@@ -68,6 +68,11 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 2. **Novo jogo começa com 7 corações.** Pegar o tomo apaga 6; o juramento com o Golden devolve o 2º e dá o Paladino.
 3. Spec: `Docs/Design/chefe-golden.md`. Plano de teste: `Docs/QA/chefe-plano-de-teste.md`. Golpes do chefe para teste: menu ⋮ do `GoldenBoss` no Inspector.
 
+## Tela inicial
+
+1. Menu **Tools > Sete Vidas > 12. Tela inicial (Novo jogo / Continuar)**. Cria `Scenes/MainMenu/MainMenu` e a coloca como primeira cena da build.
+2. **Continuar** leva ao último santuário salvo; **Novo jogo** pede confirmação antes de apagar o save. Spec: `Docs/Design/tela-inicial.md`. Plano de teste: `Docs/QA/tela-inicial-plano-de-teste.md`.
+
 ## Armadilhas
 
 1. Menu **Tools > Sete Vidas > 11. Armadilhas (circuito à esquerda do início)**. Cria os prefabs em `Prefabs/Traps`, dá ao gato o "último chão seguro" e recria a `Playground` com o circuito K: do início, ande para a **esquerda**.

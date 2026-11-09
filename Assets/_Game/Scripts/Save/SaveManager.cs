@@ -65,6 +65,9 @@ namespace SeteVidas.Save
             }
         }
 
+        /// <summary>Existe um save no disco (para o "Continuar" da tela inicial).</summary>
+        public static bool HasSaveFile => File.Exists(FilePath);
+
         /// <summary>Grava os dados atuais no disco.</summary>
         public static void Save()
         {
@@ -72,10 +75,11 @@ namespace SeteVidas.Save
         }
 
         /// <summary>Descansou num santuário: marca o checkpoint e grava.</summary>
-        public static void SaveAtSanctuary(string sanctuaryId)
+        public static void SaveAtSanctuary(string sanctuaryId, string displayName = "")
         {
             var data = Data;
             data.lastSanctuaryId = sanctuaryId ?? "";
+            data.lastSanctuaryName = displayName ?? "";
             data.scene = SceneManager.GetActiveScene().name;
             Save();
         }

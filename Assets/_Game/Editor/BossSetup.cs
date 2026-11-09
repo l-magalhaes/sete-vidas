@@ -133,6 +133,7 @@ namespace SeteVidas.EditorTools
                 s.transform.position = new Vector3(172f, ArenaFloorY, 0f);
                 var sso = new SerializedObject(s.GetComponent<Sanctuary>());
                 sso.FindProperty("sanctuaryId").stringValue = "playground_arena";
+                sso.FindProperty("displayName").stringValue = "Antes da arena";
                 sso.ApplyModifiedPropertiesWithoutUndo();
             }
         }

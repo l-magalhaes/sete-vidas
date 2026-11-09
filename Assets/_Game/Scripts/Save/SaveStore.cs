@@ -94,6 +94,7 @@ namespace SeteVidas.Save
                 data.activeClass = nameof(CharacterClass.Rogue);
 
             data.lastSanctuaryId ??= "";
+            data.lastSanctuaryName ??= "";
             data.scene ??= "";
             data.flags ??= new List<string>();
         }

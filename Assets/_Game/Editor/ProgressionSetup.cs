@@ -72,17 +72,18 @@ namespace SeteVidas.EditorTools
             if (sanctuary == null) sanctuary = CreateSanctuaryPrefab();
             var parent = new GameObject("Sanctuaries");
             SceneManager.MoveGameObjectToScene(parent, scene);
-            PlaceSanctuary(sanctuary, parent.transform, "playground_inicio", 3f);
-            PlaceSanctuary(sanctuary, parent.transform, "playground_furtividade", 119.5f);
+            PlaceSanctuary(sanctuary, parent.transform, "playground_inicio", "Início da Playground", 3f);
+            PlaceSanctuary(sanctuary, parent.transform, "playground_furtividade", "Antes da Sentinela", 119.5f);
         }
 
-        static void PlaceSanctuary(GameObject prefab, Transform parent, string id, float x)
+        static void PlaceSanctuary(GameObject prefab, Transform parent, string id, string displayName, float x)
         {
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             go.name = $"Santuário ({id})";
             go.transform.position = new Vector3(x, 0f, 0f);
             var so = new SerializedObject(go.GetComponent<Sanctuary>());
             so.FindProperty("sanctuaryId").stringValue = id;
+            so.FindProperty("displayName").stringValue = displayName;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

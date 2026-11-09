@@ -1,0 +1,133 @@
+using SeteVidas.Save;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+namespace SeteVidas.UI
+{
+    /// <summary>
+    /// Tela inicial (spec: Docs/Design/tela-inicial.md): Novo jogo, Continuar e Sair.
+    /// Continuar só fica ativo com save no disco e mostra um resumo (corações, classes, santuário); ao entrar,
+    /// o gato começa no último santuário (o PlayerHealth cuida disso). Novo jogo com save existente pede confirmação.
+    /// Teclado (W/S, setas, Enter/Espaço/E), controle e mouse.
+    /// </summary>
+    public class MainMenu : MonoBehaviour
+    {
+        [Tooltip("Cena do novo jogo")]
+        [SerializeField] string newGameScene = "Playground";
+
+        [Header("Botões")]
+        [SerializeField] Button newGameButton;
+        [SerializeField] Button continueButton;
+        [SerializeField] Button quitButton;
+        [Tooltip("Resumo do save embaixo do Continuar")]
+        [SerializeField] Text continueInfo;
+
+        [Header("Confirmação do novo jogo")]
+        [SerializeField] GameObject confirmPanel;
+        [SerializeField] Button confirmYes;
+        [SerializeField] Button confirmNo;
+
+        [Header("Visual")]
+        [Tooltip("Seta \"▶\" ao lado do botão selecionado")]
+        [SerializeField] RectTransform cursor;
+
+        public string NewGameScene => newGameScene;
+        public bool CanContinue => continueButton != null && continueButton.interactable;
+
+        void Awake()
+        {
+            Time.timeScale = 1f; // pode chegar aqui com o jogo pausado
+            if (newGameButton != null) newGameButton.onClick.AddListener(OnNewGame);
+            if (continueButton != null) continueButton.onClick.AddListener(Continue);
+            if (quitButton != null) quitButton.onClick.AddListener(Quit);
+            if (confirmYes != null) confirmYes.onClick.AddListener(StartNewGame);
+            if (confirmNo != null) confirmNo.onClick.AddListener(CloseConfirm);
+        }
+
+        void Start()
+        {
+            if (confirmPanel != null) confirmPanel.SetActive(false);
+            Refresh();
+            Select(CanContinue ? continueButton : newGameButton);
+        }
+
+        /// <summary>Atualiza o Continuar a partir do save no disco.</summary>
+        public void Refresh()
+        {
+            bool has = SaveManager.HasSaveFile;
+            if (continueButton != null) continueButton.interactable = has;
+            if (continueInfo != null) continueInfo.text = has ? SaveSummary.Describe(SaveManager.Data) : "nenhum jogo salvo";
+        }
+
+        void LateUpdate()
+        {
+            // Seta ao lado do botão selecionado (teclado/controle) ou sob o mouse
+            var selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+            if (cursor == null) return;
+            cursor.gameObject.SetActive(selected != null);
+            if (selected == null) return;
+            var rt = (RectTransform)selected.transform;
+            cursor.position = rt.position;
+            cursor.anchoredPosition += new Vector2(-rt.rect.width * 0.5f - 8f, 0f);
+        }
+
+        void Update()
+        {
+            // Sem nada selecionado (clicou fora), volta para um botão: teclado e controle nunca ficam "perdidos"
+            if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null)
+                Select(confirmPanel != null && confirmPanel.activeSelf ? confirmNo : (CanContinue ? continueButton : newGameButton));
+        }
+
+        // ------------------------------------------------------------ ações
+
+        void OnNewGame()
+        {
+            if (SaveManager.HasSaveFile && confirmPanel != null)
+            {
+                confirmPanel.SetActive(true);
+                Select(confirmNo); // o padrão é o seguro: não apagar
+                return;
+            }
+            StartNewGame();
+        }
+
+        /// <summary>Apaga o save e começa do zero (também usado pelos testes).</summary>
+        public void StartNewGame()
+        {
+            SaveManager.DeleteSave();
+            SceneManager.LoadScene(newGameScene);
+        }
+
+        /// <summary>Carrega a cena do último santuário; o PlayerHealth coloca o gato nele.</summary>
+        public void Continue()
+        {
+            if (!SaveManager.HasSaveFile) return;
+            var data = SaveManager.Data;
+            string scene = !string.IsNullOrEmpty(data.scene) && Application.CanStreamedLevelBeLoaded(data.scene) ? data.scene : newGameScene;
+            SceneManager.LoadScene(scene);
+        }
+
+        void CloseConfirm()
+        {
+            if (confirmPanel != null) confirmPanel.SetActive(false);
+            Select(newGameButton);
+        }
+
+        void Quit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+        static void Select(Selectable s)
+        {
+            if (s == null || EventSystem.current == null) return;
+            EventSystem.current.SetSelectedGameObject(s.gameObject);
+        }
+    }
+}

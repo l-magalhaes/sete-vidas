@@ -531,15 +531,17 @@ namespace SeteVidas.EditorTools
             EditorSceneManager.SaveScene(scene);
         }
 
-        static void RegisterScenesInBuild()
+        /// <summary>Tela inicial primeiro (a build abre nela), depois as fases. Outras cenas ficam na lista, desligadas.</summary>
+        public static void RegisterScenesInBuild()
         {
-            var scenes = new List<EditorBuildSettingsScene>
-            {
-                new EditorBuildSettingsScene(GameConstants.PlaygroundScenePath, true),
-                new EditorBuildSettingsScene(GameConstants.FortressScenePath, true)
-            };
+            var scenes = new List<EditorBuildSettingsScene>();
+            if (File.Exists(Path.GetFullPath(GameConstants.MainMenuScenePath)))
+                scenes.Add(new EditorBuildSettingsScene(GameConstants.MainMenuScenePath, true));
+            scenes.Add(new EditorBuildSettingsScene(GameConstants.PlaygroundScenePath, true));
+            scenes.Add(new EditorBuildSettingsScene(GameConstants.FortressScenePath, true));
             foreach (var existing in EditorBuildSettings.scenes)
-                if (existing.path != GameConstants.PlaygroundScenePath && existing.path != GameConstants.FortressScenePath)
+                if (existing.path != GameConstants.PlaygroundScenePath && existing.path != GameConstants.FortressScenePath &&
+                    existing.path != GameConstants.MainMenuScenePath)
                     scenes.Add(new EditorBuildSettingsScene(existing.path, false));
             EditorBuildSettings.scenes = scenes.ToArray();
         }

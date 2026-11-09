@@ -20,6 +20,8 @@ namespace SeteVidas.Save
         public string activeClass = nameof(CharacterClass.Rogue);
         /// <summary>Santuário onde o gato descansou por último ("" = nenhum: usa o início da cena).</summary>
         public string lastSanctuaryId = "";
+        /// <summary>Nome do último santuário para mostrar na tela inicial ("" = sem nome).</summary>
+        public string lastSanctuaryName = "";
         /// <summary>Nome da cena do último santuário.</summary>
         public string scene = "";
         /// <summary>Marcas do mundo: paredes quebradas, missões, diálogos vistos.</summary>

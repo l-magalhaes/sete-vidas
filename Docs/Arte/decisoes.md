@@ -30,6 +30,7 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Relâmpago: aviso = coluna clara piscando cada vez mais rápido; raio = núcleo branco em zigue-zague com bordas amarelas. Cura = anel dourado pulsando | [PROPOSTA] | Legibilidade dos ataques |
 | 09/11/2026 | Tomo corrompido 14×12: capa roxa #5b2a6e com runas verde-ácido #8fd14f (cores exclusivas da praga) e um olho; grade de ferro 16×64; pedestal de pedra | [PROPOSTA] | Sala do tomo |
 | 09/11/2026 | Armadilhas: **vermelho (#c83a3a) só em armadilhas** (pontas dos espinhos, marcas do fio, da placa, penas da flecha, brilho do lançador). Aço #c0c6d2, chama branco→laranja→vermelho, plataforma frágil em pedra mais clara com rachaduras | [PROPOSTA] | Leitura de perigo em menos de 1 s |
+| 09/11/2026 | Tela inicial 480×270: céu noturno em faixas, lua crescente, Fortaleza em silhueta com o brilho da praga na torre do tomo; título SETE VIDAS dourado com as sete vidas embaixo | [PROPOSTA] | Primeira impressão do jogo |
 
 ## Já configurado na Fase 0
 

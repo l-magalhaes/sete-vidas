@@ -18,6 +18,8 @@ namespace SeteVidas.World
 
         [Tooltip("Identificador único na cena. Vai para o save: não mude depois de lançado")]
         [SerializeField] string sanctuaryId = "santuario";
+        [Tooltip("Nome mostrado na tela inicial (Continuar)")]
+        [SerializeField] string displayName = "Santuário";
         [Tooltip("Onde o gato reaparece, relativo ao santuário (tiles)")]
         [SerializeField] Vector2 spawnOffset = Vector2.zero;
 
@@ -73,7 +75,7 @@ namespace SeteVidas.World
         {
             if (health == null || health.IsDead) return;
             health.RestoreFull();
-            SaveManager.SaveAtSanctuary(sanctuaryId);
+            SaveManager.SaveAtSanctuary(sanctuaryId, displayName);
             GameEvents.RaiseWorldReset();
             DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, "Salvo", new Color32(0xff, 0xd3, 0x4d, 0xff));
         }
