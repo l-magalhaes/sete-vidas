@@ -18,6 +18,7 @@ namespace SeteVidas.Player
 
         PlayerController _player;
         CombatController _combat;
+        PlayerHealth _health;
         float _footstepTimer;
         bool _wasAirborne;
         float _airPeakY;
@@ -32,6 +33,8 @@ namespace SeteVidas.Player
         public float Concealment { get; private set; } = 1f;
         /// <summary>Agachado dentro de um matinho/esconderijo.</summary>
         public bool InCover => _player != null && _player.IsCrouching && Concealment < 1f;
+        /// <summary>Inimigos podem ver e mirar o gato (falso enquanto ele está morto).</summary>
+        public bool IsTargetable => _health == null || !_health.IsDead;
         public bool IsHidden => settings != null && Visibility <= settings.HiddenThreshold;
         public PlayerController Player => _player;
         public StealthSettings Settings => settings;
@@ -50,6 +53,7 @@ namespace SeteVidas.Player
         {
             _player = GetComponent<PlayerController>();
             _combat = GetComponent<CombatController>();
+            _health = GetComponent<PlayerHealth>();
             if (settings == null)
             {
                 Debug.LogError("[Sete Vidas] StealthController sem StealthSettings.", this);
@@ -127,7 +131,7 @@ namespace SeteVidas.Player
             string where = LightExposure < 1f ? "sombra" : "luz";
             string pose = InCover ? ", agachado no mato" : _player.IsCrouching ? ", agachado" : Concealment < 1f ? ", de pé no mato" : "";
             string hidden = IsHidden ? "  [ESCONDIDO]" : "";
-            GUI.Label(new Rect(10, 10, 420, 24), $"Visibilidade {Visibility * 100f:0}% ({where}{pose}){hidden}");
+            GUI.Label(new Rect(10, Screen.height - 30, 480, 24), $"Visibilidade {Visibility * 100f:0}% ({where}{pose}){hidden}");
         }
 
 #if UNITY_EDITOR

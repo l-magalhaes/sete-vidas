@@ -2,6 +2,7 @@ using System;
 using SeteVidas.Combat;
 using SeteVidas.Core;
 using SeteVidas.Player;
+using SeteVidas.Progression;
 using UnityEngine;
 
 namespace SeteVidas.Enemies
@@ -25,6 +26,8 @@ namespace SeteVidas.Enemies
         [SerializeField, Min(0f)] float respawnDelay;
         [SerializeField] LayerMask groundLayers;
         [SerializeField] LayerMask playerLayers;
+        [Tooltip("Meio coração que pode cair ao morrer (chance em SentinelSettings.HeartDropChance)")]
+        [SerializeField] GameObject heartDrop;
 
         [Header("Visual")]
         [SerializeField] SpriteRenderer spriteRenderer;
@@ -90,6 +93,17 @@ namespace SeteVidas.Enemies
             _health = settings.MaxHealth;
             _facing = startFacing >= 0 ? 1 : -1;
             _perception.Init(settings, _brain);
+        }
+
+        void OnEnable() => GameEvents.WorldReset += OnWorldReset;
+        void OnDisable() => GameEvents.WorldReset -= OnWorldReset;
+
+        /// <summary>Descanso no santuário ou volta depois de morrer: reaparece no início, vida cheia, patrulhando.</summary>
+        void OnWorldReset()
+        {
+            if (settings == null) return;
+            _attackPhase = AttackPhase.None;
+            Respawn();
         }
 
         // ------------------------------------------------------------ física
@@ -287,7 +301,19 @@ namespace SeteVidas.Enemies
             _body.bodyType = RigidbodyType2D.Kinematic;
             _respawnAt = respawnDelay > 0f ? Time.time + settings.DeathDuration + respawnDelay : -1f;
             Died?.Invoke(this);
+            TryDropHeart(UnityEngine.Random.value);
         }
+
+        /// <summary>Solta o meio coração se <paramref name="roll01"/> cair dentro da chance. Retorna o item criado (ou null).</summary>
+        public GameObject TryDropHeart(float roll01)
+        {
+            if (heartDrop == null || !HealthRules.RollDrop(settings.HeartDropChance, roll01)) return null;
+            var chest = (Vector3)(_body.position + Vector2.up * (settings.BodySize.y * 0.6f));
+            return Instantiate(heartDrop, chest, Quaternion.identity);
+        }
+
+        [ContextMenu("Depuração: soltar meio coração")]
+        void DebugDropHeart() => TryDropHeart(0f);
 
         void StepDeath(float dt)
         {

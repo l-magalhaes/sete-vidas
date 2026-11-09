@@ -16,6 +16,9 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Sentinela placeholder: cão de armadura 26 px (canvas 32×28), tabardo vermelho, olho claro só na frente; lança recuada na preparação e esticada no golpe | [PROPOSTA] | Leitura de ameaça, frente/costas e aviso de ataque |
 | 09/11/2026 | Sombra jogável = retângulo escuro (alfa 0,5) desenhado por cima do gato: quem entra escurece. Ícones "?" amarelo e "!" vermelho sobre o inimigo | [PROPOSTA] | Legibilidade da furtividade até existir luz 2D de verdade |
 | 09/11/2026 | Matinho: moita 32×16 px (2 tiles) com 15 px de altura, verde #456633 com contorno #243822 e pontas secas #9a924a, desenhada na frente do gato: agachado (14 px) ele some, de pé (22 px) a cabeça aparece | [PROPOSTA] | Leitura do esconderijo sem UI |
+| 09/11/2026 | Corações do HUD 16×16 (13×11 de desenho): cheio #d6304a com brilho #ff8a9a, meio (metade esquerda), vazio #4a2a33, bloqueado cinza #3b3b48 com rachadura. Canvas 480×270 escalado ×4 | [PROPOSTA] | UI de vida |
+| 09/11/2026 | Santuário felino 32×32: pedestal de pedra, estátua de gato sentado e duas velas; aceso = chamas e olhos dourados #ffd34d | [PROPOSTA] | Leitura do checkpoint ativo |
+| 09/11/2026 | Meio coração no chão: metade esquerda do coração do HUD (7×11 px) com brilho rosa claro em volta, flutuando de leve | [PROPOSTA] | Leitura do drop de vida |
 
 ## Já configurado na Fase 0
 

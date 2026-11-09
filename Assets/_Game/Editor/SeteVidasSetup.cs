@@ -462,6 +462,9 @@ namespace SeteVidas.EditorTools
             Fill(ground, tiles.Ground, 130, 4, 143, 4);
             EnemySetup.PlaceStealthSection(scene);
 
+            // Fase 4: HUD de corações e santuários (E para descansar e salvar) em x 3 e x 119,5
+            ProgressionSetup.PlaceInPlayground(scene);
+
             var spawn = new GameObject("PlayerSpawn");
             spawn.transform.position = new Vector3(0.5f, 1f, 0f);
 

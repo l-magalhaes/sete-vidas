@@ -163,7 +163,7 @@ Cada coração possui três funções: representar uma vida recuperada, armazena
 
 É importante separar **corações recuperados** de **pontos de vida atuais**.
 
-Proposta inicial: cada coração recuperado aumenta a vida máxima do protagonista em uma unidade. Assim, o jogador começa com um coração e pode chegar a sete.
+Cada coração recuperado vale **2 hits** de vida máxima (alinhado com a seção 14). O jogador começa com um coração (2 hits) e pode chegar a sete (14 hits). Cada golpe inimigo comum tira 1 hit.
 
 As classes permanecem desbloqueadas permanentemente após a recuperação de seus respectivos corações. Isso evita que o jogador perca uma habilidade essencial de exploração ao receber dano.
 

@@ -58,6 +58,8 @@ namespace SeteVidas.Enemies
 
         [Header("Morte")]
         [Min(0f)] public float DeathDuration = 0.6f;
+        [Tooltip("Chance de soltar meio coração ao morrer (0,15 = 15%)")]
+        [Range(0f, 1f)] public float HeartDropChance = 0.15f;
 
         [Header("Corpo (tiles)")]
         public Vector2 BodySize = new Vector2(0.75f, 1.6f);

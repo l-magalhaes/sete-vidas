@@ -252,6 +252,7 @@ MonoBehaviour:
   playerLayers:
     serializedVersion: 2
     m_Bits: 256
+  heartDrop: {fileID: 600684618207771634, guid: 13c3365b2fb579f4f834c166dd80b0ed, type: 3}
   spriteRenderer: {fileID: 5432221935669738036}
   idle: {fileID: 21300000, guid: 5e9e196e312c82e45894f7429401e2b2, type: 3}
   walk:

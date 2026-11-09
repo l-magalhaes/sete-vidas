@@ -42,8 +42,8 @@ O jogador sente que **escolhe**: esperar na sombra, seguir a Sentinela agachado 
 13. **Não cai de bordas** nem atravessa paredes: perseguindo, para na beira.
 14. **Ataque pelas costas:** a Sentinela é `IFacingTarget`; "em combate" = estado Em combate. Patrulhando, suspeita ou investigando, um golpe pelas costas é **furtivo**.
 
-## Gato tomando dano (provisório até a Fase 4)
-15. Cada golpe conta 1 hit (contador de depuração), empurra o gato para longe do atacante e dá `InvulnerabilityTime` (1 s) com o sprite piscando. Solta borda/parede. **Não há morte até a Fase 4.**
+## Gato tomando dano
+15. Ver `Docs/Design/vida-morte-save.md` (Fase 4): cada golpe tira 1 hit, com recuo e 1 s de invencibilidade; em 0 hits o gato morre e volta ao último santuário.
 
 ## Balanceamento (Sentinela com 5 de vida)
 | Abordagem | Golpes | Conta |
@@ -72,7 +72,7 @@ Lutando de frente, o jogador precisa de 3 golpes (um combo e meio) e a Sentinela
 
 ## Implementação (Unity)
 - **C# puro (EditMode):** `StealthMath`, `PerceptionMath`, `AlertBrain` (máquina de estados + medidor).
-- **Gato:** `StealthController` (visibilidade, passos, aterrissagem, golpes → `NoiseSystem`), `PlayerHurtbox` (dano provisório).
+- **Gato:** `StealthController` (visibilidade, passos, aterrissagem, golpes → `NoiseSystem`), `PlayerHealth` (dano, desde a Fase 4).
 - **Mundo:** `LightZone` (retângulo de sombra com visual escuro). `HidingSpot` (matinho: só esconde agachado).
 - **Inimigo:** `EnemyAI` (estados, movimento, ataque, morte, ícones "?"/"!") + `EnemyPerception` (cone, linha de visão, audição) + `SentinelSettings`.
 - **Depuração:** Gizmos do cone (alcance base e efetivo), última posição conhecida e ruídos recentes; texto com estado e suspeita sobre a Sentinela; visibilidade do gato no canto da tela.

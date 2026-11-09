@@ -37,10 +37,17 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 
 ## Fase 3 — Sentinela e furtividade
 
-1. Menu **Tools > Sete Vidas > 6. Fase 3: Sentinela e furtividade**. Isso faz o gato atravessar inimigos (matriz de colisão), adiciona ao gato a visibilidade/ruído (`StealthController`) e o dano provisório (`PlayerHurtbox`), cria `ScriptableObjects/Player/StealthSettings`, `ScriptableObjects/Enemies/SentinelSettings`, o prefab `Prefabs/Enemies/Sentinel` e recria a `Playground` com o trecho H (x 122–151).
+1. Menu **Tools > Sete Vidas > 6. Fase 3: Sentinela e furtividade**. Isso faz o gato atravessar inimigos (matriz de colisão), adiciona ao gato a visibilidade/ruído (`StealthController`) e o dano no gato (hoje `PlayerHealth`, da Fase 4), cria `ScriptableObjects/Player/StealthSettings`, `ScriptableObjects/Enemies/SentinelSettings`, o prefab `Prefabs/Enemies/Sentinel` e recria a `Playground` com o trecho H (x 122–151).
 2. Ligue **Gizmos** na Game view para ver o cone de visão, a última posição conhecida e os ruídos. A visibilidade do gato aparece no canto superior esquerdo.
 3. Spec: `Docs/Design/furtividade-sentinela.md`. Plano de teste: `Docs/QA/fase3-plano-de-teste.md`.
 4. O dano no gato é provisório (conta hits, empurra e pisca, sem morte) até a Fase 4.
+
+## Fase 4 — vida, morte, santuário e save
+
+1. Menu **Tools > Sete Vidas > 7. Fase 4: vida, santuário e save**. Isso cria o HUD de corações (`Prefabs/UI/HUD`), o santuário (`Prefabs/Interactables/Sanctuary`), troca o dano provisório do gato pelo `PlayerHealth` e recria a `Playground` com santuários em x 3 e x 119,5.
+2. **E** perto de um santuário: descansa, cura e salva. Morrer volta ao último santuário; inimigos reaparecem ao descansar e ao morrer.
+3. O save fica em `Application.persistentDataPath/save_slot1.json`. **Tools > Sete Vidas > Save** apaga o save ou abre a pasta dele. Os testes usam um save temporário.
+4. Spec: `Docs/Design/vida-morte-save.md`. Plano de teste: `Docs/QA/fase4-plano-de-teste.md`.
 
 ## Git e GitHub
 

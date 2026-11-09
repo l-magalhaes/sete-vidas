@@ -208,6 +208,29 @@ namespace SeteVidas.Player
             LockHorizontalControl(controlLock);
         }
 
+        /// <summary>Coloca o gato em <paramref name="feet"/> parado, de pé e sem nenhum estado especial (respawn, carregar save).</summary>
+        public void Teleport(Vector2 feet)
+        {
+            if (IsClimbingLedge)
+            {
+                IsClimbingLedge = false;
+                _body.bodyType = RigidbodyType2D.Dynamic;
+            }
+            IsHanging = false;
+            InterruptAbility();
+            if (IsCrouching && _ground.HasRoomFor(settings.ColliderWidth, settings.StandingHeight))
+            {
+                IsCrouching = false;
+                ApplyColliderHeight(settings.StandingHeight);
+            }
+            _isJumping = false;
+            _timers.Consume();
+            _moveLockTimer = 0f;
+            _body.position = feet;
+            _body.linearVelocity = Vector2.zero;
+            transform.position = feet;
+        }
+
         /// <summary>Tira o controle da habilidade ativa (dano, morte, cutscene).</summary>
         public void InterruptAbility()
         {

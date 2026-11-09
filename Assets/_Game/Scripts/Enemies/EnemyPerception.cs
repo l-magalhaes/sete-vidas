@@ -44,7 +44,7 @@ namespace SeteVidas.Enemies
         {
             SeesPlayer = false;
             var player = StealthController.Active;
-            if (_brain == null || player == null || !player.isActiveAndEnabled) return;
+            if (_brain == null || player == null || !player.isActiveAndEnabled || !player.IsTargetable) return;
 
             float visibility = player.Visibility;
             if (_brain.State == AlertState.Combat)

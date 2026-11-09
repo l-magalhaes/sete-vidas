@@ -274,7 +274,7 @@ namespace SeteVidas.EditorTools
             var climb = root.AddComponent<WallClimbAbility>();
             var combat = root.AddComponent<CombatController>();
             var stealth = root.AddComponent<StealthController>();
-            var hurtbox = root.AddComponent<PlayerHurtbox>();
+            var health = root.AddComponent<PlayerHealth>();
 
             SetRef(reader, "actions", controls);
             SetRef(controller, "settings", settings);
@@ -307,7 +307,7 @@ namespace SeteVidas.EditorTools
             SetRef(visual, "attack", sprites.Attack);
             SetRef(visual, "wallClimb", climb);
             SetRef(visual, "combat", combat);
-            SetRef(visual, "hurtbox", hurtbox);
+            SetRef(visual, "health", health);
             SetArray(visual, "run", sprites.Run1, sprites.Run2);
             SetArray(visual, "climb", sprites.Climb1, sprites.Climb2);
             SetArray(visual, "slash", sprites.Slash1, sprites.Slash2);

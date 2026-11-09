@@ -103,6 +103,9 @@ namespace SeteVidas.EditorTools
             so.FindProperty("groundLayers").intValue = LayerMask.GetMask(
                 GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
             so.FindProperty("playerLayers").intValue = LayerMask.GetMask(GameConstants.Layers.Player);
+            var drop = AssetDatabase.LoadAssetAtPath<GameObject>(ProgressionSetup.HeartPickupPrefabPath);
+            if (drop == null) drop = ProgressionSetup.CreateHeartPickupPrefab();
+            so.FindProperty("heartDrop").objectReferenceValue = drop;
             var walk = so.FindProperty("walk");
             walk.arraySize = 2;
             walk.GetArrayElementAtIndex(0).objectReferenceValue = sprites.Walk1;
