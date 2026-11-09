@@ -408,11 +408,19 @@ namespace SeteVidas.EditorTools
             CreateTilemap(grid, "Foreground", null, 10, false);
 
             // Fundo decorativo (sem colisão)
-            Fill(background, tiles.Background, -4, 0, 220, 13);
+            Fill(background, tiles.Background, -74, 0, 220, 13);
 
             // Chão contínuo (2 tiles de espessura) e paredes de limite
-            Fill(ground, tiles.Ground, -6, -2, 222, -1);
-            Fill(ground, tiles.Ground, -6, 0, -5, 14);   // limite esquerdo
+            Fill(ground, tiles.Ground, -76, -2, 222, -1);
+            Fill(ground, tiles.Ground, -76, 0, -75, 14); // limite esquerdo (depois do circuito de armadilhas)
+
+            // K) Circuito de armadilhas (à esquerda do spawn, x -74..-8). Tiles aqui; armadilhas em TrapsSetup.
+            Fill(ground, tiles.Ground, -22, 1, -22, 6);   // pilar do teto: passagem de 1 tile embaixo (agachar)
+            Fill(ground, tiles.Ground, -34, 2, -33, 2);   // plataformas acima do fogo (topo em 3)
+            Fill(ground, tiles.Ground, -39, 2, -38, 2);
+            Fill(ground, tiles.Ground, -44, 2, -43, 2);
+            Fill(ground, tiles.Ground, -55, 2, -52, 2);   // plataforma acima da serra
+            TrapsSetup.PlaceInPlayground(scene);
             Fill(ground, tiles.Ground, 221, 0, 222, 16); // limite direito
 
             // A) Spawn: x -4..6 livre.

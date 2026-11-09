@@ -50,6 +50,9 @@ namespace SeteVidas.Player
         public JumpTimers Timers => _timers;
         /// <summary>Habilidade com o controle agora (null = movimento normal).</summary>
         public PlayerAbility ActiveAbility { get; private set; }
+        /// <summary>Mantém o gato agachado sem o botão (cenas e testes).</summary>
+        public bool HoldCrouch { get; set; }
+
         /// <summary>Multiplicador externo da velocidade de andar (ex.: marreta lenta durante o golpe). 1 = normal.</summary>
         public float SpeedMultiplier { get; set; } = 1f;
         /// <summary>Altura atual do colisor (em pé ou agachado), em tiles.</summary>
@@ -246,7 +249,7 @@ namespace SeteVidas.Player
 
         void UpdateCrouch(bool grounded)
         {
-            bool wantsCrouch = input.CrouchHeld;
+            bool wantsCrouch = input.CrouchHeld || HoldCrouch;
 
             if (!IsCrouching)
             {

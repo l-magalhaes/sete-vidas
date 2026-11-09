@@ -82,6 +82,10 @@ namespace SeteVidas.Tests
                 Assert.Greater(s.LeapHeight, 1.375f + 1f, "O gato (1,375 tile) precisa passar por baixo do salto com folga");
                 Assert.GreaterOrEqual(s.SwingWindup, 0.45f);
                 Assert.Greater(s.HealInterruptDamage, 0);
+                Assert.AreEqual(1, s.SwingDamage, "Marretada: meio coração");
+                Assert.AreEqual(4, s.LeapDamage, "Salto: 2 corações");
+                Assert.AreEqual(8, s.LightningDamage, "Relâmpago: 4 corações");
+                Assert.Less(s.LightningDamage, 14, "Com 7 corações (14 hits), um raio sozinho não mata");
             }
             finally
             {

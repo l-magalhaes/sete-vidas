@@ -57,6 +57,8 @@ namespace SeteVidas.Player
 
             // Continuar de onde salvou: se o último santuário é desta cena, começa nele
             if (TryGetSavedSanctuary(out var sanctuary)) _player.Teleport(sanctuary.SpawnPoint);
+            var safeStart = GetComponent<SafeGroundTracker>();
+            if (safeStart != null) safeStart.ResetTo(_player.Body.position);
             Changed?.Invoke();
         }
 
@@ -95,6 +97,39 @@ namespace SeteVidas.Player
             return true;
         }
 
+        /// <summary>
+        /// Dano de espinho: tira o hit sem recuo, escurece a tela rapidinho e devolve o gato ao último chão seguro
+        /// (<see cref="SafeGroundTracker"/>). Se for o último hit, é morte normal.
+        /// </summary>
+        public void TakeHazardDamage(in DamageInfo info)
+        {
+            if (IsDead || IsCollapsed || IsInvulnerable || info.Amount <= 0) return;
+            CurrentHits = HealthRules.ApplyDamage(CurrentHits, info.Amount);
+            _invulnerableUntil = Time.time + _player.Settings.InvulnerabilityTime;
+            DamagePopup.Spawn(transform.position + Vector3.up * 1.8f, $"-{info.Amount} hit", new Color32(0xff, 0x6b, 0x6b, 0xff));
+            Damaged?.Invoke(info);
+            Changed?.Invoke();
+
+            if (HealthRules.IsDead(CurrentHits)) StartCoroutine(DeathRoutine());
+            else StartCoroutine(ReturnToSafeGround());
+        }
+
+        IEnumerator ReturnToSafeGround()
+        {
+            if (_input != null) _input.SetLock(this, true);
+            _player.Body.linearVelocity = Vector2.zero;
+            var fader = ScreenFader.Active;
+            if (fader != null) yield return fader.FadeTo(1f, 0.15f);
+            else yield return new WaitForSeconds(0.15f);
+
+            var tracker = GetComponent<SafeGroundTracker>();
+            _player.Teleport(tracker != null ? tracker.LastSafe : _sceneStart);
+            yield return null;
+
+            if (fader != null) yield return fader.FadeTo(0f, 0.15f);
+            if (_input != null) _input.SetLock(this, false);
+        }
+
         /// <summary>Vida cheia (descansar no santuário).</summary>
         public void RestoreFull()
         {
@@ -127,6 +162,8 @@ namespace SeteVidas.Player
         void Respawn()
         {
             _player.Teleport(TryGetSavedSanctuary(out var sanctuary) ? sanctuary.SpawnPoint : _sceneStart);
+            var safe = GetComponent<SafeGroundTracker>();
+            if (safe != null) safe.ResetTo(_player.Body.position);
             CurrentHits = MaxHits;
             _invulnerableUntil = -1f;
             IsDead = false;

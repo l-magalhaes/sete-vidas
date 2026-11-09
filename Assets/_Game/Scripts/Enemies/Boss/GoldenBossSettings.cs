@@ -62,7 +62,12 @@ namespace SeteVidas.Enemies.Boss
         [Min(0.5f)] public float LightningSafeGap = 2.5f;
         [Min(0f)] public float LightningCooldown = 9f;
 
-        [Header("Dano no gato (hits)")]
-        [Min(0)] public int Damage = 1;
+        [Header("Dano no gato (hits; 1 coração = 2 hits)")]
+        [Tooltip("Marretada de perto: meio coração")]
+        [Min(0)] public int SwingDamage = 1;
+        [Tooltip("Salto com marretada: 2 corações")]
+        [Min(0)] public int LeapDamage = 4;
+        [Tooltip("Relâmpago: 4 corações (o aviso é longo; quem fica na coluna paga caro)")]
+        [Min(0)] public int LightningDamage = 8;
     }
 }

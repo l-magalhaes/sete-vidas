@@ -167,7 +167,7 @@ namespace SeteVidas.Enemies.Boss
                     if (_timer <= 0f) { _swingHit = false; Enter(State.SwingActive, settings.SwingActive); }
                     break;
                 case State.SwingActive:
-                    if (!_swingHit) _swingHit = HitPlayer(SwingCenter(), settings.SwingHitbox);
+                    if (!_swingHit) _swingHit = HitPlayer(SwingCenter(), settings.SwingHitbox, settings.SwingDamage);
                     if (_timer <= 0f) Enter(State.SwingRecover, settings.SwingRecovery / Speed);
                     break;
                 case State.SwingRecover:
@@ -263,7 +263,7 @@ namespace SeteVidas.Enemies.Boss
 
             _body.position = new Vector2(_leapTargetX, _spawn.y);
             var center = new Vector2(_leapTargetX, _spawn.y + 0.75f);
-            HitPlayer(center, new Vector2(settings.LeapImpactHalfWidth * 2f, 1.5f));
+            HitPlayer(center, new Vector2(settings.LeapImpactHalfWidth * 2f, 1.5f), settings.LeapDamage);
             NoiseSystem.Emit(center, 8f, 0.6f, gameObject, "marretada");
             Enter(State.LeapRecover, settings.LeapRecovery / Speed);
         }
@@ -278,7 +278,7 @@ namespace SeteVidas.Enemies.Boss
             {
                 var strike = Instantiate(lightningPrefab);
                 strike.Init(new Vector2(x, _spawn.y), settings.LightningWidth, lightningHeight,
-                    settings.LightningTelegraph, settings.LightningStrikeTime, settings.Damage, gameObject);
+                    settings.LightningTelegraph, settings.LightningStrikeTime, settings.LightningDamage, gameObject);
                 _strikes.Add(strike);
             }
         }
@@ -353,14 +353,14 @@ namespace SeteVidas.Enemies.Boss
         Vector2 SwingCenter() =>
             new Vector2(_body.position.x + _facing * (settings.BodySize.x * 0.5f + settings.SwingHitbox.x * 0.5f), _spawn.y + 0.8f);
 
-        bool HitPlayer(Vector2 center, Vector2 size)
+        bool HitPlayer(Vector2 center, Vector2 size, int damage)
         {
             var col = Physics2D.OverlapBox(center, size, 0f, playerLayers);
             if (col == null) return false;
             var target = col.GetComponentInParent<IDamageable>();
             if (target == null) return false;
             float dir = col.transform.position.x >= _body.position.x ? 1f : -1f;
-            target.TakeDamage(new DamageInfo(settings.Damage, new Vector2(dir, 0f), DamageType.Normal, AttackAngle.Front, gameObject));
+            target.TakeDamage(new DamageInfo(damage, new Vector2(dir, 0f), DamageType.Normal, AttackAngle.Front, gameObject));
             return true;
         }
 

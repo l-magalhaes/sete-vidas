@@ -18,10 +18,10 @@ Uma luta de leitura: cada golpe do Golden tem um aviso claro e uma resposta clar
 ## Golpes
 | Golpe | Aviso | Como escapar / punir | Dano |
 |---|---|---|---|
-| **Marretada** (perto, até 1,8 tile) | Marreta erguida atrás da cabeça, 0,6 s | Recuar; atacar na recuperação (0,7 s) | 1 hit |
-| **Salto com marretada** | Agacha com a marreta no alto, 0,5 s; salta 5 tiles de altura até onde o gato estava | **Passar por baixo** dele para o outro lado; atacar quando ele cai (0,8 s parado) | 1 hit (área de 3,2 tiles) |
+| **Marretada** (perto, até 1,8 tile) | Marreta erguida atrás da cabeça, 0,6 s | Recuar; atacar na recuperação (0,7 s) | **1 hit** (meio coração) |
+| **Salto com marretada** | Agacha com a marreta no alto, 0,5 s; salta 5 tiles de altura até onde o gato estava | **Passar por baixo** dele para o outro lado; atacar quando ele cai (0,8 s parado) | **4 hits** (2 corações; área de 3,2 tiles) |
 | **Cura concentrada** (só abaixo de 70% da vida) | Ajoelha com um anel dourado pulsando | Cura 2 de vida por segundo por até 4 s; **5 de dano interrompem** e o deixam atordoado 1,5 s | — |
-| **Chuva de relâmpagos** | Marreta para o céu (0,8 s); colunas claras piscam no chão por 1,2 s antes de cada raio | Ficar numa faixa **sem coluna**. Cada onda tem um raio onde o gato está e uma faixa livre de pelo menos 2,5 tiles | 1 hit |
+| **Chuva de relâmpagos** | Marreta para o céu (0,8 s); colunas claras piscam no chão por 1,2 s antes de cada raio | Ficar numa faixa **sem coluna**. Cada onda tem um raio onde o gato está e uma faixa livre de pelo menos 2,5 tiles | **8 hits** (4 corações) |
 
 - **2ª fase (metade da vida):** golpes 35% mais rápidos, pausas menores, uma onda e um raio a mais por onda. A barra mostra "(furioso)".
 - **Pelas costas:** vale 1,5× (ele está sempre em combate, nunca furtivo).
@@ -29,7 +29,7 @@ Uma luta de leitura: cada golpe do Golden tem um aviso claro e uma resposta clar
 
 ## Balanceamento
 - Golden: **30 de vida**. Adagas: 2 de frente, 3 pelas costas → ~12 golpes (6 combos).
-- O gato tem **7 corações = 14 hits** nessa luta: pode errar bastante enquanto aprende.
+- O gato tem **7 corações = 14 hits** nessa luta. **Dano por golpe (decisão de 09/11/2026):** marretada 1 hit, salto 4, relâmpago 8. O aviso mais longo carrega o castigo maior: dá para levar muitas marretadas, mas dois relâmpagos matam (8 + 8 > 14). Um relâmpago sozinho nunca mata com a vida cheia.
 
 ## Parâmetros tunáveis
 Todos em `ScriptableObjects/Enemies/GoldenBossSettings` (vida, tempos, alturas, larguras, dano, recargas). Valores iniciais na tabela acima.
@@ -50,6 +50,6 @@ Todos em `ScriptableObjects/Enemies/GoldenBossSettings` (vida, tempos, alturas, 
 - Dado o tomo pego, então os corações caem de 7 para 1, o Golden salva o gato e o HUD mostra 2 corações e o Paladino disponível.
 
 ## Perguntas abertas
-- [PROPOSTA] Vida 30 e dano 1 por golpe (luta de aprendizado, com 14 hits de folga).
+- [PROPOSTA] Vida 30 do Golden.
 - [PROPOSTA] A arena reinicia ao morrer (sem "checkpoint no meio da luta").
 - [PROPOSTA] O tomo fica com o gato só como flag no save (sem inventário no MVP).

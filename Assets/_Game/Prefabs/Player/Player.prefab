@@ -241,6 +241,7 @@ GameObject:
   - component: {fileID: 3673377045256065694}
   - component: {fileID: 3499150790131034645}
   - component: {fileID: 6425360654606903979}
+  - component: {fileID: 6133062041909678261}
   - component: {fileID: 3502049065231980797}
   - component: {fileID: 3136847245729240846}
   - component: {fileID: 4180873016327107990}
@@ -445,6 +446,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f14bd5e984b03445af5983166828df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Player.PlayerHealth
+--- !u!114 &6133062041909678261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320309356582531918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9680d82de85fd3a4f9e5cf89560e886f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Player.SafeGroundTracker
+  dangerMargin: 1.2
+  stableTime: 0.1
 --- !u!114 &3502049065231980797
 MonoBehaviour:
   m_ObjectHideFlags: 0

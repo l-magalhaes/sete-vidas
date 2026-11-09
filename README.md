@@ -68,6 +68,12 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 2. **Novo jogo começa com 7 corações.** Pegar o tomo apaga 6; o juramento com o Golden devolve o 2º e dá o Paladino.
 3. Spec: `Docs/Design/chefe-golden.md`. Plano de teste: `Docs/QA/chefe-plano-de-teste.md`. Golpes do chefe para teste: menu ⋮ do `GoldenBoss` no Inspector.
 
+## Armadilhas
+
+1. Menu **Tools > Sete Vidas > 11. Armadilhas (circuito à esquerda do início)**. Cria os prefabs em `Prefabs/Traps`, dá ao gato o "último chão seguro" e recria a `Playground` com o circuito K: do início, ande para a **esquerda**.
+2. Espinhos tiram 1 hit e devolvem o gato ao último chão seguro. Fio de alarme e placa de pressão não disparam com o gato agachado. Disparar faz barulho (Sentinelas ouvem).
+3. Spec: `Docs/Design/armadilhas.md`. Plano de teste: `Docs/QA/armadilhas-plano-de-teste.md`.
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:

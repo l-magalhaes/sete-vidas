@@ -29,6 +29,7 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Golden chefão 40×40: mesmo corpo do vínculo com a marreta em 8 posturas (parado, andando, erguida, golpe, agachado para saltar, no ar, ajoelhado curando, invocando raios) | [PROPOSTA] | Leitura dos golpes do chefe |
 | 09/11/2026 | Relâmpago: aviso = coluna clara piscando cada vez mais rápido; raio = núcleo branco em zigue-zague com bordas amarelas. Cura = anel dourado pulsando | [PROPOSTA] | Legibilidade dos ataques |
 | 09/11/2026 | Tomo corrompido 14×12: capa roxa #5b2a6e com runas verde-ácido #8fd14f (cores exclusivas da praga) e um olho; grade de ferro 16×64; pedestal de pedra | [PROPOSTA] | Sala do tomo |
+| 09/11/2026 | Armadilhas: **vermelho (#c83a3a) só em armadilhas** (pontas dos espinhos, marcas do fio, da placa, penas da flecha, brilho do lançador). Aço #c0c6d2, chama branco→laranja→vermelho, plataforma frágil em pedra mais clara com rachaduras | [PROPOSTA] | Leitura de perigo em menos de 1 s |
 
 ## Já configurado na Fase 0
 

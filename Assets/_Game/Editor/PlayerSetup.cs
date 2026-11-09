@@ -278,6 +278,7 @@ namespace SeteVidas.EditorTools
             var combat = root.AddComponent<CombatController>();
             var stealth = root.AddComponent<StealthController>();
             var health = root.AddComponent<PlayerHealth>();
+            root.AddComponent<SafeGroundTracker>(); // último chão seguro (espinhos devolvem o gato para cá)
             var classes = root.AddComponent<ClassManager>();
             var daggersAbility = root.AddComponent<MeleeWeaponAbility>();
             var hammerAbility = root.AddComponent<MeleeWeaponAbility>();

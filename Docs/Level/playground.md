@@ -6,6 +6,7 @@ Coordenadas em células (1 célula = 1 tile). A superfície do chão fica em y =
 
 | Trecho | X (células) | O que testa | Fase |
 |---|---|---|---|
+| K. Armadilhas | -74 a -8 | À esquerda do spawn: espinhos (x -12,5 a -9,5); fio de alarme (x -17) com flechas e passagem baixa sob um pilar (x -22); placa de pressão (x -26) com lanças; 8 jatos de chama (x -45,5 a -29,5) com 3 plataformas por cima (topo em 3); serra (x -58 a -49) com plataforma (x -55 a -51); poço de espinhos (x -71,5 a -62,5) com 2 plataformas frágeis | Armadilhas |
 | A. Spawn | -4 a 6 | Ponto `PlayerSpawn` em (0,5; 1) | 1 |
 | B. Degraus | 8, 12, 16, 20, 24, 28 | Alturas de 1 a 6 tiles (2 de largura) para medir o pulo. Os de 1 e 2 são blocos maciços; os de 3 a 6 são plataformas de 1 tile de espessura, com passagem por baixo | 1 |
 | C. Buracos | 36, 42, 49, 57 | Vãos de 2, 3, 4 e 5 tiles. O fundo fica só 2 tiles abaixo, então ninguém fica preso | 1 |
@@ -17,7 +18,7 @@ Coordenadas em células (1 célula = 1 tile). A superfície do chão fica em y =
 | Santuários (Fase 4) | 3 e 119,5 | `playground_inicio` (perto do spawn) e `playground_furtividade` (antes da Sentinela). E para descansar e salvar | 4 |
 | I. Paladino | 154 a 177 | Túnel embaixo de uma laje (x 156–220, y 4, topo em 5; o túnel termina em x 177). Parede rachada em x 160 fecha o túnel (vista antes da marreta). A laje, alcançada agarrando a borda de 5 tiles em x 156, leva à arena. Atrás da parede: placa "Atalho secreto!" | 5 |
 | J. Chefão | 172 a 218 | Santuário em x 172 (em cima da laje). Arena x 180–210 (chão em 5, teto em 14) com grades em x 179 (entrada) e x 211 (sala do tomo). Golden em x 200. Sala do tomo x 213–218, tomo em x 216,5 | Chefão |
-| Limites | -6/-5 e 221/222 | Paredes sólidas nas pontas | — |
+| Limites | -76/-75 e 221/222 | Paredes sólidas nas pontas | — |
 
 **Checagem anti-softlock:** os degraus de 3 a 6 são plataformas suspensas, então o chão abaixo deles fica livre: não existe vão entre pilares onde o gato fique preso, e o caminho de volta ao spawn nunca exige pulo maior que 2 tiles. (A versão anterior, com pilares maciços, prendia o gato nos vãos entre os pilares de 4, 5 e 6 tiles.) Todo buraco tem fundo raso e pode ser escapado com um pulo de mais de 2 tiles. A passagem baixa tem saída dos dois lados. A plataforma da parede escalável permite descer caindo. Na chaminé, a parede direita começa a 3 tiles do chão: dá para passar andando por baixo dela, e a plataforma de saída (topo em y 11) desce caindo para o chão. Os bonecos são triggers, então nunca bloqueiam o caminho. No trecho H todo o chão é contínuo: a passarela é opcional (sobe pela parede escalável e desce caindo ou pendurando na ponta), e o gato atravessa a Sentinela, que nunca o prende. Sem habilidade nova, sempre há volta ao spawn. Nenhum trecho exige uma habilidade além de andar, pular e agachar para sair.
 
@@ -47,3 +48,9 @@ Propósito: chefão (prova do Ladino) + sala do tomo (história) | Tamanho: aren
 - **Saída:** a grade da direita só abre com o Golden derrotado; a sala do tomo é um beco sem perigo.
 - **Risco de softlock:** nenhum. Depois da vitória as duas grades ficam abertas para sempre (flag no save); o caminho de volta é a laje e o chão.
 - **Golden fora da laje:** a Fase 5 tinha o Golden parado em cima da laje (x 168,5); agora ele é o chefão da arena.
+
+## Trecho K — ficha (armadilhas)
+Propósito: ensinar armadilhas, uma por vez | Tamanho: 66 × 8 tiles | Requisitos: andar, pular, agachar
+- Ordem: espinhos (pular) → fio + passagem baixa (agachar) → placa (agachar) → fogo (plataformas/tempo) → serra (pular/esperar) → plataformas frágeis sobre espinhos (não parar).
+- **Chão seguro entre cada armadilha:** pelo menos ~2,5 tiles livres, para que os espinhos devolvam o gato logo antes deles.
+- **Risco de softlock:** nenhum. Todo trecho tem chão contínuo para voltar; a passagem baixa (1 tile) se atravessa agachado nos dois sentidos; as plataformas frágeis voltam em 3 s.
