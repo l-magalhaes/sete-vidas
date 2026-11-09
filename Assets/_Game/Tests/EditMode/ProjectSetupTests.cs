@@ -42,5 +42,15 @@ namespace SeteVidas.Tests
             Assume.That(enemy, Is.GreaterThanOrEqualTo(0), "Layer Enemy ainda não criada");
             Assert.IsTrue(Physics2D.GetIgnoreLayerCollision(enemy, enemy));
         }
+
+        [Test]
+        public void PlayerPassesThroughEnemies()
+        {
+            int enemy = LayerMask.NameToLayer(GameConstants.Layers.Enemy);
+            int player = LayerMask.NameToLayer(GameConstants.Layers.Player);
+            Assume.That(enemy >= 0 && player >= 0, "Layers ainda não criadas");
+            Assert.IsTrue(Physics2D.GetIgnoreLayerCollision(player, enemy),
+                "O gato precisa atravessar inimigos para chegar às costas. Rode Tools > Sete Vidas > 6");
+        }
     }
 }

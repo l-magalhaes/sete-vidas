@@ -23,6 +23,7 @@ namespace SeteVidas.EditorTools
         const string SettingsPath = "Assets/_Game/ScriptableObjects/Player/PlayerMovementSettings.asset";
         const string ClimbSettingsPath = "Assets/_Game/ScriptableObjects/Player/WallClimbSettings.asset";
         const string DaggersPath = "Assets/_Game/ScriptableObjects/Combat/RogueDaggers.asset";
+        const string StealthPath = "Assets/_Game/ScriptableObjects/Player/StealthSettings.asset";
         const string MaterialPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
         const string ControlsPath = "Assets/_Game/Settings/Input/GameControls.inputactions";
         public const string PrefabPath = "Assets/_Game/Prefabs/Player/Player.prefab";
@@ -72,6 +73,7 @@ namespace SeteVidas.EditorTools
                 Movement = LoadOrCreate(SettingsPath, () => ScriptableObject.CreateInstance<PlayerMovementSettings>()),
                 Climb = LoadOrCreate(ClimbSettingsPath, () => ScriptableObject.CreateInstance<WallClimbSettings>()),
                 Daggers = LoadOrCreate(DaggersPath, () => ScriptableObject.CreateInstance<MeleeAttackSettings>()),
+                Stealth = LoadOrCreate(StealthPath, () => ScriptableObject.CreateInstance<StealthSettings>()),
                 Material = LoadOrCreate(MaterialPath, () => new PhysicsMaterial2D("PlayerNoFriction") { friction = 0f, bounciness = 0f }),
                 Controls = controls,
             };
@@ -98,6 +100,7 @@ namespace SeteVidas.EditorTools
             public PlayerMovementSettings Movement;
             public WallClimbSettings Climb;
             public MeleeAttackSettings Daggers;
+            public StealthSettings Stealth;
             public PhysicsMaterial2D Material;
             public InputActionAsset Controls;
         }
@@ -270,6 +273,8 @@ namespace SeteVidas.EditorTools
             var controller = root.AddComponent<PlayerController>();
             var climb = root.AddComponent<WallClimbAbility>();
             var combat = root.AddComponent<CombatController>();
+            var stealth = root.AddComponent<StealthController>();
+            var hurtbox = root.AddComponent<PlayerHurtbox>();
 
             SetRef(reader, "actions", controls);
             SetRef(controller, "settings", settings);
@@ -279,6 +284,7 @@ namespace SeteVidas.EditorTools
             SetRef(combat, "weapon", assets.Daggers);
             SetRef(combat, "input", reader);
             SetMask(combat, "targetLayers", GameConstants.Layers.Enemy, GameConstants.Layers.Breakable);
+            SetRef(stealth, "settings", assets.Stealth);
             var so = new SerializedObject(ground);
             so.FindProperty("solidLayers").intValue = LayerMask.GetMask(
                 GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
@@ -301,6 +307,7 @@ namespace SeteVidas.EditorTools
             SetRef(visual, "attack", sprites.Attack);
             SetRef(visual, "wallClimb", climb);
             SetRef(visual, "combat", combat);
+            SetRef(visual, "hurtbox", hurtbox);
             SetArray(visual, "run", sprites.Run1, sprites.Run2);
             SetArray(visual, "climb", sprites.Climb1, sprites.Climb2);
             SetArray(visual, "slash", sprites.Slash1, sprites.Slash2);

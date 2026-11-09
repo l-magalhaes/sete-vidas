@@ -26,6 +26,22 @@ namespace SeteVidas.Combat
             return popup;
         }
 
+        /// <summary>Texto do dano: "5 FURTIVO", "3 COSTAS" ou só o número.</summary>
+        public static string DamageLabel(in DamageInfo info) => info.Angle switch
+        {
+            AttackAngle.StealthBack => $"{info.Amount} FURTIVO",
+            AttackAngle.Back => $"{info.Amount} COSTAS",
+            _ => info.Amount.ToString(),
+        };
+
+        /// <summary>Branco de frente, laranja pelas costas, vermelho furtivo.</summary>
+        public static Color ColorFor(AttackAngle angle) => angle switch
+        {
+            AttackAngle.StealthBack => new Color32(0xff, 0x4d, 0x4d, 0xff),
+            AttackAngle.Back => new Color32(0xff, 0xa8, 0x3a, 0xff),
+            _ => Color.white,
+        };
+
         /// <summary>TextMesh de depuração com a fonte embutida do Unity. Altura ≈ fontSize × 0,01 tile.</summary>
         public static TextMesh CreateText(GameObject go, string text, Color color, int fontSize)
         {

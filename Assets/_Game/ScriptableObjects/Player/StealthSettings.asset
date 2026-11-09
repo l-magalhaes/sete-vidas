@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69e1eb5947f79243980110f48d6c47d, type: 3}
+  m_Name: StealthSettings
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Player.StealthSettings
+  CrouchVisibilityMultiplier: 0.6
+  HiddenThreshold: 0.35
+  FootstepMinSpeedFraction: 0.6
+  FootstepInterval: 0.35
+  FootstepRadius: 3
+  FootstepLoudness: 0.15
+  LandingNoiseHeight: 4.5
+  LandingRadius: 5
+  LandingLoudness: 0.4
+  AttackNoiseRadius: 4
+  AttackLoudness: 0.3

@@ -48,6 +48,16 @@ namespace SeteVidas.Player
         [Tooltip("Depois de soltar a borda, tempo sem poder agarrar de novo (s)")]
         [Range(0f, 1f)] public float LedgeRegrabCooldown = 0.3f;
 
+        [Header("Dano recebido (provisório até a Fase 4)")]
+        [Tooltip("Velocidade horizontal do recuo ao tomar dano (tiles/s)")]
+        [Min(0f)] public float KnockbackSpeed = 6f;
+        [Tooltip("Altura do pulinho do recuo (tiles)")]
+        [Min(0f)] public float KnockbackHeight = 1f;
+        [Tooltip("Tempo sem controle horizontal durante o recuo (s)")]
+        [Range(0f, 0.6f)] public float KnockbackControlLock = 0.25f;
+        [Tooltip("Invencibilidade depois de tomar dano, com o sprite piscando (s)")]
+        [Range(0f, 3f)] public float InvulnerabilityTime = 1f;
+
         [Header("Colisor (tamanhos da arte aprovada)")]
         [Tooltip("Largura do colisor (tiles). 0,75 = 12 px")]
         [Min(0.1f)] public float ColliderWidth = 0.75f;

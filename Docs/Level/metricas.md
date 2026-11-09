@@ -14,7 +14,9 @@ Unidade: **tiles** (1 tile = 16 px = 1 unidade Unity). Preencher na **Fase 1**, 
 | Altura do gato em pé | 1,375 (22 px) [APROVADA] | — | | |
 | Altura do gato agachado | 0,875 (14 px) [APROVADA] | — | passagem baixa = 1 tile | |
 | Largura do gato | 0,75 (12 px) | — | vão mínimo = 1 tile | |
-| Alcance de visão do inimigo (claro / escuro) | — | ? / ? (Fase 3) | | |
+| Alcance de visão da Sentinela (luz em pé / luz agachado / sombra em pé / sombra agachado) | 8 / 4,8 / 2,4 / 1,4 tiles, cone de ±35° [PROPOSTA] | ? | esconderijos de sombra a ≥ 2 tiles da rota da patrulha | |
+| Queda que faz barulho | ≥ 4,5 tiles (`StealthSettings`) [PROPOSTA] | ? | plataformas de 5 sobre rotas de patrulha: pendurar e soltar é silencioso | |
+| Velocidades da Sentinela (patrulha / investigação / perseguição) | 2 / 3 / 4,5 tiles/s [PROPOSTA] | — | patrulhas de 4–8 s por perna | |
 
 **Como medir:** suba nos degraus da Playground (1 a 6 tiles) e tente os buracos (2 a 5 tiles). O maior degrau e o maior buraco vencidos **com folga** viram os valores da coluna "Medido".
 

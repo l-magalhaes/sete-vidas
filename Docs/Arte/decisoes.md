@@ -13,6 +13,9 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Parede escalável = a mesma pedra do chão + ranhuras de apoio + hera seca (#4f5a2e / #8a9a4e). Nunca usar esse visual em parede não escalável | [PROPOSTA] | Leitura do gate do Ladino em todas as regiões |
 | 09/11/2026 | Corte da adaga: arco claro (#f4f7fb / #a9bcd6) de 18×16 px, um desenho por golpe do combo | [PROPOSTA] | Efeitos de combate do Ladino |
 | 09/11/2026 | Boneco de treino de palha 16×26 px com rosto só de um lado (frente e costas legíveis de longe) | [PROPOSTA] | Leitura do ataque pelas costas |
+| 09/11/2026 | Sentinela placeholder: cão de armadura 26 px (canvas 32×28), tabardo vermelho, olho claro só na frente; lança recuada na preparação e esticada no golpe | [PROPOSTA] | Leitura de ameaça, frente/costas e aviso de ataque |
+| 09/11/2026 | Sombra jogável = retângulo escuro (alfa 0,5) desenhado por cima do gato: quem entra escurece. Ícones "?" amarelo e "!" vermelho sobre o inimigo | [PROPOSTA] | Legibilidade da furtividade até existir luz 2D de verdade |
+| 09/11/2026 | Matinho: moita 32×16 px (2 tiles) com 15 px de altura, verde #456633 com contorno #243822 e pontas secas #9a924a, desenhada na frente do gato: agachado (14 px) ele some, de pé (22 px) a cabeça aparece | [PROPOSTA] | Leitura do esconderijo sem UI |
 
 ## Já configurado na Fase 0
 

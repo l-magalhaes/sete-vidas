@@ -35,6 +35,13 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 3. Specs: `Docs/Design/escalada.md` e `Docs/Design/combate-adagas.md`. Plano de teste: `Docs/QA/fase2-plano-de-teste.md`.
 4. Habilidades de locomoção novas (pulo duplo, dash) entram como componentes `PlayerAbility`, sem editar o `PlayerController`.
 
+## Fase 3 — Sentinela e furtividade
+
+1. Menu **Tools > Sete Vidas > 6. Fase 3: Sentinela e furtividade**. Isso faz o gato atravessar inimigos (matriz de colisão), adiciona ao gato a visibilidade/ruído (`StealthController`) e o dano provisório (`PlayerHurtbox`), cria `ScriptableObjects/Player/StealthSettings`, `ScriptableObjects/Enemies/SentinelSettings`, o prefab `Prefabs/Enemies/Sentinel` e recria a `Playground` com o trecho H (x 122–151).
+2. Ligue **Gizmos** na Game view para ver o cone de visão, a última posição conhecida e os ruídos. A visibilidade do gato aparece no canto superior esquerdo.
+3. Spec: `Docs/Design/furtividade-sentinela.md`. Plano de teste: `Docs/QA/fase3-plano-de-teste.md`.
+4. O dano no gato é provisório (conta hits, empurra e pisca, sem morte) até a Fase 4.
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:

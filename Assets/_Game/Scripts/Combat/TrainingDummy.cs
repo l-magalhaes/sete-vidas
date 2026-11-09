@@ -71,7 +71,7 @@ namespace SeteVidas.Combat
             _recoilUntil = Time.time + recoilTime;
             _blinkUntil = Time.time + blinkTime;
 
-            DamagePopup.Spawn(transform.position + Vector3.up * 1.9f, Label(info), ColorFor(info.Angle));
+            DamagePopup.Spawn(transform.position + Vector3.up * 1.9f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
 
             if (IsDefeated)
             {
@@ -79,20 +79,6 @@ namespace SeteVidas.Combat
                 SetVisible(false);
             }
         }
-
-        static string Label(in DamageInfo info) => info.Angle switch
-        {
-            AttackAngle.StealthBack => $"{info.Amount} FURTIVO",
-            AttackAngle.Back => $"{info.Amount} COSTAS",
-            _ => info.Amount.ToString(),
-        };
-
-        static Color ColorFor(AttackAngle angle) => angle switch
-        {
-            AttackAngle.StealthBack => new Color32(0xff, 0x4d, 0x4d, 0xff),
-            AttackAngle.Back => new Color32(0xff, 0xa8, 0x3a, 0xff),
-            _ => Color.white,
-        };
 
         void Update()
         {

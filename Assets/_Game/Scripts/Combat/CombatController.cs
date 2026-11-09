@@ -32,6 +32,8 @@ namespace SeteVidas.Combat
 
         /// <summary>Disparado a cada alvo atingido (para efeitos e testes).</summary>
         public event System.Action<IDamageable, DamageInfo> Hit;
+        /// <summary>Um golpe entrou na fase ativa (o StealthController faz barulho com isto).</summary>
+        public event System.Action SwingStarted;
 
         void Awake()
         {
@@ -72,6 +74,7 @@ namespace SeteVidas.Combat
             {
                 _lastSwingId = _sequence.SwingId;
                 _hitThisSwing.Clear();
+                SwingStarted?.Invoke();
             }
             if (_sequence.IsHitActive) CheckHits();
         }

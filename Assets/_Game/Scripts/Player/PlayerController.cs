@@ -185,6 +185,29 @@ namespace SeteVidas.Player
             StartLedgeClimb();
         }
 
+        /// <summary>
+        /// Empurrão externo (dano): solta borda e parede, aplica a velocidade e não deixa a entrada
+        /// horizontal anular o recuo por <paramref name="controlLock"/> segundos.
+        /// </summary>
+        public void ApplyKnockback(Vector2 velocity, float controlLock)
+        {
+            if (IsClimbingLedge)
+            {
+                IsClimbingLedge = false;
+                _body.bodyType = RigidbodyType2D.Dynamic;
+            }
+            if (IsHanging)
+            {
+                IsHanging = false;
+                _regrabTimer = settings.LedgeRegrabCooldown;
+            }
+            InterruptAbility();
+            _isJumping = false;
+            _timers.Consume();
+            _body.linearVelocity = velocity;
+            LockHorizontalControl(controlLock);
+        }
+
         /// <summary>Tira o controle da habilidade ativa (dano, morte, cutscene).</summary>
         public void InterruptAbility()
         {

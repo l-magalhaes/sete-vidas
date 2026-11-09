@@ -130,6 +130,9 @@ namespace SeteVidas.EditorTools
             // Inimigos atravessam uns aos outros (patrulhas não se travam).
             Physics2D.IgnoreLayerCollision(enemy, enemy, true);
 
+            // O gato atravessa inimigos (para chegar às costas deles); só os golpes machucam.
+            Physics2D.IgnoreLayerCollision(player, enemy, true);
+
             // Interativos (santuários, gatilhos, NPCs) só detectam o jogador.
             for (int layer = 0; layer < 32; layer++)
                 Physics2D.IgnoreLayerCollision(interactable, layer, layer != player);
@@ -405,12 +408,12 @@ namespace SeteVidas.EditorTools
             CreateTilemap(grid, "Foreground", null, 10, false);
 
             // Fundo decorativo (sem colisão)
-            Fill(background, tiles.Background, -4, 0, 119, 12);
+            Fill(background, tiles.Background, -4, 0, 151, 12);
 
             // Chão contínuo (2 tiles de espessura) e paredes de limite
-            Fill(ground, tiles.Ground, -6, -2, 121, -1);
+            Fill(ground, tiles.Ground, -6, -2, 153, -1);
             Fill(ground, tiles.Ground, -6, 0, -5, 14);   // limite esquerdo
-            Fill(ground, tiles.Ground, 120, 0, 121, 14); // limite direito
+            Fill(ground, tiles.Ground, 152, 0, 153, 14); // limite direito
 
             // A) Spawn: x -4..6 livre.
             // B) Degraus de 1 a 6 tiles de altura, 2 de largura, a cada 4 tiles.
@@ -450,6 +453,14 @@ namespace SeteVidas.EditorTools
 
             // G) Bonecos de treino (Fase 2): x 108..118, chão livre. Ficam como prefabs, não tiles.
             CombatSetup.PlaceDummies(scene);
+
+            // H) Furtividade (Fase 3): x 122..151. Sentinela patrulhando x 133–140; sombras em x 122–130 e 144–152.
+            //    Rota por cima: parede escalável x 128–129 (dentro da sombra A, topo em 5) e passarela x 130..143
+            //    (topo em 5). A passarela bloqueia a visão da Sentinela. Cair dela (5 tiles) faz barulho;
+            //    pendurar na ponta e soltar (3,75) não. Embaixo há 4 tiles de altura livre.
+            Fill(climbable, tiles.Climbable, 128, 0, 129, 4);
+            Fill(ground, tiles.Ground, 130, 4, 143, 4);
+            EnemySetup.PlaceStealthSection(scene);
 
             var spawn = new GameObject("PlayerSpawn");
             spawn.transform.position = new Vector3(0.5f, 1f, 0f);

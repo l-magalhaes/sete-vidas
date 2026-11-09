@@ -15,6 +15,7 @@ namespace SeteVidas.Player
         [SerializeField] SpriteRenderer spriteRenderer;
         [SerializeField] WallClimbAbility wallClimb;
         [SerializeField] CombatController combat;
+        [SerializeField] PlayerHurtbox hurtbox;
 
         [Header("Sprites placeholder")]
         [SerializeField] Sprite idle;
@@ -42,6 +43,7 @@ namespace SeteVidas.Player
             spriteRenderer = GetComponent<SpriteRenderer>();
             wallClimb = GetComponentInParent<WallClimbAbility>();
             combat = GetComponentInParent<CombatController>();
+            hurtbox = GetComponentInParent<PlayerHurtbox>();
         }
 
         void LateUpdate()
@@ -52,6 +54,8 @@ namespace SeteVidas.Player
             int facing = attacking ? combat.AttackDirection : controller.FacingDirection;
             spriteRenderer.flipX = facing < 0;
             spriteRenderer.sprite = PickSprite(attacking);
+            // Invencível depois de tomar dano: pisca
+            spriteRenderer.enabled = hurtbox == null || !hurtbox.IsInvulnerable || ((int)(Time.time * 20f) & 1) == 0;
             UpdateSlash();
         }
 
