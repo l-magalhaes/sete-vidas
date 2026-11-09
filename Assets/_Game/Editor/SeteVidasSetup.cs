@@ -14,7 +14,7 @@ using UnityEngine.Tilemaps;
 namespace SeteVidas.EditorTools
 {
     /// <summary>
-    /// Automação da Fase 0 (Docs/Fase0.md). Menu: Tools > Sete Vidas.
+    /// Automação da Fase 0 (README, seção Fase 0). Menu: Tools > Sete Vidas.
     /// Todas as etapas podem ser executadas de novo sem estragar nada (idempotentes).
     /// </summary>
     public static class SeteVidasSetup
@@ -40,7 +40,7 @@ namespace SeteVidas.EditorTools
         {
             ConfigureProject();
             CreateScenes();
-            PlayerSetup.CreatePlayerAndCamera(); // Fase 1
+            PlayerSetup.CreatePlayerAndCamera(); // Fases 1 e 2 (prefab com escalada e adagas)
             InstallPackages(); // por último: a instalação recompila o projeto
         }
 
@@ -162,33 +162,41 @@ namespace SeteVidas.EditorTools
             return new PlaceholderTiles
             {
                 Ground = MakeTile("tile_ground_placeholder", new Color32(0x5a, 0x55, 0x6e, 0xff), new Color32(0x3a, 0x36, 0x4a, 0xff), false),
-                Climbable = MakeTile("tile_climbable_placeholder", new Color32(0x6e, 0x7a, 0x4f, 0xff), new Color32(0x45, 0x4d, 0x30, 0xff), true),
+                Climbable = MakeTile("tile_climbable_placeholder", new Color32(0x5a, 0x55, 0x6e, 0xff), new Color32(0x3a, 0x36, 0x4a, 0xff), true),
                 Background = MakeTile("tile_background_placeholder", new Color32(0x24, 0x22, 0x33, 0xff), new Color32(0x1c, 0x1a, 0x28, 0xff), false),
             };
         }
 
-        // Gera um PNG 16×16 com borda escura (e listras verticais para paredes escaláveis).
-        static Tile MakeTile(string name, Color32 fill, Color32 border, bool stripes)
+        /// <summary>
+        /// Gera um PNG 16×16 com borda escura. Parede escalável: a mesma pedra do chão com ranhuras de
+        /// apoio e hera seca (linguagem visual do gate do Ladino). O PNG é regravado se o desenho do código
+        /// mudar, então não edite estes placeholders à mão.
+        /// </summary>
+        static Tile MakeTile(string name, Color32 fill, Color32 border, bool climbable)
         {
             string pngPath = $"{PlaceholderFolder}/{name}.png";
             string tilePath = $"{PlaceholderFolder}/{name}.asset";
 
-            if (AssetDatabase.LoadAssetAtPath<Sprite>(pngPath) == null)
+            int size = GameConstants.TileSize;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
             {
-                int size = GameConstants.TileSize;
-                var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-                var pixels = new Color32[size * size];
-                for (int y = 0; y < size; y++)
-                for (int x = 0; x < size; x++)
-                {
-                    bool edge = x == 0 || y == 0 || x == size - 1 || y == size - 1;
-                    bool stripe = stripes && (x == 4 || x == 11) && y % 4 != 0;
-                    pixels[y * size + x] = edge || stripe ? border : fill;
-                }
-                tex.SetPixels32(pixels);
-                tex.Apply();
-                File.WriteAllBytes(Path.GetFullPath(pngPath), tex.EncodeToPNG());
-                UnityEngine.Object.DestroyImmediate(tex);
+                bool edge = x == 0 || y == 0 || x == size - 1 || y == size - 1;
+                pixels[y * size + x] = edge ? border : fill;
+            }
+            if (climbable) PaintClimbable(pixels, size, border);
+            tex.SetPixels32(pixels);
+            tex.Apply();
+            byte[] png = tex.EncodeToPNG();
+            UnityEngine.Object.DestroyImmediate(tex);
+
+            string fullPath = Path.GetFullPath(pngPath);
+            bool changed = !File.Exists(fullPath) || !File.ReadAllBytes(fullPath).AsSpan().SequenceEqual(png);
+            if (changed || AssetDatabase.LoadAssetAtPath<Sprite>(pngPath) == null)
+            {
+                File.WriteAllBytes(fullPath, png);
                 AssetDatabase.ImportAsset(pngPath, ImportAssetOptions.ForceUpdate);
             }
 
@@ -202,6 +210,30 @@ namespace SeteVidas.EditorTools
             tile.colliderType = Tile.ColliderType.Grid;
             EditorUtility.SetDirty(tile);
             return tile;
+        }
+
+        /// <summary>Ranhuras de apoio (sombra + brilho) e dois ramos de hera seca descendo pela pedra.</summary>
+        static void PaintClimbable(Color32[] px, int size, Color32 groove)
+        {
+            var grooveLight = new Color32(0x77, 0x72, 0x8c, 0xff);
+            var vine = new Color32(0x4f, 0x5a, 0x2e, 0xff);
+            var leaf = new Color32(0x8a, 0x9a, 0x4e, 0xff);
+            void Set(int x, int y, Color32 c) { if (x > 0 && x < size - 1 && y > 0 && y < size - 1) px[y * size + x] = c; }
+
+            // Ranhuras: onde as patas apoiam
+            for (int x = 4; x <= 8; x++) { Set(x, 4, groove); Set(x, 5, grooveLight); }
+            for (int x = 8; x <= 12; x++) { Set(x, 11, groove); Set(x, 12, grooveLight); }
+
+            // Hera seca: ramos que ondulam de cima a baixo, com folhas alternadas
+            for (int y = 1; y < size - 1; y++)
+            {
+                int wobble = (y / 3) % 2;
+                int left = 2 + wobble, right = 13 - wobble;
+                Set(left, y, vine);
+                Set(right, y, vine);
+                if (y % 4 == 1) Set(left + 1, y, leaf);
+                if (y % 4 == 3) Set(right - 1, y, leaf);
+            }
         }
 
         // ------------------------------------------------------------ cenas
@@ -373,12 +405,12 @@ namespace SeteVidas.EditorTools
             CreateTilemap(grid, "Foreground", null, 10, false);
 
             // Fundo decorativo (sem colisão)
-            Fill(background, tiles.Background, -4, 0, 89, 12);
+            Fill(background, tiles.Background, -4, 0, 119, 12);
 
             // Chão contínuo (2 tiles de espessura) e paredes de limite
-            Fill(ground, tiles.Ground, -6, -2, 91, -1);
+            Fill(ground, tiles.Ground, -6, -2, 121, -1);
             Fill(ground, tiles.Ground, -6, 0, -5, 14);   // limite esquerdo
-            Fill(ground, tiles.Ground, 90, 0, 91, 14);   // limite direito
+            Fill(ground, tiles.Ground, 120, 0, 121, 14); // limite direito
 
             // A) Spawn: x -4..6 livre.
             // B) Degraus de 1 a 6 tiles de altura, 2 de largura, a cada 4 tiles.
@@ -408,6 +440,16 @@ namespace SeteVidas.EditorTools
             // E) Parede escalável de 10 tiles + plataforma no topo
             Fill(climbable, tiles.Climbable, 80, 0, 81, 9);
             Fill(ground, tiles.Ground, 82, 9, 86, 9);
+
+            // F) Chaminé (Fase 2): duas paredes escaláveis frente a frente, vão de 3 tiles (x 94..96).
+            //    Esquerda: x 92..93, do chão até y 6 (topo em 7). Direita: x 97..98, de y 3 a 10 (topo em 11),
+            //    começa no ar para treinar o pulo de uma parede para a outra. Plataforma de saída x 99..104 (topo em 11).
+            Fill(climbable, tiles.Climbable, 92, 0, 93, 6);
+            Fill(climbable, tiles.Climbable, 97, 3, 98, 10);
+            Fill(ground, tiles.Ground, 99, 10, 104, 10);
+
+            // G) Bonecos de treino (Fase 2): x 108..118, chão livre. Ficam como prefabs, não tiles.
+            CombatSetup.PlaceDummies(scene);
 
             var spawn = new GameObject("PlayerSpawn");
             spawn.transform.position = new Vector3(0.5f, 1f, 0f);

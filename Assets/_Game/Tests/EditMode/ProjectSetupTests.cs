@@ -31,7 +31,7 @@ namespace SeteVidas.Tests
             {
                 string name = GameConstants.Layers.All[i];
                 Assert.AreEqual(GameConstants.Layers.FirstIndex + i, LayerMask.NameToLayer(name),
-                    $"Layer '{name}' ausente ou fora do índice. Rode Tools > Sete Vidas > 2. Configurar projeto.");
+                    $"Layer '{name}' ausente ou fora do índice. Rode Tools > Sete Vidas > 1. Configurar projeto.");
             }
         }
 

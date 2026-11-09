@@ -1,3 +1,4 @@
+using SeteVidas.Abilities;
 using UnityEngine;
 
 namespace SeteVidas.Player
@@ -6,6 +7,8 @@ namespace SeteVidas.Player
     /// Andar, pular, agachar e agarrar bordas (spec: Docs/Design/controlador-gato.md).
     /// Usa gravidade própria (gravityScale = 0) para que a altura do pulo em tiles seja exata.
     /// Colisor em caixa: fundo reto, para o gato não escorregar das quinas.
+    /// Habilidades de locomoção (escalada, depois pulo duplo e dash) são componentes <see cref="PlayerAbility"/>
+    /// no mesmo objeto: o controlador passa o controle para elas sem precisar ser editado.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(GroundCheck))]
     public class PlayerController : MonoBehaviour
@@ -20,6 +23,9 @@ namespace SeteVidas.Player
         bool _isJumping;        // subindo por causa de um pulo (permite o corte ao soltar o botão)
         bool _dropRequested;    // S apertado enquanto pendurado
         float _regrabTimer;     // tempo até poder agarrar borda de novo
+        float _moveLockTimer;   // tempo em que a entrada horizontal não mexe na velocidade
+
+        PlayerAbility[] _abilities = new PlayerAbility[0];
 
         // Subida da borda
         float _climbElapsed;
@@ -37,12 +43,23 @@ namespace SeteVidas.Player
         public Vector2 Velocity => _body != null ? _body.linearVelocity : Vector2.zero;
         public PlayerMovementSettings Settings => settings;
 
+        // Usados pelas habilidades e pelo combate
+        public Rigidbody2D Body => _body;
+        public PlayerInputReader Input => input;
+        public GroundCheck Ground => _ground;
+        public JumpTimers Timers => _timers;
+        /// <summary>Habilidade com o controle agora (null = movimento normal).</summary>
+        public PlayerAbility ActiveAbility { get; private set; }
+        /// <summary>Altura atual do colisor (em pé ou agachado), em tiles.</summary>
+        public float CurrentHeight => settings == null ? 0f : IsCrouching ? settings.CrouchHeight : settings.StandingHeight;
+
         void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
             _collider = GetComponent<BoxCollider2D>();
             _ground = GetComponent<GroundCheck>();
             if (input == null) input = GetComponent<PlayerInputReader>();
+            _abilities = GetComponents<PlayerAbility>();
 
             if (settings == null)
             {
@@ -64,7 +81,9 @@ namespace SeteVidas.Player
             if (IsHanging && input.CrouchPressedThisFrame)
                 _dropRequested = true;
 
-            if (IsHanging || IsClimbingLedge) return; // a direção fica travada na borda
+            // A direção fica travada na borda, durante habilidades e logo depois de um pulo da parede
+            if (IsHanging || IsClimbingLedge || _moveLockTimer > 0f) return;
+            if (ActiveAbility != null && ActiveAbility.LocksFacing) return;
             float moveX = input.MoveX;
             if (moveX > 0.01f) FacingDirection = 1;
             else if (moveX < -0.01f) FacingDirection = -1;
@@ -74,9 +93,16 @@ namespace SeteVidas.Player
         {
             float dt = Time.fixedDeltaTime;
             _regrabTimer -= dt;
+            _moveLockTimer -= dt;
 
             if (IsClimbingLedge) { StepLedgeClimb(dt); _timers.Tick(dt); return; }
             if (IsHanging) { StepHanging(); _timers.Tick(dt); return; }
+            if (ActiveAbility != null)
+            {
+                if (!ActiveAbility.enabled || !ActiveAbility.Step(dt)) ActiveAbility = null;
+                _timers.Tick(dt);
+                return;
+            }
 
             Vector2 v = _body.linearVelocity;
 
@@ -90,10 +116,23 @@ namespace SeteVidas.Player
 
             UpdateCrouch(grounded);
 
-            // Andar
-            float target = input.MoveX * settings.MoveSpeed * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
-            float rate = Mathf.Abs(target) > 0.01f ? settings.Acceleration : settings.Deceleration;
-            v.x = Mathf.MoveTowards(v.x, target, rate * dt);
+            // Habilidades de locomoção: a primeira que quiser assume o controle
+            foreach (var ability in _abilities)
+            {
+                if (ability == null || !ability.enabled || !ability.TryBegin(grounded)) continue;
+                ActiveAbility = ability;
+                _isJumping = false;
+                _timers.Tick(dt);
+                return;
+            }
+
+            // Andar (logo depois de um pulo da parede, a entrada não freia o impulso)
+            if (_moveLockTimer <= 0f)
+            {
+                float target = input.MoveX * settings.MoveSpeed * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
+                float rate = Mathf.Abs(target) > 0.01f ? settings.Acceleration : settings.Deceleration;
+                v.x = Mathf.MoveTowards(v.x, target, rate * dt);
+            }
 
             // Pular (agachado, só se houver espaço para ficar de pé)
             if (_timers.CanJump && (!IsCrouching || TryStandUp()))
@@ -118,6 +157,41 @@ namespace SeteVidas.Player
             _timers.Tick(dt);
 
             if (!grounded && v.y <= 0f) TryGrabLedge();
+        }
+
+        // ------------------------------------------------- API das habilidades
+
+        /// <summary>Vira o gato para <paramref name="dir"/> (1 ou -1).</summary>
+        public void Face(int dir)
+        {
+            if (dir != 0) FacingDirection = dir > 0 ? 1 : -1;
+        }
+
+        /// <summary>Lança o gato com esta velocidade. Sem pulo variável: soltar o botão não corta a subida.</summary>
+        public void StartJump(Vector2 velocity)
+        {
+            _body.linearVelocity = velocity;
+            _isJumping = false;
+        }
+
+        /// <summary>Durante este tempo, a entrada horizontal não muda a velocidade nem a direção.</summary>
+        public void LockHorizontalControl(float seconds) => _moveLockTimer = Mathf.Max(_moveLockTimer, seconds);
+
+        /// <summary>Sobe para cima da quina <paramref name="corner"/> (mesma animação da borda).</summary>
+        public void ClimbOnto(Vector2 corner, int dir)
+        {
+            FacingDirection = dir;
+            _climbTo = LedgeStandPoint(corner, dir);
+            StartLedgeClimb();
+        }
+
+        /// <summary>Tira o controle da habilidade ativa (dano, morte, cutscene).</summary>
+        public void InterruptAbility()
+        {
+            if (ActiveAbility == null) return;
+            var ability = ActiveAbility;
+            ActiveAbility = null;
+            ability.OnInterrupted();
         }
 
         // ------------------------------------------------------------ agachar
@@ -182,11 +256,14 @@ namespace SeteVidas.Player
             _isJumping = false;
             _dropRequested = false;
             FacingDirection = dir;
-            _climbTo = new Vector2(corner.x + dir * (settings.ColliderWidth * 0.5f + 0.05f), corner.y + 0.01f);
+            _climbTo = LedgeStandPoint(corner, dir);
             _body.position = new Vector2(corner.x - dir * (settings.ColliderWidth * 0.5f + 0.01f),
                                          corner.y - settings.LedgeHandHeight);
             _body.linearVelocity = Vector2.zero;
         }
+
+        Vector2 LedgeStandPoint(Vector2 corner, int dir) =>
+            new Vector2(corner.x + dir * (settings.ColliderWidth * 0.5f + 0.05f), corner.y + 0.01f);
 
         void StepHanging()
         {

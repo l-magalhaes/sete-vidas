@@ -20,8 +20,15 @@ namespace SeteVidas.Player
         public static float LaunchVelocity(float height, float timeToApex, float fixedDeltaTime)
         {
             float g = Gravity(height, timeToApex);
-            float gdt = g * fixedDeltaTime;
-            return (gdt + (float)Math.Sqrt(gdt * gdt + 8f * g * height)) / 2f;
+            return LaunchVelocityForGravity(g, height, fixedDeltaTime);
+        }
+
+        /// <summary>Mesma conta, para uma gravidade já conhecida (ex.: pulo da parede usa a gravidade do pulo normal).</summary>
+        public static float LaunchVelocityForGravity(float gravity, float height, float fixedDeltaTime)
+        {
+            if (height <= 0f) return 0f;
+            float gdt = gravity * fixedDeltaTime;
+            return (gdt + (float)Math.Sqrt(gdt * gdt + 8f * gravity * height)) / 2f;
         }
     }
 }

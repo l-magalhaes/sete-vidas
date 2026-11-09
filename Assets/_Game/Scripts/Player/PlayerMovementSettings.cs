@@ -62,5 +62,9 @@ namespace SeteVidas.Player
         /// <summary>Velocidade de saída do pulo para o passo de física informado.</summary>
         public float LaunchVelocity(float fixedDeltaTime) =>
             JumpMath.LaunchVelocity(JumpHeight, TimeToApex, fixedDeltaTime);
+
+        /// <summary>Velocidade de saída para subir <paramref name="height"/> tiles com a gravidade da subida.</summary>
+        public float LaunchVelocityFor(float height, float fixedDeltaTime) =>
+            JumpMath.LaunchVelocityForGravity(Gravity, height, fixedDeltaTime);
     }
 }

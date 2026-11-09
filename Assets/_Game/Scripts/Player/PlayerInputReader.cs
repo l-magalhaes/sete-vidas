@@ -5,7 +5,7 @@ namespace SeteVidas.Player
 {
     /// <summary>
     /// Lê o asset GameControls (mapa "Player") e expõe os valores que o controlador usa.
-    /// Outras ações (Attack, Interact, troca de classe…) entram aqui nas próximas fases.
+    /// Interact e troca de classe entram aqui nas próximas fases.
     /// </summary>
     public class PlayerInputReader : MonoBehaviour
     {
@@ -14,7 +14,7 @@ namespace SeteVidas.Player
         [SerializeField] InputActionAsset actions;
 
         InputActionMap _map;
-        InputAction _move, _jump, _crouch;
+        InputAction _move, _jump, _crouch, _attack;
 
         /// <summary>Direção horizontal: -1, 0 ou 1 no teclado; contínua no analógico.</summary>
         public float MoveX
@@ -27,10 +27,22 @@ namespace SeteVidas.Player
             }
         }
 
+        /// <summary>Direção vertical (W/S, setas, analógico): sobe e desce na escalada.</summary>
+        public float MoveY
+        {
+            get
+            {
+                if (_move == null) return 0f;
+                float y = _move.ReadValue<Vector2>().y;
+                return Mathf.Abs(y) < StickDeadZone ? 0f : y;
+            }
+        }
+
         public bool JumpPressedThisFrame => _jump != null && _jump.WasPressedThisFrame();
         public bool JumpHeld => _jump != null && _jump.IsPressed();
         public bool CrouchHeld => _crouch != null && _crouch.IsPressed();
         public bool CrouchPressedThisFrame => _crouch != null && _crouch.WasPressedThisFrame();
+        public bool AttackPressedThisFrame => _attack != null && _attack.WasPressedThisFrame();
 
         void Awake()
         {
@@ -44,6 +56,7 @@ namespace SeteVidas.Player
             _move = _map.FindAction("Move", throwIfNotFound: true);
             _jump = _map.FindAction("Jump", throwIfNotFound: true);
             _crouch = _map.FindAction("Crouch", throwIfNotFound: true);
+            _attack = _map.FindAction("Attack", throwIfNotFound: true);
         }
 
         void OnEnable() => _map?.Enable();

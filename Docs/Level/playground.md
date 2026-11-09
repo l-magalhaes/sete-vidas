@@ -10,9 +10,11 @@ Coordenadas em células (1 célula = 1 tile). A superfície do chão fica em y =
 | B. Degraus | 8, 12, 16, 20, 24, 28 | Alturas de 1 a 6 tiles (2 de largura) para medir o pulo. Os de 1 e 2 são blocos maciços; os de 3 a 6 são plataformas de 1 tile de espessura, com passagem por baixo | 1 |
 | C. Buracos | 36, 42, 49, 57 | Vãos de 2, 3, 4 e 5 tiles. O fundo fica só 2 tiles abaixo, então ninguém fica preso | 1 |
 | D. Passagem baixa | 68 a 75 | Vão de 1 tile de altura: só passa agachado | 1 |
-| E. Parede escalável | 80 a 81 | 10 tiles da layer `Climbable` e uma plataforma no topo (82 a 86, y = 9) | 2 |
-| Limites | -6/-5 e 90/91 | Paredes sólidas nas pontas | — |
+| E. Parede escalável | 80 a 81 | 10 tiles da layer `Climbable` e uma plataforma no topo (82 a 86, y = 9). Escalar até o topo e subir sobre ela | 2 |
+| F. Chaminé | 92 a 104 | Duas paredes escaláveis frente a frente com vão de 3 tiles (x 94 a 96). Esquerda: x 92–93, do chão até o topo em y 7. Direita: x 97–98, de y 3 até o topo em y 11 (começa no ar). Plataforma de saída x 99–104 (topo em y 11). Treina subir, descer e saltar de uma parede para a outra | 2 |
+| G. Bonecos de treino | 108 a 118 | Dois `TrainingDummy`: x 110,5 olhando para a direita e x 115,5 olhando para a esquerda. O gato atravessa os bonecos (trigger) para chegar às costas | 2 |
+| Limites | -6/-5 e 120/121 | Paredes sólidas nas pontas | — |
 
-**Checagem anti-softlock:** os degraus de 3 a 6 são plataformas suspensas, então o chão abaixo deles fica livre: não existe vão entre pilares onde o gato fique preso, e o caminho de volta ao spawn nunca exige pulo maior que 2 tiles. (A versão anterior, com pilares maciços, prendia o gato nos vãos entre os pilares de 4, 5 e 6 tiles.) Todo buraco tem fundo raso e pode ser escapado com um pulo de mais de 2 tiles. A passagem baixa tem saída dos dois lados. A plataforma da parede escalável permite descer caindo. Nenhum trecho exige uma habilidade além de andar, pular e agachar para sair.
+**Checagem anti-softlock:** os degraus de 3 a 6 são plataformas suspensas, então o chão abaixo deles fica livre: não existe vão entre pilares onde o gato fique preso, e o caminho de volta ao spawn nunca exige pulo maior que 2 tiles. (A versão anterior, com pilares maciços, prendia o gato nos vãos entre os pilares de 4, 5 e 6 tiles.) Todo buraco tem fundo raso e pode ser escapado com um pulo de mais de 2 tiles. A passagem baixa tem saída dos dois lados. A plataforma da parede escalável permite descer caindo. Na chaminé, a parede direita começa a 3 tiles do chão: dá para passar andando por baixo dela, e a plataforma de saída (topo em y 11) desce caindo para o chão. Os bonecos são triggers, então nunca bloqueiam o caminho. Nenhum trecho exige uma habilidade além de andar, pular e agachar para sair.
 
 Tilemaps: `Background` (sem colisão, ordem -10) · `Ground` (layer Ground) · `Climbable` (layer Climbable) · `Foreground` (ordem 10).

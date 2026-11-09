@@ -28,6 +28,13 @@ Cada item do menu pode ser executado de novo sem problema. Atenção: o item 2 *
 
 Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a câmera automaticamente.
 
+## Fase 2 — escalada, adagas e ataque pelas costas
+
+1. Menu **Tools > Sete Vidas > 5. Fase 2: escalada, adagas e boneco de treino**. Isso atualiza o prefab do gato (escalada + adagas), cria `ScriptableObjects/Player/WallClimbSettings`, `ScriptableObjects/Combat/RogueDaggers`, o prefab `Prefabs/Enemies/TrainingDummy` e recria a `Playground` com a chaminé (x 92–104) e dois bonecos (x 110 e 115).
+2. Controles novos: **W/S** sobem e descem escalando, **Espaço** salta da parede, **clique esquerdo** ataca (botão oeste no controle).
+3. Specs: `Docs/Design/escalada.md` e `Docs/Design/combate-adagas.md`. Plano de teste: `Docs/QA/fase2-plano-de-teste.md`.
+4. Habilidades de locomoção novas (pulo duplo, dash) entram como componentes `PlayerAbility`, sem editar o `PlayerController`.
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:

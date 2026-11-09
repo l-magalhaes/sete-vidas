@@ -37,3 +37,5 @@ Resultado: **todos os casos passaram** em 09/11/2026 (teste manual).
 **Casos-limite a observar:** apertar S e Espaço ao mesmo tempo pendurado; agarrar a borda logo depois de soltar outra; subir uma borda com um teto baixo logo acima (não deve agarrar); apertar S e Espaço no mesmo frame; soltar S exatamente ao sair da passagem; cair agachado de uma borda; pular rente ao teto dos degraus suspensos.
 
 **Pronto quando** (documento "Primeiros passos"): alguém que nunca jogou atravessa a `Playground` sem frustração, e as métricas de pulo estão em `Docs/Level/metricas.md`.
+
+**Mudança na Fase 2:** MOV-17 e LED-04 usavam a parede escalável como parede comum. Com a escalada, segurar a direção dela no ar agora faz o gato **escalar** (ver `fase2-plano-de-teste.md`, CLB-01). Para repetir esses dois casos, use uma parede cinza (`Ground`), como o limite da direita (x 120).

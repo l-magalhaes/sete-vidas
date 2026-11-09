@@ -1,4 +1,6 @@
 using System.IO;
+using SeteVidas.Abilities;
+using SeteVidas.Combat;
 using SeteVidas.Core;
 using SeteVidas.Player;
 using Unity.Cinemachine;
@@ -19,6 +21,8 @@ namespace SeteVidas.EditorTools
     {
         const string ArtFolder = "Assets/_Game/Art/Characters/Cat/Placeholder";
         const string SettingsPath = "Assets/_Game/ScriptableObjects/Player/PlayerMovementSettings.asset";
+        const string ClimbSettingsPath = "Assets/_Game/ScriptableObjects/Player/WallClimbSettings.asset";
+        const string DaggersPath = "Assets/_Game/ScriptableObjects/Combat/RogueDaggers.asset";
         const string MaterialPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
         const string ControlsPath = "Assets/_Game/Settings/Input/GameControls.inputactions";
         public const string PrefabPath = "Assets/_Game/Prefabs/Player/Player.prefab";
@@ -45,7 +49,8 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------ assets
 
-        static bool CreatePlayerAssets()
+        /// <summary>Cria/atualiza sprites, assets de valores e o prefab do jogador (Fases 1 e 2).</summary>
+        public static bool CreatePlayerAssets()
         {
             var controls = AssetDatabase.LoadAssetAtPath<InputActionAsset>(ControlsPath);
             if (controls == null)
@@ -56,17 +61,24 @@ namespace SeteVidas.EditorTools
 
             Directory.CreateDirectory(ArtFolder);
             Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(DaggersPath));
             Directory.CreateDirectory(Path.GetDirectoryName(MaterialPath));
             Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath));
             AssetDatabase.Refresh();
 
             var sprites = CreatePlaceholderSprites();
-            var settings = LoadOrCreate(SettingsPath, () => ScriptableObject.CreateInstance<PlayerMovementSettings>());
-            var material = LoadOrCreate(MaterialPath, () => new PhysicsMaterial2D("PlayerNoFriction") { friction = 0f, bounciness = 0f });
+            var assets = new PlayerAssets
+            {
+                Movement = LoadOrCreate(SettingsPath, () => ScriptableObject.CreateInstance<PlayerMovementSettings>()),
+                Climb = LoadOrCreate(ClimbSettingsPath, () => ScriptableObject.CreateInstance<WallClimbSettings>()),
+                Daggers = LoadOrCreate(DaggersPath, () => ScriptableObject.CreateInstance<MeleeAttackSettings>()),
+                Material = LoadOrCreate(MaterialPath, () => new PhysicsMaterial2D("PlayerNoFriction") { friction = 0f, bounciness = 0f }),
+                Controls = controls,
+            };
 
-            // O prefab é sempre gerado de novo a partir do código (os valores ajustáveis ficam no
-            // PlayerMovementSettings, que é preservado). Não edite o prefab à mão.
-            BuildPrefab(settings, controls, material, sprites);
+            // O prefab é sempre gerado de novo a partir do código (os valores ajustáveis ficam nos
+            // ScriptableObjects, que são preservados). Não edite o prefab à mão.
+            BuildPrefab(assets, sprites);
 
             AssetDatabase.SaveAssets();
             return true;
@@ -81,7 +93,16 @@ namespace SeteVidas.EditorTools
             return asset;
         }
 
-        struct CatSprites { public Sprite Idle, Run1, Run2, Jump, Fall, Crouch, Hang; }
+        struct PlayerAssets
+        {
+            public PlayerMovementSettings Movement;
+            public WallClimbSettings Climb;
+            public MeleeAttackSettings Daggers;
+            public PhysicsMaterial2D Material;
+            public InputActionAsset Controls;
+        }
+
+        struct CatSprites { public Sprite Idle, Run1, Run2, Jump, Fall, Crouch, Hang, Climb1, Climb2, Attack, Slash1, Slash2; }
 
         static CatSprites CreatePlaceholderSprites()
         {
@@ -94,10 +115,15 @@ namespace SeteVidas.EditorTools
                 Fall = MakeCatSprite("chr_cat_placeholder_fall", 22, Legs.Stand, -1),
                 Crouch = MakeCatSprite("chr_cat_placeholder_crouch", 14, Legs.Stand, 0),
                 Hang = MakeCatSprite("chr_cat_placeholder_hang", 22, Legs.Dangling, 1),
+                Climb1 = MakeCatSprite("chr_cat_placeholder_climb_1", 22, Legs.ClimbA, 1),
+                Climb2 = MakeCatSprite("chr_cat_placeholder_climb_2", 22, Legs.ClimbB, 1),
+                Attack = MakeCatSprite("chr_cat_placeholder_attack", 22, Legs.Strike, 0),
+                Slash1 = MakeSlashSprite("fx_dagger_slash_1", 8),
+                Slash2 = MakeSlashSprite("fx_dagger_slash_2", 4),
             };
         }
 
-        enum Legs { Stand, RunA, RunB, Tucked, Dangling }
+        enum Legs { Stand, RunA, RunB, Tucked, Dangling, ClimbA, ClimbB, Strike }
 
         /// <summary>
         /// Retângulo azul-noite (cor do Ladino) com orelhas e olhos, no tamanho final aprovado:
@@ -140,7 +166,7 @@ namespace SeteVidas.EditorTools
             {
                 Legs.RunA => new[] { 3, 4, 11, 12 },
                 Legs.RunB => new[] { 6, 7, 8, 9 },
-                Legs.Tucked => new int[0],
+                Legs.Tucked or Legs.ClimbA or Legs.ClimbB => new int[0],
                 _ => new[] { 4, 5, 10, 11 },
             };
             foreach (int x in legX) { Set(x, 0, outline); Set(x, 1, outline); }
@@ -150,6 +176,21 @@ namespace SeteVidas.EditorTools
             {
                 for (int y = bodyTop - 4; y <= bodyTop - 1; y++) Set(14, y, outline);
                 Set(15, bodyTop - 1, outline);
+            }
+
+            // Escalando: patas encostadas na parede (à direita), alternando a altura entre os dois quadros
+            if (legs == Legs.ClimbA || legs == Legs.ClimbB)
+            {
+                int front = legs == Legs.ClimbA ? bodyTop - 2 : bodyTop - 5;
+                int back = legs == Legs.ClimbA ? 3 : 6;
+                foreach (int y in new[] { front, front + 1, back, back + 1 }) { Set(14, y, outline); Set(15, y, outline); }
+            }
+
+            // Golpe: pata da frente esticada na altura do peito
+            if (legs == Legs.Strike)
+            {
+                int y = bodyTop - 7;
+                Set(14, y, outline); Set(15, y, outline); Set(14, y + 1, outline); Set(15, y + 1, outline);
             }
 
             // Olhos (olhando para a direita)
@@ -165,8 +206,47 @@ namespace SeteVidas.EditorTools
             return AssetDatabase.LoadAssetAtPath<Sprite>(path);
         }
 
-        static void BuildPrefab(PlayerMovementSettings settings, InputActionAsset controls, PhysicsMaterial2D material, CatSprites sprites)
+        /// <summary>
+        /// Corte da adaga: arco claro de 18×16 px virado para a direita (o tamanho da hitbox, ~1,1 × 0,9 tile).
+        /// <paramref name="centerY"/> muda a curva entre o 1º golpe (horizontal) e o 2º (de baixo para cima).
+        /// </summary>
+        static Sprite MakeSlashSprite(string name, int centerY)
         {
+            string path = $"{ArtFolder}/{name}.png";
+            var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (existing != null) return existing;
+
+            const int w = 18, h = 16;
+            var edge = new Color32(0xf4, 0xf7, 0xfb, 0xff);
+            var inner = new Color32(0xa9, 0xbc, 0xd6, 0xff);
+            var px = new Color32[w * h];
+            const float cx = -2f, outer = 17.5f, mid = 16f, innerR = 14f;
+            for (int y = 0; y < h; y++)
+            for (int x = 6; x < w; x++)
+            {
+                float d = Mathf.Sqrt((x - cx) * (x - cx) + (y - centerY) * (y - centerY));
+                if (d <= outer && d > mid) px[y * w + x] = edge;
+                else if (d <= mid && d > innerR) px[y * w + x] = inner;
+            }
+            return SavePng(path, w, h, px);
+        }
+
+        static Sprite SavePng(string path, int w, int h, Color32[] px)
+        {
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+            tex.SetPixels32(px);
+            tex.Apply();
+            File.WriteAllBytes(Path.GetFullPath(path), tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate); // PixelArtImportPostprocessor: PPU 16, Point
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
+        static void BuildPrefab(PlayerAssets assets, CatSprites sprites)
+        {
+            var settings = assets.Movement;
+            var controls = assets.Controls;
+            var material = assets.Material;
             var root = new GameObject("Player") { tag = "Player", layer = LayerMask.NameToLayer(GameConstants.Layers.Player) };
 
             var body = root.AddComponent<Rigidbody2D>();
@@ -188,10 +268,17 @@ namespace SeteVidas.EditorTools
             var ground = root.AddComponent<GroundCheck>();
             var reader = root.AddComponent<PlayerInputReader>();
             var controller = root.AddComponent<PlayerController>();
+            var climb = root.AddComponent<WallClimbAbility>();
+            var combat = root.AddComponent<CombatController>();
 
             SetRef(reader, "actions", controls);
             SetRef(controller, "settings", settings);
             SetRef(controller, "input", reader);
+            SetRef(climb, "settings", assets.Climb);
+            SetMask(climb, "climbableLayers", GameConstants.Layers.Climbable);
+            SetRef(combat, "weapon", assets.Daggers);
+            SetRef(combat, "input", reader);
+            SetMask(combat, "targetLayers", GameConstants.Layers.Enemy, GameConstants.Layers.Breakable);
             var so = new SerializedObject(ground);
             so.FindProperty("solidLayers").intValue = LayerMask.GetMask(
                 GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
@@ -211,12 +298,21 @@ namespace SeteVidas.EditorTools
             SetRef(visual, "fall", sprites.Fall);
             SetRef(visual, "crouch", sprites.Crouch);
             SetRef(visual, "hang", sprites.Hang);
-            var vso = new SerializedObject(visual);
-            var run = vso.FindProperty("run");
-            run.arraySize = 2;
-            run.GetArrayElementAtIndex(0).objectReferenceValue = sprites.Run1;
-            run.GetArrayElementAtIndex(1).objectReferenceValue = sprites.Run2;
-            vso.ApplyModifiedPropertiesWithoutUndo();
+            SetRef(visual, "attack", sprites.Attack);
+            SetRef(visual, "wallClimb", climb);
+            SetRef(visual, "combat", combat);
+            SetArray(visual, "run", sprites.Run1, sprites.Run2);
+            SetArray(visual, "climb", sprites.Climb1, sprites.Climb2);
+            SetArray(visual, "slash", sprites.Slash1, sprites.Slash2);
+
+            // Corte da adaga: fora do "Visual" para não herdar o espelhamento do corpo
+            var slashGo = new GameObject("Slash");
+            slashGo.transform.SetParent(root.transform, false);
+            slashGo.layer = root.layer;
+            var slashRenderer = slashGo.AddComponent<SpriteRenderer>();
+            slashRenderer.sortingOrder = 6;
+            slashRenderer.enabled = false;
+            SetRef(visual, "slashRenderer", slashRenderer);
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             Object.DestroyImmediate(root);
@@ -232,6 +328,34 @@ namespace SeteVidas.EditorTools
                 return;
             }
             prop.objectReferenceValue = value;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void SetArray(Object target, string field, params Object[] values)
+        {
+            var so = new SerializedObject(target);
+            var prop = so.FindProperty(field);
+            if (prop == null)
+            {
+                Debug.LogError($"[Sete Vidas] Campo '{field}' não encontrado em {target.GetType().Name}.");
+                return;
+            }
+            prop.arraySize = values.Length;
+            for (int i = 0; i < values.Length; i++)
+                prop.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        public static void SetMask(Object target, string field, params string[] layers)
+        {
+            var so = new SerializedObject(target);
+            var prop = so.FindProperty(field);
+            if (prop == null)
+            {
+                Debug.LogError($"[Sete Vidas] Campo '{field}' não encontrado em {target.GetType().Name}.");
+                return;
+            }
+            prop.intValue = LayerMask.GetMask(layers);
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

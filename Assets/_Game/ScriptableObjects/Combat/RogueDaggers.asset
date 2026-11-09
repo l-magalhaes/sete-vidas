@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 060e4751d6948e447a8a081f04ed6db7, type: 3}
+  m_Name: RogueDaggers
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Combat.MeleeAttackSettings
+  BaseDamage: 2
+  Type: 0
+  BackstabBonus: 1
+  Multipliers:
+    Front: 1
+    Back: 1.5
+    StealthBack: 2.5
+  ComboSteps: 2
+  Windup: 0.04
+  Active: 0.08
+  Recovery: 0.12
+  FinalRecovery: 0.22
+  HitboxSize: {x: 1.1, y: 0.9}
+  HitboxForward: 0.5
+  HitstopFront: 0.05
+  HitstopBack: 0.07
+  HitstopStealth: 0.12
