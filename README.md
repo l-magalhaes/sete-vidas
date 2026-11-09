@@ -18,6 +18,16 @@ GDD: [`Docs/GDD_Sete_Vidas_v0.1.md`](Docs/GDD_Sete_Vidas_v0.1.md)
 
 Cada item do menu pode ser executado de novo sem problema. Atenção: o item 2 **recria a Playground** (é uma cena de testes); a `Fortress_MVP` nunca é sobrescrita.
 
+## Fase 1 — controlador do gato
+
+1. Menu **Tools > Sete Vidas > 4. Criar jogador e câmera (Fase 1)**. Isso cria os sprites placeholder do gato, o asset `ScriptableObjects/Player/PlayerMovementSettings`, o prefab `Prefabs/Player/Player` e a câmera Cinemachine na `Playground`.
+2. Aperte Play na `Playground`: A/D ou setas para andar, Espaço para pular, S para agachar (o controle também funciona).
+3. Com o jogo rodando, selecione `PlayerMovementSettings` e ajuste os valores no Inspector. **Atenção:** mudanças no asset durante o Play **ficam salvas** (é um ScriptableObject).
+4. Meça o pulo nos degraus e buracos e anote em `Docs/Level/metricas.md`.
+5. Spec e critérios de aceite: `Docs/Design/controlador-gato.md`.
+
+Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a câmera automaticamente.
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:

@@ -5,9 +5,9 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | Data | Decisão | Status | Impacto |
 |---|---|---|---|
 | 09/11/2026 | Estilo pixel art | [APROVADA] (GDD §14) | Tudo |
-| 09/11/2026 | Resolução interna 480×270 (escala ×4 para 1080p) | [PROPOSTA] | Câmera, UI, level design |
-| 09/11/2026 | Tile 16×16 px, Pixels Per Unit 16 | [PROPOSTA] | Física, métricas, tilesets |
-| 09/11/2026 | Gato com ~20–24 px de altura, canvas 48×48, pivot nos pés | [PROPOSTA] | Colisor do jogador, animações |
+| 09/11/2026 | Resolução interna 480×270 (escala ×4 para 1080p) | [APROVADA] 09/11/2026 | Câmera, UI, level design |
+| 09/11/2026 | Tile 16×16 px, Pixels Per Unit 16 | [APROVADA] 09/11/2026 | Física, métricas, tilesets |
+| 09/11/2026 | Gato com 22 px de altura (14 px agachado), canvas 48×48, pivot nos pés | [APROVADA] 09/11/2026 | Colisor do jogador, animações |
 | 09/11/2026 | Aseprite como ferramenta; importador `.aseprite` do Unity | [PROPOSTA] | Pipeline de arte |
 | 09/11/2026 | Corpo-base do gato + camadas por classe | [PROPOSTA] | Custo de produção das 7 classes |
 

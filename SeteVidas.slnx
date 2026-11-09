@@ -1,7 +1,7 @@
 ﻿<Solution>
+  <Project Path="SeteVidas.Runtime.csproj" />
   <Project Path="Unity.2D.Welcome.csproj" />
   <Project Path="SeteVidas.Tests.EditMode.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="SeteVidas.Tests.PlayMode.csproj" />
-  <Project Path="SeteVidas.Runtime.csproj" />
 </Solution>

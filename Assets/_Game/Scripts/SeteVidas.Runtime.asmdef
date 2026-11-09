@@ -1,7 +1,9 @@
 {
     "name": "SeteVidas.Runtime",
     "rootNamespace": "SeteVidas",
-    "references": [],
+    "references": [
+        "Unity.InputSystem"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

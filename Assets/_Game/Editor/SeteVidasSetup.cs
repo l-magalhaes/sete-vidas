@@ -40,6 +40,7 @@ namespace SeteVidas.EditorTools
         {
             ConfigureProject();
             CreateScenes();
+            PlayerSetup.CreatePlayerAndCamera(); // Fase 1
             InstallPackages(); // por último: a instalação recompila o projeto
         }
 
@@ -63,6 +64,7 @@ namespace SeteVidas.EditorTools
 
             CreatePlaceholderTiles(); // garante os assets; a Playground os recarrega depois de abrir a cena
             CreatePlayground();
+            PlayerSetup.PlaceInPlaygroundIfReady(); // a Playground é recriada; recoloca jogador e câmera
             CreateFortressScene();
             RegisterScenesInBuild();
             EditorSceneManager.OpenScene(GameConstants.PlaygroundScenePath);
@@ -286,8 +288,48 @@ namespace SeteVidas.EditorTools
             if (physicsLayer != null) go.layer = LayerMask.NameToLayer(physicsLayer);
             var map = go.AddComponent<Tilemap>();
             go.AddComponent<TilemapRenderer>().sortingOrder = sortingOrder;
-            if (collider) go.AddComponent<TilemapCollider2D>();
+            if (collider) MergeTileColliders(go.AddComponent<TilemapCollider2D>());
             return map;
+        }
+
+        /// <summary>
+        /// Une os tiles num só colisor: sem emendas onde o gato possa enganchar ao andar.
+        /// Retorna true se mudou algo (para cenas antigas que ainda não tinham).
+        /// </summary>
+        static bool MergeTileColliders(TilemapCollider2D tilemapCollider)
+        {
+            var go = tilemapCollider.gameObject;
+            if (go.GetComponent<CompositeCollider2D>() != null &&
+                tilemapCollider.compositeOperation == Collider2D.CompositeOperation.Merge)
+                return false;
+
+            var body = go.GetComponent<Rigidbody2D>();
+            if (body == null) body = go.AddComponent<Rigidbody2D>();
+            body.bodyType = RigidbodyType2D.Static;
+            var composite = go.GetComponent<CompositeCollider2D>();
+            if (composite == null) composite = go.AddComponent<CompositeCollider2D>();
+            composite.geometryType = CompositeCollider2D.GeometryType.Polygons;
+            tilemapCollider.compositeOperation = Collider2D.CompositeOperation.Merge;
+            return true;
+        }
+
+        /// <summary>
+        /// Força a montagem das formas de colisão dos tilemaps antes de salvar a cena.
+        /// O Unity só gera o CompositeCollider2D um instante depois de pintar os tiles; salvando antes,
+        /// a cena guarda um colisor vazio e o chão não colide durante o jogo.
+        /// </summary>
+        static void BuildTileColliders(Scene scene)
+        {
+            foreach (var root in scene.GetRootGameObjects())
+            foreach (var tc in root.GetComponentsInChildren<TilemapCollider2D>(true))
+            {
+                tc.ProcessTilemapChanges();
+                var composite = tc.GetComponent<CompositeCollider2D>();
+                if (composite == null) continue;
+                composite.GenerateGeometry();
+                if (composite.pathCount == 0 && tc.GetComponent<Tilemap>().GetUsedTilesCount() > 0)
+                    Debug.LogError($"[Sete Vidas] {scene.name}/{tc.name}: colisor unificado ficou vazio. O chão não vai colidir.");
+            }
         }
 
         static Transform CreateGrid()
@@ -370,6 +412,7 @@ namespace SeteVidas.EditorTools
             var spawn = new GameObject("PlayerSpawn");
             spawn.transform.position = new Vector3(0.5f, 1f, 0f);
 
+            BuildTileColliders(scene);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
         }
@@ -377,7 +420,22 @@ namespace SeteVidas.EditorTools
         static void CreateFortressScene()
         {
             if (File.Exists(Path.GetFullPath(GameConstants.FortressScenePath)))
-                return; // não sobrescreve trabalho de level design já feito
+            {
+                // Não sobrescreve trabalho de level design já feito; só atualiza os colisores dos tilemaps.
+                var existing = EditorSceneManager.OpenScene(GameConstants.FortressScenePath, OpenSceneMode.Single);
+                bool changed = false;
+                foreach (var root in existing.GetRootGameObjects())
+                foreach (var tc in root.GetComponentsInChildren<TilemapCollider2D>(true))
+                    changed |= MergeTileColliders(tc);
+                if (changed)
+                {
+                    BuildTileColliders(existing);
+                    EditorSceneManager.MarkSceneDirty(existing);
+                    EditorSceneManager.SaveScene(existing);
+                    Debug.Log("[Sete Vidas] Fortress_MVP: colisores dos tilemaps unificados (conteúdo preservado).");
+                }
+                return;
+            }
 
             var scene = NewSceneFromTemplate(GameConstants.FortressScenePath);
             SetupPixelPerfectCamera(FindCamera(scene), Vector2.zero);
