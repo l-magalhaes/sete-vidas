@@ -36,7 +36,7 @@ namespace SeteVidas.Player
         [Tooltip("Tempo em que um pulo apertado antes de aterrissar é guardado (s)")]
         [Range(0f, 0.3f)] public float JumpBufferTime = 0.1f;
 
-        [Header("Agarrar borda [PROPOSTA]")]
+        [Header("Agarrar borda")]
         [Tooltip("Liga/desliga agarrar bordas ao cair segurando a direção da parede")]
         public bool LedgeGrabEnabled = true;
         [Tooltip("Altura das patas acima dos pés ao se pendurar (tiles). 1,25 = 20 px")]

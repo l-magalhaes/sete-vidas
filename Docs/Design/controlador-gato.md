@@ -1,5 +1,5 @@
 # Controlador do gato (andar, pular, agachar, câmera)
-**Pilar:** 1 e 2 (base de toda classe e de toda exploração) | **Escopo:** MVP, Fase 1 | **Status:** rascunho para teste
+**Pilar:** 1 e 2 (base de toda classe e de toda exploração) | **Escopo:** MVP, Fase 1 | **Status:** aprovado (playtest 09/11/2026)
 
 ## Objetivo de experiência
 Controlar o gato tem de ser gostoso antes de existir qualquer classe (GDD §13, pergunta 1). Ele é ágil: começa e para rápido, o pulo responde na hora e o jogador controla a altura pelo tempo do botão.
@@ -16,7 +16,7 @@ Controlar o gato tem de ser gostoso antes de existir qualquer classe (GDD §13, 
 9. **Levantar.** Ao soltar o agachar, o gato só levanta se houver espaço acima. Sob teto baixo, continua agachado até sair dele. O colisor nunca cresce dentro de uma parede.
 10. **Pular agachado.** Só é possível se houver espaço para ficar de pé. Numa passagem de 1 tile, o pulo é ignorado.
 11. **Cair agachado** (sair de uma borda abaixado): continua agachado no ar e levanta assim que houver espaço.
-12. **Agarrar borda [PROPOSTA].** Caindo (velocidade vertical ≤ 0) e segurando a direção de uma parede, o gato se pendura se a quina do topo estiver na altura das patas (`LedgeHandHeight` ± `LedgeGrabWindow`) e houver espaço para ficar de pé em cima. Não agarra agachado nem segurando S.
+12. **Agarrar borda [APROVADA].** Caindo (velocidade vertical ≤ 0) e segurando a direção de uma parede, o gato se pendura se a quina do topo estiver na altura das patas (`LedgeHandHeight` ± `LedgeGrabWindow`) e houver espaço para ficar de pé em cima. Não agarra agachado nem segurando S.
 13. **Pendurado.** Fica parado, sem gravidade, virado para a parede. **Espaço** sobe para cima da borda em `LedgeClimbDuration`. **S** solta e cai; durante `LedgeRegrabCooldown` não agarra de novo (para não grudar na mesma quina).
 14. **Colisor.** O colisor é uma caixa de fundo reto. Parado na ponta de uma borda, o gato não escorrega (a cápsula anterior deslizava pela quina).
 15. **Câmera.** Segue o gato com *dead zone* e uma pequena antecipação horizontal, sempre com Pixel Perfect (480×270, PPU 16).
@@ -90,8 +90,8 @@ O prefab, o asset de valores e a câmera são criados por **Tools > Sete Vidas >
 - **Dado** o gato andando, **quando** a câmera o segue, **então** a imagem não treme e os tiles continuam nítidos em 1920×1080.
 
 ## Perguntas abertas
-- [PROPOSTA] Agarrar borda desde o início, como locomoção global do gato. O GDD só cita "se pendurar" nos pontos de ancoragem do Caçador; agarrar quinas comuns é uma mecânica nova. Se preferir, ela pode virar um desbloqueio (desligando `LedgeGrabEnabled`).
-- [PROPOSTA] Agarrar só segurando a direção da parede. Alternativa: agarrar automaticamente ao sair andando de uma borda agachado (descer para a borda de forma furtiva).
-- [PROPOSTA] `JumpHeight = 4` tiles. Se o pulo ficar alto demais para um gato de 1,4 tile, testar 3,5.
-- [PROPOSTA] Controle aéreo igual ao do chão. Se ficar "escorregadio", adicionar um multiplicador de aceleração no ar.
+- [APROVADA] Agarrar borda desde o início, como locomoção global do gato. O GDD só cita "se pendurar" nos pontos de ancoragem do Caçador; agarrar quinas comuns é uma mecânica nova. Se preferir, ela pode virar um desbloqueio (desligando `LedgeGrabEnabled`).
+- [APROVADA] Agarrar só segurando a direção da parede. Alternativa: agarrar automaticamente ao sair andando de uma borda agachado (descer para a borda de forma furtiva).
+- [APROVADA] `JumpHeight = 4` tiles. Se o pulo ficar alto demais para um gato de 1,4 tile, testar 3,5.
+- [APROVADA] Controle aéreo igual ao do chão. Se ficar "escorregadio", adicionar um multiplicador de aceleração no ar.
 - O dash (Shift) fica sem efeito até ser desbloqueado. Continua aberta a pergunta do GDD sobre antecipar o dash para antes do Caçador.
