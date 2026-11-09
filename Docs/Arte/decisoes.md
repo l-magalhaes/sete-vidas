@@ -19,6 +19,10 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Corações do HUD 16×16 (13×11 de desenho): cheio #d6304a com brilho #ff8a9a, meio (metade esquerda), vazio #4a2a33, bloqueado cinza #3b3b48 com rachadura. Canvas 480×270 escalado ×4 | [PROPOSTA] | UI de vida |
 | 09/11/2026 | Santuário felino 32×32: pedestal de pedra, estátua de gato sentado e duas velas; aceso = chamas e olhos dourados #ffd34d | [PROPOSTA] | Leitura do checkpoint ativo |
 | 09/11/2026 | Meio coração no chão: metade esquerda do coração do HUD (7×11 px) com brilho rosa claro em volta, flutuando de leve | [PROPOSTA] | Leitura do drop de vida |
+| 09/11/2026 | Paladino = mesmo gato + camada da marreta (canvas 32×28: nas costas, erguida, no chão). Cabo #6b4a2b, cabeça #b8bfcc com faixa dourada #d9a441 | [PROPOSTA] | Identidade do gato em todas as classes |
+| 09/11/2026 | Ícones de classe 16×16: Ladino (adagas cruzadas em azul-noite), Paladino (marreta em dourado escuro) | [PROPOSTA] | HUD |
+| 09/11/2026 | Parede rachada 16×64: pedra do chão + rachadura em zigue-zague dourada (#ffd34d / #8a621e); danificada com galhos | [PROPOSTA] | Gate do Paladino |
+| 09/11/2026 | Golden placeholder 24×34: cão dourado de armadura, tabardo dourado, orelha caída, marreta apoiada | [PROPOSTA] | Vínculo do Paladino |
 
 ## Já configurado na Fase 0
 

@@ -408,12 +408,12 @@ namespace SeteVidas.EditorTools
             CreateTilemap(grid, "Foreground", null, 10, false);
 
             // Fundo decorativo (sem colisão)
-            Fill(background, tiles.Background, -4, 0, 151, 12);
+            Fill(background, tiles.Background, -4, 0, 177, 12);
 
             // Chão contínuo (2 tiles de espessura) e paredes de limite
-            Fill(ground, tiles.Ground, -6, -2, 153, -1);
+            Fill(ground, tiles.Ground, -6, -2, 179, -1);
             Fill(ground, tiles.Ground, -6, 0, -5, 14);   // limite esquerdo
-            Fill(ground, tiles.Ground, 152, 0, 153, 14); // limite direito
+            Fill(ground, tiles.Ground, 178, 0, 179, 14); // limite direito
 
             // A) Spawn: x -4..6 livre.
             // B) Degraus de 1 a 6 tiles de altura, 2 de largura, a cada 4 tiles.
@@ -464,6 +464,12 @@ namespace SeteVidas.EditorTools
 
             // Fase 4: HUD de corações e santuários (E para descansar e salvar) em x 3 e x 119,5
             ProgressionSetup.PlaceInPlayground(scene);
+
+            // I) Paladino (Fase 5): x 154..177. Túnel embaixo de uma laje (x 156..177, y 4, topo em 5; 4 tiles de
+            //    altura livre; encosta no limite direito, sem fresta). A parede rachada (x 160, y 0..3) fecha o túnel: é vista antes de ter a marreta.
+            //    O Golden fica em cima da laje (x 168,5): sobe agarrando a borda de 5 tiles em x 156.
+            Fill(ground, tiles.Ground, 156, 4, 177, 4); // até encostar no limite (x 178): sem fresta para entrar por cima
+            ClassSetup.PlaceInPlayground(scene);
 
             var spawn = new GameObject("PlayerSpawn");
             spawn.transform.position = new Vector3(0.5f, 1f, 0f);

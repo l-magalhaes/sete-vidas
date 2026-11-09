@@ -5,7 +5,7 @@ namespace SeteVidas.Player
 {
     /// <summary>
     /// Lê o asset GameControls (mapa "Player") e expõe os valores que o controlador usa.
-    /// A troca de classe entra aqui na Fase 5.
+    /// Inclui a troca de classe (R/Q e 1–7).
     /// </summary>
     public class PlayerInputReader : MonoBehaviour
     {
@@ -14,7 +14,8 @@ namespace SeteVidas.Player
         [SerializeField] InputActionAsset actions;
 
         InputActionMap _map;
-        InputAction _move, _jump, _crouch, _attack, _interact;
+        InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass;
+        readonly InputAction[] _classSlots = new InputAction[7];
 
         /// <summary>Direção horizontal: -1, 0 ou 1 no teclado; contínua no analógico.</summary>
         public float MoveX
@@ -44,6 +45,19 @@ namespace SeteVidas.Player
         public bool CrouchPressedThisFrame => _crouch != null && _crouch.WasPressedThisFrame();
         public bool AttackPressedThisFrame => _attack != null && _attack.WasPressedThisFrame();
         public bool InteractPressedThisFrame => _interact != null && _interact.WasPressedThisFrame();
+        public bool NextClassPressedThisFrame => _nextClass != null && _nextClass.WasPressedThisFrame();
+        public bool PrevClassPressedThisFrame => _prevClass != null && _prevClass.WasPressedThisFrame();
+
+        /// <summary>Tecla de classe apertada neste frame: 1 a 7, ou 0 se nenhuma.</summary>
+        public int ClassSlotPressedThisFrame
+        {
+            get
+            {
+                for (int i = 0; i < _classSlots.Length; i++)
+                    if (_classSlots[i] != null && _classSlots[i].WasPressedThisFrame()) return i + 1;
+                return 0;
+            }
+        }
 
         void Awake()
         {
@@ -59,6 +73,10 @@ namespace SeteVidas.Player
             _crouch = _map.FindAction("Crouch", throwIfNotFound: true);
             _attack = _map.FindAction("Attack", throwIfNotFound: true);
             _interact = _map.FindAction("Interact", throwIfNotFound: true);
+            _nextClass = _map.FindAction("NextClass", throwIfNotFound: false);
+            _prevClass = _map.FindAction("PrevClass", throwIfNotFound: false);
+            for (int i = 0; i < _classSlots.Length; i++)
+                _classSlots[i] = _map.FindAction($"SelectClass{i + 1}", throwIfNotFound: false);
         }
 
         void OnEnable() => _map?.Enable();

@@ -29,6 +29,17 @@ namespace SeteVidas.Combat
         /// <summary>Lado do golpe atual, travado no início do golpe.</summary>
         public int AttackDirection { get; private set; } = 1;
         public MeleeAttackSettings Weapon => weapon;
+        /// <summary>Na preparação do golpe (a marreta mostra a arma erguida).</summary>
+        public bool IsWindingUp => _sequence.Current == AttackSequence.Phase.Windup;
+
+        /// <summary>Troca a arma (troca de classe). Cancela um golpe em andamento.</summary>
+        public void Equip(MeleeAttackSettings newWeapon)
+        {
+            if (newWeapon == null || newWeapon == weapon) return;
+            _sequence.Cancel();
+            weapon = newWeapon;
+            if (!enabled && _player != null) enabled = true; // começou sem arma
+        }
 
         /// <summary>Disparado a cada alvo atingido (para efeitos e testes).</summary>
         public event System.Action<IDamageable, DamageInfo> Hit;
@@ -39,13 +50,12 @@ namespace SeteVidas.Combat
         {
             _player = GetComponent<PlayerController>();
             if (input == null) input = GetComponent<PlayerInputReader>();
+            _filter = new ContactFilter2D { useTriggers = true, useLayerMask = true, layerMask = targetLayers };
             if (weapon == null)
             {
                 Debug.LogError("[Sete Vidas] CombatController sem MeleeAttackSettings.", this);
                 enabled = false;
-                return;
             }
-            _filter = new ContactFilter2D { useTriggers = true, useLayerMask = true, layerMask = targetLayers };
         }
 
         bool CanAttack => !_player.IsHanging && !_player.IsClimbingLedge && _player.ActiveAbility == null;
@@ -55,6 +65,7 @@ namespace SeteVidas.Combat
             if (!CanAttack)
             {
                 if (_sequence.IsAttacking) _sequence.Cancel();
+                _player.SpeedMultiplier = 1f;
                 return;
             }
 
@@ -77,6 +88,15 @@ namespace SeteVidas.Combat
                 SwingStarted?.Invoke();
             }
             if (_sequence.IsHitActive) CheckHits();
+
+            // Armas pesadas deixam o gato lento enquanto golpeia
+            _player.SpeedMultiplier = _sequence.IsAttacking ? weapon.MoveMultiplierWhileAttacking : 1f;
+        }
+
+        void OnDisable()
+        {
+            _sequence.Cancel();
+            if (_player != null) _player.SpeedMultiplier = 1f;
         }
 
         /// <summary>Centro e tamanho da hitbox no mundo, para o lado <see cref="AttackDirection"/>.</summary>

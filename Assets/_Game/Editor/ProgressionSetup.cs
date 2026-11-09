@@ -112,7 +112,7 @@ namespace SeteVidas.EditorTools
             // Corações: canto superior esquerdo, 16×16 a cada 18 px
             var row = UiChild(root, "Hearts");
             row.anchorMin = row.anchorMax = row.pivot = new Vector2(0f, 1f);
-            row.anchoredPosition = new Vector2(8f, -8f);
+            row.anchoredPosition = new Vector2(28f, -8f); // à direita do ícone da classe
             row.sizeDelta = new Vector2(GameConstants.MaxHearts * 18f, 16f);
             var hud = root.AddComponent<HeartsHud>();
             var so = new SerializedObject(hud);
@@ -134,6 +134,19 @@ namespace SeteVidas.EditorTools
             so.FindProperty("empty").objectReferenceValue = empty;
             so.FindProperty("locked").objectReferenceValue = locked;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            // Ícone da classe ativa, à esquerda dos corações
+            var iconRt = UiChild(root, "ClassIcon");
+            iconRt.anchorMin = iconRt.anchorMax = iconRt.pivot = new Vector2(0f, 1f);
+            iconRt.anchoredPosition = new Vector2(8f, -8f);
+            iconRt.sizeDelta = new Vector2(16f, 16f);
+            var iconImg = iconRt.gameObject.AddComponent<Image>();
+            iconImg.raycastTarget = false;
+            iconImg.enabled = false;
+            var iconHud = root.AddComponent<ClassIconHud>();
+            var iso = new SerializedObject(iconHud);
+            iso.FindProperty("icon").objectReferenceValue = iconImg;
+            iso.ApplyModifiedPropertiesWithoutUndo();
 
             // Tela preta da morte, por cima de tudo
             var fadeRt = UiChild(root, "Fader");

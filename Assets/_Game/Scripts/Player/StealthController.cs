@@ -122,7 +122,8 @@ namespace SeteVidas.Player
         void OnSwing()
         {
             if (settings == null) return;
-            NoiseSystem.Emit(ChestPosition, settings.AttackNoiseRadius, settings.AttackLoudness, gameObject, "golpe");
+            float k = _combat != null && _combat.Weapon != null ? _combat.Weapon.NoiseMultiplier : 1f;
+            NoiseSystem.Emit(ChestPosition, settings.AttackNoiseRadius * k, Mathf.Clamp01(settings.AttackLoudness * k), gameObject, "golpe");
         }
 
         void OnGUI()

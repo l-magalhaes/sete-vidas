@@ -15,7 +15,8 @@ Coordenadas em células (1 célula = 1 tile). A superfície do chão fica em y =
 | G. Bonecos de treino | 108 a 118 | Dois `TrainingDummy`: x 110,5 olhando para a direita e x 115,5 olhando para a esquerda. O gato atravessa os bonecos (trigger) para chegar às costas | 2 |
 | H. Furtividade | 122 a 151 | Sentinela patrulhando x 133–140 (pausa de 1,5 s em cada ponta). Matinho em x 137–139 (e outro de teste em x 105–107, antes dos bonecos). Sombra A em x 122–130 e sombra B em x 144–152 (y 0 a 5, exposição 0,3). Rota por cima: parede escalável x 128–129 (dentro da sombra A, topo em y 5) e passarela x 130–143 (topo em y 5), que bloqueia a visão da Sentinela. Embaixo da passarela há 4 tiles livres | 3 |
 | Santuários (Fase 4) | 3 e 119,5 | `playground_inicio` (perto do spawn) e `playground_furtividade` (antes da Sentinela). E para descansar e salvar | 4 |
-| Limites | -6/-5 e 152/153 | Paredes sólidas nas pontas | — |
+| I. Paladino | 154 a 177 | Túnel embaixo de uma laje (x 156–177, y 4, topo em 5, encostada no limite: sem fresta). Parede rachada em x 160 fecha o túnel (vista antes da marreta). Golden em cima da laje (x 168,5), alcançado agarrando a borda de 5 tiles em x 156. Atrás da parede: placa "Atalho secreto!" | 5 |
+| Limites | -6/-5 e 178/179 | Paredes sólidas nas pontas | — |
 
 **Checagem anti-softlock:** os degraus de 3 a 6 são plataformas suspensas, então o chão abaixo deles fica livre: não existe vão entre pilares onde o gato fique preso, e o caminho de volta ao spawn nunca exige pulo maior que 2 tiles. (A versão anterior, com pilares maciços, prendia o gato nos vãos entre os pilares de 4, 5 e 6 tiles.) Todo buraco tem fundo raso e pode ser escapado com um pulo de mais de 2 tiles. A passagem baixa tem saída dos dois lados. A plataforma da parede escalável permite descer caindo. Na chaminé, a parede direita começa a 3 tiles do chão: dá para passar andando por baixo dela, e a plataforma de saída (topo em y 11) desce caindo para o chão. Os bonecos são triggers, então nunca bloqueiam o caminho. No trecho H todo o chão é contínuo: a passarela é opcional (sobe pela parede escalável e desce caindo ou pendurando na ponta), e o gato atravessa a Sentinela, que nunca o prende. Sem habilidade nova, sempre há volta ao spawn. Nenhum trecho exige uma habilidade além de andar, pular e agachar para sair.
 
@@ -29,3 +30,11 @@ Propósito: ensinar furtividade | Tamanho: 30 × 6 tiles | Requisitos: andar, ag
 - **Solução de combate:** lutar de frente (3 golpes) desviando da estocada (aviso de 0,45 s).
 - **Patrulha legível:** 7 tiles a 2 tiles/s = 3,5 s por perna + 1,5 s de pausa = ciclo de 10 s.
 - **Risco de softlock:** nenhum.
+
+## Trecho I — ficha da sala (Fase 5)
+Propósito: ensinar o Paladino (gate visível → vínculo → volta) | Tamanho: 24 × 6 tiles | Requisitos: andar, pular, agarrar borda
+- **Ver antes de poder:** o caminho natural pelo chão entra no túnel e bate na parede rachada (adagas: "tink").
+- **Vínculo:** a laje tem topo em 5 tiles: o gato agarra a borda em x 156 e sobe. O Golden está lá.
+- **Volta e quebra:** do Golden, desce e volta ao túnel (4 tiles) com o Paladino: duas marretadas abrem a passagem.
+- **Risco de softlock:** nenhum. O túnel e a laje se acessam pelo chão contínuo; a parede só bloqueia uma área opcional.
+- **Sem atalho indevido:** a laje vai até o limite direito (x 177). Uma versão anterior parava em x 176 e deixava uma fresta de 1 tile por onde dava para cair atrás da parede sem a marreta.

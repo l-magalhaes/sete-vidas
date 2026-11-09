@@ -49,6 +49,13 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 3. O save fica em `Application.persistentDataPath/save_slot1.json`. **Tools > Sete Vidas > Save** apaga o save ou abre a pasta dele. Os testes usam um save temporário.
 4. Spec: `Docs/Design/vida-morte-save.md`. Plano de teste: `Docs/QA/fase4-plano-de-teste.md`.
 
+## Fase 5 — troca de classe e o Paladino
+
+1. Menu **Tools > Sete Vidas > 8. Fase 5: classes, Paladino e parede rachada**. Cria `ScriptableObjects/Classes/Rogue` e `Paladin`, a marreta `ScriptableObjects/Combat/PaladinHammer`, os prefabs `BreakableWall` e `Golden`, coloca o `ClassManager` no gato, o ícone da classe no HUD e recria a `Playground` com o trecho I (x 154–177).
+2. Controles: **R/Q** giram entre as classes desbloqueadas, **1–7** escolhem direto, **E** fala com o Golden.
+3. Specs: `Docs/Design/classes-paladino.md`; falas em `Docs/Narrativa/dialogos-mvp.md`. Plano de teste: `Docs/QA/fase5-plano-de-teste.md`.
+4. Nova classe = um `ClassDefinition` + um componente `ClassAbility` (ver a spec).
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:

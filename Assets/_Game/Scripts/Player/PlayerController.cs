@@ -50,6 +50,8 @@ namespace SeteVidas.Player
         public JumpTimers Timers => _timers;
         /// <summary>Habilidade com o controle agora (null = movimento normal).</summary>
         public PlayerAbility ActiveAbility { get; private set; }
+        /// <summary>Multiplicador externo da velocidade de andar (ex.: marreta lenta durante o golpe). 1 = normal.</summary>
+        public float SpeedMultiplier { get; set; } = 1f;
         /// <summary>Altura atual do colisor (em pé ou agachado), em tiles.</summary>
         public float CurrentHeight => settings == null ? 0f : IsCrouching ? settings.CrouchHeight : settings.StandingHeight;
 
@@ -129,7 +131,7 @@ namespace SeteVidas.Player
             // Andar (logo depois de um pulo da parede, a entrada não freia o impulso)
             if (_moveLockTimer <= 0f)
             {
-                float target = input.MoveX * settings.MoveSpeed * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
+                float target = input.MoveX * settings.MoveSpeed * SpeedMultiplier * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
                 float rate = Mathf.Abs(target) > 0.01f ? settings.Acceleration : settings.Deceleration;
                 v.x = Mathf.MoveTowards(v.x, target, rate * dt);
             }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 060e4751d6948e447a8a081f04ed6db7, type: 3}
+  m_Name: PaladinHammer
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Combat.MeleeAttackSettings
+  BaseDamage: 4
+  Type: 1
+  BackstabBonus: 0
+  Multipliers:
+    Front: 1
+    Back: 1.5
+    StealthBack: 2.5
+  ComboSteps: 1
+  Windup: 0.35
+  Active: 0.12
+  Recovery: 0.2
+  FinalRecovery: 0.45
+  MoveMultiplierWhileAttacking: 0.3
+  NoiseMultiplier: 2
+  HitboxSize: {x: 1.4, y: 1.3}
+  HitboxForward: 0.6
+  HitstopFront: 0.1
+  HitstopBack: 0.1
+  HitstopStealth: 0.1

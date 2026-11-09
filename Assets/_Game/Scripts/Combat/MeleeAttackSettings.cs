@@ -25,6 +25,12 @@ namespace SeteVidas.Combat
         [Tooltip("Depois do último golpe do combo")]
         [Range(0f, 0.8f)] public float FinalRecovery = 0.22f;
 
+        [Header("Movimento e barulho")]
+        [Tooltip("Velocidade de andar durante o ataque (1 = normal). Marreta: lenta")]
+        [Range(0f, 1f)] public float MoveMultiplierWhileAttacking = 1f;
+        [Tooltip("Multiplica o barulho do golpe (raio e intensidade do StealthSettings)")]
+        [Min(0f)] public float NoiseMultiplier = 1f;
+
         [Header("Hitbox (tiles)")]
         public Vector2 HitboxSize = new Vector2(1.1f, 0.9f);
         [Tooltip("Distância do centro da hitbox à borda da frente do gato")]

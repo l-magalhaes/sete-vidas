@@ -1,5 +1,6 @@
 using System.IO;
 using SeteVidas.Abilities;
+using SeteVidas.Classes;
 using SeteVidas.Combat;
 using SeteVidas.Core;
 using SeteVidas.Player;
@@ -80,6 +81,7 @@ namespace SeteVidas.EditorTools
 
             // O prefab é sempre gerado de novo a partir do código (os valores ajustáveis ficam nos
             // ScriptableObjects, que são preservados). Não edite o prefab à mão.
+            assets.Classes = ClassSetup.CreateClassAssets(assets.Daggers); // Ladino e Paladino (Fase 5)
             BuildPrefab(assets, sprites);
 
             AssetDatabase.SaveAssets();
@@ -101,6 +103,7 @@ namespace SeteVidas.EditorTools
             public WallClimbSettings Climb;
             public MeleeAttackSettings Daggers;
             public StealthSettings Stealth;
+            public ClassSetup.ClassAssets Classes;
             public PhysicsMaterial2D Material;
             public InputActionAsset Controls;
         }
@@ -275,6 +278,20 @@ namespace SeteVidas.EditorTools
             var combat = root.AddComponent<CombatController>();
             var stealth = root.AddComponent<StealthController>();
             var health = root.AddComponent<PlayerHealth>();
+            var classes = root.AddComponent<ClassManager>();
+            var daggersAbility = root.AddComponent<MeleeWeaponAbility>();
+            var hammerAbility = root.AddComponent<MeleeWeaponAbility>();
+            root.AddComponent<ClassSwitchFeedback>();
+            SetArray(classes, "classes", assets.Classes.Rogue, assets.Classes.Paladin);
+            SetRef(classes, "input", reader);
+            SetRef(classes, "combat", combat);
+            SetEnum(daggersAbility, "forClass", (int)CharacterClass.Rogue);
+            SetEnum(hammerAbility, "forClass", (int)CharacterClass.Paladin);
+            foreach (var a in new[] { daggersAbility, hammerAbility })
+            {
+                SetRef(a, "combat", combat);
+                SetRef(a, "classes", classes);
+            }
 
             SetRef(reader, "actions", controls);
             SetRef(controller, "settings", settings);
@@ -308,6 +325,7 @@ namespace SeteVidas.EditorTools
             SetRef(visual, "wallClimb", climb);
             SetRef(visual, "combat", combat);
             SetRef(visual, "health", health);
+            SetRef(visual, "classes", classes);
             SetArray(visual, "run", sprites.Run1, sprites.Run2);
             SetArray(visual, "climb", sprites.Climb1, sprites.Climb2);
             SetArray(visual, "slash", sprites.Slash1, sprites.Slash2);
@@ -320,6 +338,15 @@ namespace SeteVidas.EditorTools
             slashRenderer.sortingOrder = 6;
             slashRenderer.enabled = false;
             SetRef(visual, "slashRenderer", slashRenderer);
+
+            // Camada da classe (marreta etc.): filho do Visual, desenhada por cima do gato
+            var overlayGo = new GameObject("ClassOverlay");
+            overlayGo.transform.SetParent(visualGo.transform, false);
+            overlayGo.layer = root.layer;
+            var overlay = overlayGo.AddComponent<SpriteRenderer>();
+            overlay.sortingOrder = 6;
+            overlay.enabled = false;
+            SetRef(visual, "classOverlay", overlay);
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             Object.DestroyImmediate(root);
@@ -350,6 +377,19 @@ namespace SeteVidas.EditorTools
             prop.arraySize = values.Length;
             for (int i = 0; i < values.Length; i++)
                 prop.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void SetEnum(Object target, string field, int value)
+        {
+            var so = new SerializedObject(target);
+            var prop = so.FindProperty(field);
+            if (prop == null)
+            {
+                Debug.LogError($"[Sete Vidas] Campo {field} não encontrado em {target.GetType().Name}.");
+                return;
+            }
+            prop.enumValueIndex = value;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
