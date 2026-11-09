@@ -83,7 +83,7 @@ namespace SeteVidas.Dialogue
             _index = 0;
             _openedFrame = Time.frameCount;
             _unlockPending = false;
-            if (_input != null) _input.GameplayLocked = true;
+            if (_input != null) _input.SetLock(this, true);
             if (!IsOpen) _savedTimeScale = Time.timeScale > 0f ? Time.timeScale : 1f;
             Time.timeScale = 0f;
             IsOpen = true;
@@ -115,7 +115,7 @@ namespace SeteVidas.Dialogue
                 // Libera o controle só no frame seguinte ao fechamento: o E que fechou não reabre a conversa
                 if (_unlockPending && Time.frameCount > _closedFrame)
                 {
-                    if (_input != null) _input.GameplayLocked = false;
+                    if (_input != null) _input.SetLock(this, false);
                     _unlockPending = false;
                 }
                 return;

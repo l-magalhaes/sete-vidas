@@ -31,6 +31,17 @@ namespace SeteVidas.UI
             image.enabled = c.a > 0.001f;
         }
 
+        /// <summary>Clarão colorido (maldição, relâmpago): sobe até <paramref name="peak"/> e some. Depois volta a ser preto.</summary>
+        public IEnumerator Flash(Color color, float peak, float up, float down)
+        {
+            if (image == null) yield break;
+            image.color = new Color(color.r, color.g, color.b, 0f);
+            yield return FadeTo(peak, up);
+            yield return FadeTo(0f, down);
+            image.color = new Color(0f, 0f, 0f, 0f);
+            image.enabled = false;
+        }
+
         public IEnumerator FadeTo(float alpha, float duration)
         {
             float from = Alpha;

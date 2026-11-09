@@ -127,7 +127,7 @@ namespace SeteVidas.Tests
         {
             var data = SaveStore.Read(_path, out var result);
             Assert.AreEqual(SaveStore.LoadResult.NewGame, result);
-            Assert.AreEqual(1, data.heartsRecovered);
+            Assert.AreEqual(7, data.heartsRecovered, "Prólogo: o Ladino começa com as 7 vidas");
             CollectionAssert.AreEqual(new[] { "Rogue" }, data.unlockedClasses);
             Assert.AreEqual("", data.lastSanctuaryId);
         }
@@ -142,7 +142,7 @@ namespace SeteVidas.Tests
             var data = SaveStore.Read(_path, out var result);
 
             Assert.AreEqual(SaveStore.LoadResult.Recovered, result);
-            Assert.AreEqual(1, data.heartsRecovered);
+            Assert.AreEqual(7, data.heartsRecovered);
             Assert.IsTrue(File.Exists(_path + ".corrupt"), "O arquivo ruim deve ser guardado para análise");
         }
 

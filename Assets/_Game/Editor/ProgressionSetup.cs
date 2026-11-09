@@ -149,6 +149,7 @@ namespace SeteVidas.EditorTools
             iso.ApplyModifiedPropertiesWithoutUndo();
 
             // Interface de diálogo (caixa, nome, retrato), abaixo da tela preta
+            BossSetup.BuildBossBar(root); // barra de vida do chefão (topo)
             DialogueSetup.BuildDialogueUi(root);
 
             // Tela preta da morte, por cima de tudo

@@ -81,9 +81,9 @@ namespace SeteVidas.Player
             spriteRenderer.color = Color.Lerp(Color.white, _flashColor, flash);
 
             // Morto: deitado de lado. Invencível depois de tomar dano: pisca
-            bool dead = health != null && health.IsDead;
+            bool dead = health != null && (health.IsDead || health.IsCollapsed);
             spriteRenderer.transform.localRotation = dead ? Quaternion.Euler(0f, 0f, facing * 90f) : Quaternion.identity;
-            spriteRenderer.enabled = dead || health == null || !health.IsInvulnerable || ((int)(Time.time * 20f) & 1) == 0;
+            spriteRenderer.enabled = dead || health == null || !health.IsInvulnerable || health.IsCollapsed || ((int)(Time.time * 20f) & 1) == 0;
 
             UpdateOverlay(attacking, dead);
             UpdateSlash();

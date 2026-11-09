@@ -5,7 +5,7 @@
 Errar custa tempo, nunca progresso. O jogador sente o peso de cada hit (com 1 coração, o 2º golpe mata), mas sabe que corações e classes recuperados são para sempre. Descansar no santuário é um momento de alívio: vida cheia e jogo salvo.
 
 ## Regras — vida
-1. **Vida máxima em hits = corações recuperados × 2** (GDD §14; o §4.2 foi corrigido para dizer o mesmo). Novo jogo: 1 coração = 2 hits.
+1. **Vida máxima em hits = corações recuperados × 2** (GDD §14; o §4.2 foi corrigido para dizer o mesmo). **Novo jogo: 7 corações = 14 hits** (prólogo: as 7 vidas do Ladino). O tomo amaldiçoado apaga 6 (sobra 1 = 2 hits); cada vínculo devolve um (ver `chefe-golden.md`).
 2. Cada golpe inimigo comum tira **1 hit**.
 3. Depois de tomar dano: recuo curto para longe do atacante (solta borda e parede) e **invencibilidade de 1 s** com o sprite piscando. Dois golpes no mesmo instante contam 1 hit.
 4. **HUD:** os 7 corações no canto superior esquerdo. Recuperados: **cheio** (2 hits), **meio** (1) ou **vazio** (0). Não recuperados: **escurecidos com rachadura**.
@@ -56,7 +56,7 @@ Errar custa tempo, nunca progresso. O jogador sente o peso de cada hit (com 1 co
 - Depuração: no Inspector do `PlayerHealth` (menu ⋮) há "+1 coração" e "tomar 1 hit". Menu **Tools > Sete Vidas > Save** apaga o save ou abre a pasta dele.
 
 ## Critérios de aceite
-- Dado um jogo novo, então o HUD mostra 1 coração cheio e 6 escurecidos.
+- Dado um jogo novo, então o HUD mostra 7 corações cheios. Depois da maldição do tomo, 1 coração e 6 escurecidos.
 - Dado o gato com 1 coração, quando leva 1 golpe, então o coração fica pela metade e ele pisca por 1 s; quando leva o 2º (depois de 1 s), então morre.
 - Dado que o gato descansou no santuário de x 119,5, quando morre em qualquer lugar, então volta nele com vida cheia e a Sentinela volta a patrulhar.
 - Dado que o gato descansou e o jogo foi fechado, quando o Play é apertado de novo, então ele começa no mesmo santuário.

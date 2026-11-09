@@ -21,7 +21,16 @@ namespace SeteVidas.Player
         /// Diálogo aberto (ou cutscene): todas as leituras de jogo devolvem "nada apertado".
         /// Só <see cref="AdvanceDialoguePressedThisFrame"/> continua funcionando.
         /// </summary>
-        public bool GameplayLocked { get; set; }
+        public bool GameplayLocked => _locks.Count > 0;
+        readonly System.Collections.Generic.HashSet<object> _locks = new System.Collections.Generic.HashSet<object>();
+
+        /// <summary>Trava ou destrava o controle em nome de <paramref name="owner"/> (diálogo, cena). Só destrava quando ninguém mais trava.</summary>
+        public void SetLock(object owner, bool locked)
+        {
+            if (owner == null) return;
+            if (locked) _locks.Add(owner);
+            else _locks.Remove(owner);
+        }
 
         /// <summary>E, Espaço ou ataque: avança o diálogo. Ignora o bloqueio.</summary>
         public bool AdvanceDialoguePressedThisFrame =>

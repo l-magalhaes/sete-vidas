@@ -30,6 +30,8 @@ namespace SeteVidas.Dialogue
         public string ScriptId = "D-";
         [Tooltip("Conversa obrigatória (limite de 6 caixas)")]
         public bool Required = true;
+        [Tooltip("Versão do texto. O setup só reescreve um asset existente se a revisão do código for maior")]
+        public int Revision = 1;
         public List<DialogueLine> Lines = new List<DialogueLine>();
 
         /// <summary>Problemas de tamanho (vazio = tudo certo). Usado pelos testes.</summary>

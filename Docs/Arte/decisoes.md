@@ -26,6 +26,9 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Interface de diálogo: caixa de pergaminho #e9dcb8 com contorno #3b2a1e e cantos chanfrados (9-slice), placa de madeira #6b4a2b com filete dourado, moldura dourada do retrato. Escala inteira (1 pixel = 1 unidade da tela 480×270) | [PROPOSTA] | Toda a UI de texto |
 | 09/11/2026 | Retratos 48×48: gato (neutro e irônico, com o lenço do Clã das Sombras) olhando para a direita; Golden (orelhas caídas, gola de armadura) olhando para a esquerda | [PROPOSTA] | Diálogos |
 | 09/11/2026 | Fonte de texto provisória (embutida do Unity) até escolher uma fonte pixel com acentos | [PROPOSTA] | Diálogos, placas |
+| 09/11/2026 | Golden chefão 40×40: mesmo corpo do vínculo com a marreta em 8 posturas (parado, andando, erguida, golpe, agachado para saltar, no ar, ajoelhado curando, invocando raios) | [PROPOSTA] | Leitura dos golpes do chefe |
+| 09/11/2026 | Relâmpago: aviso = coluna clara piscando cada vez mais rápido; raio = núcleo branco em zigue-zague com bordas amarelas. Cura = anel dourado pulsando | [PROPOSTA] | Legibilidade dos ataques |
+| 09/11/2026 | Tomo corrompido 14×12: capa roxa #5b2a6e com runas verde-ácido #8fd14f (cores exclusivas da praga) e um olho; grade de ferro 16×64; pedestal de pedra | [PROPOSTA] | Sala do tomo |
 
 ## Já configurado na Fase 0
 

@@ -32,6 +32,7 @@ namespace SeteVidas.Tests
             var health = PlayerHealth.Active;
             var input = health.GetComponent<PlayerInputReader>();
 
+            health.ApplyCurse(1); // depois do tomo: 1 coração
             golden.Interact(health);
             Assert.IsTrue(runner.IsOpen, "E perto do Golden abre a conversa");
             Assert.AreEqual(0f, Time.timeScale, "O jogo pausa durante a conversa");
@@ -74,6 +75,7 @@ namespace SeteVidas.Tests
             Assert.IsNotNull(runner, "HUD sem DialogueRunner. Rode Tools > Sete Vidas > 9");
             var golden = Object.FindAnyObjectByType<CompanionBond>();
             var health = PlayerHealth.Active;
+            health.ApplyCurse(1);
             golden.CompleteBond(health);
 
             golden.Interact(health);

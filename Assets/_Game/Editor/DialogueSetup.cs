@@ -39,42 +39,30 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>
-        /// Cria os falantes e as conversas do MVP. Conversas já existentes são preservadas
-        /// (edite o texto direto no asset; o setup não sobrescreve).
+        /// Cria os falantes e as conversas do Golden. Conversas existentes são preservadas, salvo quando o roteiro
+        /// mudou (revisão maior no código). Textos de referência: Docs/Narrativa/dialogos-mvp.md.
         /// </summary>
         public static GoldenDialogues CreateDialogueAssets()
         {
-            Directory.CreateDirectory(DataFolder + "/Speakers");
-            Directory.CreateDirectory(PortraitArt);
-            AssetDatabase.Refresh();
-
-            var cat = Speaker("Gato", "Gato", SpeakerProfile.ScreenSide.Left, new Color32(0xc9, 0xd6, 0xff, 0xff), 1.35f,
-                Portrait("portrait_cat_neutral", CatFace.Neutral));
-            if (cat.Expressions.Count == 0)
-            {
-                cat.Expressions.Add(new SpeakerProfile.Expression { Key = "ironico", Portrait = Portrait("portrait_cat_ironic", CatFace.Ironic) });
-                EditorUtility.SetDirty(cat);
-            }
-            var golden = Speaker("Golden", "Golden", SpeakerProfile.ScreenSide.Right, new Color32(0xff, 0xd8, 0x80, 0xff), 0.8f,
-                GoldenPortrait());
+            var (cat, golden) = Speakers();
 
             var result = new GoldenDialogues
             {
-                // D-GOLDEN-01
-                Bond = Conversation("D-GOLDEN-01", true,
-                    (golden, "", "Ainda respira, ladrãozinho. Seu último coração bate fraco... mas bate."),
-                    (cat, "ironico", "Ótimo. Um cão de lata me dando sermão. Dia perfeito."),
-                    (golden, "", "Sermão nenhum. Corações não se consertam sozinhos: se refazem com laços."),
-                    (cat, "", "Laços. Claro. E você ganha o quê com isso?"),
-                    (golden, "", "Um ladrão que me deve uma. Segure firme: minha força agora é sua.")),
-                Unlock = Conversation("D-GOLDEN-01-SISTEMA", true,
+                // D-GOLDEN-01 (rev. 2): resgate depois da maldição e juramento de destruir o tomo
+                Bond = Conversation("D-GOLDEN-01", true, 2,
+                    (golden, "", "Respire, ladrãozinho. Seu último coração ainda bate... por pouco."),
+                    (cat, "ironico", "Você... me salvou? Depois da surra que eu te dei?"),
+                    (golden, "", "Quem aguenta o selo e ainda respira é forte. Força assim não se desperdiça."),
+                    (golden, "", "Jure destruir esse tomo. Em troca, minha força é sua."),
+                    (cat, "", "Juro. Não que eu tenha muita escolha.")),
+                Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 1,
                     (null, "", "Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.")),
-                // D-GOLDEN-02, em rodízio
+                // D-GOLDEN-02 (rev. 2), em rodízio: lembram o juramento
                 Idle = new[]
                 {
-                    Conversation("D-GOLDEN-02a", false, (golden, "", "Paredes rachadas não resistem a um golpe honesto.")),
-                    Conversation("D-GOLDEN-02b", false, (golden, "", "A marreta abre caminhos que nem você consegue arrombar. Use com juízo.")),
-                    Conversation("D-GOLDEN-02c", false,
+                    Conversation("D-GOLDEN-02a", false, 2, (golden, "", "Paredes rachadas não resistem a um golpe honesto.")),
+                    Conversation("D-GOLDEN-02b", false, 2, (golden, "", "O tomo ainda sussurra, não é? Não o escute. Lembre do juramento.")),
+                    Conversation("D-GOLDEN-02c", false, 2,
                         (golden, "", "Força não substitui cuidado. Volte inteiro, ladrãozinho."),
                         (cat, "ironico", "Inteiro é o que eu menos estou.")),
                 },
@@ -98,18 +86,45 @@ namespace SeteVidas.EditorTools
             return s;
         }
 
-        static DialogueDefinition Conversation(string id, bool required, params (SpeakerProfile speaker, string expression, string text)[] lines)
+        /// <summary>
+        /// Cria a conversa ou, se o asset existente tem revisão menor que <paramref name="revision"/>, reescreve o texto
+        /// (mudança de roteiro). Com a mesma revisão, o asset (e qualquer edição feita nele) fica como está.
+        /// </summary>
+        public static DialogueDefinition Conversation(string id, bool required, int revision, params (SpeakerProfile speaker, string expression, string text)[] lines)
         {
+            Directory.CreateDirectory(DataFolder);
             string path = $"{DataFolder}/{id}.asset";
             var d = AssetDatabase.LoadAssetAtPath<DialogueDefinition>(path);
-            if (d != null) return d;
-            d = ScriptableObject.CreateInstance<DialogueDefinition>();
+            if (d != null && d.Revision >= revision) return d;
+            bool isNew = d == null;
+            if (isNew) d = ScriptableObject.CreateInstance<DialogueDefinition>();
             d.ScriptId = id;
             d.Required = required;
+            d.Revision = revision;
+            d.Lines.Clear();
             foreach (var (speaker, expression, text) in lines)
                 d.Lines.Add(new DialogueLine { Speaker = speaker, Expression = expression, Text = text });
-            AssetDatabase.CreateAsset(d, path);
+            if (isNew) AssetDatabase.CreateAsset(d, path);
+            else EditorUtility.SetDirty(d);
             return d;
+        }
+
+        /// <summary>Falantes do MVP (gato e Golden), criados se faltarem.</summary>
+        public static (SpeakerProfile cat, SpeakerProfile golden) Speakers()
+        {
+            Directory.CreateDirectory(DataFolder + "/Speakers");
+            Directory.CreateDirectory(PortraitArt);
+            AssetDatabase.Refresh();
+            var cat = Speaker("Gato", "Gato", SpeakerProfile.ScreenSide.Left, new Color32(0xc9, 0xd6, 0xff, 0xff), 1.35f,
+                Portrait("portrait_cat_neutral", CatFace.Neutral));
+            if (cat.Expressions.Count == 0)
+            {
+                cat.Expressions.Add(new SpeakerProfile.Expression { Key = "ironico", Portrait = Portrait("portrait_cat_ironic", CatFace.Ironic) });
+                EditorUtility.SetDirty(cat);
+            }
+            var golden = Speaker("Golden", "Golden", SpeakerProfile.ScreenSide.Right, new Color32(0xff, 0xd8, 0x80, 0xff), 0.8f,
+                GoldenPortrait());
+            return (cat, golden);
         }
 
         // --------------------------------------------------------- interface

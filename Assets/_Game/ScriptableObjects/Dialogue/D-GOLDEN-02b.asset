@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-02b
   Required: 0
+  Revision: 2
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "A marreta abre caminhos que nem voc\xEA consegue arrombar. Use com ju\xEDzo."
+    Text: "O tomo ainda sussurra, n\xE3o \xE9? N\xE3o o escute. Lembre do juramento."

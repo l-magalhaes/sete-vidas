@@ -14,7 +14,8 @@ namespace SeteVidas.Save
         public const int CurrentVersion = 1;
 
         public int version = CurrentVersion;
-        public int heartsRecovered = 1;
+        /// <summary>Prólogo: o Ladino começa com as 7 vidas. O tomo amaldiçoado apaga 6 (sobra 1); cada vínculo devolve uma.</summary>
+        public int heartsRecovered = 7;
         public List<string> unlockedClasses = new List<string> { nameof(CharacterClass.Rogue) };
         public string activeClass = nameof(CharacterClass.Rogue);
         /// <summary>Santuário onde o gato descansou por último ("" = nenhum: usa o início da cena).</summary>

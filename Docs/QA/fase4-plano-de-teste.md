@@ -6,10 +6,10 @@ Santuários: x 3 (início) e x 119,5 (antes da Sentinela). Atalhos de depuraçã
 
 | ID | Sistema | Pré-condição | Passos | Resultado esperado | Status |
 |---|---|---|---|---|---|
-| HP-01 | HUD | Jogo novo | Play | 1 coração cheio e 6 escurecidos no canto superior esquerdo, nítidos | ☐ |
+| HP-01 | HUD | Jogo novo | Play | 7 corações cheios no canto superior esquerdo, nítidos (depois do tomo: 1 cheio e 6 escurecidos) | ☐ |
 | HP-02 | Dano | Jogo novo | Levar 1 estocada da Sentinela | Coração pela metade, "-1 hit", recuo e pisca ~1 s | ☐ |
 | HP-03 | Invencibilidade | Logo após HP-02 | Levar outro golpe em menos de 1 s | Não conta | ☐ |
-| HP-04 | Morte | Com meio coração | Levar outro golpe | Tomba, tela escurece, volta ao início (x 0,5) com vida cheia | ☐ |
+| HP-04 | Morte | Com meio coração (depois do tomo, ou ⋮ "tomar 1 hit" até sobrar 1) | Levar outro golpe | Tomba, tela escurece, volta ao início (x 0,5) com vida cheia | ☐ |
 | HP-05 | Sem controle morto | Durante a morte | Apertar teclas | Nada acontece | ☐ |
 | HP-06 | Inimigos ignoram o morto | Durante a morte | Observar a Sentinela | Não continua atacando o corpo | ☐ |
 | HP-07 | Mais corações | ⋮ "+1 coração" duas vezes | Olhar o HUD; levar 3 golpes | 3 corações; com 3 hits: cheio, meio, vazio | ☐ |

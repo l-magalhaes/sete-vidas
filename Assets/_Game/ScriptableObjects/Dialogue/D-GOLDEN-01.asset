@@ -14,19 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01
   Required: 1
+  Revision: 2
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "Ainda respira, ladr\xE3ozinho. Seu \xFAltimo cora\xE7\xE3o bate fraco... mas bate."
+    Text: "Respire, ladr\xE3ozinho. Seu \xFAltimo cora\xE7\xE3o ainda bate... por pouco."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: "\xD3timo. Um c\xE3o de lata me dando serm\xE3o. Dia perfeito."
+    Text: "Voc\xEA... me salvou? Depois da surra que eu te dei?"
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "Serm\xE3o nenhum. Cora\xE7\xF5es n\xE3o se consertam sozinhos: se refazem com la\xE7os."
+    Text: "Quem aguenta o selo e ainda respira \xE9 forte. For\xE7a assim n\xE3o se desperdi\xE7a."
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: 
+    Text: "Jure destruir esse tomo. Em troca, minha for\xE7a \xE9 sua."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
-    Text: "La\xE7os. Claro. E voc\xEA ganha o qu\xEA com isso?"
-  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
-    Text: "Um ladr\xE3o que me deve uma. Segure firme: minha for\xE7a agora \xE9 sua."
+    Text: "Juro. N\xE3o que eu tenha muita escolha."

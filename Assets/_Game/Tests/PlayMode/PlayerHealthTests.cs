@@ -39,12 +39,12 @@ namespace SeteVidas.Tests
         static DamageInfo Hit() => new DamageInfo(1, Vector2.right, DamageType.Normal, AttackAngle.Front, null);
 
         [UnityTest]
-        public IEnumerator NewGame_OneHeart_TwoHits()
+        public IEnumerator NewGame_SevenHearts_FourteenHits()
         {
             yield return Load();
-            Assert.AreEqual(1, _health.HeartsRecovered);
-            Assert.AreEqual(2, _health.MaxHits);
-            Assert.AreEqual(2, _health.CurrentHits);
+            Assert.AreEqual(7, _health.HeartsRecovered, "Prólogo: as 7 vidas do Ladino");
+            Assert.AreEqual(14, _health.MaxHits);
+            Assert.AreEqual(14, _health.CurrentHits);
         }
 
         [UnityTest]
@@ -53,7 +53,7 @@ namespace SeteVidas.Tests
             yield return Load();
             _health.TakeDamage(Hit());
             _health.TakeDamage(Hit());
-            Assert.AreEqual(1, _health.CurrentHits, "Dois golpes no mesmo instante contam como 1 hit");
+            Assert.AreEqual(_health.MaxHits - 1, _health.CurrentHits, "Dois golpes no mesmo instante contam como 1 hit");
             Assert.IsTrue(_health.IsInvulnerable);
         }
 
@@ -61,6 +61,7 @@ namespace SeteVidas.Tests
         public IEnumerator Rest_Saves_ThenDeath_RespawnsThereWithFullHealth()
         {
             yield return Load();
+            _health.ApplyCurse(1); // depois do tomo: 1 coração (2 hits)
             var sanctuary = Sanctuary.Find(SanctuaryB);
             sanctuary.Rest(_health);
 
@@ -115,6 +116,8 @@ namespace SeteVidas.Tests
         public IEnumerator HalfHeart_Heals1Hit_StaysWhenFull_NeverExceeds()
         {
             yield return Load();
+            _health.ApplyCurse(1);   // 1 coração...
+            _health.RestoreFull();   // ...cheio (2 hits)
             var sentinel = Object.FindAnyObjectByType<EnemyAI>();
             var drop = sentinel.TryDropHeart(0f).GetComponent<HeartPickup>();
 

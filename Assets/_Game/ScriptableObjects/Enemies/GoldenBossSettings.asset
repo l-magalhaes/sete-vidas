@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 795a58294ecdee148905a70f6177f4cf, type: 3}
+  m_Name: GoldenBossSettings
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Enemies.Boss.GoldenBossSettings
+  MaxHealth: 30
+  SecondPhaseAt: 0.5
+  IdleBetween: 0.7
+  WalkSpeed: 2.5
+  WalkTime: 1.2
+  BodySize: {x: 1.4, y: 2}
+  SwingRange: 1.8
+  SwingWindup: 0.6
+  SwingActive: 0.15
+  SwingRecovery: 0.7
+  SwingHitbox: {x: 1.8, y: 1.4}
+  LeapWindup: 0.5
+  LeapAirTime: 0.9
+  LeapHeight: 5
+  LeapImpactHalfWidth: 1.6
+  LeapRecovery: 0.8
+  HealBelow: 0.7
+  HealDuration: 4
+  HealPerSecond: 2
+  HealInterruptDamage: 5
+  StaggerTime: 1.5
+  HealCooldown: 15
+  LightningCastTime: 0.8
+  LightningWaves: 3
+  StrikesPerWave: 4
+  LightningTelegraph: 1.2
+  LightningStrikeTime: 0.2
+  LightningWaveGap: 0.4
+  LightningWidth: 1.4
+  LightningSafeGap: 2.5
+  LightningCooldown: 9
+  Damage: 1

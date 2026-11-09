@@ -62,6 +62,12 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 2. E perto de um NPC abre a conversa: retrato de quem fala (gato à esquerda, NPCs à direita), texto letra por letra; E/Espaço/clique avançam. O jogo pausa enquanto a conversa está aberta.
 3. Para mudar um texto, edite o asset da conversa no Inspector. Spec: `Docs/Design/dialogo.md`. Plano de teste: `Docs/QA/dialogo-plano-de-teste.md`.
 
+## Chefão: Golden, arena e tomo
+
+1. Menu **Tools > Sete Vidas > 10. Chefão: Golden, arena e tomo**. Cria o Golden chefão, os relâmpagos, as grades, o tomo, a barra de vida no HUD e recria a `Playground` com a arena (x 180–210) e a sala do tomo (x 213–218).
+2. **Novo jogo começa com 7 corações.** Pegar o tomo apaga 6; o juramento com o Golden devolve o 2º e dá o Paladino.
+3. Spec: `Docs/Design/chefe-golden.md`. Plano de teste: `Docs/QA/chefe-plano-de-teste.md`. Golpes do chefe para teste: menu ⋮ do `GoldenBoss` no Inspector.
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:

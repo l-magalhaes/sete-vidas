@@ -110,8 +110,6 @@ namespace SeteVidas.EditorTools
         {
             var wall = AssetDatabase.LoadAssetAtPath<GameObject>(WallPrefabPath);
             if (wall == null) wall = CreateWallPrefab();
-            var golden = AssetDatabase.LoadAssetAtPath<GameObject>(GoldenPrefabPath);
-            if (golden == null) golden = CreateGoldenPrefab();
 
             var parent = new GameObject("PaladinSection");
             SceneManager.MoveGameObjectToScene(parent, scene);
@@ -122,10 +120,6 @@ namespace SeteVidas.EditorTools
             var so = new SerializedObject(w.GetComponent<BreakableWall>());
             so.FindProperty("wallId").stringValue = "playground_tunel";
             so.ApplyModifiedPropertiesWithoutUndo();
-
-            var g = (GameObject)PrefabUtility.InstantiatePrefab(golden, parent.transform);
-            g.name = "Golden (vínculo do Paladino)";
-            g.transform.position = new Vector3(168.5f, 5f, 0f);
 
             var sign = new GameObject("Placa: atalho");
             sign.transform.SetParent(parent.transform, false);

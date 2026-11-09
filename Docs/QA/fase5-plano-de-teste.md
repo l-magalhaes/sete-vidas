@@ -1,5 +1,7 @@
 # Plano de teste — Fase 5 (troca de classe e o Paladino)
 
+> **Atualizado:** o Golden agora é o chefão da arena e o vínculo acontece depois do tomo. Os casos GLD-01 a GLD-05 foram substituídos pelo [plano do chefe](chefe-plano-de-teste.md) (BOS e TOM).
+
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080.
 Antes: rode **Tools > Sete Vidas > 8. Fase 5** e **Tools > Sete Vidas > Save > Apagar save** (jogo novo).
 Trecho I: x 154–177. Para ir direto, durante o Play mude o **Position X** do `Player` para **153**. Parede rachada em x 160 (dentro do túnel); Golden em cima da laje, em x 168,5 (suba agarrando a borda de x 156).

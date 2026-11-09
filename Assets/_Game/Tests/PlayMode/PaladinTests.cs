@@ -69,6 +69,7 @@ namespace SeteVidas.Tests
             Assert.AreEqual(wallHealth, _wall.Health, "Adagas não arranham a parede rachada");
 
             // 2) Vínculo: +1 coração e Paladino
+            _health.ApplyCurse(1); // o tomo apaga 6 das 7 vidas
             _golden.CompleteBond(_health);
             Assert.AreEqual(2, _health.HeartsRecovered, "O vínculo recupera o 2º coração");
             Assert.AreEqual(4, _health.MaxHits);
@@ -95,6 +96,7 @@ namespace SeteVidas.Tests
         public IEnumerator BrokenWall_StaysBroken_AfterReopening()
         {
             yield return Load();
+            _health.ApplyCurse(1); // o tomo apaga 6 das 7 vidas
             _golden.CompleteBond(_health);
             _classes.TrySwitch(CharacterClass.Paladin);
             HitWall();
@@ -123,6 +125,7 @@ namespace SeteVidas.Tests
         public IEnumerator ClimbingStillWorks_WithPaladinActive()
         {
             yield return Load();
+            _health.ApplyCurse(1); // o tomo apaga 6 das 7 vidas
             _golden.CompleteBond(_health);
             Assert.IsTrue(_classes.TrySwitch(CharacterClass.Paladin));
             var climb = _classes.GetComponent<WallClimbAbility>();
@@ -134,6 +137,7 @@ namespace SeteVidas.Tests
         public IEnumerator Death_KeepsClassesAndHearts()
         {
             yield return Load();
+            _health.ApplyCurse(1); // o tomo apaga 6 das 7 vidas
             _golden.CompleteBond(_health);
             _classes.TrySwitch(CharacterClass.Paladin);
 

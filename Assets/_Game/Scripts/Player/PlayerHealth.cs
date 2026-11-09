@@ -31,6 +31,8 @@ namespace SeteVidas.Player
         public int MaxHits => HealthRules.MaxHits(HeartsRecovered);
         public bool IsDead { get; private set; }
         public bool IsInvulnerable => Time.time < _invulnerableUntil;
+        /// <summary>Caído depois da maldição do tomo (sem controle, deitado), até o Golden o salvar.</summary>
+        public bool IsCollapsed { get; private set; }
 
         /// <summary>Vida ou corações mudaram (HUD).</summary>
         public event Action Changed;
@@ -62,7 +64,7 @@ namespace SeteVidas.Player
 
         public void TakeDamage(in DamageInfo info)
         {
-            if (IsDead || IsInvulnerable || info.Amount <= 0) return;
+            if (IsDead || IsCollapsed || IsInvulnerable || info.Amount <= 0) return;
             var s = _player.Settings;
 
             CurrentHits = HealthRules.ApplyDamage(CurrentHits, info.Amount);
@@ -141,6 +143,38 @@ namespace SeteVidas.Player
             if (data.scene != gameObject.scene.name) return false;
             sanctuary = Sanctuary.Find(data.lastSanctuaryId);
             return sanctuary != null;
+        }
+
+        // ---------------------------------------------------------- maldição
+
+        /// <summary>
+        /// Muda os corações recuperados (maldição do tomo: 7 → 1). <paramref name="save"/> grava na hora.
+        /// A vida atual nunca passa do novo máximo.
+        /// </summary>
+        public void SetHeartsRecovered(int hearts, bool save)
+        {
+            var data = SaveManager.Data;
+            data.heartsRecovered = HealthRules.ClampHearts(hearts);
+            if (save) SaveManager.Save();
+            HeartsRecovered = data.heartsRecovered;
+            CurrentHits = Mathf.Min(CurrentHits, MaxHits);
+            Changed?.Invoke();
+        }
+
+        /// <summary>Maldição completa (atalho para testes e para a cena do tomo): sobra <paramref name="remainingHearts"/> e meio coração de vida.</summary>
+        public void ApplyCurse(int remainingHearts = 1)
+        {
+            SetHeartsRecovered(remainingHearts, save: true);
+            CurrentHits = 1; // quase morto
+            Changed?.Invoke();
+        }
+
+        /// <summary>Caído (deitado, sem dano) durante a cena da maldição.</summary>
+        public void SetCollapsed(bool collapsed)
+        {
+            IsCollapsed = collapsed;
+            if (collapsed) _invulnerableUntil = float.MaxValue;
+            else _invulnerableUntil = Time.time + 1f;
         }
 
         // ------------------------------------------------------- depuração

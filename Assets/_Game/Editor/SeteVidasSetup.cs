@@ -408,12 +408,12 @@ namespace SeteVidas.EditorTools
             CreateTilemap(grid, "Foreground", null, 10, false);
 
             // Fundo decorativo (sem colisão)
-            Fill(background, tiles.Background, -4, 0, 177, 12);
+            Fill(background, tiles.Background, -4, 0, 220, 13);
 
             // Chão contínuo (2 tiles de espessura) e paredes de limite
-            Fill(ground, tiles.Ground, -6, -2, 179, -1);
+            Fill(ground, tiles.Ground, -6, -2, 222, -1);
             Fill(ground, tiles.Ground, -6, 0, -5, 14);   // limite esquerdo
-            Fill(ground, tiles.Ground, 178, 0, 179, 14); // limite direito
+            Fill(ground, tiles.Ground, 221, 0, 222, 16); // limite direito
 
             // A) Spawn: x -4..6 livre.
             // B) Degraus de 1 a 6 tiles de altura, 2 de largura, a cada 4 tiles.
@@ -468,8 +468,18 @@ namespace SeteVidas.EditorTools
             // I) Paladino (Fase 5): x 154..177. Túnel embaixo de uma laje (x 156..177, y 4, topo em 5; 4 tiles de
             //    altura livre; encosta no limite direito, sem fresta). A parede rachada (x 160, y 0..3) fecha o túnel: é vista antes de ter a marreta.
             //    O Golden fica em cima da laje (x 168,5): sobe agarrando a borda de 5 tiles em x 156.
-            Fill(ground, tiles.Ground, 156, 4, 177, 4); // até encostar no limite (x 178): sem fresta para entrar por cima
+            Fill(ground, tiles.Ground, 156, 4, 220, 4); // laje contínua até a arena (sem fresta para cair no túnel)
+            Fill(ground, tiles.Ground, 178, 0, 220, 3); // maciço embaixo da arena: o túnel termina em x 177
             ClassSetup.PlaceInPlayground(scene);
+
+            // J) Chefão (Golden): arena x 180..210 (chão em 5, teto em 14) e sala do tomo x 213..218.
+            //    Passagens de 4 tiles (y 5..8) com grades em x 179 (entrada) e x 211 (tomo).
+            Fill(ground, tiles.Ground, 178, 9, 179, 14);  // parede da entrada, acima da grade
+            Fill(ground, tiles.Ground, 180, 14, 210, 14); // teto da arena
+            Fill(ground, tiles.Ground, 211, 9, 212, 14);  // parede do tomo, acima da grade
+            Fill(ground, tiles.Ground, 213, 10, 220, 14); // teto da sala do tomo
+            Fill(ground, tiles.Ground, 219, 5, 220, 9);   // fundo da sala do tomo
+            BossSetup.PlaceInPlayground(scene);
 
             var spawn = new GameObject("PlayerSpawn");
             spawn.transform.position = new Vector3(0.5f, 1f, 0f);

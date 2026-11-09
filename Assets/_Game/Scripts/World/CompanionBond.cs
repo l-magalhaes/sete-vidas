@@ -81,17 +81,35 @@ namespace SeteVidas.World
 
             if (!IsBonded)
             {
-                runner.Play(bondDialogue, input, () =>
-                {
-                    CompleteBond(player);
-                    if (unlockDialogue != null) runner.Play(unlockDialogue, input);
-                });
+                StartBond(player, null);
                 return;
             }
 
             if (idleDialogues.Length == 0) return;
             runner.Play(idleDialogues[_idleIndex % idleDialogues.Length], input);
             _idleIndex++;
+        }
+
+        /// <summary>
+        /// Conversa de vínculo: ao terminar, concede coração e classe e mostra a dica de troca.
+        /// <paramref name="onDone"/> roda depois da última linha (a cena do tomo usa para levantar o gato).
+        /// </summary>
+        public void StartBond(PlayerHealth player, Action onDone)
+        {
+            var runner = DialogueRunner.Active;
+            var input = player != null ? player.GetComponent<PlayerInputReader>() : null;
+            if (runner == null || bondDialogue == null)
+            {
+                CompleteBond(player);
+                onDone?.Invoke();
+                return;
+            }
+            runner.Play(bondDialogue, input, () =>
+            {
+                CompleteBond(player);
+                if (unlockDialogue != null) runner.Play(unlockDialogue, input, onDone);
+                else onDone?.Invoke();
+            });
         }
 
         /// <summary>Concede coração e classe e grava o save (também usado pelos testes).</summary>

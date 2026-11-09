@@ -26,7 +26,8 @@ O jogador vê uma parede rachada que não consegue quebrar, ganha o Paladino num
 15. Ao quebrar: some, deixa entulho, faz um barulho alto (raio 8) e **grava a flag `parede_quebrada_<id>` no save na hora**. Continua quebrada para sempre, mesmo depois de reabrir o jogo.
 16. Visual: a mesma pedra do chão com **rachaduras de brilho dourado** (linguagem do gate do Paladino). Deve aparecer **antes** de o jogador ter a marreta.
 
-## Regras — vínculo placeholder (Golden)
+## Regras — vínculo (Golden)
+> **Atualizado:** o Golden agora é o chefão que guarda o tomo. O vínculo acontece depois da luta, quando o tomo amaldiçoa o gato (ver `chefe-golden.md`). As regras abaixo continuam valendo para a conversa de vínculo.
 17. Perto do Golden aparece "E: falar". E abre a conversa D-GOLDEN-01 na interface de diálogo (`Docs/Design/dialogo.md`).
 18. Ao fim da conversa: **+1 coração** (2º), **Paladino desbloqueado**, save gravado na hora, e a linha de sistema "Aperte 2 (ou Q/R)".
 19. A conversa pausa o jogo e trava o controle até o fim (não dá para sair no meio).
