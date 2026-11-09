@@ -23,6 +23,9 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Ícones de classe 16×16: Ladino (adagas cruzadas em azul-noite), Paladino (marreta em dourado escuro) | [PROPOSTA] | HUD |
 | 09/11/2026 | Parede rachada 16×64: pedra do chão + rachadura em zigue-zague dourada (#ffd34d / #8a621e); danificada com galhos | [PROPOSTA] | Gate do Paladino |
 | 09/11/2026 | Golden placeholder 24×34: cão dourado de armadura, tabardo dourado, orelha caída, marreta apoiada | [PROPOSTA] | Vínculo do Paladino |
+| 09/11/2026 | Interface de diálogo: caixa de pergaminho #e9dcb8 com contorno #3b2a1e e cantos chanfrados (9-slice), placa de madeira #6b4a2b com filete dourado, moldura dourada do retrato. Escala inteira (1 pixel = 1 unidade da tela 480×270) | [PROPOSTA] | Toda a UI de texto |
+| 09/11/2026 | Retratos 48×48: gato (neutro e irônico, com o lenço do Clã das Sombras) olhando para a direita; Golden (orelhas caídas, gola de armadura) olhando para a esquerda | [PROPOSTA] | Diálogos |
+| 09/11/2026 | Fonte de texto provisória (embutida do Unity) até escolher uma fonte pixel com acentos | [PROPOSTA] | Diálogos, placas |
 
 ## Já configurado na Fase 0
 

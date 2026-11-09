@@ -193,39 +193,17 @@ namespace SeteVidas.EditorTools
 
             var prompt = DamagePopup.CreateText(Child(root, "Prompt", new Vector3(0f, 2.5f, 0f)), "E: falar", new Color32(0xff, 0xe9, 0xa8, 0xff), 30);
             prompt.gameObject.SetActive(false);
-            var speech = DamagePopup.CreateText(Child(root, "Fala", new Vector3(0f, 2.6f, 0f)), "", Color.white, 26);
-            speech.gameObject.SetActive(false);
 
             var bond = root.AddComponent<CompanionBond>();
             var so = new SerializedObject(bond);
             so.FindProperty("prompt").objectReferenceValue = prompt;
-            so.FindProperty("speech").objectReferenceValue = speech;
-            // D-GOLDEN-01 e D-GOLDEN-02 (Docs/Narrativa/dialogos-mvp.md)
-            var lines = new[]
-            {
-                ("GOLDEN", "Ainda respira, ladrãozinho. Seu último coração bate fraco... mas bate."),
-                ("GATO", "Ótimo. Um cão de lata me dando sermão. Dia perfeito."),
-                ("GOLDEN", "Sermão nenhum. Corações não se consertam sozinhos: se refazem com laços."),
-                ("GATO", "Laços. Claro. E você ganha o quê com isso?"),
-                ("GOLDEN", "Um ladrão que me deve uma. Segure firme: minha força agora é sua."),
-            };
-            var bondLines = so.FindProperty("bondLines");
-            bondLines.arraySize = lines.Length;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                var el = bondLines.GetArrayElementAtIndex(i);
-                el.FindPropertyRelative("Speaker").stringValue = lines[i].Item1;
-                el.FindPropertyRelative("Text").stringValue = lines[i].Item2;
-            }
-            var idle = new[]
-            {
-                "Paredes rachadas não resistem a um golpe honesto.",
-                "A marreta abre caminhos que nem você consegue arrombar. Use com juízo.",
-                "Força não substitui cuidado. Volte inteiro, ladrãozinho.",
-            };
-            var idleProp = so.FindProperty("idleLines");
-            idleProp.arraySize = idle.Length;
-            for (int i = 0; i < idle.Length; i++) idleProp.GetArrayElementAtIndex(i).stringValue = idle[i];
+            // Conversas na interface de diálogo (D-GOLDEN-01 e D-GOLDEN-02, ScriptableObjects/Dialogue)
+            var dialogues = DialogueSetup.CreateDialogueAssets();
+            so.FindProperty("bondDialogue").objectReferenceValue = dialogues.Bond;
+            so.FindProperty("unlockDialogue").objectReferenceValue = dialogues.Unlock;
+            var idleProp = so.FindProperty("idleDialogues");
+            idleProp.arraySize = dialogues.Idle.Length;
+            for (int i = 0; i < dialogues.Idle.Length; i++) idleProp.GetArrayElementAtIndex(i).objectReferenceValue = dialogues.Idle[i];
             so.ApplyModifiedPropertiesWithoutUndo();
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, GoldenPrefabPath);

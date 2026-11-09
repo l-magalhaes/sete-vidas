@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-GOLDEN-01
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-GOLDEN-01
+  Required: 1
+  Lines:
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: 
+    Text: "Ainda respira, ladr\xE3ozinho. Seu \xFAltimo cora\xE7\xE3o bate fraco... mas bate."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "\xD3timo. Um c\xE3o de lata me dando serm\xE3o. Dia perfeito."
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: 
+    Text: "Serm\xE3o nenhum. Cora\xE7\xF5es n\xE3o se consertam sozinhos: se refazem com la\xE7os."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: "La\xE7os. Claro. E voc\xEA ganha o qu\xEA com isso?"
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: 
+    Text: "Um ladr\xE3o que me deve uma. Segure firme: minha for\xE7a agora \xE9 sua."

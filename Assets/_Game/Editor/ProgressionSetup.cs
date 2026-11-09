@@ -148,6 +148,9 @@ namespace SeteVidas.EditorTools
             iso.FindProperty("icon").objectReferenceValue = iconImg;
             iso.ApplyModifiedPropertiesWithoutUndo();
 
+            // Interface de diálogo (caixa, nome, retrato), abaixo da tela preta
+            DialogueSetup.BuildDialogueUi(root);
+
             // Tela preta da morte, por cima de tudo
             var fadeRt = UiChild(root, "Fader");
             fadeRt.anchorMin = Vector2.zero;

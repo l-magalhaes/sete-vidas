@@ -196,110 +196,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!1 &6598564715395927467
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6521188332269861274}
-  - component: {fileID: 540406199064299842}
-  - component: {fileID: 877823973060641142}
-  m_Layer: 14
-  m_Name: Fala
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &6521188332269861274
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6598564715395927467}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 885778367515036887}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &540406199064299842
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6598564715395927467}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 50
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!102 &877823973060641142
-TextMesh:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6598564715395927467}
-  m_Text: 
-  m_OffsetZ: 0
-  m_CharacterSize: 0.1
-  m_LineSpacing: 1
-  m_Anchor: 7
-  m_Alignment: 1
-  m_TabSize: 4
-  m_FontSize: 26
-  m_FontStyle: 0
-  m_RichText: 1
-  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Color:
-    serializedVersion: 2
-    rgba: 4294967295
 --- !u!1 &7976949114093843204
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,7 +229,6 @@ Transform:
   m_Children:
   - {fileID: 2527398482984978425}
   - {fileID: 7462812394125836026}
-  - {fileID: 6521188332269861274}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &122096906432590684
@@ -394,25 +289,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cb11e1c4fb6aa9408f15712a339b0a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.CompanionBond
-  companionName: Golden
   grantsClass: 1
   bondFlag: vinculo_golden
-  bondLines:
-  - Speaker: GOLDEN
-    Text: "Ainda respira, ladr\xE3ozinho. Seu \xFAltimo cora\xE7\xE3o bate fraco... mas bate."
-  - Speaker: GATO
-    Text: "\xD3timo. Um c\xE3o de lata me dando serm\xE3o. Dia perfeito."
-  - Speaker: GOLDEN
-    Text: "Serm\xE3o nenhum. Cora\xE7\xF5es n\xE3o se consertam sozinhos: se refazem com la\xE7os."
-  - Speaker: GATO
-    Text: "La\xE7os. Claro. E voc\xEA ganha o qu\xEA com isso?"
-  - Speaker: GOLDEN
-    Text: "Um ladr\xE3o que me deve uma. Segure firme: minha for\xE7a agora \xE9 sua."
-  unlockHint: Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar.
-  idleLines:
-  - "Paredes rachadas n\xE3o resistem a um golpe honesto."
-  - "A marreta abre caminhos que nem voc\xEA consegue arrombar. Use com ju\xEDzo."
-  - "For\xE7a n\xE3o substitui cuidado. Volte inteiro, ladr\xE3ozinho."
+  bondDialogue: {fileID: 11400000, guid: 39be87a6cf621ce44ba4815b76da752c, type: 2}
+  unlockDialogue: {fileID: 11400000, guid: 9487b107d8c46384f83ab76eaf8f85b6, type: 2}
+  idleDialogues:
+  - {fileID: 11400000, guid: 877390945708065459c2047fd4ad99ce, type: 2}
+  - {fileID: 11400000, guid: 683b8e39a2f7288499ae6c33c740d5ca, type: 2}
+  - {fileID: 11400000, guid: 3e97a3eb25a418b42a0bbeb4ee63b5d4, type: 2}
   prompt: {fileID: 2423921639891710531}
-  speech: {fileID: 877823973060641142}
-  idleLineSeconds: 3.5

@@ -1,7 +1,7 @@
 # Diálogos do MVP (placeholder)
 
 Limites: até ~90 caracteres e 2 linhas por caixa; até 6 caixas por conversa obrigatória.
-No jogo: o texto aparece num balão sobre quem fala; **E** avança. Afastar-se encerra a conversa (sem recompensa se ela não chegou ao fim).
+No jogo: interface de diálogo com retratos (Docs/Design/dialogo.md); **E**, Espaço ou clique avançam. Os textos ficam em `ScriptableObjects/Dialogue` (edite lá; este arquivo é a referência do roteiro).
 
 ## D-GOLDEN-01 — Vínculo do Paladino (obrigatório, placeholder da Fase 5)
 GOLDEN: Ainda respira, ladrãozinho. Seu último coração bate fraco... mas bate.
@@ -13,9 +13,11 @@ GOLDEN: Um ladrão que me deve uma. Segure firme: minha força agora é sua.
 SISTEMA: Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.
 
 ## D-GOLDEN-02 — Conversas seguintes (opcional, uma por vez, em rodízio)
+(No jogo: D-GOLDEN-02a, 02b e 02c.)
 GOLDEN: Paredes rachadas não resistem a um golpe honesto.
 GOLDEN: A marreta abre caminhos que nem você consegue arrombar. Use com juízo.
 GOLDEN: Força não substitui cuidado. Volte inteiro, ladrãozinho.
+GATO (irônico): Inteiro é o que eu menos estou.
 
 ## Ficha de voz (resumo)
 | Personagem | Voz | Nunca diria |

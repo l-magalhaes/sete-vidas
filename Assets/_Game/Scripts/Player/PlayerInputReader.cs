@@ -17,12 +17,24 @@ namespace SeteVidas.Player
         InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass;
         readonly InputAction[] _classSlots = new InputAction[7];
 
+        /// <summary>
+        /// Diálogo aberto (ou cutscene): todas as leituras de jogo devolvem "nada apertado".
+        /// Só <see cref="AdvanceDialoguePressedThisFrame"/> continua funcionando.
+        /// </summary>
+        public bool GameplayLocked { get; set; }
+
+        /// <summary>E, Espaço ou ataque: avança o diálogo. Ignora o bloqueio.</summary>
+        public bool AdvanceDialoguePressedThisFrame =>
+            (_interact != null && _interact.WasPressedThisFrame()) ||
+            (_jump != null && _jump.WasPressedThisFrame()) ||
+            (_attack != null && _attack.WasPressedThisFrame());
+
         /// <summary>Direção horizontal: -1, 0 ou 1 no teclado; contínua no analógico.</summary>
         public float MoveX
         {
             get
             {
-                if (_move == null) return 0f;
+                if (_move == null || GameplayLocked) return 0f;
                 float x = _move.ReadValue<Vector2>().x;
                 return Mathf.Abs(x) < StickDeadZone ? 0f : x;
             }
@@ -33,26 +45,27 @@ namespace SeteVidas.Player
         {
             get
             {
-                if (_move == null) return 0f;
+                if (_move == null || GameplayLocked) return 0f;
                 float y = _move.ReadValue<Vector2>().y;
                 return Mathf.Abs(y) < StickDeadZone ? 0f : y;
             }
         }
 
-        public bool JumpPressedThisFrame => _jump != null && _jump.WasPressedThisFrame();
-        public bool JumpHeld => _jump != null && _jump.IsPressed();
-        public bool CrouchHeld => _crouch != null && _crouch.IsPressed();
-        public bool CrouchPressedThisFrame => _crouch != null && _crouch.WasPressedThisFrame();
-        public bool AttackPressedThisFrame => _attack != null && _attack.WasPressedThisFrame();
-        public bool InteractPressedThisFrame => _interact != null && _interact.WasPressedThisFrame();
-        public bool NextClassPressedThisFrame => _nextClass != null && _nextClass.WasPressedThisFrame();
-        public bool PrevClassPressedThisFrame => _prevClass != null && _prevClass.WasPressedThisFrame();
+        public bool JumpPressedThisFrame => !GameplayLocked && _jump != null && _jump.WasPressedThisFrame();
+        public bool JumpHeld => !GameplayLocked && _jump != null && _jump.IsPressed();
+        public bool CrouchHeld => !GameplayLocked && _crouch != null && _crouch.IsPressed();
+        public bool CrouchPressedThisFrame => !GameplayLocked && _crouch != null && _crouch.WasPressedThisFrame();
+        public bool AttackPressedThisFrame => !GameplayLocked && _attack != null && _attack.WasPressedThisFrame();
+        public bool InteractPressedThisFrame => !GameplayLocked && _interact != null && _interact.WasPressedThisFrame();
+        public bool NextClassPressedThisFrame => !GameplayLocked && _nextClass != null && _nextClass.WasPressedThisFrame();
+        public bool PrevClassPressedThisFrame => !GameplayLocked && _prevClass != null && _prevClass.WasPressedThisFrame();
 
         /// <summary>Tecla de classe apertada neste frame: 1 a 7, ou 0 se nenhuma.</summary>
         public int ClassSlotPressedThisFrame
         {
             get
             {
+                if (GameplayLocked) return 0;
                 for (int i = 0; i < _classSlots.Length; i++)
                     if (_classSlots[i] != null && _classSlots[i].WasPressedThisFrame()) return i + 1;
                 return 0;

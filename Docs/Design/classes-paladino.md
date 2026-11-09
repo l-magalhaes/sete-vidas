@@ -27,9 +27,9 @@ O jogador vê uma parede rachada que não consegue quebrar, ganha o Paladino num
 16. Visual: a mesma pedra do chão com **rachaduras de brilho dourado** (linguagem do gate do Paladino). Deve aparecer **antes** de o jogador ter a marreta.
 
 ## Regras — vínculo placeholder (Golden)
-17. Perto do Golden aparece "E: falar". A conversa D-GOLDEN-01 (`Docs/Narrativa/dialogos-mvp.md`) avança com E.
-18. Na última caixa: **+1 coração** (2º), **Paladino desbloqueado**, save gravado na hora, e a dica "Aperte 2 (ou Q/R)".
-19. Afastar-se no meio da conversa encerra sem recompensa; falar de novo recomeça.
+17. Perto do Golden aparece "E: falar". E abre a conversa D-GOLDEN-01 na interface de diálogo (`Docs/Design/dialogo.md`).
+18. Ao fim da conversa: **+1 coração** (2º), **Paladino desbloqueado**, save gravado na hora, e a linha de sistema "Aperte 2 (ou Q/R)".
+19. A conversa pausa o jogo e trava o controle até o fim (não dá para sair no meio).
 20. Depois do vínculo, cada E mostra uma fala curta (D-GOLDEN-02, em rodízio).
 
 ## Balanceamento

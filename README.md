@@ -56,6 +56,12 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 3. Specs: `Docs/Design/classes-paladino.md`; falas em `Docs/Narrativa/dialogos-mvp.md`. Plano de teste: `Docs/QA/fase5-plano-de-teste.md`.
 4. Nova classe = um `ClassDefinition` + um componente `ClassAbility` (ver a spec).
 
+## Diálogos
+
+1. Menu **Tools > Sete Vidas > 9. Diálogos (interface com retratos)**. Cria os falantes e as conversas em `ScriptableObjects/Dialogue`, a interface de diálogo no HUD e atualiza o Golden.
+2. E perto de um NPC abre a conversa: retrato de quem fala (gato à esquerda, NPCs à direita), texto letra por letra; E/Espaço/clique avançam. O jogo pausa enquanto a conversa está aberta.
+3. Para mudar um texto, edite o asset da conversa no Inspector. Spec: `Docs/Design/dialogo.md`. Plano de teste: `Docs/QA/dialogo-plano-de-teste.md`.
+
 ## Git e GitHub
 
 O `.gitignore` e o `.gitattributes` (com Git LFS para arte e áudio) já estão na raiz. No terminal, dentro desta pasta:
