@@ -20,6 +20,7 @@ namespace SeteVidas.EditorTools
     {
         const string GoldenArt = "Assets/_Game/Art/Characters/Golden";
         const string EnvArt = "Assets/_Game/Art/Environments/Placeholder";
+        const string ContractorArt = "Assets/_Game/Art/Characters/Contractor";
         const string WhiteSquare = "Assets/_Game/Art/Environments/Placeholder/fx_shadow_zone.png";
         const string SettingsPath = "Assets/_Game/ScriptableObjects/Enemies/GoldenBossSettings.asset";
         public const string BossPrefabPath = "Assets/_Game/Prefabs/Enemies/GoldenBoss.prefab";
@@ -51,11 +52,12 @@ namespace SeteVidas.EditorTools
 
         // ----------------------------------------------------------- conversas
 
-        public struct ArenaDialogues { public DialogueDefinition Intro, Defeat, Take, Curse; }
+        public struct ArenaDialogues { public DialogueDefinition Intro, Defeat, Take, Curse, Villain, VillainLeave; }
 
         public static ArenaDialogues CreateDialogues()
         {
             var (cat, golden) = DialogueSetup.Speakers();
+            var capy = DialogueSetup.ContractorSpeaker();
             var result = new ArenaDialogues
             {
                 Intro = DialogueSetup.Conversation("D-GOLDEN-00", true, 1,
@@ -66,12 +68,27 @@ namespace SeteVidas.EditorTools
                     (golden, "", "Chega... Você é rápido, admito. Rápido demais para o próprio bem."),
                     (golden, "", "Pegue, se precisa. Mas o selo cobra um preço que ninguém paga duas vezes."),
                     (cat, "ironico", "Todo mundo diz isso. Ninguém cobra.")),
-                Take = DialogueSetup.Conversation("D-TOMO-01", true, 1,
-                    (null, "", "O tomo é pesado e frio. Algo lá dentro respira."),
-                    (cat, "", "...Ele está me olhando?")),
-                Curse = DialogueSetup.Conversation("D-TOMO-02", true, 1,
-                    (null, "", "O selo se rompe. Seis das suas sete vidas se apagam."),
+                Take = DialogueSetup.Conversation("D-TOMO-01", true, 2,
+                    (null, "", "O tomo é pesado e frio. As runas acendem sob as suas patas."),
+                    (cat, "", "...Ele está me olhando?"),
+                    (null, "", "O selo se rompe com um estalo seco. Algo puxa o ar dos seus pulmões.")),
+                Curse = DialogueSetup.Conversation("D-TOMO-02", true, 2,
+                    (null, "", "Uma a uma, seis das suas sete vidas se apagam."),
+                    (cat, "", "Não... não, não, não. Isso não estava no contrato."),
                     (null, "", "Resta uma última centelha. E ela está se apagando.")),
+                // O contratante (capivara necromante) aparece com o gato caído
+                Villain = DialogueSetup.Conversation("D-CAPIVARA-01", true, 2,
+                    (capy, "", "Ah, estava sim. Cláusula sete. Você leu... e achou graça."),
+                    (cat, "", "Você... o contratante. O que você fez comigo?"),
+                    (capy, "", "Eu? Nada. O tomo dorme há cem anos e só acorda bebendo vidas."),
+                    (capy, "", "Sete vidas de gato. Raras. Deliciosas. Exatamente o que ele precisava."),
+                    (cat, "", "Você me usou... desde o começo."),
+                    (capy, "", "Como se usa uma chave, gatinho. E chaves não reclamam da porta.")),
+                VillainLeave = DialogueSetup.Conversation("D-CAPIVARA-02", true, 1,
+                    (null, "", "Uma moeda de ouro tilinta no chão, ao lado do seu focinho."),
+                    (capy, "", "O pagamento está feito pelos seus serviços. Não diga que não sou honesto."),
+                    (capy, "", "Adeus. Aproveite a sua última vida. Ela não vai durar."),
+                    (null, "", "Ele some numa névoa roxa, levando o tomo. Só a moeda fica para trás.")),
             };
             AssetDatabase.SaveAssets();
             return result;
@@ -79,8 +96,24 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------- cena
 
+        /// <summary>Posições de uma arena do Golden (tudo em tiles, no mundo).</summary>
+        public struct ArenaLayout
+        {
+            public float MinX, MaxX, FloorY, CeilingHeight;
+            public float EntryGateX, ExitGateX, BossX, TomeX, SanctuaryX;
+            public string SanctuaryId, SanctuaryName;
+        }
+
         /// <summary>Arena, Golden, grades, tomo e santuário do trecho J (chamado ao recriar a Playground).</summary>
-        public static void PlaceInPlayground(Scene scene)
+        public static void PlaceInPlayground(Scene scene) => PlaceArena(scene, new ArenaLayout
+        {
+            MinX = ArenaMinX, MaxX = ArenaMaxX, FloorY = ArenaFloorY, CeilingHeight = 9f,
+            EntryGateX = 179.5f, ExitGateX = 211.5f, BossX = 200f, TomeX = 216.5f, SanctuaryX = 172f,
+            SanctuaryId = "playground_arena", SanctuaryName = "Antes da arena",
+        });
+
+        /// <summary>Monta a arena em qualquer cena (Playground e Fortaleza).</summary>
+        public static void PlaceArena(Scene scene, ArenaLayout a)
         {
             var bossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BossPrefabPath);
             if (bossPrefab == null) { CreatePrefabs(); bossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BossPrefabPath); }
@@ -93,18 +126,23 @@ namespace SeteVidas.EditorTools
 
             var boss = (GameObject)PrefabUtility.InstantiatePrefab(bossPrefab, parent.transform);
             boss.name = "Golden (chefão)";
-            boss.transform.position = new Vector3(200f, ArenaFloorY, 0f);
+            boss.transform.position = new Vector3(a.BossX, a.FloorY, 0f);
+            var bso = new SerializedObject(boss.GetComponent<GoldenBoss>());
+            bso.FindProperty("arenaMinX").floatValue = a.MinX;
+            bso.FindProperty("arenaMaxX").floatValue = a.MaxX;
+            bso.FindProperty("lightningHeight").floatValue = a.CeilingHeight;
+            bso.ApplyModifiedPropertiesWithoutUndo();
 
-            var entry = Gate(gatePrefab, parent.transform, "Grade de entrada", 179.5f, closed: false);
-            var exit = Gate(gatePrefab, parent.transform, "Grade do tomo", 211.5f, closed: true);
+            var entry = Gate(gatePrefab, parent.transform, "Grade de entrada", a.EntryGateX, a.FloorY, closed: false);
+            var exit = Gate(gatePrefab, parent.transform, "Grade do tomo", a.ExitGateX, a.FloorY, closed: true);
 
             // Gatilho da arena: entrou, a grade fecha
             var arenaGo = new GameObject("Arena") { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             arenaGo.transform.SetParent(parent.transform, false);
-            arenaGo.transform.position = new Vector3(195.5f, ArenaFloorY + 4f, 0f);
+            arenaGo.transform.position = new Vector3((a.MinX + a.MaxX) * 0.5f, a.FloorY + 4f, 0f);
             var trigger = arenaGo.AddComponent<BoxCollider2D>();
             trigger.isTrigger = true;
-            trigger.size = new Vector2(26f, 8f);
+            trigger.size = new Vector2(a.MaxX - a.MinX - 5f, 8f); // começa uns tiles depois da grade: o gato já está dentro
             var arena = arenaGo.AddComponent<BossArena>();
             var aso = new SerializedObject(arena);
             aso.FindProperty("boss").objectReferenceValue = boss.GetComponent<GoldenBoss>();
@@ -116,12 +154,14 @@ namespace SeteVidas.EditorTools
 
             var tome = (GameObject)PrefabUtility.InstantiatePrefab(tomePrefab, parent.transform);
             tome.name = "Tomo corrompido";
-            tome.transform.position = new Vector3(216.5f, ArenaFloorY, 0f);
+            tome.transform.position = new Vector3(a.TomeX, a.FloorY, 0f);
             var tso = new SerializedObject(tome.GetComponent<CursedTome>());
             tso.FindProperty("golden").objectReferenceValue = boss.GetComponent<GoldenBoss>();
             tso.FindProperty("goldenBond").objectReferenceValue = boss.GetComponentInChildren<CompanionBond>(true);
             tso.FindProperty("takeDialogue").objectReferenceValue = dialogues.Take;
             tso.FindProperty("curseDialogue").objectReferenceValue = dialogues.Curse;
+            tso.FindProperty("villainDialogue").objectReferenceValue = dialogues.Villain;
+            tso.FindProperty("villainLeaveDialogue").objectReferenceValue = dialogues.VillainLeave;
             tso.ApplyModifiedPropertiesWithoutUndo();
 
             // Santuário antes da arena, em cima da laje
@@ -129,20 +169,20 @@ namespace SeteVidas.EditorTools
             if (sanctuary != null)
             {
                 var s = (GameObject)PrefabUtility.InstantiatePrefab(sanctuary, parent.transform);
-                s.name = "Santuário (playground_arena)";
-                s.transform.position = new Vector3(172f, ArenaFloorY, 0f);
+                s.name = $"Santuário ({a.SanctuaryId})";
+                s.transform.position = new Vector3(a.SanctuaryX, a.FloorY, 0f);
                 var sso = new SerializedObject(s.GetComponent<Sanctuary>());
-                sso.FindProperty("sanctuaryId").stringValue = "playground_arena";
-                sso.FindProperty("displayName").stringValue = "Antes da arena";
+                sso.FindProperty("sanctuaryId").stringValue = a.SanctuaryId;
+                sso.FindProperty("displayName").stringValue = a.SanctuaryName;
                 sso.ApplyModifiedPropertiesWithoutUndo();
             }
         }
 
-        static ArenaGate Gate(GameObject prefab, Transform parent, string name, float x, bool closed)
+        static ArenaGate Gate(GameObject prefab, Transform parent, string name, float x, float floorY, bool closed)
         {
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             go.name = name;
-            go.transform.position = new Vector3(x, ArenaFloorY, 0f);
+            go.transform.position = new Vector3(x, floorY, 0f);
             var gate = go.GetComponent<ArenaGate>();
             var so = new SerializedObject(gate);
             so.FindProperty("startsClosed").boolValue = closed;
@@ -222,6 +262,7 @@ namespace SeteVidas.EditorTools
             var bso = new SerializedObject(bond);
             bso.FindProperty("prompt").objectReferenceValue = prompt;
             bso.FindProperty("bondDialogue").objectReferenceValue = dialogues.Bond;
+            bso.FindProperty("bondFollowUp").objectReferenceValue = dialogues.BondFollowUp;
             bso.FindProperty("unlockDialogue").objectReferenceValue = dialogues.Unlock;
             var idleProp = bso.FindProperty("idleDialogues");
             idleProp.arraySize = dialogues.Idle.Length;
@@ -278,6 +319,8 @@ namespace SeteVidas.EditorTools
         static void CreateTomePrefab()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(TomePrefabPath));
+            Directory.CreateDirectory(ContractorArt);
+            AssetDatabase.Refresh();
             var root = new GameObject("CursedTome") { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             var box = root.AddComponent<BoxCollider2D>();
             box.isTrigger = true;
@@ -291,9 +334,28 @@ namespace SeteVidas.EditorTools
             book.sortingOrder = 3;
             var prompt = SeteVidas.Combat.DamagePopup.CreateText(Child(root, "Prompt", new Vector3(0f, 2.6f, 0f)), "E: pegar o tomo", new Color32(0xc8, 0xa8, 0xff, 0xff), 30);
             prompt.gameObject.SetActive(false);
+            // O contratante (escondido até a cena da maldição), o tomo nas patas dele e a moeda de ouro
+            var contractorGo = Child(root, "Contratante", Vector3.zero);
+            var contractor = contractorGo.AddComponent<SpriteRenderer>();
+            contractor.sprite = ContractorSprite();
+            contractor.sortingOrder = 4;
+            var held = Child(contractorGo, "Tomo nas patas", new Vector3(-0.55f, 1.05f, 0f)).AddComponent<SpriteRenderer>();
+            held.sprite = book.sprite;
+            held.sortingOrder = 5;
+            held.enabled = false;
+            contractorGo.SetActive(false);
+            var coin = Child(root, "Moeda de ouro", new Vector3(-1.4f, 0.05f, 0f));
+            var coinSr = coin.AddComponent<SpriteRenderer>();
+            coinSr.sprite = CoinSprite();
+            coinSr.sortingOrder = 6;
+            coin.SetActive(false);
+
             var tome = root.AddComponent<CursedTome>();
             var so = new SerializedObject(tome);
             so.FindProperty("book").objectReferenceValue = book;
+            so.FindProperty("contractor").objectReferenceValue = contractor;
+            so.FindProperty("contractorBook").objectReferenceValue = held;
+            so.FindProperty("coin").objectReferenceValue = coin.transform;
             so.FindProperty("prompt").objectReferenceValue = prompt;
             so.ApplyModifiedPropertiesWithoutUndo();
             PrefabUtility.SaveAsPrefabAsset(root, TomePrefabPath);
@@ -530,6 +592,43 @@ namespace SeteVidas.EditorTools
             foreach (int ty in new[] { 14, 34, 54 })
                 for (int x = 1; x <= 15; x++) { set(x, ty, dark); set(x, ty + 1, iron); }
             foreach (int bx in new[] { 3, 8, 13 }) { set(bx, 0, iron); set(bx, 1, iron); } // pontas
+        });
+
+        /// <summary>
+        /// Contratante 24×30 (pivot nos pés, olhando para a direita): capivara gorda num manto roxo de necromante,
+        /// olho com o brilho verde da praga e corrente de ouro.
+        /// </summary>
+        static Sprite ContractorSprite() => Draw(ContractorArt + "/chr_contractor_placeholder.png", 24, 30, set =>
+        {
+            var robe = new Color32(0x4a, 0x22, 0x66, 0xff);
+            var robeEdge = new Color32(0x22, 0x10, 0x2e, 0xff);
+            var fur = new Color32(0x8a, 0x5a, 0x3a, 0xff);
+            var outline = new Color32(0x2a, 0x16, 0x0c, 0xff);
+            var glow = new Color32(0x8f, 0xd1, 0x4f, 0xff);
+            var gold = new Color32(0xd9, 0xa4, 0x41, 0xff);
+            Rect(set, 4, 0, 18, 18, robe, robeEdge);           // manto (corpo largo de capivara)
+            for (int y = 2; y <= 16; y += 3) set(11, y, robeEdge);
+            Rect(set, 6, 17, 18, 26, fur, outline);            // cabeça
+            Rect(set, 17, 18, 22, 23, fur, outline);           // focinho largo
+            set(21, 22, outline); set(21, 21, outline);        // narina
+            set(15, 24, glow); set(16, 24, glow);              // olho com o brilho da praga
+            set(8, 27, outline); set(9, 27, outline);          // orelhinha
+            for (int x = 4; x <= 18; x++) if (x % 2 == 0) set(x, 25 + (x > 11 ? 1 : 0), robe); // capuz
+            for (int x = 6; x <= 16; x += 2) set(x, 16, gold); // corrente de ouro
+        });
+
+        /// <summary>Moeda de ouro 6×6 com brilho: o "pagamento" do contratante.</summary>
+        static Sprite CoinSprite() => Draw(EnvArt + "/item_gold_coin.png", 6, 6, set =>
+        {
+            var gold = new Color32(0xd9, 0xa4, 0x41, 0xff);
+            var shine = new Color32(0xff, 0xf2, 0x8a, 0xff);
+            var edge = new Color32(0x8a, 0x62, 0x1e, 0xff);
+            for (int y = 0; y < 6; y++) for (int x = 0; x < 6; x++)
+            {
+                float d = (x - 2.5f) * (x - 2.5f) + (y - 2.5f) * (y - 2.5f);
+                if (d <= 6.5f) set(x, y, d > 4f ? edge : gold);
+            }
+            set(2, 3, shine); set(3, 4, shine);
         });
 
         /// <summary>Pedestal de pedra 24×20 com faixa de runas apagadas.</summary>

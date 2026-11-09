@@ -164,7 +164,7 @@ namespace SeteVidas.EditorTools
             PlaceBush(bush, parent.transform, "Matinho (teste, área livre)", 106f);
         }
 
-        static void PlaceBush(GameObject prefab, Transform parent, string name, float x)
+        internal static void PlaceBush(GameObject prefab, Transform parent, string name, float x)
         {
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             go.name = name;
@@ -258,7 +258,7 @@ namespace SeteVidas.EditorTools
             return zone;
         }
 
-        static Sprite LoadShadowSprite()
+        internal static Sprite LoadShadowSprite()
         {
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ShadowSpritePath);
             if (sprite != null) return sprite;

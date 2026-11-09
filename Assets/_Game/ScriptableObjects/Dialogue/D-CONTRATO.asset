@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-CONTRATO
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-CONTRATO
+  Required: 1
+  Revision: 1
+  IsDocument: 1
+  Lines:
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Ao Cl\xE3 das Sombras, a Guilda dos Ladr\xF5es.\nAos cuidados do melhor gatuno da casa."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Objeto: um tomo de capa roxa, guardado na C\xE2mara do Selo da Cidadela da Ordem dos Paladinos C\xE3es."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Sou colecionador de rel\xEDquias antigas. A Ordem esconde esse livro h\xE1 cem anos e se recusa a vend\xEA-lo, emprest\xE1-lo ou sequer mostr\xE1-lo a quem n\xE3o late."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "A Cidadela tem muralhas altas, sentinelas que n\xE3o dormem, armadilhas em cada corredor e um paladino de guarda diante do selo."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Mandei soldados. Mandei mercen\xE1rios. Mandei magos. Nenhum voltou.\n\nS\xF3 a Guilda dos Ladr\xF5es entra onde ningu\xE9m entra e sai sem que ningu\xE9m perceba. Por isso escrevo a voc\xEAs."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Pagamento: uma bolsa de ouro, entregue em m\xE3os assim que o tomo deixar o pedestal."
+  - Speaker: {fileID: 0}
+    Expression: miuda
+    Text: "Cl\xE1usula 7: o portador assume, de livre vontade, todos os custos pessoais decorrentes do manuseio do objeto."
+  - Speaker: {fileID: 0}
+    Expression: selo
+    Text: 'Assinado,
+
+
+      O Contratante'
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Uma bolsa de ouro por um livro velho. Colecionador, \xE9? Gente rica tem cada mania."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: "Muralhas, sentinelas, armadilhas, um paladino... Ele tem raz\xE3o: \xE9 trabalho para a Guilda."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Cl\xE1usula sete... letra mi\xFAda \xE9 coisa de advogado. Eu sou ladr\xE3o."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: Entrar, pegar, sair. Esta noite.

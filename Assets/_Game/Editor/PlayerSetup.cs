@@ -409,7 +409,7 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------- cena
 
-        static void PlaceInScene(Scene scene)
+        internal static void PlaceInScene(Scene scene)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             Camera mainCam = null;

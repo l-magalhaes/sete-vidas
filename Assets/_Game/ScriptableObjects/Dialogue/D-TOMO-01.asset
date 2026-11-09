@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-TOMO-01
   Required: 1
-  Revision: 1
+  Revision: 2
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "O tomo \xE9 pesado e frio. Algo l\xE1 dentro respira."
+    Text: "O tomo \xE9 pesado e frio. As runas acendem sob as suas patas."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
     Text: "...Ele est\xE1 me olhando?"
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "O selo se rompe com um estalo seco. Algo puxa o ar dos seus pulm\xF5es."

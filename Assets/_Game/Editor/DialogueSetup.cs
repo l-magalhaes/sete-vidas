@@ -34,7 +34,7 @@ namespace SeteVidas.EditorTools
 
         public struct GoldenDialogues
         {
-            public DialogueDefinition Bond, Unlock;
+            public DialogueDefinition Bond, BondFollowUp, Unlock;
             public DialogueDefinition[] Idle;
         }
 
@@ -48,20 +48,29 @@ namespace SeteVidas.EditorTools
 
             var result = new GoldenDialogues
             {
-                // D-GOLDEN-01 (rev. 2): resgate depois da maldição e juramento de destruir o tomo
-                Bond = Conversation("D-GOLDEN-01", true, 2,
-                    (golden, "", "Respire, ladrãozinho. Seu último coração ainda bate... por pouco."),
-                    (cat, "ironico", "Você... me salvou? Depois da surra que eu te dei?"),
-                    (golden, "", "Quem aguenta o selo e ainda respira é forte. Força assim não se desperdiça."),
-                    (golden, "", "Jure destruir esse tomo. Em troca, minha força é sua."),
-                    (cat, "", "Juro. Não que eu tenha muita escolha.")),
+                // D-GOLDEN-01 (rev. 3): o resgate. O Golden chega depois que o contratante levou o tomo
+                Bond = Conversation("D-GOLDEN-01", true, 3,
+                    (golden, "", "Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco."),
+                    (cat, "ironico", "Ótimo. Agora o cão de lata vai me dar sermão antes de eu morrer."),
+                    (golden, "", "Sermão nenhum. Quem fez isso? Quem levou o tomo?"),
+                    (cat, "", "O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas."),
+                    (golden, "", "Com o tomo desperto, a praga vai se espalhar. Sozinho, não chego a tempo."),
+                    (golden, "", "Jure me ajudar a recuperar o tomo e destruí-lo. Em troca, minha força é sua.")),
+                // D-GOLDEN-01b: o gato aceita, movido pela vingança
+                BondFollowUp = Conversation("D-GOLDEN-01b", true, 1,
+                    (cat, "", "Destruir o tomo... tanto faz. Eu quero a capivara."),
+                    (cat, "", "Ninguém me usa como chave e me paga com troco. Ninguém."),
+                    (golden, "", "Vingança é um começo ruim. Mas é um começo. Jure, e levante."),
+                    (cat, "", "Eu juro. Pelo tomo, pela moeda... e pelas seis vidas que ele me tirou.")),
                 Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 1,
                     (null, "", "Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.")),
                 // D-GOLDEN-02 (rev. 2), em rodízio: lembram o juramento
                 Idle = new[]
                 {
                     Conversation("D-GOLDEN-02a", false, 2, (golden, "", "Paredes rachadas não resistem a um golpe honesto.")),
-                    Conversation("D-GOLDEN-02b", false, 2, (golden, "", "O tomo ainda sussurra, não é? Não o escute. Lembre do juramento.")),
+                    Conversation("D-GOLDEN-02b", false, 3,
+                        (golden, "", "Onde aquela capivara for, a praga vai atrás. Vamos alcançá-la."),
+                        (cat, "ironico", "E devolver a moeda. Enfiada onde ela não gosta.")),
                     Conversation("D-GOLDEN-02c", false, 2,
                         (golden, "", "Força não substitui cuidado. Volte inteiro, ladrãozinho."),
                         (cat, "ironico", "Inteiro é o que eu menos estou.")),
@@ -70,6 +79,48 @@ namespace SeteVidas.EditorTools
             AssetDatabase.SaveAssets();
             return result;
         }
+
+        /// <summary>O contratante: capivara necromante (fala grave e arrastada). Criado se faltar.</summary>
+        public static SpeakerProfile ContractorSpeaker()
+        {
+            Directory.CreateDirectory(DataFolder + "/Speakers");
+            Directory.CreateDirectory(PortraitArt);
+            AssetDatabase.Refresh();
+            return Speaker("Contratante", "Contratante", SpeakerProfile.ScreenSide.Right, new Color32(0xc8, 0x9c, 0xff, 0xff), 0.6f,
+                ContractorPortrait());
+        }
+
+        /// <summary>
+        /// Capivara necromante 48×48 (olhando para a esquerda): pelo marrom, focinho largo, olhos semicerrados com o
+        /// brilho verde-ácido da praga, capuz roxo e uma corrente de ouro (é rica: paga com ouro).
+        /// </summary>
+        static Sprite ContractorPortrait() => Draw($"{PortraitArt}/portrait_contractor.png", 48, 48, set =>
+        {
+            var fur = new Color32(0x8a, 0x5a, 0x3a, 0xff);
+            var furDark = new Color32(0x5e, 0x3b, 0x24, 0xff);
+            var snout = new Color32(0xa8, 0x72, 0x50, 0xff);
+            var outline = new Color32(0x2a, 0x16, 0x0c, 0xff);
+            var hood = new Color32(0x4a, 0x22, 0x66, 0xff);
+            var hoodEdge = new Color32(0x22, 0x10, 0x2e, 0xff);
+            var glow = new Color32(0x8f, 0xd1, 0x4f, 0xff);
+            var gold = new Color32(0xd9, 0xa4, 0x41, 0xff);
+
+            Ellipse(set, 24f, 4f, 20f, 9f, hood, hoodEdge);                 // ombros com o manto
+            Ellipse(set, 25f, 26f, 17f, 17f, hood, hoodEdge);               // capuz por trás da cabeça
+            Ellipse(set, 25f, 23f, 13f, 12f, fur, outline);                 // cabeça
+            Ellipse(set, 15f, 18f, 9f, 7f, snout, outline);                 // focinho largo (para a esquerda)
+            for (int x = 10; x <= 13; x++) { set(x, 21, outline); set(x, 20, outline); } // narina
+            for (int x = 9; x <= 18; x++) set(x, 14, outline);              // boca reta, de quem não se importa
+            set(17, 15, outline); set(18, 15, outline);                     // canto da boca: sorriso de lado
+            Ellipse(set, 31f, 33f, 2.5f, 2f, furDark, outline);             // orelhinha
+            foreach (int ex in new[] { 20, 28 })                            // olhos semicerrados, brilho da praga
+            {
+                for (int x = ex - 2; x <= ex + 1; x++) set(x, 26, outline);
+                set(ex - 1, 25, glow); set(ex, 25, glow);
+            }
+            for (int x = 8; x <= 40; x += 3) { set(x, 9, gold); set(x + 1, 10, gold); } // corrente de ouro
+            Ellipse(set, 24f, 7f, 2f, 2f, gold, outline);                   // medalhão
+        });
 
         static SpeakerProfile Speaker(string file, string name, SpeakerProfile.ScreenSide side, Color nameColor, float pitch, Sprite portrait)
         {

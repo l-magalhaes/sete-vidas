@@ -45,10 +45,12 @@ namespace SeteVidas.EditorTools
                 Debug.LogWarning("[Sete Vidas] Pare o Play antes de apagar o save.");
                 return;
             }
-            if (!EditorUtility.DisplayDialog("Apagar save", $"Apagar {SaveManager.FilePath}?\nO próximo Play começa um jogo novo.", "Apagar", "Cancelar"))
+            if (!EditorUtility.DisplayDialog("Apagar saves",
+                    "Apagar o save do jogo (Fortaleza) e o da área de testes (Playground)? O próximo Play começa do zero.",
+                    "Apagar", "Cancelar"))
                 return;
-            SaveManager.DeleteSave();
-            Debug.Log("[Sete Vidas] Save apagado.");
+            SaveManager.DeleteAllSaves();
+            Debug.Log("[Sete Vidas] Saves apagados (jogo e área de testes).");
         }
 
         [MenuItem("Tools/Sete Vidas/Save/Abrir pasta do save", priority = 61)]
@@ -76,7 +78,7 @@ namespace SeteVidas.EditorTools
             PlaceSanctuary(sanctuary, parent.transform, "playground_furtividade", "Antes da Sentinela", 119.5f);
         }
 
-        static void PlaceSanctuary(GameObject prefab, Transform parent, string id, string displayName, float x)
+        internal static void PlaceSanctuary(GameObject prefab, Transform parent, string id, string displayName, float x)
         {
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             go.name = $"Santuário ({id})";

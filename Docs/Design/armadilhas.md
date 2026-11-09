@@ -20,7 +20,7 @@ O percurso tem perigos que se **leem antes de machucar**. Os ativos pedem plataf
 1. **Último chão seguro:** o gato guarda o último lugar onde pisou firme: no chão (não em plataforma frágil), parado na vertical, sem estar escalando ou pendurado e a mais de 1,2 tile de qualquer armadilha. Os espinhos devolvem o gato para lá (tela pisca rapidinho, controle volta em ~0,3 s).
 2. Se o hit do espinho for o último, é **morte normal** (volta ao santuário).
 3. **Invencibilidade de 1 s** depois de qualquer hit, igual aos golpes de inimigos.
-4. **Fio e placa** rearmam sozinhos em 3 s. Disparar faz barulho (raio 8, intensidade 0,6): **Sentinelas por perto ouvem e vêm investigar**.
+4. **Fio e placa** rearmam sozinhos em 3 s. Disparar mostra "ALARME!" (fio) ou "CLIC!" (placa) e faz barulho (raio 8, intensidade 0,6; alarmes sem armadilha podem ter raio maior): **Sentinelas por perto ouvem e vêm investigar**.
 5. **Morrer ou descansar** devolve as plataformas frágeis e rearma fios e placas.
 6. Toda armadilha registra sua área de perigo; o "chão seguro" nunca fica colado numa delas.
 

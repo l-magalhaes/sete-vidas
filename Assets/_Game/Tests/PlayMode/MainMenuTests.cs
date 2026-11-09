@@ -68,6 +68,18 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator TestArea_OpensPlayground()
+        {
+            SaveManager.DeleteSave();
+            yield return LoadMenu();
+            Object.FindAnyObjectByType<MainMenu>().OpenTestArea();
+            yield return null;
+            yield return null;
+            yield return null;
+            Assert.AreEqual("Playground", SceneManager.GetActiveScene().name);
+        }
+
+        [UnityTest]
         public IEnumerator NewGame_ErasesSave_AndStartsWithSevenHearts()
         {
             WriteSaveAtArena();
@@ -76,10 +88,20 @@ namespace SeteVidas.Tests
             yield return null;
             yield return null;
 
-            Assert.AreEqual("Playground", SceneManager.GetActiveScene().name);
+            // Com o prólogo na build, o Novo jogo passa primeiro pelo contrato
+            var prologue = Object.FindAnyObjectByType<PrologueController>();
+            if (prologue != null)
+            {
+                Assert.AreEqual("Prologue", SceneManager.GetActiveScene().name);
+                prologue.Finish();
+                yield return null;
+                yield return null;
+                yield return null;
+            }
             Assert.IsFalse(SaveManager.HasSaveFile, "Novo jogo apaga o save");
+            Assert.AreEqual("Fortress_MVP", SceneManager.GetActiveScene().name, "Novo jogo começa na Fortaleza (tela inicial antiga? Rode Tools > Sete Vidas > 12)");
             Assert.AreEqual(7, PlayerHealth.Active.HeartsRecovered);
-            Assert.AreEqual(0.5f, PlayerHealth.Active.transform.position.x, 0.3f, "Começa no início da fase");
+            Assert.AreEqual(3f, PlayerHealth.Active.transform.position.x, 0.5f, "Começa na entrada da Fortaleza");
         }
     }
 }

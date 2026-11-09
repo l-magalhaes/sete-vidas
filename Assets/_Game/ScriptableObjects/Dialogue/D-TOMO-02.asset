@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-TOMO-02
   Required: 1
-  Revision: 1
+  Revision: 2
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: O selo se rompe. Seis das suas sete vidas se apagam.
+    Text: Uma a uma, seis das suas sete vidas se apagam.
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: "N\xE3o... n\xE3o, n\xE3o, n\xE3o. Isso n\xE3o estava no contrato."
   - Speaker: {fileID: 0}
     Expression: 
     Text: "Resta uma \xFAltima centelha. E ela est\xE1 se apagando."

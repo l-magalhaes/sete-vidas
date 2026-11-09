@@ -31,6 +31,8 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 09/11/2026 | Tomo corrompido 14×12: capa roxa #5b2a6e com runas verde-ácido #8fd14f (cores exclusivas da praga) e um olho; grade de ferro 16×64; pedestal de pedra | [PROPOSTA] | Sala do tomo |
 | 09/11/2026 | Armadilhas: **vermelho (#c83a3a) só em armadilhas** (pontas dos espinhos, marcas do fio, da placa, penas da flecha, brilho do lançador). Aço #c0c6d2, chama branco→laranja→vermelho, plataforma frágil em pedra mais clara com rachaduras | [PROPOSTA] | Leitura de perigo em menos de 1 s |
 | 09/11/2026 | Tela inicial 480×270: céu noturno em faixas, lua crescente, Fortaleza em silhueta com o brilho da praga na torre do tomo; título SETE VIDAS dourado com as sete vidas embaixo | [PROPOSTA] | Primeira impressão do jogo |
+| 09/11/2026 | Contratante: capivara 24×30 em manto roxo #4a2266 com corrente de ouro e olho verde-ácido (praga); retrato 48×48 com capuz. Teleporte = clarão roxo + aparecer/sumir em 0,3 s. Moeda de ouro 6×6 | [PROPOSTA] | Antagonista |
+| 09/11/2026 | Cenário da Cidadela: estandartes carmesim/dourado 16×40 com o emblema (pata sobre marreta), estátuas de cães paladinos 24×48, alvos de arco, suportes de armas de treino, escudos 12×14, tochas, vitrais em arco 16×32 azul/dourado, placas de pedra legíveis. Tudo atrás dos personagens (ordem -5) | [PROPOSTA] | Identidade da Cidadela |
 
 ## Já configurado na Fase 0
 

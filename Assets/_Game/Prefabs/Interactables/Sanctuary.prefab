@@ -290,6 +290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Sanctuary
   sanctuaryId: santuario
+  displayName: "Santu\xE1rio"
   spawnOffset: {x: 0, y: 0}
   spriteRenderer: {fileID: 2501365467163358356}
   unlitSprite: {fileID: 21300000, guid: f9851f56320177a4391559914edaea62, type: 3}

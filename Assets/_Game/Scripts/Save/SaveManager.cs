@@ -10,7 +10,11 @@ namespace SeteVidas.Save
     /// </summary>
     public class SaveManager : MonoBehaviour
     {
-        const string FileName = "save_slot1.json";
+        /// <summary>Save do jogo (Fortaleza).</summary>
+        public const string MainSlot = "slot1";
+        /// <summary>Save da área de testes (Playground): nunca mistura com o jogo.</summary>
+        public const string TestSlot = "playground";
+        const string TestScene = "Playground";
 
         static SaveManager s_instance;
 
@@ -31,9 +35,27 @@ namespace SeteVidas.Save
 
         SaveData _data;
 
-        public static string FilePath => !string.IsNullOrEmpty(s_pathOverride)
-            ? s_pathOverride
-            : Path.Combine(Application.persistentDataPath, FileName);
+        /// <summary>
+        /// Qual save usar. Vazio = automático: a Playground usa o save de testes; o resto, o do jogo.
+        /// A tela inicial escolhe explicitamente. Mudar recarrega o save no próximo acesso.
+        /// </summary>
+        public static string Slot
+        {
+            get => s_slot;
+            set
+            {
+                s_slot = value;
+                if (s_instance != null) s_instance._data = null;
+            }
+        }
+        static string s_slot;
+
+        public static string ActiveSlot => !string.IsNullOrEmpty(s_slot) ? s_slot
+            : SceneManager.GetActiveScene().name == TestScene ? TestSlot : MainSlot;
+
+        public static string PathForSlot(string slot) => Path.Combine(Application.persistentDataPath, $"save_{slot}.json");
+
+        public static string FilePath => !string.IsNullOrEmpty(s_pathOverride) ? s_pathOverride : PathForSlot(ActiveSlot);
 
         /// <summary>Dados atuais (carrega do disco na primeira vez).</summary>
         public static SaveData Data
@@ -82,6 +104,14 @@ namespace SeteVidas.Save
             data.lastSanctuaryName = displayName ?? "";
             data.scene = SceneManager.GetActiveScene().name;
             Save();
+        }
+
+        /// <summary>Apaga os saves do jogo e da área de testes.</summary>
+        public static void DeleteAllSaves()
+        {
+            SaveStore.Delete(PathForSlot(MainSlot));
+            SaveStore.Delete(PathForSlot(TestSlot));
+            if (s_instance != null) s_instance._data = null;
         }
 
         /// <summary>Apaga o save do disco e volta a um jogo novo na memória.</summary>

@@ -5,9 +5,10 @@
 Entrar no jogo em segundos: continuar de onde parou (o santuário) ou começar do zero sem perder o save por acidente.
 
 ## Regras
-1. É a **primeira cena da build** (`Scenes/MainMenu/MainMenu`).
-2. **Novo jogo:** sem save, começa na hora. Com save, abre a confirmação "Começar um jogo novo? O progresso salvo será apagado." com **Não** já selecionado (o padrão é o seguro). **Sim, apagar** apaga o save e começa do início da fase com **7 corações**.
-3. **Continuar:** só fica ativo se existe save no disco. Embaixo dele, um resumo: corações · classes · santuário (ex.: "2 corações · Ladino, Paladino · Santuário: Antes da arena"). Ao confirmar, abre a cena do save e o gato começa no último santuário onde descansou (sem santuário: no início da fase).
+1. É a **primeira cena da build** (`Scenes/MainMenu/MainMenu`). No editor, o **Play também começa por ela**, mesmo com outra cena aberta (desligue em **Tools > Sete Vidas > Play começa na tela inicial** para testar uma cena direto; os testes automáticos não são afetados).
+   - **Área de testes:** abre a Playground com um **save separado** (`save_playground.json`): testar nunca mexe no progresso do jogo. Apertar Play direto na Playground também usa o save de testes.
+2. **Novo jogo:** sem save, começa na hora. Com save, abre a confirmação "Começar um jogo novo? O progresso salvo será apagado." com **Não** já selecionado (o padrão é o seguro). **Sim, apagar** apaga o save, abre o **prólogo (a leitura do contrato)** e depois a **entrada da Fortaleza** (`Fortress_MVP`) com **7 corações**.
+3. **Continuar:** só fica ativo se existe save no disco. Embaixo dele, um resumo: corações · classes · santuário (ex.: "2 corações · Ladino, Paladino · Santuário: Antes da arena"). Ao confirmar, abre a cena do save (a Fortaleza) e o gato começa no último santuário onde descansou (sem santuário: no início da fase).
 4. Com save, o **Continuar já vem selecionado**; sem save, o **Novo jogo**.
 5. **Sair** fecha o jogo (no editor, para o Play).
 6. **Controles:** setas/WASD ou analógico/direcional para escolher; **Enter** ou botão sul do controle para confirmar; o mouse seleciona ao passar por cima e confirma com clique. Uma seta dourada marca o botão selecionado.

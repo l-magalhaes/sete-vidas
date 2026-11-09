@@ -95,6 +95,7 @@ MonoBehaviour:
   grantsClass: 1
   bondFlag: vinculo_golden
   bondDialogue: {fileID: 11400000, guid: 39be87a6cf621ce44ba4815b76da752c, type: 2}
+  bondFollowUp: {fileID: 11400000, guid: 871bc84cbeefe3b49ac3c2e733d17cf2, type: 2}
   unlockDialogue: {fileID: 11400000, guid: 9487b107d8c46384f83ab76eaf8f85b6, type: 2}
   idleDialogues:
   - {fileID: 11400000, guid: 877390945708065459c2047fd4ad99ce, type: 2}

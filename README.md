@@ -68,10 +68,23 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 2. **Novo jogo começa com 7 corações.** Pegar o tomo apaga 6; o juramento com o Golden devolve o 2º e dá o Paladino.
 3. Spec: `Docs/Design/chefe-golden.md`. Plano de teste: `Docs/QA/chefe-plano-de-teste.md`. Golpes do chefe para teste: menu ⋮ do `GoldenBoss` no Inspector.
 
+## Prólogo: o contrato
+
+1. Menu **Tools > Sete Vidas > 14. Prólogo: o contrato**. Cria a cena `Scenes/Prologue/Prologue`: o Novo jogo passa a abrir com a leitura do contrato (E avança, Esc pula) e depois começa a Fortaleza.
+2. Texto em `ScriptableObjects/Dialogue/D-CONTRATO` (roteiro em `Docs/Narrativa/dialogos-mvp.md`).
+
+## Fase 6 — Fortaleza (o jogo)
+
+1. Menu **Tools > Sete Vidas > 13. Fase 6: Fortaleza (gera a cena do jogo)**. Gera `Scenes/World/Fortress_MVP` do zero: entrada, pátio, muralha, corredor patrulhado, salão, armadilhas, câmara do Golden e a saída atrás da parede rachada. **Novo jogo começa aqui.**
+2. A Playground é só a **área de testes** (botão no menu), com save separado.
+3. Mapa, fichas e checagem anti-softlock: `Docs/Level/fortaleza-mvp.md`. Plano de teste e playtest: `Docs/QA/fase6-plano-de-teste.md`.
+4. O gerador recria a cena do zero: depois de começar a editar a Fortaleza à mão, não rode o menu 13 de novo.
+
 ## Tela inicial
 
 1. Menu **Tools > Sete Vidas > 12. Tela inicial (Novo jogo / Continuar)**. Cria `Scenes/MainMenu/MainMenu` e a coloca como primeira cena da build.
-2. **Continuar** leva ao último santuário salvo; **Novo jogo** pede confirmação antes de apagar o save. Spec: `Docs/Design/tela-inicial.md`. Plano de teste: `Docs/QA/tela-inicial-plano-de-teste.md`.
+2. No editor, o Play começa pela tela inicial mesmo com outra cena aberta. Para testar uma cena direto, desmarque **Tools > Sete Vidas > Play começa na tela inicial**.
+3. **Continuar** leva ao último santuário salvo; **Novo jogo** pede confirmação antes de apagar o save. Spec: `Docs/Design/tela-inicial.md`. Plano de teste: `Docs/QA/tela-inicial-plano-de-teste.md`.
 
 ## Armadilhas
 

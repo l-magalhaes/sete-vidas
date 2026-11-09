@@ -158,9 +158,9 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------ tiles
 
-        struct PlaceholderTiles { public Tile Ground; public Tile Climbable; public Tile Background; }
+        internal struct PlaceholderTiles { public Tile Ground; public Tile Climbable; public Tile Background; }
 
-        static PlaceholderTiles CreatePlaceholderTiles()
+        internal static PlaceholderTiles CreatePlaceholderTiles()
         {
             return new PlaceholderTiles
             {
@@ -242,7 +242,7 @@ namespace SeteVidas.EditorTools
         // ------------------------------------------------------------ cenas
 
         // Copia a cena-modelo do template Universal 2D (já tem câmera e Global Light 2D configuradas).
-        static Scene NewSceneFromTemplate(string path)
+        internal static Scene NewSceneFromTemplate(string path)
         {
             if (File.Exists(Path.GetFullPath(path)))
                 AssetDatabase.DeleteAsset(path);
@@ -264,7 +264,7 @@ namespace SeteVidas.EditorTools
             return scene;
         }
 
-        static Camera FindCamera(Scene scene)
+        internal static Camera FindCamera(Scene scene)
         {
             foreach (var root in scene.GetRootGameObjects())
             {
@@ -276,7 +276,7 @@ namespace SeteVidas.EditorTools
             return go.AddComponent<Camera>();
         }
 
-        static void SetupPixelPerfectCamera(Camera cam, Vector2 position)
+        internal static void SetupPixelPerfectCamera(Camera cam, Vector2 position)
         {
             cam.orthographic = true;
             cam.orthographicSize = GameConstants.ReferenceHeight / 2f / GameConstants.PixelsPerUnit;
@@ -316,7 +316,7 @@ namespace SeteVidas.EditorTools
             Debug.LogWarning($"[Sete Vidas] Não consegui definir {property} = {value} na {target.GetType().Name}. Ajuste no Inspector.");
         }
 
-        static Tilemap CreateTilemap(Transform grid, string name, string physicsLayer, int sortingOrder, bool collider)
+        internal static Tilemap CreateTilemap(Transform grid, string name, string physicsLayer, int sortingOrder, bool collider)
         {
             var go = new GameObject(name);
             go.transform.SetParent(grid, false);
@@ -353,7 +353,7 @@ namespace SeteVidas.EditorTools
         /// O Unity só gera o CompositeCollider2D um instante depois de pintar os tiles; salvando antes,
         /// a cena guarda um colisor vazio e o chão não colide durante o jogo.
         /// </summary>
-        static void BuildTileColliders(Scene scene)
+        internal static void BuildTileColliders(Scene scene)
         {
             foreach (var root in scene.GetRootGameObjects())
             foreach (var tc in root.GetComponentsInChildren<TilemapCollider2D>(true))
@@ -367,21 +367,21 @@ namespace SeteVidas.EditorTools
             }
         }
 
-        static Transform CreateGrid()
+        internal static Transform CreateGrid()
         {
             var grid = new GameObject("Grid");
             grid.AddComponent<Grid>().cellSize = Vector3.one; // 1 célula = 1 tile de 16 px
             return grid.transform;
         }
 
-        static void Fill(Tilemap map, TileBase tile, int x0, int y0, int x1, int y1)
+        internal static void Fill(Tilemap map, TileBase tile, int x0, int y0, int x1, int y1)
         {
             for (int x = x0; x <= x1; x++)
             for (int y = y0; y <= y1; y++)
                 map.SetTile(new Vector3Int(x, y, 0), tile);
         }
 
-        static void Clear(Tilemap map, int x0, int y0, int x1, int y1) => Fill(map, null, x0, y0, x1, y1);
+        internal static void Clear(Tilemap map, int x0, int y0, int x1, int y1) => Fill(map, null, x0, y0, x1, y1);
 
         /// <summary>
         /// Layout em células (1 célula = 1 tile). O chão fica na linha y = -1 (superfície em y = 0).
@@ -537,11 +537,13 @@ namespace SeteVidas.EditorTools
             var scenes = new List<EditorBuildSettingsScene>();
             if (File.Exists(Path.GetFullPath(GameConstants.MainMenuScenePath)))
                 scenes.Add(new EditorBuildSettingsScene(GameConstants.MainMenuScenePath, true));
+            if (File.Exists(Path.GetFullPath(GameConstants.PrologueScenePath)))
+                scenes.Add(new EditorBuildSettingsScene(GameConstants.PrologueScenePath, true));
             scenes.Add(new EditorBuildSettingsScene(GameConstants.PlaygroundScenePath, true));
             scenes.Add(new EditorBuildSettingsScene(GameConstants.FortressScenePath, true));
             foreach (var existing in EditorBuildSettings.scenes)
                 if (existing.path != GameConstants.PlaygroundScenePath && existing.path != GameConstants.FortressScenePath &&
-                    existing.path != GameConstants.MainMenuScenePath)
+                    existing.path != GameConstants.MainMenuScenePath && existing.path != GameConstants.PrologueScenePath)
                     scenes.Add(new EditorBuildSettingsScene(existing.path, false));
             EditorBuildSettings.scenes = scenes.ToArray();
         }

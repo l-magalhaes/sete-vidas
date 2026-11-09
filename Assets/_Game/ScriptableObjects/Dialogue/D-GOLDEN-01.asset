@@ -14,20 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01
   Required: 1
-  Revision: 2
+  Revision: 3
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "Respire, ladr\xE3ozinho. Seu \xFAltimo cora\xE7\xE3o ainda bate... por pouco."
+    Text: "Ladr\xE3ozinho! Aguente firme. Seu \xFAltimo cora\xE7\xE3o ainda bate... por pouco."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: "Voc\xEA... me salvou? Depois da surra que eu te dei?"
+    Text: "\xD3timo. Agora o c\xE3o de lata vai me dar serm\xE3o antes de eu morrer."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "Quem aguenta o selo e ainda respira \xE9 forte. For\xE7a assim n\xE3o se desperdi\xE7a."
-  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
-    Text: "Jure destruir esse tomo. Em troca, minha for\xE7a \xE9 sua."
+    Text: "Serm\xE3o nenhum. Quem fez isso? Quem levou o tomo?"
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
-    Text: "Juro. N\xE3o que eu tenha muita escolha."
+    Text: O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas.
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: 
+    Text: "Com o tomo desperto, a praga vai se espalhar. Sozinho, n\xE3o chego a tempo."
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: 
+    Text: "Jure me ajudar a recuperar o tomo e destru\xED-lo. Em troca, minha for\xE7a \xE9 sua."

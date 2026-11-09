@@ -81,7 +81,8 @@ namespace SeteVidas.EditorTools
             var newGame = MakeButton(root, "Novo jogo", new Vector2(70f, 10f));
             var cont = MakeButton(root, "Continuar", new Vector2(70f, -16f));
             var info = Label(root, "Resumo do save", "", 8, Light, new Vector2(0.5f, 0.5f), new Vector2(70f, -33f), new Vector2(240f, 12f));
-            var quit = MakeButton(root, "Sair", new Vector2(70f, -52f));
+            var test = MakeButton(root, "Área de testes", new Vector2(70f, -52f));
+            var quit = MakeButton(root, "Sair", new Vector2(70f, -76f));
             var cursor = Img(root, "Seta", AssetDatabase.LoadAssetAtPath<Sprite>(ArrowSprite), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(5f, 7f));
             cursor.color = Gold;
             cursor.raycastTarget = false;
@@ -99,7 +100,9 @@ namespace SeteVidas.EditorTools
 
             var menu = canvasGo.AddComponent<MainMenu>();
             var so = new SerializedObject(menu);
-            so.FindProperty("newGameScene").stringValue = Path.GetFileNameWithoutExtension(GameConstants.PlaygroundScenePath);
+            so.FindProperty("newGameSceneName").stringValue = Path.GetFileNameWithoutExtension(GameConstants.FortressScenePath);
+            so.FindProperty("testScene").stringValue = Path.GetFileNameWithoutExtension(GameConstants.PlaygroundScenePath);
+            so.FindProperty("testAreaButton").objectReferenceValue = test;
             so.FindProperty("newGameButton").objectReferenceValue = newGame;
             so.FindProperty("continueButton").objectReferenceValue = cont;
             so.FindProperty("quitButton").objectReferenceValue = quit;

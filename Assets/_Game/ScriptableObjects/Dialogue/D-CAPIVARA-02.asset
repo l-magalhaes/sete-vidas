@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-CAPIVARA-02
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-CAPIVARA-02
+  Required: 1
+  Revision: 1
+  Lines:
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Uma moeda de ouro tilinta no ch\xE3o, ao lado do seu focinho."
+  - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
+    Expression: 
+    Text: "O pagamento est\xE1 feito pelos seus servi\xE7os. N\xE3o diga que n\xE3o sou honesto."
+  - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
+    Expression: 
+    Text: "Adeus. Aproveite a sua \xFAltima vida. Ela n\xE3o vai durar."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Ele some numa n\xE9voa roxa, levando o tomo. S\xF3 a moeda fica para tr\xE1s."

@@ -48,6 +48,13 @@ namespace SeteVidas.World.Traps
             effects = linked;
         }
 
+        /// <summary>Alcance do barulho ao disparar (alarme que deve chamar inimigos mais longe).</summary>
+        public void SetNoise(float radius, float loudness)
+        {
+            noiseRadius = radius;
+            noiseLoudness = loudness;
+        }
+
         void Awake() => _playerMask = LayerMask.GetMask(GameConstants.Layers.Player);
 
         void OnEnable() => GameEvents.WorldReset += Rearm;
@@ -87,6 +94,9 @@ namespace SeteVidas.World.Traps
             if (!IsArmed) return;
             _rearmAt = Time.time + rearmTime;
             foreach (var e in effects) if (e != null) e.Fire();
+            // Aviso visível: o jogador sempre sabe que disparou alguma coisa
+            Combat.DamagePopup.Spawn((Vector2)transform.position + Vector2.up * 2.2f,
+                kind == Kind.Tripwire ? "ALARME!" : "CLIC!", new Color32(0xff, 0xa8, 0x3a, 0xff));
             NoiseSystem.Emit((Vector2)transform.position + Vector2.up, noiseRadius, noiseLoudness, gameObject,
                 kind == Kind.Tripwire ? "fio de alarme" : "placa de pressão");
         }

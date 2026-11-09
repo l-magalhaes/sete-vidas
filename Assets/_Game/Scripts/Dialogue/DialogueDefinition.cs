@@ -25,6 +25,8 @@ namespace SeteVidas.Dialogue
     {
         public const int MaxCharsPerLine = 90;
         public const int MaxLinesRequired = 6;
+        /// <summary>Documentos (contrato, cartas) são lidos em página cheia: cabem mais caracteres.</summary>
+        public const int MaxCharsPerPage = 260;
 
         [Tooltip("ID do roteiro, ex.: D-GOLDEN-01")]
         public string ScriptId = "D-";
@@ -32,6 +34,8 @@ namespace SeteVidas.Dialogue
         public bool Required = true;
         [Tooltip("Versão do texto. O setup só reescreve um asset existente se a revisão do código for maior")]
         public int Revision = 1;
+        [Tooltip("Documento lido em página cheia (contrato, carta): limite de caracteres maior e sem limite de páginas")]
+        public bool IsDocument;
         public List<DialogueLine> Lines = new List<DialogueLine>();
 
         /// <summary>Problemas de tamanho (vazio = tudo certo). Usado pelos testes.</summary>
@@ -39,13 +43,14 @@ namespace SeteVidas.Dialogue
         {
             var problems = new List<string>();
             if (Lines.Count == 0) problems.Add($"{ScriptId}: sem falas");
-            if (Required && Lines.Count > MaxLinesRequired)
+            int maxChars = IsDocument ? MaxCharsPerPage : MaxCharsPerLine;
+            if (Required && !IsDocument && Lines.Count > MaxLinesRequired)
                 problems.Add($"{ScriptId}: {Lines.Count} caixas (máximo {MaxLinesRequired} numa conversa obrigatória)");
             for (int i = 0; i < Lines.Count; i++)
             {
                 int len = Lines[i].Text?.Length ?? 0;
                 if (len == 0) problems.Add($"{ScriptId} caixa {i + 1}: texto vazio");
-                else if (len > MaxCharsPerLine) problems.Add($"{ScriptId} caixa {i + 1}: {len} caracteres (máximo {MaxCharsPerLine})");
+                else if (len > maxChars) problems.Add($"{ScriptId} caixa {i + 1}: {len} caracteres (máximo {maxChars})");
             }
             return problems;
         }

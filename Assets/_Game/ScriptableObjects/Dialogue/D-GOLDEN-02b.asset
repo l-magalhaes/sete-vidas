@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-02b
   Required: 0
-  Revision: 2
+  Revision: 3
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "O tomo ainda sussurra, n\xE3o \xE9? N\xE3o o escute. Lembre do juramento."
+    Text: "Onde aquela capivara for, a praga vai atr\xE1s. Vamos alcan\xE7\xE1-la."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "E devolver a moeda. Enfiada onde ela n\xE3o gosta."

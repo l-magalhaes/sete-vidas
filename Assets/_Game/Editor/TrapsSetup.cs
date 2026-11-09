@@ -82,9 +82,9 @@ namespace SeteVidas.EditorTools
             Sign(t, -73.5f, 1.6f, "Fim do circuito");
         }
 
-        static void Rec(Component c) => PrefabUtility.RecordPrefabInstancePropertyModifications(c);
+        internal static void Rec(Component c) => PrefabUtility.RecordPrefabInstancePropertyModifications(c);
 
-        static void Spikes(Transform parent, float x, int width)
+        internal static void Spikes(Transform parent, float x, int width)
         {
             var s = Instance<SpikeStrip>(parent, "SpikeStrip", $"Espinhos ({width})", new Vector2(x, 0f));
             s.SetWidth(width);
@@ -93,7 +93,7 @@ namespace SeteVidas.EditorTools
             PrefabUtility.RecordPrefabInstancePropertyModifications(s);
         }
 
-        static T Instance<T>(Transform parent, string prefabName, string name, Vector2 position) where T : Component
+        internal static T Instance<T>(Transform parent, string prefabName, string name, Vector2 position) where T : Component
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{Prefabs}/{prefabName}.prefab");
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
@@ -102,7 +102,7 @@ namespace SeteVidas.EditorTools
             return go.GetComponent<T>();
         }
 
-        static void Sign(Transform parent, float x, float y, string text)
+        internal static void Sign(Transform parent, float x, float y, string text)
         {
             var go = new GameObject("Placa: " + text);
             go.transform.SetParent(parent, false);

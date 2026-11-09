@@ -23,6 +23,8 @@ namespace SeteVidas.World
         [Header("Diálogos")]
         [Tooltip("Conversa de vínculo (D-GOLDEN-01)")]
         [SerializeField] DialogueDefinition bondDialogue;
+        [Tooltip("Continuação da conversa de vínculo (o juramento do gato, D-GOLDEN-01b). Opcional")]
+        [SerializeField] DialogueDefinition bondFollowUp;
         [Tooltip("Linha de sistema logo depois do vínculo (dica de troca de classe)")]
         [SerializeField] DialogueDefinition unlockDialogue;
         [Tooltip("Falas seguintes, uma por conversa, em rodízio (D-GOLDEN-02)")]
@@ -104,11 +106,17 @@ namespace SeteVidas.World
                 onDone?.Invoke();
                 return;
             }
-            runner.Play(bondDialogue, input, () =>
+            void Finish()
             {
                 CompleteBond(player);
                 if (unlockDialogue != null) runner.Play(unlockDialogue, input, onDone);
                 else onDone?.Invoke();
+            }
+
+            runner.Play(bondDialogue, input, () =>
+            {
+                if (bondFollowUp != null) runner.Play(bondFollowUp, input, Finish);
+                else Finish();
             });
         }
 

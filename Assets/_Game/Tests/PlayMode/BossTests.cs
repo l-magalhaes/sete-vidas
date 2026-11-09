@@ -151,6 +151,12 @@ namespace SeteVidas.Tests
             var onDisk = SaveStore.Read(SaveManager.FilePath);
             Assert.AreEqual(2, onDisk.heartsRecovered);
             Assert.IsTrue(onDisk.HasFlag(CursedTome.TakenFlag));
+            Assert.IsTrue(onDisk.HasFlag(CursedTome.StolenFlag), "O contratante levou o tomo");
+            var coin = _tome.transform.Find("Moeda de ouro");
+            Assert.IsNotNull(coin, "Tomo sem a moeda. Rode Tools > Sete Vidas > 10 ou 13");
+            Assert.IsTrue(coin.gameObject.activeSelf, "A moeda do pagamento fica no chão");
+            var contractor = _tome.transform.Find("Contratante");
+            Assert.IsFalse(contractor.gameObject.activeSelf, "O contratante sumiu no teleporte");
         }
     }
 }

@@ -38,6 +38,7 @@ namespace SeteVidas.Core
 
         // Cenas
         public const string MainMenuScenePath = "Assets/_Game/Scenes/MainMenu/MainMenu.unity";
+        public const string PrologueScenePath = "Assets/_Game/Scenes/Prologue/Prologue.unity";
         public const string PlaygroundScenePath = "Assets/_Game/Scenes/Dev/Playground.unity";
         public const string FortressScenePath = "Assets/_Game/Scenes/World/Fortress_MVP.unity";
     }

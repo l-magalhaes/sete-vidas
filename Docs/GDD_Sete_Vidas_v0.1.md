@@ -30,7 +30,7 @@
 
 O jogador controla um pequeno gato ladino, integrante de um clã de ladrões, contratado para roubar um tomo mágico protegido por uma ordem de paladinos caninos.
 
-O roubo desencadeia uma maldição que destrói seis de suas sete vidas. Salvo por um paladino Golden Retriever, o protagonista descobre que foi manipulado por um crocodilo necromante para libertar uma praga ancestral.
+O roubo desencadeia uma maldição que destrói seis de suas sete vidas. Salvo por um paladino Golden Retriever, o protagonista descobre que foi manipulado por uma capivara necromante para libertar uma praga ancestral.
 
 Agora, com apenas uma vida restante, o gato precisa atravessar um reino em decadência, conquistar aliados e recuperar seus corações perdidos.
 
@@ -70,11 +70,11 @@ Ao encontrar o tomo e removê-lo de seu pedestal, um selo ancestral se rompe.
 
 Uma energia sombria atravessa o corpo do protagonista, consumindo suas sete vidas, uma após a outra.
 
-Quando o último coração está prestes a ser destruído, um paladino Golden Retriever invade a câmara e interrompe o ritual com seu martelo divino.
+Quando resta só a última centelha, o contratante aparece num clarão roxo.
 
-Nesse instante, o contratante aparece.
+Ele revela sua verdadeira identidade: uma **capivara necromante** que precisava de um ser com sete vidas para despertar o tomo, que só acorda bebendo vidas. Ele toma o tomo, joga uma moeda de ouro ao lado do gato ("o pagamento está feito pelos seus serviços") e some, deixando-o para morrer.
 
-Ele revela sua verdadeira identidade: um crocodilo necromante que precisava de um ser com sete vidas para absorver a proteção mágica do tomo.
+O paladino Golden Retriever, guardião da câmara, salva o gato e pede ajuda para recuperar e destruir o tomo. O gato jura, movido pela vingança contra quem o usou.
 
 O gato nunca foi contratado para roubar o livro. Ele foi escolhido para servir como receptáculo da maldição.
 
@@ -102,7 +102,7 @@ Esses vínculos concedem poderes específicos, possibilitando alcançar novas re
 
 ### 3.4. Conflito final
 
-O crocodilo necromante pretende utilizar o tomo para espalhar a praga e dominar as terras.
+A capivara necromante pretende utilizar o tomo para espalhar a praga e dominar as terras.
 
 No confronto final, o protagonista terá recuperado suas sete vidas, não como um privilégio de nascimento, mas como resultado dos laços construídos durante a jornada.
 
@@ -294,7 +294,7 @@ Cada região principal deverá possuir um chefe que explore a habilidade recém-
 
 Por exemplo, um guardião protegido por rochas pode exigir a marreta do Paladino, enquanto um chefe cercado por vinhas pode exigir o fogo do Mago.
 
-O necromante crocodilo será o antagonista principal, mas poderá aparecer durante a campanha para demonstrar o avanço da praga e provocar o protagonista.
+A capivara necromante será a antagonista principal, mas poderá aparecer durante a campanha para demonstrar o avanço da praga e provocar o protagonista.
 
 ## 8. Exploração, checkpoints e morte
 
