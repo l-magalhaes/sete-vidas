@@ -408,11 +408,22 @@ namespace SeteVidas.EditorTools
             CreateTilemap(grid, "Foreground", null, 10, false);
 
             // Fundo decorativo (sem colisão)
-            Fill(background, tiles.Background, -74, 0, 220, 13);
+            Fill(background, tiles.Background, -110, 0, 220, 13);
 
             // Chão contínuo (2 tiles de espessura) e paredes de limite
-            Fill(ground, tiles.Ground, -76, -2, 222, -1);
-            Fill(ground, tiles.Ground, -76, 0, -75, 14); // limite esquerdo (depois do circuito de armadilhas)
+            Fill(ground, tiles.Ground, -112, -2, 222, -1);
+            Fill(ground, tiles.Ground, -112, 0, -111, 14); // limite esquerdo (depois das rampas)
+
+            // L) Rampas (x -110..-77), depois do circuito de armadilhas. Andando para a esquerda:
+            //    rampa suave 1:2 subindo (x -88..-80, 4 de altura) → platô (x -94..-89, topo em 4) →
+            //    rampa 1:1 descendo (x -98..-94) → plano → rampa íngreme 2:1 (x -106..-104), que não dá para subir
+            //    andando (vira parede e escorrega), encostada num bloco de 4 (x -108..-107) que se vence pulando.
+            var slopes = new GameObject("Rampas").transform;
+            SlopeSetup.Create(slopes, "Rampa 1x2", -88, 0, 8, 4, risesRight: false);
+            Fill(ground, tiles.Ground, -94, 0, -89, 3);
+            SlopeSetup.Create(slopes, "Rampa 1x1", -98, 0, 4, 4, risesRight: true);
+            SlopeSetup.Create(slopes, "Rampa ingreme 2x1", -106, 0, 2, 4, risesRight: false);
+            Fill(ground, tiles.Ground, -108, 0, -107, 3);
 
             // K) Circuito de armadilhas (à esquerda do spawn, x -74..-8). Tiles aqui; armadilhas em TrapsSetup.
             Fill(ground, tiles.Ground, -22, 1, -22, 6);   // pilar do teto: passagem de 1 tile embaixo (agachar)

@@ -25,6 +25,15 @@ namespace SeteVidas.EditorTools
             public Map Map; public bool Clear; public int X0, Y0, X1, Y1; public string Note;
         }
 
+        /// <summary>
+        /// Rampa (triângulo de colisão). Base em Y0, de X0 a X0+W; o lado alto (Y0+H) fica à direita se RisesRight.
+        /// Andáveis: 1:1 e 1:2 (até 46°). Encoste o lado alto num bloco de tiles com topo em Y0+H.
+        /// </summary>
+        public class SlopeRect
+        {
+            public int X0, Y0, W, H; public bool RisesRight; public string Note;
+        }
+
         public class Obj
         {
             public string Kind;      // ver FortressSetup.Place
@@ -147,6 +156,20 @@ namespace SeteVidas.EditorTools
             C(t, 223, 0, 250, 12, "portão dos fundos e estrada");
             G(t, 223, 4, 223, 12, "acima do portão dos fundos: só quebrando se passa");
             return t;
+        }
+
+        // ---------------------------------------------------------------- rampas
+
+        /// <summary>Rampas do mapa. Vazio por enquanto: entram na Etapa 2 do plano de cenário (relevo do exterior).</summary>
+        public static List<SlopeRect> Slopes()
+        {
+            var s = new List<SlopeRect>();
+            return s;
+        }
+
+        static void S(List<SlopeRect> s, int x0, int y0, int w, int h, bool risesRight, string note)
+        {
+            s.Add(new SlopeRect { X0 = x0, Y0 = y0, W = w, H = h, RisesRight = risesRight, Note = note });
         }
 
         static void G(List<TileRect> t, int x0, int y0, int x1, int y1, string note) { t.Add(new TileRect { Map = Map.Ground, X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, Note = note }); }

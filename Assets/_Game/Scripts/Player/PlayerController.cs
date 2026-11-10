@@ -24,6 +24,9 @@ namespace SeteVidas.Player
         bool _dropRequested;    // S apertado enquanto pendurado
         float _regrabTimer;     // tempo até poder agarrar borda de novo
         float _moveLockTimer;   // tempo em que a entrada horizontal não mexe na velocidade
+        float _slopeLockTimer;  // depois de pulo/empurrão, não cola na rampa
+        bool _wasGrounded;      // no passo anterior (para colar no começo de uma descida)
+        bool _snapped;          // neste passo, colou na rampa sem estar encostado ainda
 
         PlayerAbility[] _abilities = new PlayerAbility[0];
 
@@ -37,7 +40,9 @@ namespace SeteVidas.Player
         public bool IsHanging { get; private set; }
         /// <summary>Subindo de uma borda para cima dela.</summary>
         public bool IsClimbingLedge { get; private set; }
-        public bool IsGrounded => _ground != null && _ground.IsGrounded;
+        public bool IsGrounded => _ground != null && (_ground.IsGrounded || _snapped);
+        /// <summary>De pé numa rampa andável.</summary>
+        public bool IsOnSlope => _ground != null && _ground.OnSlope;
         /// <summary>1 = olhando para a direita, -1 = para a esquerda.</summary>
         public int FacingDirection { get; private set; } = 1;
         public Vector2 Velocity => _body != null ? _body.linearVelocity : Vector2.zero;
@@ -99,20 +104,35 @@ namespace SeteVidas.Player
             float dt = Time.fixedDeltaTime;
             _regrabTimer -= dt;
             _moveLockTimer -= dt;
+            _slopeLockTimer -= dt;
+            _snapped = false;
 
-            if (IsClimbingLedge) { StepLedgeClimb(dt); _timers.Tick(dt); return; }
-            if (IsHanging) { StepHanging(); _timers.Tick(dt); return; }
+            if (IsClimbingLedge) { StepLedgeClimb(dt); _timers.Tick(dt); _wasGrounded = false; return; }
+            if (IsHanging) { StepHanging(); _timers.Tick(dt); _wasGrounded = false; return; }
             if (ActiveAbility != null)
             {
                 if (!ActiveAbility.enabled || !ActiveAbility.Step(dt)) ActiveAbility = null;
                 _timers.Tick(dt);
+                _wasGrounded = false;
                 return;
             }
 
             Vector2 v = _body.linearVelocity;
 
-            _ground.Refresh(settings.ColliderWidth);
-            bool grounded = _ground.IsGrounded && v.y <= 0.01f;
+            _ground.Refresh(settings.ColliderWidth, settings.MaxSlopeAngle);
+            // Subindo a rampa o gato tem velocidade para cima e continua no chão; depois de um pulo, não
+            bool canStick = _slopeLockTimer <= 0f && !_isJumping;
+            bool grounded = _ground.IsGrounded && (v.y <= 0.01f || canStick);
+
+            // Começo de uma descida: cola na rampa em vez de sair voando por um instante
+            float snapDistance = 0f;
+            if (!grounded && _wasGrounded && canStick && v.y <= 0.01f &&
+                _ground.TryFindSnap(settings.ColliderWidth, settings.SlopeSnapDistance, out snapDistance))
+            {
+                grounded = true;
+                _snapped = true;
+            }
+
             if (grounded)
             {
                 _timers.OnGrounded(settings.CoyoteTime);
@@ -139,12 +159,19 @@ namespace SeteVidas.Player
                 v.x = Mathf.MoveTowards(v.x, target, rate * dt);
             }
 
+            // Rampa íngreme demais à frente: andando, o gato não tenta subir nela (senão fica pulando no pé dela)
+            if (grounded && Mathf.Abs(v.x) > 0.01f && _ground.SteepAhead(v.x > 0f ? 1 : -1, settings.ColliderWidth))
+                v.x = 0f;
+
             // Pular (agachado, só se houver espaço para ficar de pé)
+            bool jumped = false;
             if (_timers.CanJump && (!IsCrouching || TryStandUp()))
             {
                 v.y = settings.LaunchVelocity(dt);
                 _timers.Consume();
                 _isJumping = true;
+                jumped = true;
+                _slopeLockTimer = settings.SlopeJumpGrace;
             }
 
             // Pulo variável: soltar o botão corta a subida
@@ -154,12 +181,33 @@ namespace SeteVidas.Player
                 _isJumping = false;
             }
 
-            // Gravidade própria, mais forte na queda
-            float gravity = settings.Gravity * (v.y < 0f ? settings.FallGravityMultiplier : 1f);
-            v.y = Mathf.Max(v.y - gravity * dt, -settings.MaxFallSpeed);
+            bool onSlope = grounded && !jumped && (_snapped || _ground.OnSlope);
+            if (onSlope && _snapped)
+            {
+                // desce exatamente até encostar neste passo
+                v.y = -(snapDistance + 0.01f) / dt;
+            }
+            else if (onSlope)
+            {
+                // Mesma velocidade horizontal do plano; a vertical acompanha a rampa. Sem gravidade: parado,
+                // o gato não escorrega. O empurrão vai contra a normal, então não puxa rampa abaixo.
+                Vector2 n = _ground.GroundNormal;
+                v.y = SlopeMath.VerticalSpeedFor(n, v.x);
+                v -= n * settings.SlopeStickSpeed;
+            }
+            else
+            {
+                // Saiu de uma rampa para o plano ainda com velocidade para cima: para no plano
+                if (grounded && !jumped && v.y > 0f) v.y = 0f;
+
+                // Gravidade própria, mais forte na queda
+                float gravity = settings.Gravity * (v.y < 0f ? settings.FallGravityMultiplier : 1f);
+                v.y = Mathf.Max(v.y - gravity * dt, -settings.MaxFallSpeed);
+            }
 
             _body.linearVelocity = v;
             _timers.Tick(dt);
+            _wasGrounded = grounded && !jumped;
 
             if (!grounded && v.y <= 0f) TryGrabLedge();
         }
@@ -177,6 +225,8 @@ namespace SeteVidas.Player
         {
             _body.linearVelocity = velocity;
             _isJumping = false;
+            _slopeLockTimer = settings.SlopeJumpGrace;
+            _wasGrounded = false;
         }
 
         /// <summary>Durante este tempo, a entrada horizontal não muda a velocidade nem a direção.</summary>
@@ -210,6 +260,8 @@ namespace SeteVidas.Player
             _isJumping = false;
             _timers.Consume();
             _body.linearVelocity = velocity;
+            _slopeLockTimer = settings.SlopeJumpGrace; // o pulinho do recuo não é cancelado pela rampa
+            _wasGrounded = false;
             LockHorizontalControl(controlLock);
         }
 

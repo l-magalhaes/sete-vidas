@@ -52,6 +52,17 @@ public static class FortressPreview
             Func<float, int> PX = x => (int)((x - minX) * S);
             Func<float, int> PY = y => (int)((maxY + 1 - y) * S);
 
+            // rampas (triângulos de pedra)
+            using (var slopeBrush = new SolidBrush(ColorTranslator.FromHtml("#5a556e")))
+                foreach (var r in FortressLayout.Slopes())
+                {
+                    int highX = r.RisesRight ? r.X0 + r.W : r.X0;
+                    g.FillPolygon(slopeBrush, new[]
+                    {
+                        new Point(PX(r.X0), PY(r.Y0)), new Point(PX(r.X0 + r.W), PY(r.Y0)), new Point(PX(highX), PY(r.Y0 + r.H))
+                    });
+                }
+
             // personagem no início
             Mark(g, PX(FortressLayout.SpawnX), PY(FortressLayout.SpawnY), S, Color.White, "▲", bold, "início");
 

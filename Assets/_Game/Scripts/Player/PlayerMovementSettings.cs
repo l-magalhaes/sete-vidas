@@ -36,6 +36,16 @@ namespace SeteVidas.Player
         [Tooltip("Tempo em que um pulo apertado antes de aterrissar é guardado (s)")]
         [Range(0f, 0.3f)] public float JumpBufferTime = 0.1f;
 
+        [Header("Rampas")]
+        [Tooltip("Inclinação máxima em que o gato anda (graus). 46 = sobe 1:1 (45°) e 1:2 (26,6°); 2:1 (63,4°) vira parede e escorrega")]
+        [Range(0f, 80f)] public float MaxSlopeAngle = 46f;
+        [Tooltip("No começo de uma descida, cola o gato na rampa se ela estiver até esta distância abaixo dos pés (tiles)")]
+        [Range(0f, 1f)] public float SlopeSnapDistance = 0.5f;
+        [Tooltip("Empurrão contra a rampa enquanto anda nela, para não descolar (tiles/s)")]
+        [Range(0f, 3f)] public float SlopeStickSpeed = 0.5f;
+        [Tooltip("Depois de um pulo ou empurrão, tempo sem colar na rampa (s). Evita que o pulo seja cancelado na subida")]
+        [Range(0f, 0.5f)] public float SlopeJumpGrace = 0.15f;
+
         [Header("Agarrar borda")]
         [Tooltip("Liga/desliga agarrar bordas ao cair segurando a direção da parede")]
         public bool LedgeGrabEnabled = true;

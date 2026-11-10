@@ -6,7 +6,7 @@ Referência de história do MVP. Falas prontas: `dialogos-mvp.md`. Decisões: `d
 Fortaleza na fronteira do reino onde a Ordem forma seus guerreiros. Os **escudeiros** (filhotes) treinam no pátio com bonecos de palha e armas de madeira; os aprovados viram **templários**, que fazem a guarda e dormem no alojamento; os melhores viram **paladinos**, que carregam a marreta divina.
 - **Cores e emblema:** branco e dourado; o emblema é a **pata dourada** (estandartes, escudos, vitrais, placas). Os templários (Sentinelas) usam a pata dourada na sobreveste branca (`SeteVidasDocs/Inimigos_Arte.md`).
 - **Juramento da Ordem:** "Guardar o selo. Servir o reino. Nunca abandonar um ferido." (A última linha explica por que o Koda salva o ladrão.)
-- **A Câmara do Selo:** há cinco séculos (desde o ano 423, Lore Oficial), Golden, o Dourado, prendeu ali um **tomo que bebe vidas**. Desde então, um guardião vigia a câmara. Hoje, é o Koda.
+- **A Câmara do Selo:** a câmara mais alta da torre da Cidadela (o topo da fase, andar 101). Há cinco séculos (desde o ano 423, Lore Oficial), Golden, o Dourado, prendeu ali um **tomo que bebe vidas**. Desde então, um guardião vigia a câmara. Hoje, é o Koda.
 
 ## O tomo
 Livro de capa roxa com runas verde-ácido e um olho (as cores exclusivas da praga). Dorme selado; para despertar, precisa **beber vidas**. Sete vidas de gato, raras, bastam para acordá-lo. Desperto, ele espalha a praga.

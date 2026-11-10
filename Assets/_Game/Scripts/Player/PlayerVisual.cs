@@ -266,9 +266,27 @@ namespace SeteVidas.Player
 
         // ------------------------------------------------------------ quadro
 
+        // Na rampa, a caixa de colisão encosta pela quina de cima e o meio dos pés fica no ar:
+        // o desenho desce essa folga (em pixels inteiros) para as patas tocarem a rampa.
+        float _slopeDrop;
+        const float SlopeDropSpeed = 8f; // tiles/s: suaviza a entrada e a saída da rampa
+
+        void UpdateSlopeDrop(float dt)
+        {
+            float target = 0f;
+            var ground = controller.Ground;
+            if (ground != null && controller.IsGrounded && !controller.IsHanging && !controller.IsClimbingLedge)
+                target = ground.SlopeGap;
+            _slopeDrop = Mathf.MoveTowards(_slopeDrop, target, SlopeDropSpeed * dt);
+            var p = transform.localPosition;
+            p.y = -Mathf.Round(_slopeDrop / Px) * Px;
+            transform.localPosition = p;
+        }
+
         void LateUpdate()
         {
             if (controller == null || spriteRenderer == null) return;
+            UpdateSlopeDrop(Time.deltaTime);
             if (animationSet == null) { LegacyUpdate(); return; }
             Build();
 

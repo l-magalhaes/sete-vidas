@@ -89,6 +89,50 @@ O prefab, o asset de valores e a câmera são criados por **Tools > Sete Vidas >
 - **Dado** o gato caindo ao lado de uma parede sem quina livre (ex.: parede que continua para cima), **então** não se pendura.
 - **Dado** o gato andando, **quando** a câmera o segue, **então** a imagem não treme e os tiles continuam nítidos em 1920×1080.
 
+## Rampas
+**Status:** implementado em 10/11/2026 (pedido do usuário). Teste no trecho L da Playground (x -110..-77).
+
+**Objetivo:** relevo natural no exterior e na arquitetura (encostas, escadarias de terra, entulho) sem perder as métricas de pulo.
+
+### Regras
+1. Rampa = triângulo de colisão (`PolygonCollider2D`) na layer `Ground`, criado por `SlopeSetup.Create` (Playground) ou por `FortressLayout.Slopes()` (Fortaleza).
+2. **Andáveis:** inclinação até `MaxSlopeAngle` (46°). Na prática: **1:1 (45°)** e **1:2 (26,6°)**. Mais íngreme (ex.: 2:1, 63°) **não é chão**: o gato escorrega e, andando, não tenta subir (para no pé dela, como numa parede).
+3. Na rampa a **velocidade horizontal é a mesma do plano** (subir não fica mais lento); a vertical acompanha a rampa.
+4. **Parado na rampa não escorrega** (sem gravidade enquanto está nela; um empurrão leve contra a normal mantém o contato).
+5. **Começo de descida:** se o chão some mas há rampa até `SlopeSnapDistance` (0,5 tile) abaixo, o gato cola nela em vez de voar um instante.
+6. **Fim de subida:** ao passar da rampa para o plano, a velocidade para cima é zerada (não dá pulinho no topo).
+7. **Pulo e empurrão** (pulo normal, pulo de parede, dano) desligam a colagem por `SlopeJumpGrace` (0,15 s), para a rampa não cancelar o pulo.
+8. **Desenho:** o colisor tem fundo reto, então na rampa ele encosta pela quina de cima e o meio dos pés fica no ar (6 px em 45°, 3 px em 1:2). O `PlayerVisual` desce o sprite essa folga, em pixels inteiros e suavizado (8 tiles/s).
+9. Agachar, pular, coyote time, jump buffer e furtividade funcionam igual na rampa.
+10. **Inimigos não andam em rampas** por enquanto (a Sentinela trata a rampa como parede). Não coloque patrulhas em rampas.
+
+### Parâmetros (`PlayerMovementSettings`, cabeçalho "Rampas")
+| Parâmetro | Inicial | Unidade | Faixa de teste |
+|---|---|---|---|
+| `MaxSlopeAngle` | 46 | graus | 40–50 |
+| `SlopeSnapDistance` | 0,5 | tiles | 0,3–0,7 |
+| `SlopeStickSpeed` | 0,5 | tiles/s | 0,2–1 |
+| `SlopeJumpGrace` | 0,15 | s | 0,1–0,25 |
+
+### Implementação
+- `SlopeMath` (C# puro): ângulo, andável, velocidade vertical na rampa, folga do sprite. Testes: `Tests/EditMode/SlopeMathTests.cs`.
+- `GroundCheck`: normal do chão (raios das duas quinas e do meio, vale a mais "para cima"), `OnSlope`, `OnSteepSlope`, `SlopeGap`, `TryFindSnap`, `SteepAhead`.
+- `PlayerController`: rampa no passo de física; `IsOnSlope` para outros sistemas.
+- `PlayerVisual.UpdateSlopeDrop`: desce o sprite.
+- `SlopeSetup` (editor): colisor + desenho placeholder com o tamanho final (`env_slope_placeholder_<w>x<h>_<r|l>.png`).
+- Testes PlayMode: `Tests/PlayMode/SlopeTests.cs` (parado não escorrega; íngreme escorrega).
+
+### Critérios de aceite
+- **Dado** o gato parado numa rampa 1:1 ou 1:2, **quando** não houver entrada, **então** ele não escorrega e as patas encostam na rampa.
+- **Dado** o gato andando, **quando** subir ou descer uma rampa 1:1 ou 1:2, **então** a velocidade horizontal é a do plano e ele não sai do chão (nem no topo, nem no começo da descida).
+- **Dado** o gato numa rampa, **quando** pular, **então** a altura do pulo é a mesma do plano (4 tiles).
+- **Dado** o gato andando até uma rampa 2:1, **então** ele para no pé dela; **quando** cair em cima dela, **então** escorrega até o chão.
+- **Dado** o gato agachado numa rampa, **quando** andar, **então** anda a 50% e continua colado.
+
+### Perguntas abertas
+- Inimigos em rampas (patrulha da Sentinela): fica para quando uma sala pedir.
+- Rampas desenhadas (arte final) entram na Etapa 2 do plano de cenário (`SeteVidasDocs/Sete Vidas — Assets e Cenários da Fortaleza.md`).
+
 ## Perguntas abertas
 - [APROVADA] Agarrar borda desde o início, como locomoção global do gato. O GDD só cita "se pendurar" nos pontos de ancoragem do Caçador; agarrar quinas comuns é uma mecânica nova. Se preferir, ela pode virar um desbloqueio (desligando `LedgeGrabEnabled`).
 - [APROVADA] Agarrar só segurando a direção da parede. Alternativa: agarrar automaticamente ao sair andando de uma borda agachado (descer para a borda de forma furtiva).

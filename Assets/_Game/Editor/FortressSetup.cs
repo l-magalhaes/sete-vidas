@@ -100,6 +100,11 @@ namespace SeteVidas.EditorTools
             SeteVidasSetup.CreateTilemap(grid, "Foreground", null, 10, false);
             BuildTiles(tiles, maps);
 
+            var slopes = new GameObject("Rampas");
+            SceneManager.MoveGameObjectToScene(slopes, scene);
+            foreach (var r in FortressLayout.Slopes())
+                SlopeSetup.Create(slopes.transform, "Rampa " + r.Note, r.X0, r.Y0, r.W, r.H, r.RisesRight);
+
             var root = new GameObject("Fortaleza");
             SceneManager.MoveGameObjectToScene(root, scene);
             PlaceObjects(scene, root.transform, dialogues);

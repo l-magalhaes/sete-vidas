@@ -18,9 +18,22 @@ namespace SeteVidas.Player
 
         Rigidbody2D _body;
         float _lastWidth = 0.75f;
+        float _maxSlopeAngle = 46f;
+
+        /// <summary>Os raios de rampa saem um pouco acima dos pés, para não começarem dentro do chão.</summary>
+        const float RayLift = 0.05f;
 
         public bool IsGrounded { get; private set; }
         public LayerMask SolidLayers => solidLayers;
+
+        /// <summary>Normal do chão sob os pés (para cima no chão plano).</summary>
+        public Vector2 GroundNormal { get; private set; } = Vector2.up;
+        /// <summary>De pé numa rampa andável.</summary>
+        public bool OnSlope => IsGrounded && SlopeMath.IsSlope(GroundNormal);
+        /// <summary>Encostado só numa rampa íngreme demais: não conta como chão, o gato escorrega.</summary>
+        public bool OnSteepSlope { get; private set; }
+        /// <summary>Distância entre o meio dos pés e a rampa (a caixa encosta pela quina). O sprite desce isso.</summary>
+        public float SlopeGap { get; private set; }
 
         // Com interpolação ligada, o transform fica "atrasado" em relação à física; use a posição do corpo.
         Vector2 Feet => _body != null ? _body.position : (Vector2)transform.position;
@@ -33,14 +46,89 @@ namespace SeteVidas.Player
                     GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
         }
 
-        /// <summary>Atualiza <see cref="IsGrounded"/>. Chame no início de cada passo de física.</summary>
-        public void Refresh(float width)
+        /// <summary>
+        /// Atualiza <see cref="IsGrounded"/>, a normal do chão e a folga da rampa. Chame no início de cada passo de física.
+        /// <paramref name="maxSlopeAngle"/> negativo = usa o último valor informado (habilidades não precisam saber dele).
+        /// </summary>
+        public void Refresh(float width, float maxSlopeAngle = -1f)
         {
             _lastWidth = width;
+            if (maxSlopeAngle >= 0f) _maxSlopeAngle = maxSlopeAngle;
             Vector2 feet = Feet;
             var center = new Vector2(feet.x, feet.y - probeDepth * 0.5f);
             var size = new Vector2(width - 2f * sideInset, probeDepth);
-            IsGrounded = Physics2D.OverlapBox(center, size, 0f, solidLayers) != null;
+            bool touching = Physics2D.OverlapBox(center, size, 0f, solidLayers) != null;
+
+            GroundNormal = Vector2.up;
+            OnSteepSlope = false;
+            SlopeGap = 0f;
+
+            if (touching)
+            {
+                // Normal do contato: raios curtos das duas quinas e do meio. Vale o mais "para cima":
+                // com uma quina no plano e outra na rampa, o gato está no plano.
+                float reach = RayLift + probeDepth + 0.04f;
+                if (TryBestNormal(feet, width, reach, out Vector2 normal, out _))
+                {
+                    GroundNormal = normal;
+                    if (!SlopeMath.IsWalkable(normal, _maxSlopeAngle))
+                    {
+                        OnSteepSlope = true;
+                        touching = false; // íngreme demais: não é chão, a gravidade faz escorregar
+                    }
+                }
+            }
+            IsGrounded = touching;
+
+            // Na rampa, a caixa encosta pela quina de cima e o meio dos pés fica no ar
+            if (IsGrounded && SlopeMath.IsSlope(GroundNormal))
+            {
+                float expected = SlopeMath.CenterGap(width * 0.5f, GroundNormal);
+                var hit = Physics2D.Raycast(new Vector2(feet.x, feet.y + RayLift), Vector2.down, RayLift + expected + 0.05f, solidLayers);
+                if (hit.collider != null && SlopeMath.IsSlope(hit.normal))
+                    SlopeGap = Mathf.Max(0f, hit.distance - RayLift);
+            }
+        }
+
+        /// <summary>
+        /// Procura chão andável até <paramref name="maxDistance"/> abaixo dos pés (para colar o gato na rampa
+        /// ao começar uma descida, em vez de ele voar um pouco). Devolve a distância até encostar.
+        /// </summary>
+        public bool TryFindSnap(float width, float maxDistance, out float distance)
+        {
+            distance = 0f;
+            if (!TryBestNormal(Feet, width, RayLift + maxDistance, out Vector2 normal, out float closest)) return false;
+            if (!SlopeMath.IsWalkable(normal, _maxSlopeAngle)) return false;
+            distance = Mathf.Max(0f, closest - RayLift);
+            return true;
+        }
+
+        /// <summary>Há uma rampa íngreme demais logo à frente dos pés? (o gato não tenta subir nela andando)</summary>
+        public bool SteepAhead(int dir, float width)
+        {
+            if (dir == 0) return false;
+            Vector2 feet = Feet;
+            var hit = Physics2D.Raycast(new Vector2(feet.x, feet.y + RayLift), new Vector2(dir, 0f), width * 0.5f + 0.06f, solidLayers);
+            return hit.collider != null && hit.normal.y > 0.01f && !SlopeMath.IsWalkable(hit.normal, _maxSlopeAngle);
+        }
+
+        /// <summary>Raios para baixo das duas quinas e do meio: a normal mais "para cima" e a menor distância.</summary>
+        bool TryBestNormal(Vector2 feet, float width, float length, out Vector2 best, out float closest)
+        {
+            best = Vector2.up;
+            closest = float.MaxValue;
+            bool any = false;
+            float half = width * 0.5f - sideInset;
+            for (int i = -1; i <= 1; i++)
+            {
+                var origin = new Vector2(feet.x + i * half, feet.y + RayLift);
+                var hit = Physics2D.Raycast(origin, Vector2.down, length, solidLayers);
+                if (hit.collider == null || hit.normal.y <= 0.01f) continue;
+                if (!any || hit.normal.y > best.y) best = hit.normal;
+                closest = Mathf.Min(closest, hit.distance);
+                any = true;
+            }
+            return any;
         }
 
         /// <summary>Há espaço para o colisor ter esta altura a partir dos pés?</summary>
