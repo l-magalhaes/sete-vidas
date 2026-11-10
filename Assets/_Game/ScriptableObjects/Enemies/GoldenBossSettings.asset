@@ -12,28 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 795a58294ecdee148905a70f6177f4cf, type: 3}
   m_Name: GoldenBossSettings
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Enemies.Boss.GoldenBossSettings
-  MaxHealth: 30
-  SecondPhaseAt: 0.5
-  IdleBetween: 0.7
-  WalkSpeed: 2.5
-  WalkTime: 1.2
+  MaxHealth: 45
+  SecondPhaseAt: 0.6
+  IdleBetween: 0.4
+  WalkSpeed: 3.6
+  WalkTime: 0.9
   BodySize: {x: 1.4, y: 2}
   SwingRange: 1.8
-  SwingWindup: 0.6
+  SwingWindup: 0.5
   SwingActive: 0.15
-  SwingRecovery: 0.7
+  SwingRecovery: 0.5
   SwingHitbox: {x: 1.8, y: 1.4}
+  ComboChance: 0.45
+  SecondPhaseSpeed: 1.45
   LeapWindup: 0.5
   LeapAirTime: 0.9
   LeapHeight: 5
   LeapImpactHalfWidth: 1.6
-  LeapRecovery: 0.8
+  LeapRecovery: 0.6
   HealBelow: 0.7
   HealDuration: 4
-  HealPerSecond: 2
+  HealPerSecond: 5
   HealInterruptDamage: 5
   StaggerTime: 1.5
-  HealCooldown: 15
+  HealCooldown: 13
   LightningCastTime: 0.8
   LightningWaves: 3
   StrikesPerWave: 4
@@ -42,5 +44,6 @@ MonoBehaviour:
   LightningWaveGap: 0.4
   LightningWidth: 1.4
   LightningSafeGap: 2.5
-  LightningCooldown: 9
+  LightningCooldown: 7
+  ShieldDuringLightning: 1
   Damage: 1

@@ -68,6 +68,9 @@ namespace SeteVidas.Enemies.Boss
         Sprite _poseOverride;
         string _poseClip;
         float _poseTime, _stateTime, _stateDuration;
+        int _combo;               // marretadas seguidas neste combo
+        SpriteRenderer _shield;   // bolha dourada dos relâmpagos
+        float _shieldFlashUntil, _nextShieldPopup;
         readonly List<LightningStrike> _strikes = new List<LightningStrike>();
 
         public static GoldenBoss Active { get; private set; }
@@ -82,6 +85,10 @@ namespace SeteVidas.Enemies.Boss
         public int FacingDirection => _facing;
         public bool InCombat => true; // guardião sempre alerta: pelas costas vale 1,5×, nunca furtivo
 
+        /// <summary>Escudo sagrado: enquanto chama e lança os relâmpagos, nenhum golpe passa (de nenhum ângulo).</summary>
+        public bool IsShielded => settings != null && settings.ShieldDuringLightning
+                                  && (Current == State.LightningCast || Current == State.Lightning);
+
         /// <summary>Vida chegou a zero.</summary>
         public event Action Defeated;
 
@@ -95,6 +102,7 @@ namespace SeteVidas.Enemies.Boss
             if (playerLayers == 0) playerLayers = LayerMask.GetMask(GameConstants.Layers.Player);
             if (healAura != null) healAura.enabled = false;
             _box.enabled = false; // só sólido para golpes durante a luta
+            _shield = BuildShield();
         }
 
         void OnEnable() => Active = this;
@@ -183,7 +191,7 @@ namespace SeteVidas.Enemies.Boss
 
                 case State.Walk:
                     FacePlayer();
-                    if (DistanceToPlayer() <= settings.SwingRange) { Enter(State.SwingWindup, settings.SwingWindup); break; }
+                    if (DistanceToPlayer() <= settings.SwingRange) { StartSwing(false); break; }
                     MoveX(_facing * settings.WalkSpeed * Speed * dt);
                     if (_timer <= 0f) Enter(State.Idle, 0f);
                     break;
@@ -196,7 +204,11 @@ namespace SeteVidas.Enemies.Boss
                     if (_timer <= 0f) Enter(State.SwingRecover, settings.SwingRecovery / Speed);
                     break;
                 case State.SwingRecover:
-                    if (_timer <= 0f) Enter(State.Idle, IdleTime);
+                    if (_timer > 0f) break;
+                    // agressivo: se o gato ficou perto, emenda outra marretada (até 3 seguidas)
+                    if (_combo < 3 && DistanceToPlayer() <= settings.SwingRange + 0.4f
+                        && UnityEngine.Random.value < settings.ComboChance) { FacePlayer(); StartSwing(true); }
+                    else Enter(State.Idle, IdleTime);
                     break;
 
                 case State.LeapWindup:
@@ -212,7 +224,10 @@ namespace SeteVidas.Enemies.Boss
                     StepLeap();
                     break;
                 case State.LeapRecover:
-                    if (_timer <= 0f) Enter(State.Idle, IdleTime);
+                    if (_timer > 0f) break;
+                    // caiu do lado do gato: já levanta batendo
+                    if (DistanceToPlayer() <= settings.SwingRange) { FacePlayer(); StartSwing(false); }
+                    else Enter(State.Idle, IdleTime);
                     break;
 
                 case State.Heal:
@@ -243,8 +258,15 @@ namespace SeteVidas.Enemies.Boss
             }
         }
 
-        float Speed => InSecondPhase ? 1.35f : 1f;
+        float Speed => InSecondPhase ? settings.SecondPhaseSpeed : 1f;
         float IdleTime => settings.IdleBetween * (InSecondPhase ? 0.6f : 1f);
+
+        /// <summary>Marretada. No combo, a preparação é mais curta (o gato já viu a primeira).</summary>
+        void StartSwing(bool chained)
+        {
+            _combo = chained ? _combo + 1 : 1;
+            Enter(State.SwingWindup, settings.SwingWindup / Speed * (chained ? 0.65f : 1f));
+        }
 
         void ChooseMove()
         {
@@ -266,7 +288,7 @@ namespace SeteVidas.Enemies.Boss
             if (!IsFighting) return;
             switch (move)
             {
-                case BossMove.Swing: Enter(State.SwingWindup, settings.SwingWindup / Speed); break;
+                case BossMove.Swing: StartSwing(false); break;
                 case BossMove.Leap: Enter(State.LeapWindup, settings.LeapWindup / Speed); break;
                 case BossMove.Heal:
                     _healAccum = 0f;
@@ -329,6 +351,17 @@ namespace SeteVidas.Enemies.Boss
         public void TakeDamage(in DamageInfo info)
         {
             if (!IsFighting || info.Amount <= 0) return;
+            if (IsShielded)
+            {
+                // o golpe bate na bolha e não passa: nem pelas costas, nem de cima, nem de baixo
+                _shieldFlashUntil = Time.time + 0.18f;
+                if (Time.time >= _nextShieldPopup)
+                {
+                    _nextShieldPopup = Time.time + 0.4f;
+                    DamagePopup.Spawn(transform.position + Vector3.up * 2.6f, "escudo!", new Color32(0xff, 0xf0, 0xa8, 0xff));
+                }
+                return;
+            }
             Health = Mathf.Max(0, Health - info.Amount);
             _blinkUntil = Time.time + 0.15f;
             DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
@@ -423,6 +456,7 @@ namespace SeteVidas.Enemies.Boss
                 float pulse = 0.35f + 0.25f * Mathf.Sin(Time.time * 6f);
                 var c = healAura.color; c.a = pulse; healAura.color = c;
             }
+            UpdateShield();
         }
 
         /// <summary>
@@ -461,6 +495,60 @@ namespace SeteVidas.Enemies.Boss
             }
             CurrentClipName = clip.name;
             if (frame != null && frame.sprite != null) spriteRenderer.sprite = frame.sprite;
+        }
+
+        // ---------------------------------------------------------- escudo
+
+        /// <summary>
+        /// Bolha dourada em pixel art (56×64 px, base nos pés): anel claro, treliça de runas por dentro e um brilho
+        /// no alto à esquerda. Gerada em código para não depender de arquivo de arte.
+        /// </summary>
+        SpriteRenderer BuildShield()
+        {
+            const int W = 56, H = 64;
+            var tex = new Texture2D(W, H, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "fx_koda_shield" };
+            var px = new Color32[W * H];
+            float cx = (W - 1) * 0.5f, cy = (H - 1) * 0.5f, rx = W * 0.5f - 0.5f, ry = H * 0.5f - 0.5f;
+            for (int y = 0; y < H; y++)
+                for (int x = 0; x < W; x++)
+                {
+                    float nx = (x - cx) / rx, ny = (y - cy) / ry;
+                    float d = Mathf.Sqrt(nx * nx + ny * ny);
+                    Color32 c = new Color32(0, 0, 0, 0);
+                    if (d > 1f) { }
+                    else if (d > 0.94f) c = new Color32(0xff, 0xf2, 0xb8, 0xf0);                      // borda clara
+                    else if (d > 0.87f) c = new Color32(0xff, 0xc9, 0x4d, 0xa0);                      // borda dourada
+                    else if (d > 0.70f && d < 0.78f && nx < -0.25f && ny > 0.3f) c = new Color32(0xff, 0xff, 0xff, 0xa8); // brilho
+                    else if ((x + y) % 7 == 0 || (x - y + 70) % 7 == 0) c = new Color32(0xff, 0xd8, 0x70, 0x50);       // runas
+                    else c = new Color32(0xff, 0xe0, 0x80, 0x22);                                     // véu
+                    px[y * W + x] = c;
+                }
+            tex.SetPixels32(px);
+            tex.Apply();
+            var go = new GameObject("Escudo sagrado");
+            go.transform.SetParent(transform, false);
+            go.transform.localPosition = new Vector3(0f, -0.15f, 0f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = Sprite.Create(tex, new Rect(0, 0, W, H), new Vector2(0.5f, 0f), 16f);
+            if (spriteRenderer != null) { sr.sortingLayerID = spriteRenderer.sortingLayerID; sr.sortingOrder = spriteRenderer.sortingOrder + 2; }
+            sr.enabled = false;
+            return sr;
+        }
+
+        void UpdateShield()
+        {
+            if (_shield == null) return;
+            bool on = IsShielded;
+            _shield.enabled = on;
+            if (!on) return;
+            // cresce ao surgir, pulsa, e pisca branco quando um golpe bate nele
+            float grow = Mathf.Clamp01(_stateTime / 0.15f);
+            if (Current == State.Lightning) grow = 1f;
+            float s = Mathf.Lerp(0.6f, 1f, grow) * (1f + 0.03f * Mathf.Sin(Time.time * 9f));
+            _shield.transform.localScale = new Vector3(s, s, 1f);
+            bool flash = Time.time < _shieldFlashUntil;
+            float a = flash ? 1f : 0.7f + 0.2f * Mathf.Sin(Time.time * 7f);
+            _shield.color = flash ? new Color(1.4f, 1.4f, 1.4f, a) : new Color(1f, 1f, 1f, a);
         }
 
         [ContextMenu("Depuração: salto")] void DebugLeap() => ForceMove(BossMove.Leap);

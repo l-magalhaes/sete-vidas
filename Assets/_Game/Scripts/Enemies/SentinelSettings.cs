@@ -56,6 +56,28 @@ namespace SeteVidas.Enemies
         [Tooltip("Distância do centro da hitbox à frente da Sentinela")]
         public float AttackHitboxForward = 0.6f;
 
+        [Header("Atirador (besta)")]
+        [Tooltip("Cão Sentinela Atirador: mira e atira virotes em vez de atacar com a lança")]
+        public bool Ranged;
+        [Tooltip("Não sai do posto (no alto): investiga só olhando, nunca desce para perseguir")]
+        public bool HoldPosition;
+        [Tooltip("Distância máxima do tiro (tiles)")]
+        [Min(0f)] public float ShootRange = 11f;
+        [Tooltip("Mirando antes do disparo (s): a linha de mira avisa o jogador")]
+        [Min(0.1f)] public float AimTime = 0.9f;
+        [Tooltip("Nos últimos segundos da mira ela trava (dá para desviar do lugar marcado)")]
+        [Min(0f)] public float AimLockTime = 0.25f;
+        [Tooltip("Recarregando a besta depois do tiro (s): janela para se aproximar")]
+        [Min(0f)] public float ReloadTime = 1.4f;
+        [Min(1f)] public float BoltSpeed = 13f;
+        [Min(0)] public int BoltDamage = 1;
+        [Tooltip("Quanto ela consegue mirar para baixo (graus abaixo da horizontal)")]
+        [Range(0f, 89f)] public float MaxAimDown = 70f;
+        [Tooltip("Quanto ela consegue mirar para cima (graus)")]
+        [Range(0f, 89f)] public float MaxAimUp = 20f;
+        [Tooltip("O cone de visão aponta este tanto para baixo (graus): quem fica no alto olha para o chão")]
+        [Range(0f, 80f)] public float VisionTiltDown = 0f;
+
         [Header("Morte")]
         [Min(0f)] public float DeathDuration = 0.6f;
         [Tooltip("Chance de soltar meio coração ao morrer (0,15 = 15%)")]

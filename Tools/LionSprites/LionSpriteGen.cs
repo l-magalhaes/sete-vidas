@@ -31,6 +31,7 @@ public static partial class LionSpriteGen
         P('D', "#a9bcd6"); P('d', "#f4f7fb");                    // lâmina
         P('W', "#6b4a2b"); P('I', "#b8bfcc"); P('i', "#8a91a0"); P('Y', "#d9a441"); // marreta
         P('R', "#5b2a6e"); P('g', "#8fd14f");                    // tomo (praga)
+        P('r', "#9a5ab8");                                       // veia da praga sobre pelo claro
         P('w', "#ffffff"); P('c', "#c9c2b0"); P('C', "#e6e0d0"); // branco, poeira
     }
 
@@ -168,6 +169,11 @@ public static partial class LionSpriteGen
             case "lick": set(5, 6, 'F'); set(5, 10, 'F'); set(8, 9, 'N'); break;
             case "down": set(5, 6, 'F'); set(5, 10, 'F'); set(6, 6, 'E'); set(6, 10, 'E'); set(7, 6, 'o'); set(7, 10, 'o'); break;
             case "up": set(4, 6, 'o'); set(4, 10, 'o'); set(5, 6, 'E'); set(5, 10, 'E'); set(6, 6, 'F'); set(6, 10, 'F'); break;
+            case "cursed":   // orelhas baixas, olhos acesos de verde-praga
+                rows[0] = "............"; rows[1] = "LFf..LFf....";
+                set(5, 6, 'g'); set(5, 10, 'g'); break;
+            case "cursedup": // olhando o tomo lá em cima, olhos verdes
+                set(4, 6, 'o'); set(4, 10, 'o'); set(5, 6, 'g'); set(5, 10, 'g'); set(6, 6, 'F'); set(6, 10, 'F'); break;
         }
         return rows;
     }
@@ -600,14 +606,26 @@ public static partial class LionSpriteGen
         // ---------------- cenas: maldição, caído, levantar, pegar o tomo, olhar
         var lying = Lying("lying_0", "blink");
         var lyingClip = new Clip("lying", 0.5f, true); lyingClip.Frames.Add(lying); Clips.Add(lyingClip);
-        var kneel = new Clip("curse_kneel", 0.14f, false);
-        kneel.Frames.Add(MakeFrame("curse_kneel_0", With(std, p => p.HeadV = "wide")));
-        kneel.Frames.Add(MakeFrame("curse_kneel_1", With(std, p => { p.Py = 17; p.HeadV = "hurt"; p.FrontHand = new Point(13, 13); })));
-        kneel.Frames.Add(MakeFrame("curse_kneel_2", With(LandLow(), p => p.HeadV = "hurt")));
-        kneel.Frames.Add(MakeFrame("curse_kneel_3", With(CrouchPose(), p => p.HeadV = "hurt")));
-        kneel.Frames.Add(MakeFrame("curse_kneel_4", With(CrouchPose(), p => { p.HeadV = "flatblink"; p.CrouchHeadDy = 1; })));
-        kneel.Frames.Add(Lying("curse_kneel_5", "blink"));
+        // o selo rompe: o tomo explode na pata, ele é jogado para trás, leva as patas ao peito, cai de joelhos e tomba.
+        // As veias roxas sobem pelo pelo a cada frame (Corrupt). O tomo sai da pata no frame 1 (o jogo o faz flutuar).
+        var kneel = new Clip("curse_kneel", 0.13f, false);
+        kneel.Frames.Add(Corrupt(MakeFrame("curse_kneel_0", With(std, p => { p.HeadV = "wide"; p.FrontHand = new Point(16, 8); p.FrontItem = new Item("tome", 0); })), 0, 0));
+        kneel.Frames.Add(Corrupt(MakeFrame("curse_kneel_1", With(std, p => { p.Px = 6; p.HeadDx = -1; p.TorsoV = "up"; p.HeadV = "hurt"; p.FrontHand = new Point(17, 9); p.BackFoot = new Point(5, 20); p.FrontFoot = new Point(10, 20); })), 1, 1));
+        kneel.Frames.Add(Corrupt(MakeFrame("curse_kneel_2", With(std, p => { p.Py = 17; p.HeadV = "cursed"; p.FrontHand = new Point(13, 12); p.BackHand = new Point(12, 12); p.BackArmInFront = true; })), 2, 2));
+        kneel.Frames.Add(Corrupt(MakeFrame("curse_kneel_3", With(LandLow(), p => { p.HeadV = "cursed"; p.HeadDy = 1; p.FrontHand = new Point(13, 14); p.BackHand = new Point(12, 14); p.BackArmInFront = true; })), 2, 3));
+        kneel.Frames.Add(Corrupt(MakeFrame("curse_kneel_4", With(CrouchPose(), p => p.HeadV = "cursed")), 3, 4));
+        kneel.Frames.Add(Corrupt(MakeFrame("curse_kneel_5", With(CrouchPose(), p => { p.HeadV = "flatblink"; p.CrouchHeadDy = 1; })), 3, 5));
+        kneel.Frames.Add(Corrupt(Lying("curse_kneel_6", "hurt", new Point(4, 0), 0, 0), 3, 6));
         Clips.Add(kneel);
+        // no chão, enquanto o tomo suga as vidas: se contorce, ergue a cabeça e estende a pata para o tomo (loop)
+        var writhe = new Clip("curse_writhe", 0.16f, true);
+        writhe.Frames.Add(Corrupt(Lying("curse_writhe_0", "hurt", new Point(4, 0), 0, 0), 3, 10));
+        writhe.Frames.Add(Corrupt(Lying("curse_writhe_1", "cursed", new Point(5, 3), 1, 1), 4, 11));
+        writhe.Frames.Add(Corrupt(Lying("curse_writhe_2", "cursedup", new Point(6, 6), 2, 0), 4, 12));
+        writhe.Frames.Add(Corrupt(Lying("curse_writhe_3", "cursedup", new Point(6, 9), 2, 1), 4, 13));
+        writhe.Frames.Add(Corrupt(Lying("curse_writhe_4", "cursed", new Point(5, 4), 1, 0), 4, 14));
+        writhe.Frames.Add(Corrupt(Lying("curse_writhe_5", "flatblink", new Point(5, 1), 0, 0), 3, 15));
+        Clips.Add(writhe);
         var getUp = new Clip("get_up", 0.12f, false);
         getUp.Frames.Add(Lying("get_up_0", "n"));
         getUp.Frames.Add(MakeFrame("get_up_1", With(CrouchPose(), p => { p.HeadV = "flatblink"; p.CrouchHeadDy = 1; })));
@@ -685,19 +703,42 @@ public static partial class LionSpriteGen
     }
     static void SetC(Canvas cv, int x, int y, char c) { if (x >= 0 && y >= 0 && x < W && y < H) cv.Px[x, y] = c; }
 
-    // Deitado de lado: o corpo em pé (sem contorno) girado 90° (cabeça para a direita), apoiado no chão.
-    static Frame Lying(string name, string head)
+    // Veias roxas da praga sobre pelo, capuz e calças: <paramref name="level"/> 0..4 (mais veias), <paramref name="seed"/>
+    // muda o desenho para as veias "correrem" de um frame para o outro. Algumas viram brasas verdes.
+    static Frame Corrupt(Frame f, int level, int seed)
     {
-        var p = With(Std(), q => { q.HeadV = head; q.FrontHand = new Point(13, 14); });
+        if (level <= 0) return f;
+        var cv = f.Body;
+        for (int x = 1; x < W - 1; x++)
+            for (int y = 1; y < H - 1; y++)
+            {
+                char c = cv.Px[x, y];
+                if (c != 'L' && c != 'F' && c != 'f' && c != 'G' && c != 'H' && c != 'P' && c != 'p') continue;
+                int h = (x * 73856093) ^ (y * 19349663) ^ (seed * 83492791);
+                h = (h ^ (h >> 13)) & 1023;
+                bool vein = ((x + 2 * y + seed) % 7 == 0 && h < 260 + level * 110) || h < level * 22;
+                if (!vein) continue;
+                cv.Px[x, y] = (h & 31) == 0 && level >= 3 ? 'g' : (c == 'L' || c == 'P' ? 'r' : 'R');
+            }
+        return f;
+    }
+
+    // Deitado de lado: o corpo em pé (sem contorno) girado 90° (cabeça para a direita), apoiado no chão.
+    static Frame Lying(string name, string head) { return Lying(name, head, new Point(4, 0), 0, 0); }
+
+    // Caído de bruços (cabeça para a direita): o corpo em pé (sem cabeça e sem braço) girado 90°, de barriga no
+    // chão; a cabeça é carimbada em pé na ponta, para o rosto ficar legível.
+    // <paramref name="reach"/>: onde a pata da frente vai, em px a partir do ombro (x para a frente, y para cima).
+    // <paramref name="headLift"/>: quanto ele ergue a cabeça. <paramref name="spasm"/>: o tronco treme 1 px para cima.
+    static Frame Lying(string name, string head, Point reach, int headLift, int spasm)
+    {
+        var p = Std();
         var cv = new Canvas();
-        // desenha sem contorno
         DrawLeg(cv, p.Px, p.Py + 2, p.BackFoot, false, true);
         for (int x = 0; x < 6; x++) { cv.Set(p.Px + x, p.Py, 'P'); cv.Set(p.Px + x, p.Py + 1, 'P'); }
         DrawLeg(cv, p.Px + 3, p.Py + 2, p.FrontFoot, false, false);
         cv.Stamp(Torsos["n"], p.Px - 5, p.Py - 5);
-        cv.Stamp(Head(head), p.Px - 3, p.Py - 15);
-        DrawArm(cv, p.Px + 6, p.Py - 4, p.FrontHand.Value, 'F', 'L', null);
-        // gira no sentido horário: (x, y) → (H-1-y, x); depois apoia no chão e centraliza
+        // gira no sentido horário: (x, y) → (H-1-y, x): a frente (barriga) fica para baixo, as costas para cima
         var rot = new Canvas();
         int minX = W, maxX = -1, maxY = -1;
         for (int x = 0; x < W; x++)
@@ -708,23 +749,42 @@ public static partial class LionSpriteGen
                 rot.Px[nx, ny] = c;
                 minX = Math.Min(minX, nx); maxX = Math.Max(maxX, nx); maxY = Math.Max(maxY, ny);
             }
+        int shiftX = 20 - (minX + maxX + 1) / 2, shiftY = 38 - maxY;
+        Func<int, int, Point> mapPx = (mx, my) => new Point(H - 1 - (my + OY) + shiftX, mx + OX + shiftY);
         var fin = new Canvas();
-        int shiftX = 24 - (minX + maxX + 1) / 2, shiftY = 38 - maxY;
         for (int x = 0; x < W; x++)
             for (int y = 0; y < H; y++)
             {
                 char c = rot.Px[x, y]; if (c == '.') continue;
                 int nx = x + shiftX, ny = y + shiftY;
+                if (spasm > 0 && ny < 37) ny -= spasm;
                 if (nx >= 0 && ny >= 0 && nx < W && ny < H) fin.Px[nx, ny] = c;
+                if (spasm > 0 && y + shiftY == 37 && ny >= 0 && ny < H) fin.Px[nx, 36] = c; // sem buraco
             }
-        Outline(fin, 'o');
-        // âncoras passam pela mesma rotação + deslocamento
-        Func<int, int, PointF> map = (mx, my) =>
+        // cabeça em pé na ponta do tronco (o capuz cobre o pescoço)
+        var neck = mapPx(p.Px + 2, p.Py - 5);
+        var hd = Head(head);
+        int hx = neck.X - 3, hy = 38 - headLift - spasm - (hd.Length - 1);
+        for (int r = 0; r < hd.Length; r++)
+            for (int c = 0; c < hd[r].Length; c++)
+            {
+                char ch = hd[r][c]; if (ch == '.' || ch == ' ') continue;
+                int x = hx + c, y = hy + r;
+                if (x >= 0 && y >= 0 && x < W && y < H) fin.Px[x, y] = ch;
+            }
+        // pata da frente: sai debaixo do queixo e vai para a frente (ou sobe, estendida para o tomo)
+        var sh = new Point(hx + 10, 37 - spasm);
+        var hand = new Point(sh.X + reach.X, sh.Y - reach.Y);
+        var pts = Line(sh.X, sh.Y, hand.X, hand.Y);
+        for (int i = 0; i < pts.Count; i++)
         {
-            int cx = mx + OX, cy = my + OY;
-            int rx = H - 1 - cy + shiftX, ry = cx + shiftY;
-            return new PointF(rx + 0.5f - 24f, 40f - (ry + 0.5f));
-        };
+            var q = pts[i];
+            if (q.X < 0 || q.Y < 0 || q.X >= W || q.Y >= H) continue;
+            fin.Px[q.X, q.Y] = i >= pts.Count - 2 ? 'L' : 'F';
+            if (i == pts.Count - 1 && q.Y + 1 < H && fin.Px[q.X, q.Y + 1] == '.') fin.Px[q.X, q.Y + 1] = 'L'; // patinha de 2 px
+        }
+        Outline(fin, 'o');
+        Func<int, int, PointF> map = (mx, my) => { var q = mapPx(mx, my); return new PointF(q.X + 0.5f - 24f, 40f - (q.Y + 0.5f)); };
         return new Frame { Name = name, Body = fin, Tail = map(p.Px - 3, p.Py - 1), Chest = map(p.Px + 3, p.Py - 4), BodyOffset = new Point(0, 0), HasTail = true };
     }
 

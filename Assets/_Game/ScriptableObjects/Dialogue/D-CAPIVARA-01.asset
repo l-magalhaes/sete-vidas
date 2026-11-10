@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-CAPIVARA-01
   Required: 1
-  Revision: 3
+  Revision: 4
+  IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
     Expression: deboche
-    Text: "Ah, estava sim. Nas letras mi\xFAdas. Que voc\xEA, claro, n\xE3o leu."
+    Text: "Ah, estava sim. Cl\xE1usula sete. Voc\xEA leu... e achou gra\xE7a."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
     Text: "Voc\xEA... o contratante. O que voc\xEA fez comigo?"

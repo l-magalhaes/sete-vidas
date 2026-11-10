@@ -21,16 +21,27 @@ GATO: Entrar, pegar, sair. Esta noite.
 
 > A cláusula 7 é a armadilha: "custos pessoais do manuseio" são as seis vidas. Na traição, a capivara cita a cláusula.
 
-## D-FORT-01 — Chegada à Cidadela (obrigatório, uma vez; rev. 3)
-SISTEMA: A Cidadela do Sol Eterno, onde os cães viram templários e os templários, paladinos.
+## D-FORT-01 — No alto da montanha (obrigatório, uma vez; rev. 5)
+SISTEMA: Do alto da montanha, a Cidadela do Sol Eterno brilha no pôr do sol.
 GATO (irônico): Muralhas, sentinelas, armadilhas. O contratante não exagerou.
-GATO: Bom. Seria chato se fosse fácil.
+GATO: Caminho mais curto até lá? Para baixo.
+[AÇÃO: placa "salto de fé: corra e pule"; o gato cai 60 tiles ao lado da cachoeira]
+
+## D-FORT-02 — A lagoa (obrigatório, uma vez, ao cair na água)
+GATO (irônico): Água. Claro que tinha que ser água.
+GATO: Caí de pé, pelo menos. Como sempre.
 
 ## Placas de lore (opcionais, E para ler)
 - **D-PLACA-01 (pátio):** "Pátio dos Escudeiros. Aqui o filhote vira templário, e o templário, paladino." / "Quem não aguenta o boneco de palha não aguenta a praga."
 - **D-PLACA-02 (alojamento):** "Alojamento dos Templários. Silêncio depois do toque do sino." / "Arranhado embaixo, com letra torta: 'o Koda ronca'." / GATO (irônico): "Bom saber."
 - **D-PLACA-03 (salão):** "Juramento da Ordem: guardar o selo. Servir o reino. Nunca abandonar um ferido." / GATO (irônico): "Bonito. Pena que eu não sou do reino."
 - **D-PLACA-04 (câmara):** "Câmara do Selo. Há cinco séculos, Golden, o Dourado, prendeu aqui um tomo que bebe vidas." / "Que ninguém o desperte. Que nenhum guardião o abandone." / GATO: "...Ninguém falou nada de beber vidas."
+- **D-PLACA-05 (estábulo, atrás da porta rachada do pátio):** "Estábulo da Ordem. Aviso de Soluki: só cães passam deste portão." / GATO (irônico): "Ótimo. Eu nem sou de passar por portões."
+- **D-PLACA-06 (cofre do guardião, passagem dos fundos):** "Diário do Guardião do Selo: o tomo voltou a sussurrar à noite. Pedi reforços." / "A resposta de Soluki chegou hoje. Uma palavra: 'Superstição.'" / GATO: "...O cão de lata avisou. Ninguém ouviu."
+- **D-PLACA-07 (cofre do patamar 72):** "Mural da Marcha Dourada: quarenta dias subindo os salões de Aetherion." / "À frente, Golden, o Dourado. No fim, entre os escombros, um livro que sussurrava."
+- **D-PLACA-08 (cofre do patamar 43):** "Pedra antiga dos votos: 'Guardar o selo. Servir os vivos. Nunca abandonar um ferido.'" / "Alguém raspou 'os vivos' e gravou 'o reino' por cima." / GATO (irônico): "Engraçado. Os cães também têm letra miúda." **[PROPOSTA, ligada ao segredo do Koda]**
+- **D-PLACA-09 (cofre do patamar 15):** "Guardiões do Selo: Golden, o Dourado. Depois dele, cinco séculos de Dourados." / "O último nome da lista ainda tem a tinta fresca: Koda."
+- **D-PLACA-10 (marco da trilha):** "Marco da estrada: Cidadela do Sol Eterno, adiante. Miaravéu, três dias para trás." / GATO: "Três dias de volta. Com o livro, dois."
 
 ## D-GOLDEN-00 — Entrada da câmara (obrigatório)
 KODA: Alto, ladrão. Esse tomo dorme selado há cinco séculos. E vai continuar dormindo.

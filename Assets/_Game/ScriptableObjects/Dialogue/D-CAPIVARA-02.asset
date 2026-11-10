@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-CAPIVARA-02
   Required: 1
-  Revision: 1
+  Revision: 2
+  IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 

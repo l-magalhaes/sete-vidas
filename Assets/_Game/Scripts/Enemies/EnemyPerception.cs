@@ -54,7 +54,7 @@ namespace SeteVidas.Enemies
             LastEffectiveRange = effective;
 
             Vector2 eye = Eye, target = player.ChestPosition;
-            if (!PerceptionMath.InVisionCone(eye, facing, target, effective, _settings.VisionHalfAngle)) return;
+            if (!PerceptionMath.InVisionCone(eye, facing, target, effective, _settings.VisionHalfAngle, _settings.VisionTiltDown)) return;
             if (Physics2D.Linecast(eye, target, occluders).collider != null) return; // parede no caminho
 
             float distance = Vector2.Distance(eye, target);

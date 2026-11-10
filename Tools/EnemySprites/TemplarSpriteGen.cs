@@ -131,8 +131,25 @@ public static class TemplarSpriteGen
                 set(6, 7, 'a'); set(6, 8, 'a'); set(9, 10, 'o'); set(9, 11, 'o');
                 break;
         }
+        if (Archer)
+        {
+            // atirador: capuz de couro no lugar do elmo de aço (e sem o protetor de nariz)
+            for (int r = 0; r < rows.Length; r++)
+            {
+                var a = rows[r].ToCharArray();
+                for (int c = 0; c < a.Length; c++)
+                {
+                    if (r <= 5) { if (a[c] == 'I') a[c] = 'w'; else if (a[c] == 'i') a[c] = 'W'; else if (a[c] == 'J') a[c] = 'B'; }
+                    else if (a[c] == 'i') a[c] = 'A';
+                }
+                rows[r] = new string(a);
+            }
+        }
         return rows;
     }
+
+    /// <summary>Gera a variante do atirador (capuz de couro, aljava, besta).</summary>
+    static bool Archer;
 
     // Tronco (12×10): ombreiras de aço, sobreveste branca com a pata dourada da Ordem, cinto, saia em duas abas.
     static readonly string[] Torso = {
@@ -159,6 +176,11 @@ public static class TemplarSpriteGen
         public float SpearAngle = 90f;          // 90 = de pé
         public float SpearBack = 12f;           // quanto da haste fica atrás da mão
         public bool NoSpear;
+        // besta (Cão Sentinela Atirador)
+        public bool Crossbow;
+        public float BowAngle;                  // 0 = para a frente, negativo = mirando para baixo
+        public bool Loaded = true;              // virote no trilho
+        public bool Released;                   // corda solta (acabou de atirar)
         public Pose Clone() { return (Pose)MemberwiseClone(); }
     }
 
@@ -176,6 +198,12 @@ public static class TemplarSpriteGen
         cv.Set(bx, ty + 7, 'K'); cv.Set(bx - 1, ty + 7, 'K'); cv.Set(bx - 1, ty + 8, 'K'); cv.Set(bx - 2, ty + 8, 'k');
         cv.Set(bx - 2, ty + 9, 'K'); cv.Set(bx - 3, ty + 9, 'K'); cv.Set(bx - 3, ty + 10, 'A');
 
+        // aljava nas costas (atirador): couro com as penas dos virotes para fora
+        if (Archer)
+        {
+            for (int k = 0; k < 8; k++) { cv.Set(bx - 1 + k / 4, ty - 1 + k, 'B'); cv.Set(bx + k / 4, ty - 1 + k, 'W'); }
+            cv.Set(bx - 2, ty - 2, 'P'); cv.Set(bx - 1, ty - 3, 'P'); cv.Set(bx, ty - 2, 'p'); cv.Set(bx - 1, ty - 2, 'Y');
+        }
         // braço de trás (atrás de tudo)
         if (p.BackHand.HasValue) Arm(cv, bsx, bsy, p.BackHand.Value, 'J', 'J');
         // pernas
@@ -185,7 +213,8 @@ public static class TemplarSpriteGen
         cv.Stamp(Torso, bx, ty);
         cv.Stamp(Head(p.HeadV), bx + 1 + p.HeadDx, ty - 10 + p.HeadDy);
         // lança e braço da frente (a mão por cima da haste)
-        if (!p.NoSpear) Spear(cv, p.FrontHand.X + 0.5f, p.FrontHand.Y + 0.5f, p.SpearAngle, p.SpearBack);
+        if (p.Crossbow) CrossbowAt(cv, p.FrontHand.X + 0.5f, p.FrontHand.Y + 0.5f, p.BowAngle, p.Loaded, p.Released);
+        else if (!p.NoSpear) Spear(cv, p.FrontHand.X + 0.5f, p.FrontHand.Y + 0.5f, p.SpearAngle, p.SpearBack);
         Arm(cv, fsx, fsy, p.FrontHand, 'I', 'J');
         if (outline) Outline(cv);
         return cv;
@@ -297,6 +326,32 @@ public static class TemplarSpriteGen
         AddCanvas("death", 0.12f, false, Render(d0, true), Render(d1, true), Fallen(45f), Fallen(90f), Fallen(90f));
     }
 
+    // Besta: coronha de madeira (a mão segura no meio), arco de aço na frente, corda e o virote no trilho.
+    static void CrossbowAt(Canvas cv, float gx, float gy, float angle, bool loaded, bool released)
+    {
+        double a = angle * Math.PI / 180.0;
+        float dx = (float)Math.Cos(a), dy = (float)-Math.Sin(a);   // para a frente (y para baixo)
+        float px = -dy, py = dx;                                    // perpendicular
+        // coronha (de 6 px atrás da mão até 3 na frente)
+        FillRotated(cv, gx, gy, angle, -6f, 3f, 0.6f, (u, v) => u < -4.5f ? 'B' : (v > 0.1f ? 'w' : 'W'));
+        // arco (limbos) atravessado na ponta: puxado para trás quando armado
+        float bx = gx + dx * 3.5f, by = gy + dy * 3.5f;
+        float pull = released ? 0f : 1.2f;
+        for (int s = -1; s <= 1; s += 2)
+            foreach (var q in Line((int)Math.Round(bx), (int)Math.Round(by),
+                                   (int)Math.Round(bx + px * 4f * s - dx * pull), (int)Math.Round(by + py * 4f * s - dy * pull)))
+                cv.Set(q.X, q.Y, 'J');
+        // corda: dos limbos até a trava (armada) ou reta (solta)
+        float nx = released ? bx : gx - dx * 1.5f, ny = released ? by : gy - dy * 1.5f;
+        for (int s = -1; s <= 1; s += 2)
+            foreach (var q in Line((int)Math.Round(bx + px * 4f * s - dx * pull), (int)Math.Round(by + py * 4f * s - dy * pull),
+                                   (int)Math.Round(nx), (int)Math.Round(ny)))
+                if (cv.Get(q.X, q.Y) == '.') cv.Set(q.X, q.Y, 'p');
+        // virote no trilho, com a ponta clara passando do arco
+        if (loaded)
+            FillRotated(cv, gx, gy, angle, -1.5f, 6f, 0.45f, (u, v) => u > 5f ? 'd' : (u < -0.5f ? 'P' : 'D'));
+    }
+
     // Corpo girado para trás em volta dos pés (cai de costas), lança largada no chão.
     static Canvas Fallen(float degrees)
     {
@@ -315,10 +370,83 @@ public static class TemplarSpriteGen
                 char c = body.Get((int)Math.Floor(sx), (int)Math.Floor(sy));
                 if (c != '.') cv.Px[x, y] = c;
             }
-        if (degrees >= 89f) Spear(cv, 36.5f, 42.5f, 0f, 10f);         // lança no chão
+        if (Archer)
+        {
+            if (degrees >= 89f) CrossbowAt(cv, 40.5f, 42.5f, 0f, false, true); // besta largada no chão
+            else CrossbowAt(cv, 39.5f, 39.5f, -30f, false, true);
+        }
+        else if (degrees >= 89f) Spear(cv, 36.5f, 42.5f, 0f, 10f);   // lança no chão
         else Spear(cv, 38.5f, 38.5f, 160f, 8f);
         Outline(cv);
         return cv;
+    }
+
+    // ------------------------------------------------ o Cão Sentinela Atirador
+
+    static void BuildCrossbowClips()
+    {
+        Clips.Clear();
+        // de guarda: a besta atravessada no corpo, apontando para o chão à frente
+        var rest = new Pose { Crossbow = true, NoSpear = true, BowAngle = -40f, FrontHand = new Point(38, 33), BackHand = new Point(33, 31) };
+        Add("idle", 0.25f, true, rest, rest, With(rest, p => { p.TorsoDy = 1; p.FrontHand = new Point(38, 34); p.BackHand = new Point(33, 32); }),
+                                            With(rest, p => { p.TorsoDy = 1; p.FrontHand = new Point(38, 34); p.BackHand = new Point(33, 32); }));
+        Add("walk", 0.15f, true,
+            With(rest, p => { p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); }),
+            With(rest, p => { p.TorsoDy = -1; p.BackFoot = new Point(30, 42); p.FrontFoot = new Point(34, 43); }),
+            With(rest, p => { p.BackFoot = new Point(36, 43); p.FrontFoot = new Point(28, 43); }),
+            With(rest, p => { p.TorsoDy = -1; p.BackFoot = new Point(33, 43); p.FrontFoot = new Point(31, 42); }));
+        Clips.Add(new Clip { Name = "run", FrameTime = 0.1f, Loop = true, Frames = Clips[Clips.Count - 1].Frames });
+        // alerta: ergue a besta, orelhas em pé
+        var up = With(rest, p => { p.HeadV = "alert"; p.BowAngle = -12f; p.FrontHand = new Point(39, 31); p.BackHand = new Point(34, 30); });
+        Add("alert", 0.3f, true, up, With(up, p => { p.HeadDx = -1; }));
+
+        // mira em três ângulos: a besta no ombro, as duas mãos nela
+        var aim0 = With(rest, p => { p.HeadV = "angry"; p.BowAngle = 0f; p.FrontHand = new Point(40, 29); p.BackHand = new Point(35, 29); p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); });
+        var aim30 = With(aim0, p => { p.BowAngle = -30f; p.HeadDy = 1; p.FrontHand = new Point(39, 31); p.BackHand = new Point(35, 29); });
+        var aim60 = With(aim0, p => { p.BowAngle = -60f; p.HeadDy = 1; p.HeadDx = 1; p.TorsoDy = 1; p.FrontHand = new Point(38, 33); p.BackHand = new Point(36, 30); });
+        Add("aim_0", 0.2f, true, aim0, With(aim0, p => { p.TorsoDy = 1; p.FrontHand = new Point(40, 30); p.BackHand = new Point(35, 30); }));
+        Add("aim_30", 0.2f, true, aim30, With(aim30, p => { p.TorsoDy = 1; p.FrontHand = new Point(39, 32); p.BackHand = new Point(35, 30); }));
+        Add("aim_60", 0.2f, true, aim60, With(aim60, p => { p.TorsoDy = 2; p.FrontHand = new Point(38, 34); p.BackHand = new Point(36, 31); }));
+        // disparo: o virote sai, a corda bate e a besta dá um coice para trás
+        Add("shoot_0", 0.06f, false, With(aim0, p => { p.Loaded = false; p.Released = true; p.FrontHand = new Point(39, 29); p.BackHand = new Point(34, 29); p.HeadDx = -1; }),
+                                     With(aim0, p => { p.Loaded = false; p.Released = true; }));
+        Add("shoot_30", 0.06f, false, With(aim30, p => { p.Loaded = false; p.Released = true; p.FrontHand = new Point(38, 30); p.HeadDx = -1; }),
+                                      With(aim30, p => { p.Loaded = false; p.Released = true; }));
+        Add("shoot_60", 0.06f, false, With(aim60, p => { p.Loaded = false; p.Released = true; p.FrontHand = new Point(37, 32); }),
+                                      With(aim60, p => { p.Loaded = false; p.Released = true; }));
+        // recarga: baixa a besta, puxa a corda e põe outro virote
+        var low = With(rest, p => { p.BowAngle = -70f; p.Loaded = false; p.Released = true; p.FrontHand = new Point(37, 35); p.BackHand = new Point(34, 33); p.HeadDy = 1; });
+        Add("reload", 0.15f, false,
+            low,
+            With(low, p => { p.Released = false; p.BackHand = new Point(35, 31); }),
+            With(low, p => { p.Released = false; p.BackHand = new Point(33, 30); p.HeadV = "angry"; }),
+            With(low, p => { p.Released = false; p.Loaded = true; p.BackHand = new Point(36, 33); }));
+
+        var hit = With(rest, p => { p.HeadV = "hurt"; p.HeadDx = -1; p.BodyDx = -1; p.BowAngle = -60f; });
+        Add("hurt", 0.1f, false, hit, With(hit, p => { p.HeadDx = 0; p.BodyDx = 0; }));
+        var d1 = With(rest, p => { p.HeadV = "hurt"; p.Py = 39; p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); p.FrontHand = new Point(38, 37); p.BowAngle = -80f; p.Loaded = false; p.Released = true; });
+        AddCanvas("death", 0.12f, false, Render(hit, true), Render(d1, true), Fallen(45f), Fallen(90f), Fallen(90f));
+    }
+
+    /// <summary>Virote 10×3 apontando para a direita (o jogo gira conforme a mira).</summary>
+    static char[,] BoltPixels(out int w, out int h)
+    {
+        w = 12; h = 5;
+        var px = new char[w, h];
+        for (int x = 0; x < w; x++) for (int y = 0; y < h; y++) px[x, y] = '.';
+        for (int x = 1; x <= 8; x++) px[x, 2] = 'W';                  // haste
+        px[9, 2] = 'D'; px[10, 2] = 'd'; px[9, 1] = 'D'; px[9, 3] = 'D'; // ponta
+        px[1, 1] = 'P'; px[2, 1] = 'P'; px[1, 3] = 'P'; px[2, 3] = 'P'; // penas
+        // contorno
+        var copy = (char[,])px.Clone();
+        for (int x = 0; x < w; x++)
+            for (int y = 0; y < h; y++)
+            {
+                if (copy[x, y] != '.') continue;
+                bool n = (x > 0 && copy[x - 1, y] != '.') || (x < w - 1 && copy[x + 1, y] != '.') || (y > 0 && copy[x, y - 1] != '.') || (y < h - 1 && copy[x, y + 1] != '.');
+                if (n) px[x, y] = 'o';
+            }
+        return px;
     }
 
     // ------------------------------------------------------------- saída
@@ -344,46 +472,76 @@ public static class TemplarSpriteGen
         return bmp;
     }
 
+    public const string CrossbowAssetGuid = "a2f4c6e8b0d24f6a9c1e3b5d7f9a1c46";
+    public const string BoltSpriteGuidKey = "bolt/enm_bolt.png";
+
     public static string Run(string projectRoot, string metaTemplatePath, string previewPath)
     {
         InitPalette();
-        BuildClips();
         string template = File.ReadAllText(metaTemplatePath);
-        string art = Path.Combine(projectRoot, "Assets/_Game/Art/Enemies/Templar");
+
+        // lanceiro (Cão Templário)
+        Archer = false;
+        BuildClips();
+        int spear = WriteSet(projectRoot, template, "Templar", "enm_templar_", "TemplarAnimationSet", AssetGuid);
+        if (!string.IsNullOrEmpty(previewPath)) Preview(previewPath, 6);
+
+        // atirador (Cão Sentinela Atirador)
+        Archer = true;
+        BuildCrossbowClips();
+        int bow = WriteSet(projectRoot, template, "TemplarCrossbow", "enm_archer_", "CrossbowTemplarAnimationSet", CrossbowAssetGuid);
+        if (!string.IsNullOrEmpty(previewPath)) Preview(Path.Combine(Path.GetDirectoryName(previewPath), "atirador_animacoes.png"), 6);
+
+        // virote
+        int bw, bh; var bolt = BoltPixels(out bw, out bh);
+        string boltPath = Path.Combine(projectRoot, "Assets/_Game/Art/Enemies/TemplarCrossbow/enm_bolt.png");
+        Directory.CreateDirectory(Path.GetDirectoryName(boltPath));
+        using (var bmp = ToBitmap(bolt, bw, bh)) bmp.Save(boltPath, ImageFormat.Png);
+        if (!File.Exists(boltPath + ".meta"))
+            File.WriteAllText(boltPath + ".meta", template.Replace("__GUID__", Guid(BoltSpriteGuidKey)).Replace("__ALIGN__", "0").Replace("__PIVOTY__", "0.5"));
+        Archer = false;
+        return "lanceiro: " + spear + " frames, atirador: " + bow + " frames";
+    }
+
+    /// <summary>Grava os frames de <see cref="Clips"/> e o asset CharacterAnimationSet. Retorna o número de frames.</summary>
+    static int WriteSet(string projectRoot, string template, string folder, string filePrefix, string assetName, string assetGuid)
+    {
+        string art = Path.Combine(projectRoot, "Assets/_Game/Art/Enemies/" + folder);
         var y = new StringBuilder();
         y.Append("%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n");
         y.Append("  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n");
         y.Append("  m_GameObject: {fileID: 0}\n  m_Enabled: 1\n  m_EditorHideFlags: 0\n");
-        y.Append("  m_Script: {fileID: 11500000, guid: " + ScriptGuid + ", type: 3}\n  m_Name: TemplarAnimationSet\n  m_EditorClassIdentifier: \n  clips:\n");
+        y.Append("  m_Script: {fileID: 11500000, guid: " + ScriptGuid + ", type: 3}\n  m_Name: " + assetName + "\n  m_EditorClassIdentifier: \n  clips:\n");
         int frames = 0;
         foreach (var c in Clips)
         {
             y.Append("  - name: " + c.Name + "\n    frameTime: " + c.FrameTime.ToString(System.Globalization.CultureInfo.InvariantCulture) + "\n    loop: " + (c.Loop ? 1 : 0) + "\n    frames:\n");
             for (int i = 0; i < c.Frames.Count; i++)
             {
-                string rel = c.Name + "/enm_templar_" + c.Name + "_" + i + ".png";
+                // "run" do atirador reaproveita os frames de "walk": mesmo arquivo
+                string clipFolder = c.Name == "run" && filePrefix == "enm_archer_" ? "walk" : c.Name;
+                string rel = clipFolder + "/" + filePrefix + clipFolder + "_" + i + ".png";
                 string path = Path.Combine(art, rel);
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 using (var bmp = ToBitmap(c.Frames[i].Px, W, H)) bmp.Save(path, ImageFormat.Png);
-                string gu = Guid(rel);
+                string gu = Guid(filePrefix == "enm_templar_" ? rel : "archer/" + rel);
                 File.WriteAllText(path + ".meta", template.Replace("__GUID__", gu).Replace("__ALIGN__", "9").Replace("__PIVOTY__", "0"));
                 y.Append("    - sprite: {fileID: 21300000, guid: " + gu + ", type: 3}\n      overlay: {fileID: 0}\n");
                 y.Append("      tail: {x: 0, y: 0}\n      chest: {x: 0, y: 14}\n      trim: {x: 0, y: 0}\n      body: {x: 0, y: 0}\n      hasTail: 0\n      hasTrim: 0\n");
                 frames++;
             }
         }
-        string assetPath = Path.Combine(projectRoot, "Assets/_Game/ScriptableObjects/Enemies/TemplarAnimationSet.asset");
+        string assetPath = Path.Combine(projectRoot, "Assets/_Game/ScriptableObjects/Enemies/" + assetName + ".asset");
         File.WriteAllText(assetPath, y.ToString());
         if (!File.Exists(assetPath + ".meta"))
-            File.WriteAllText(assetPath + ".meta", "fileFormatVersion: 2\nguid: " + AssetGuid + "\nNativeFormatImporter:\n  externalObjects: {}\n  mainObjectFileID: 11400000\n  userData: \n  assetBundleName: \n  assetBundleVariant: \n");
-        if (!string.IsNullOrEmpty(previewPath)) Preview(previewPath, 6);
-        return "clipes: " + Clips.Count + ", frames: " + frames;
+            File.WriteAllText(assetPath + ".meta", "fileFormatVersion: 2\nguid: " + assetGuid + "\nNativeFormatImporter:\n  externalObjects: {}\n  mainObjectFileID: 11400000\n  userData: \n  assetBundleName: \n  assetBundleVariant: \n");
+        return frames;
     }
 
     public static void Preview(string path, int S)
     {
         if (Pal.Count == 0) InitPalette();
-        if (Clips.Count == 0) BuildClips();
+        if (Clips.Count == 0) { if (Archer) BuildCrossbowClips(); else BuildClips(); }
         int cols = 1; foreach (var c in Clips) cols = Math.Max(cols, c.Frames.Count);
         const int x0 = 4, y0 = 8, cw = 60, ch = 36;
         using (var bmp = new Bitmap(cols * (cw * S + 6), Clips.Count * (ch * S + 18)))

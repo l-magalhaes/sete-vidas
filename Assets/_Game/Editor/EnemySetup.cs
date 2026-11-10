@@ -123,6 +123,70 @@ namespace SeteVidas.EditorTools
             return prefab;
         }
 
+        // ------------------------------------------------ Cão Sentinela Atirador
+
+        public const string CrossbowPrefabPath = "Assets/_Game/Prefabs/Enemies/CrossbowSentinel.prefab";
+        const string CrossbowSettingsPath = "Assets/_Game/ScriptableObjects/Enemies/CrossbowSentinelSettings.asset";
+        const string CrossbowAnimationsPath = "Assets/_Game/ScriptableObjects/Enemies/CrossbowTemplarAnimationSet.asset";
+        const string BoltSpritePath = "Assets/_Game/Art/Enemies/TemplarCrossbow/enm_bolt.png";
+
+        /// <summary>
+        /// O atirador: a mesma Sentinela (cérebro, percepção, dano, ataque pelas costas) com a besta. Fica no alto,
+        /// vê para baixo, mira com uma linha de aviso, atira virotes e recarrega. Spec: Docs/Design/atirador.md.
+        /// </summary>
+        public static GameObject CreateCrossbowSentinelPrefab()
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(SentinelPrefabPath) == null) CreateSentinelPrefab();
+            var settings = AssetDatabase.LoadAssetAtPath<SentinelSettings>(CrossbowSettingsPath);
+            if (settings == null)
+            {
+                settings = ScriptableObject.CreateInstance<SentinelSettings>();
+                // frágil e parado no posto, mas enxerga longe e para baixo
+                settings.MaxHealth = 3;
+                settings.PatrolSpeed = 1.5f;
+                settings.ChaseSpeed = 0f;
+                settings.VisionRange = 11f;
+                settings.VisionHalfAngle = 50f;
+                settings.VisionTiltDown = 30f;
+                settings.SightFillRate = 1f;
+                settings.Ranged = true;
+                settings.HoldPosition = true;
+                settings.ShootRange = 11f;
+                settings.AimTime = 0.9f;
+                settings.AimLockTime = 0.25f;
+                settings.ReloadTime = 1.6f;
+                settings.BoltSpeed = 12f;
+                settings.BoltDamage = 1;
+                settings.AttackActive = 0.15f;
+                settings.MaxAimDown = 70f;
+                settings.MaxAimUp = 20f;
+                settings.HeartDropChance = 0.25f;
+                AssetDatabase.CreateAsset(settings, CrossbowSettingsPath);
+                AssetDatabase.SaveAssets();
+            }
+
+            var root = PrefabUtility.LoadPrefabContents(SentinelPrefabPath);
+            try
+            {
+                root.name = "CrossbowSentinel";
+                var ai = root.GetComponent<EnemyAI>();
+                var so = new SerializedObject(ai);
+                so.FindProperty("settings").objectReferenceValue = settings;
+                var art = AssetDatabase.LoadAssetAtPath<CharacterAnimationSet>(CrossbowAnimationsPath);
+                so.FindProperty("animations").objectReferenceValue = art;
+                so.FindProperty("boltSprite").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>(BoltSpritePath);
+                so.ApplyModifiedPropertiesWithoutUndo();
+                var sr = root.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null && art != null && art.Get("idle") != null) sr.sprite = art.Get("idle").frames[0].sprite;
+                if (art == null) Debug.LogWarning("[Sete Vidas] Falta a arte do atirador. Rode Tools/EnemySprites/gerar.ps1");
+                return PrefabUtility.SaveAsPrefabAsset(root, CrossbowPrefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
         static GameObject Child(GameObject parent, string name, Vector3 localPosition)
         {
             var go = new GameObject(name) { layer = parent.layer };

@@ -186,6 +186,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &5540163279912836471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666473743224267637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3a5c7e9b1d34f6a8c2e4a6b8d0f2c91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.ContractorVisual
+  animations: {fileID: 11400000, guid: e7c3a9f1b5d2468a9c0e4b6d8f1a3c57, type: 2}
 --- !u!1 &4343575464267403361
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,6 +293,66 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!58 &8817263544190023451
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343575464267403361}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.45
+--- !u!114 &8817263544190023452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343575464267403361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d4f6a8e0b14c7d9f1b3d5f7a9c2e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.CoinPickup
+  value: 100
+  pickupId: moeda_do_contratante
+  collectable: 0
+  spriteRenderer: {fileID: 7139469370733492299}
+  spin:
+  - {fileID: 21300000, guid: 4d6e02b16407b627ec40e0a2b8d62207, type: 3}
+  - {fileID: 21300000, guid: 6e030d1fc8f554a1d07bc0ceacbd7626, type: 3}
+  - {fileID: 21300000, guid: 1519689f91a878a9de2cabba6467dcb8, type: 3}
+  - {fileID: 21300000, guid: f4e7e91e6bf36f923e05aae9ceec6c77, type: 3}
+  frameTime: 0.12
+  bob: 0.06
+  pickupDialogue: {fileID: 0}
 --- !u!1 &6288346559913745812
 GameObject:
   m_ObjectHideFlags: 0
@@ -473,6 +546,7 @@ MonoBehaviour:
   book: {fileID: 6733561134516652180}
   prompt: {fileID: 1193299093929129745}
   takeDialogue: {fileID: 0}
+  sealDialogue: {fileID: 0}
   curseDialogue: {fileID: 0}
   villainDialogue: {fileID: 0}
   villainLeaveDialogue: {fileID: 0}
@@ -482,6 +556,7 @@ MonoBehaviour:
   teleportColor: {r: 0.2901961, g: 0.13333334, b: 0.4, a: 1}
   heartBreakInterval: 0.3
   curseColor: {r: 0.41960785, g: 0.16470589, b: 0.5411765, a: 1}
+  sealColor: {r: 1, g: 0.84705883, b: 0.5019608, a: 1}
   heartsLeft: 1
 --- !u!1 &7176042952191308425
 GameObject:
@@ -679,76 +754,3 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4294944968
---- !u!114 &5540163279912836471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1666473743224267637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3a5c7e9b1d34f6a8c2e4a6b8d0f2c91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animations: {fileID: 11400000, guid: e7c3a9f1b5d2468a9c0e4b6d8f1a3c57, type: 2}
---- !u!58 &8817263544190023451
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4343575464267403361}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.45
---- !u!114 &8817263544190023452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4343575464267403361}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2d4f6a8e0b14c7d9f1b3d5f7a9c2e4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.CoinPickup
-  value: 100
-  pickupId: moeda_do_contratante
-  collectable: 0
-  spriteRenderer: {fileID: 7139469370733492299}
-  spin:
-  - {fileID: 21300000, guid: 4d6e02b16407b627ec40e0a2b8d62207, type: 3}
-  - {fileID: 21300000, guid: 6e030d1fc8f554a1d07bc0ceacbd7626, type: 3}
-  - {fileID: 21300000, guid: 1519689f91a878a9de2cabba6467dcb8, type: 3}
-  - {fileID: 21300000, guid: f4e7e91e6bf36f923e05aae9ceec6c77, type: 3}
-  frameTime: 0.14
-  bob: 0.05
-  pickupDialogue: {fileID: 11400000, guid: f5a7c9e1b3d54f0a8c2e4a6c8e0b2d47, type: 2}

@@ -24,22 +24,9 @@ GATO: Vou guardar. Um dia eu devolvo... com juros.
 
 ## Onde ficam as moedas (MVP)
 
-**Fortaleza** (8 moedas de 1, nos desvios e nas rotas difíceis):
-
-| Id | Lugar | Posição (x, y) | O que pede |
-|---|---|---|---|
-| `fort_pedra` | Em cima da pedra alta do tutorial | 15; 3,7 | pulo |
-| `fort_fosso` | No ar, sobre o fosso de espinhos | 21,5; 3,2 | pulo no tempo certo (risco) |
-| `fort_passagem` | Dentro da passagem baixa | 45; 0,5 | agachar |
-| `fort_hera` | No meio da hera da muralha | 71,4; 9 | escalar |
-| `fort_passarela` | Na passarela alta do corredor | 92; 19,6 | rota furtiva por cima |
-| `fort_salao` | No fim do salão das duas sentinelas | 140; 14,6 | passar pela luta |
-| `fort_camara` | Antes da câmara do Koda | 182,5; 14,6 | passar pelas armadilhas |
-| `fort_saida` | Atrás da parede rachada | 84; 0,6 | voltar com o Paladino |
+**Fortaleza** (versão vertical, 10/11/2026): 13 moedas de 1 nos desvios e nas rotas de risco, mais 10 moedas de 5 em cofres atrás de paredes rachadas. Elas ficam no mapa de dados `Assets/_Game/Editor/FortressLayout.cs` (ids `fort_*`) e são descritas em `Docs/Level/fortaleza-mvp.md` § Moedas.
 
 **Playground:** 3 moedas de teste (`pg_inicio`, `pg_mato`, `pg_furtividade`).
-
-As posições foram tiradas de `Docs/Level/fortaleza-mvp.md`. Conferir no editor se alguma ficou dentro de parede e ajustar.
 
 ## Interface
 - Contador no canto superior esquerdo, **abaixo dos corações e dos orbes da cura**: ícone de moeda e o número.

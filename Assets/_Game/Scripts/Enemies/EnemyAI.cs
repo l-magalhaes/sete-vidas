@@ -37,6 +37,8 @@ namespace SeteVidas.Enemies
         [SerializeField] Sprite attack;
         [Tooltip("Animações em pixel art (ex.: TemplarAnimationSet, gerado por Tools/EnemySprites). Vazio = sprites acima")]
         [SerializeField] CharacterAnimationSet animations;
+        [Tooltip("Atirador: sprite do virote (aponta para a direita)")]
+        [SerializeField] Sprite boltSprite;
         [Tooltip("\"?\" e \"!\" sobre a cabeça")]
         [SerializeField] TextMesh alertIcon;
         [Tooltip("Estado e suspeita (depuração)")]
@@ -167,6 +169,14 @@ namespace SeteVidas.Enemies
 
         float Investigate(float dt)
         {
+            if (!_brain.IsSearching && settings.HoldPosition)
+            {
+                // atirador no alto: não desce; olha para onde ouviu/viu e começa a procurar dali
+                LookAt(_brain.LastKnownPosition.x);
+                _brain.ArrivedAtLastKnownPosition();
+                _searchLookTimer = settings.SearchLookInterval;
+                return 0f;
+            }
             if (!_brain.IsSearching)
             {
                 float v = MoveTo(_brain.LastKnownPosition.x, settings.InvestigateSpeed, dt, out bool arrived);
@@ -190,6 +200,7 @@ namespace SeteVidas.Enemies
 
         float Fight(float dt)
         {
+            if (settings.Ranged) return FightRanged(dt);
             if (_attackPhase != AttackPhase.None)
             {
                 StepAttack(dt);
@@ -213,6 +224,150 @@ namespace SeteVidas.Enemies
             }
             if (Mathf.Abs(dx) < settings.AttackRange * 0.7f) return 0f; // não entra em cima do gato
             return MoveTo(target.x, settings.ChaseSpeed, dt, out _);
+        }
+
+        // ------------------------------------------------------ atirador (besta)
+
+        Vector2 _aimDir = Vector2.right;
+        int _aimBucket;
+        SpriteRenderer[] _aimDots;
+        static Sprite s_dot;
+
+        /// <summary>Atirador: mirando, disparando ou recarregando.</summary>
+        public bool IsAiming => settings != null && settings.Ranged && _attackPhase == AttackPhase.Windup;
+        /// <summary>Direção atual da mira (atirador).</summary>
+        public Vector2 AimDirection => _aimDir;
+
+        /// <summary>Ombro de onde sai a besta (o virote nasce um pouco à frente).</summary>
+        Vector2 AimPivot => (_body != null ? _body.position : (Vector2)transform.position) + new Vector2(_facing * 0.3f, 1.05f);
+        Vector2 Muzzle => AimPivot + _aimDir * 0.6f;
+
+        float FightRanged(float dt)
+        {
+            if (_attackPhase != AttackPhase.None)
+            {
+                StepRanged(dt);
+                return 0f;
+            }
+
+            Vector2 target = _brain.LastKnownPosition;
+            var player = StealthController.Active;
+            if (_perception.SeesPlayer && player != null) target = player.ChestPosition;
+            LookAt(target.x);
+
+            if (_perception.SeesPlayer && CanShootAt(target))
+            {
+                _attackPhase = AttackPhase.Windup;     // mirando
+                _attackTimer = settings.AimTime;
+                Aim(target);
+                return 0f;
+            }
+            if (settings.HoldPosition) return 0f;
+            float dx = target.x - _body.position.x;
+            if (Mathf.Abs(dx) <= settings.ShootRange * 0.8f) return 0f; // já está em alcance: não chega perto
+            return MoveTo(target.x, settings.ChaseSpeed, dt, out _);
+        }
+
+        bool CanShootAt(Vector2 target)
+        {
+            Vector2 from = AimPivot;
+            if ((target - from).sqrMagnitude > settings.ShootRange * settings.ShootRange) return false;
+            float below = PerceptionMath.AngleBelowHorizontal(from, target);
+            return below <= settings.MaxAimDown && below >= -settings.MaxAimUp;
+        }
+
+        void Aim(Vector2 target)
+        {
+            Vector2 from = AimPivot;
+            float below = Mathf.Clamp(PerceptionMath.AngleBelowHorizontal(from, target), -settings.MaxAimUp, settings.MaxAimDown);
+            float r = below * Mathf.Deg2Rad;
+            _aimDir = new Vector2(_facing * Mathf.Cos(r), -Mathf.Sin(r));
+            _aimBucket = PerceptionMath.AimBucket(below);
+        }
+
+        void StepRanged(float dt)
+        {
+            _attackTimer -= dt;
+            var player = StealthController.Active;
+            // a mira acompanha o gato até travar nos últimos instantes
+            if (_attackPhase == AttackPhase.Windup && _attackTimer > settings.AimLockTime && _perception.SeesPlayer && player != null)
+            {
+                LookAt(player.ChestPosition.x);
+                Aim(player.ChestPosition);
+            }
+            if (_attackTimer > 0f) return;
+
+            switch (_attackPhase)
+            {
+                case AttackPhase.Windup:
+                    FireBolt();
+                    _attackPhase = AttackPhase.Active;
+                    _attackTimer = settings.AttackActive;
+                    break;
+                case AttackPhase.Active:
+                    _attackPhase = AttackPhase.Recovery;  // recarregando
+                    _attackTimer = settings.ReloadTime;
+                    break;
+                default:
+                    _attackPhase = AttackPhase.None;
+                    break;
+            }
+        }
+
+        void FireBolt()
+        {
+            if (boltSprite == null) boltSprite = DotSprite();
+            EnemyBolt.Fire(boltSprite, Muzzle, _aimDir * settings.BoltSpeed, settings.BoltDamage, gameObject,
+                spriteRenderer != null ? spriteRenderer.sortingOrder + 1 : 5);
+        }
+
+        /// <summary>Linha de mira pontilhada: avisa para onde o virote vai; fica firme quando a mira trava.</summary>
+        void UpdateAimLine()
+        {
+            bool show = IsAiming && !IsDead;
+            if (!show)
+            {
+                if (_aimDots != null) foreach (var d in _aimDots) d.enabled = false;
+                return;
+            }
+            if (_aimDots == null)
+            {
+                _aimDots = new SpriteRenderer[16];
+                for (int i = 0; i < _aimDots.Length; i++)
+                {
+                    var go = new GameObject("Mira " + (i + 1));
+                    go.transform.SetParent(transform, false);
+                    var sr = go.AddComponent<SpriteRenderer>();
+                    sr.sprite = DotSprite();
+                    sr.sortingOrder = (spriteRenderer != null ? spriteRenderer.sortingOrder : 4) + 2;
+                    _aimDots[i] = sr;
+                }
+            }
+            Vector2 from = Muzzle;
+            var hit = Physics2D.Raycast(from, _aimDir, settings.ShootRange, groundLayers);
+            float length = hit.collider != null ? hit.distance : settings.ShootRange;
+            bool locked = _attackTimer <= settings.AimLockTime;
+            float pulse = locked ? 1f : 0.45f + 0.35f * Mathf.Sin(Time.time * 18f);
+            for (int i = 0; i < _aimDots.Length; i++)
+            {
+                float along = (i + 1) * 0.7f;
+                var d = _aimDots[i];
+                d.enabled = along < length;
+                if (!d.enabled) continue;
+                d.transform.position = from + _aimDir * along;
+                d.color = new Color(1f, locked ? 0.25f : 0.35f, 0.25f, pulse);
+            }
+        }
+
+        static Sprite DotSprite()
+        {
+            if (s_dot != null) return s_dot;
+            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
+            var white = (Color32)Color.white;
+            tex.SetPixels32(new Color32[] { white, white, white, white });
+            tex.Apply(false);
+            s_dot = Sprite.Create(tex, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f), 16f);
+            return s_dot;
         }
 
         void StepAttack(float dt)
@@ -351,6 +506,7 @@ namespace SeteVidas.Enemies
             if (settings == null) return;
             UpdateSprite();
             UpdateLabels();
+            if (settings.Ranged) UpdateAimLine();
         }
 
         void UpdateSprite()
@@ -419,6 +575,14 @@ namespace SeteVidas.Enemies
                 float duration = _attackPhase == AttackPhase.Windup ? settings.AttackWindup
                                : _attackPhase == AttackPhase.Active ? settings.AttackActive : settings.AttackRecovery;
                 key = _attackPhase == AttackPhase.Windup ? "attack_windup" : _attackPhase == AttackPhase.Active ? "attack_active" : "attack_recovery";
+                if (settings.Ranged)
+                {
+                    // besta: mira e disparo no ângulo da mira (reto, 30° ou 60° para baixo); depois recarrega
+                    duration = _attackPhase == AttackPhase.Windup ? settings.AimTime
+                             : _attackPhase == AttackPhase.Active ? settings.AttackActive : settings.ReloadTime;
+                    string angle = "_" + _aimBucket;
+                    key = _attackPhase == AttackPhase.Windup ? "aim" + angle : _attackPhase == AttackPhase.Active ? "shoot" + angle : "reload";
+                }
                 normalized = duration > 0f ? 1f - Mathf.Clamp01(_attackTimer / duration) : 1f;
             }
             else if (Time.time - _hurtAt < 0.2f) key = "hurt";

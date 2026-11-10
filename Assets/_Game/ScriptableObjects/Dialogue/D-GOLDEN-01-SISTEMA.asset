@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01-SISTEMA
   Required: 1
-  Revision: 1
+  Revision: 2
+  IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
     Text: Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Magia de cura aprendida! Aperte F para curar 1 coração. 3 usos; o santuário recarrega."
+    Text: "Magia de cura aprendida! Aperte F para curar 1 cora\xE7\xE3o. 3 usos; o santu\xE1rio recarrega."

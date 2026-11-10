@@ -127,6 +127,33 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator Shield_BlocksEveryAngle_WhileCastingLightning()
+        {
+            yield return Load();
+            _arena.StartEncounter(_health);
+            SkipDialogues();
+            _boss.ForceMove(BossMove.Lightning);
+            yield return null;
+            Assert.IsTrue(_boss.IsShielded, "Chamando os relâmpagos, o escudo sobe");
+            yield return null;
+            var shield = _boss.transform.Find("Escudo sagrado");
+            Assert.IsNotNull(shield, "A bolha dourada aparece em volta dele");
+            Assert.IsTrue(shield.GetComponent<SpriteRenderer>().enabled);
+
+            int hp = _boss.Health;
+            foreach (AttackAngle angle in System.Enum.GetValues(typeof(AttackAngle)))
+                _boss.TakeDamage(new DamageInfo(5, Vector2.right, DamageType.Normal, angle, null));
+            Assert.AreEqual(hp, _boss.Health, "Nenhum golpe passa pelo escudo, de nenhum ângulo");
+
+            // acabados os raios, o escudo cai e ele volta a apanhar
+            float t = 0f;
+            while (_boss.IsShielded && t < 15f) { t += Time.deltaTime; yield return null; }
+            Assert.IsFalse(_boss.IsShielded, "O escudo cai depois dos raios");
+            _boss.TakeDamage(Hit(1));
+            Assert.AreEqual(hp - 1, _boss.Health);
+        }
+
+        [UnityTest]
         public IEnumerator Defeat_OpensTomeRoom_AndIsSaved()
         {
             yield return Load();
@@ -152,6 +179,32 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator Tome_FloatsAndDrainsLife_WhileTheCatWrithes()
+        {
+            yield return Load();
+            Defeat();
+            _tome.StartCoroutine(_tome.Take(_health));
+            var visual = _health.GetComponentInChildren<PlayerVisual>();
+
+            // espera as vidas começarem a cair: o tomo flutua aberto e o gato se contorce no chão
+            float t = 0f;
+            while (_health.HeartsRecovered == 7 && t < 10f) { SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
+            Assert.Less(_health.HeartsRecovered, 7, "As vidas começam a ser arrancadas");
+            var drain = _tome.GetComponentInChildren<TomeDrainFx>();
+            Assert.IsNotNull(drain, "O tomo sugando a vida aparece na cena");
+            Assert.IsTrue(drain.Visible && drain.Draining, "Flutua e puxa os fiapos de vida");
+            Assert.Greater(drain.BookPosition.y, _health.transform.position.y + 1f, "Flutua acima do gato");
+            if (visual != null && !string.IsNullOrEmpty(visual.CurrentClipName))
+                Assert.AreEqual("curse_writhe", visual.CurrentClipName, "No chão, ele se contorce. Rode Tools/LionSprites/gerar.ps1");
+
+            // o golpe do Koda repele o tomo: para de sugar
+            while (!drain.Visible || drain.Draining) { if (t > 20f) break; SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
+            Assert.IsFalse(drain.Draining, "Depois do selo do Koda, o tomo para de sugar");
+            while (_tome.IsRunning && t < 30f) { SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
+            Assert.IsFalse(drain.Visible, "O Contratante leva o tomo");
+        }
+
+        [UnityTest]
         public IEnumerator Tome_Curse_LeavesOneHeart_ThenGoldenBond_GivesPaladin()
         {
             yield return Load();
@@ -163,7 +216,7 @@ namespace SeteVidas.Tests
 
             // Avança as conversas (narração do tomo, maldição e juramento) até o fim da cena
             float t = 0f;
-            while (_tome.IsRunning && t < 20f)
+            while (_tome.IsRunning && t < 30f)
             {
                 SkipDialogues();
                 t += Time.unscaledDeltaTime;

@@ -155,6 +155,17 @@ namespace SeteVidas.Player
 
         public void StopAction() => _action = null;
 
+        /// <summary>Tinta de cena multiplicada no gato, na cauda e na capa (branco = nenhuma).</summary>
+        public Color SceneTint { get; set; } = Color.white;
+
+        /// <summary>O frame mostra o gato caído no chão (a cauda deita junto).</summary>
+        static bool IsLyingFrame(SpriteFrame f)
+        {
+            if (f == null || f.sprite == null) return false;
+            string n = f.sprite.name;
+            return n.StartsWith("chr_lion_lying") || n.StartsWith("chr_lion_curse_writhe") || n == "chr_lion_curse_kneel_6" || n == "chr_lion_get_up_0";
+        }
+
         static readonly Color HealGold = new Color32(0xff, 0xd3, 0x4d, 0xff);
 
         /// <summary>
@@ -283,6 +294,7 @@ namespace SeteVidas.Player
             // cor: brilho da troca de classe e piscar da invencibilidade (alfa 1 ↔ 0,3)
             float flash = Time.time < _flashUntil ? (_flashUntil - Time.time) / switchFlashTime : 0f;
             Color color = Color.Lerp(Color.white, _flashColor, flash);
+            color *= SceneTint; // cenas (ex.: a maldição do tomo deixa o gato arroxeado)
             bool blinking = health != null && health.IsInvulnerable && !health.IsCollapsed && !health.IsDead &&
                             ((int)(Time.time / 0.08f) & 1) == 1;
             if (blinking) color.a = 0.3f;
@@ -418,7 +430,7 @@ namespace SeteVidas.Player
             if (collapsed)
             {
                 overlayAllowed = false;
-                if (_action != null && _action.name == "curse_kneel") return Show(_action, _actionTime);
+                if (_action != null && (_action.name == "curse_kneel" || _action.name == "curse_writhe")) return Show(_action, _actionTime);
                 return Show(set.Get("lying"), 0f);
             }
             if (_action != null)
@@ -733,7 +745,8 @@ namespace SeteVidas.Player
 
             BodyMood mood = BodyMood.Idle;
             Vector2 v = controller.Velocity;
-            if (_hurtTime < 0.3f) mood = BodyMood.Hurt;
+            if (IsLyingFrame(frame)) mood = BodyMood.Lying;
+            else if (_hurtTime < 0.3f) mood = BodyMood.Hurt;
             else if (controller.IsHanging || controller.IsClimbingLedge || (wallClimb != null && wallClimb.IsClimbing)) mood = BodyMood.Hang;
             else if (controller.IsCrouching) mood = BodyMood.Sneak;
             else if (!controller.IsGrounded && v.y < -2f) mood = BodyMood.Fall;

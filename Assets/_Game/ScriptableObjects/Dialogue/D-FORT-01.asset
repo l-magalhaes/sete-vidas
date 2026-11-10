@@ -14,14 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-FORT-01
   Required: 1
-  Revision: 3
+  Revision: 5
+  IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "A Cidadela do Sol Eterno, onde os c\xE3es viram templ\xE1rios e os templ\xE1rios, paladinos."
-  - Speaker: {fileID: 0}
-    Expression: 
-    Text: "Em algum lugar l\xE1 dentro, um tomo selado. E uma bolsa de ouro esperando l\xE1 fora."
+    Text: "Do alto da montanha, a Cidadela do Sol Eterno brilha no p\xF4r do sol."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: Entrar, pegar, sair. E receber. Como sempre.
+    Text: "Muralhas, sentinelas, armadilhas. O contratante n\xE3o exagerou."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: "Caminho mais curto at\xE9 l\xE1? Para baixo."

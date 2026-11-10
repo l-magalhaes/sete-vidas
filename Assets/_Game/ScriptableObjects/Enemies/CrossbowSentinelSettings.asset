@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e1383bee263aea4190ced338328dd8f, type: 3}
+  m_Name: CrossbowSentinelSettings
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Enemies.SentinelSettings
+  MaxHealth: 3
+  PatrolSpeed: 1.5
+  InvestigateSpeed: 3
+  ChaseSpeed: 0
+  PatrolPause: 1.5
+  SearchLookInterval: 1
+  GravityScale: 4
+  VisionRange: 11
+  VisionHalfAngle: 50
+  EyeHeight: 1.3
+  SightFillRate: 1
+  CombatVisibilityFloor: 0.6
+  HearingMultiplier: 1
+  SuspiciousThreshold: 0.25
+  InvestigateThreshold: 0.5
+  CalmThreshold: 0.1
+  DrainDelay: 1
+  DrainRate: 0.15
+  SuspiciousTime: 1.2
+  LoseSightTime: 2
+  SearchTime: 3
+  AttackRange: 1.3
+  AttackWindup: 0.45
+  AttackActive: 0.15
+  AttackRecovery: 0.6
+  AttackDamage: 1
+  AttackHitboxSize: {x: 1.2, y: 0.9}
+  AttackHitboxForward: 0.6
+  Ranged: 1
+  HoldPosition: 1
+  ShootRange: 11
+  AimTime: 0.9
+  AimLockTime: 0.25
+  ReloadTime: 1.6
+  BoltSpeed: 12
+  BoltDamage: 1
+  MaxAimDown: 70
+  MaxAimUp: 20
+  VisionTiltDown: 30
+  DeathDuration: 0.6
+  HeartDropChance: 0.25
+  BodySize: {x: 0.75, y: 1.6}

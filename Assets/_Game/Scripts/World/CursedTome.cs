@@ -121,10 +121,26 @@ namespace SeteVidas.World
             var fader = ScreenFader.Active;
             if (fader != null) StartCoroutine(fader.Flash(curseColor, 0.7f, 0.15f, 0.6f));
 
-            // Seis vidas se apagam, uma a uma (o HUD mostra cada coração quebrando)
+            // O tomo escapa da pata, sobe e abre na frente do gato
+            var controller = player.GetComponent<PlayerController>();
+            int facing = controller != null && controller.FacingDirection < 0 ? -1 : 1;
+            Vector3 feet = player.transform.position;
+            var drain = Drain(player);
+            drain.Source = () => player.transform.position + new Vector3(0f, 0.45f, 0f);
+            StartCoroutine(drain.Rise(feet + new Vector3(facing * 0.7f, 1.1f, 0f), feet + new Vector3(facing * 1.3f, 2.3f, 0f), 0.5f));
+            _tinting = StartCoroutine(Tint(visual));
+
+            // Ele cai de joelhos e tomba; no chão, se contorce enquanto o tomo puxa os fiapos de vida
+            yield return new WaitForSeconds(0.9f);
+            if (visual != null) visual.PlayAction("curse_writhe", hold: true);
+            drain.Draining = true;
+
+            // Seis vidas são arrancadas, uma a uma: um coração voa até o tomo e o HUD quebra um coração
+            float interval = Mathf.Max(heartBreakInterval, 0.5f);
             for (int h = player.HeartsRecovered - 1; h >= heartsLeft; h--)
             {
-                yield return new WaitForSeconds(heartBreakInterval);
+                yield return new WaitForSeconds(interval);
+                drain.TearHeart();
                 player.SetHeartsRecovered(h, save: false);
             }
             player.ApplyCurse(heartsLeft); // grava: corações e flag do tomo
@@ -136,11 +152,18 @@ namespace SeteVidas.World
             if (golden != null) StartCoroutine(golden.SealStrike());
             yield return new WaitForSeconds(0.35f);
             if (fader != null) StartCoroutine(fader.Flash(sealColor, 0.85f, 0.06f, 0.7f));
+            // a luz dourada repele o tomo: ele fecha e cai no chão, ao lado do gato; o gato fica imóvel
+            StartCoroutine(drain.Repel(new Vector3(feet.x + facing * 1.6f, feet.y, feet.z)));
+            if (_tinting != null) StopCoroutine(_tinting);
+            StartCoroutine(Untint(visual));
+            if (visual != null) visual.StopAction();
             yield return new WaitForSeconds(0.8f);
+
             yield return Talk(runner, curseDialogue, input);
 
             // O contratante: surge num clarão roxo, revela o plano, toma o tomo, paga com uma moeda e some
             yield return ContractorScene(player, runner, input, fader);
+            if (_drain != null) _drain.Hide();
 
             // O Golden chega
             if (fader != null) yield return fader.FadeTo(1f, 0.5f);
@@ -189,6 +212,7 @@ namespace SeteVidas.World
             yield return Talk(runner, villainDialogue, input);
 
             // Toma o tomo das patas do gato, com a mão de osso
+            if (_drain != null) _drain.Hide();
             if (animated)
             {
                 anim.Play("take", "hold");
@@ -230,6 +254,41 @@ namespace SeteVidas.World
             data.SetFlag(StolenFlag);
             SaveManager.Save();
             yield return new WaitForSeconds(0.6f);
+        }
+
+        TomeDrainFx _drain;
+        Coroutine _tinting;
+
+        TomeDrainFx Drain(PlayerHealth player)
+        {
+            if (_drain == null)
+            {
+                var sr = player.GetComponentInChildren<SpriteRenderer>();
+                _drain = TomeDrainFx.Create(transform, sr != null ? sr.sortingLayerID : 0, (sr != null ? sr.sortingOrder : 0) + 2);
+            }
+            return _drain;
+        }
+
+        /// <summary>O gato vai ficando roxo e pulsa a cada puxão do tomo.</summary>
+        IEnumerator Tint(PlayerVisual visual)
+        {
+            if (visual == null) yield break;
+            var purple = new Color(0.78f, 0.6f, 0.95f, 1f);
+            for (float t = 0f; ; t += Time.deltaTime)
+            {
+                float depth = Mathf.Clamp01(t / 3f);
+                float pulse = 0.5f + 0.5f * Mathf.Sin(t * 9f);
+                visual.SceneTint = Color.Lerp(Color.white, purple, depth * (0.55f + 0.45f * pulse));
+                yield return null;
+            }
+        }
+
+        static IEnumerator Untint(PlayerVisual visual)
+        {
+            if (visual == null) yield break;
+            var from = visual.SceneTint;
+            for (float t = 0f; t < 0.6f; t += Time.deltaTime) { visual.SceneTint = Color.Lerp(from, Color.white, t / 0.6f); yield return null; }
+            visual.SceneTint = Color.white;
         }
 
         static void SetAlpha(SpriteRenderer sr, float a)

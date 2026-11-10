@@ -261,6 +261,7 @@ MonoBehaviour:
   windup: {fileID: 21300000, guid: 1f135a42060b0aa4c90dd3d43d67ee1f, type: 3}
   attack: {fileID: 21300000, guid: 895e8765ac5cc404ab16e0e1727e606b, type: 3}
   animations: {fileID: 11400000, guid: c7e3a1f05b9d4c2e8a6f0d1b3c5e7a92, type: 2}
+  boltSprite: {fileID: 0}
   alertIcon: {fileID: 6313013600712559648}
   debugLabel: {fileID: 8310502607012671390}
   showDebugLabel: 1

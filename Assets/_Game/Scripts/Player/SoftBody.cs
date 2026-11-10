@@ -6,7 +6,7 @@ using System;
 namespace SeteVidas.Player
 {
     /// <summary>Estado do corpo que muda a pose da cauda e da capa.</summary>
-    public enum BodyMood { Idle, Run, Jump, Sneak, Fall, Hang, Hurt }
+    public enum BodyMood { Idle, Run, Jump, Sneak, Fall, Hang, Hurt, Lying }
 
     /// <summary>Índices da paleta usados no buffer (0 = vazio).</summary>
     public static class SoftPal
@@ -243,6 +243,7 @@ namespace SeteVidas.Player
                 case BodyMood.Fall:  baseA = 40f; curl = 8f; amp = 9f; freq = 12f; lag = 1.0f; break;
                 case BodyMood.Hang:  baseA = -82f; curl = 7f; amp = 6f; freq = 1.6f; lag = 0.6f; break;
                 case BodyMood.Hurt:  baseA = 70f; curl = 0f; amp = 3f; freq = 20f; lag = 0.4f; break;   // eriçada, reta
+                case BodyMood.Lying: baseA = -14f; curl = 5f; amp = 6f; freq = 2.4f; lag = 0.9f; break;  // caído: deitada no chão, ponta tremendo
                 default:             baseA = -6f; curl = 17f; amp = 8f; freq = 2.3f; lag = 0.75f; break;
             }
             for (int i = 0; i < outAngles.Length; i++)
@@ -267,6 +268,7 @@ namespace SeteVidas.Player
                 case BodyMood.Fall:  baseA = 118f; curl = 10f; amp = 9f; freq = 13f; lag = 1.2f; break; // sobe com o vento
                 case BodyMood.Hang:  baseA = 12f; curl = 3f; amp = 3f; freq = 1.4f; lag = 0.8f; break;
                 case BodyMood.Hurt:  baseA = 85f; curl = 12f; amp = 6f; freq = 18f; lag = 1f; break;
+                case BodyMood.Lying: baseA = 80f; curl = 4f; amp = 2f; freq = 2f; lag = 1f; break;
                 default:             baseA = 16f; curl = 5f; amp = 3f; freq = 1.7f; lag = 0.9f; break;     // respira
             }
             for (int i = 0; i < outAngles.Length; i++)
