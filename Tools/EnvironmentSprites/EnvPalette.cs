@@ -31,7 +31,8 @@ public static class EnvPalette
 
         g = "Reservadas (jogo)";
         S(p, g, "Armadilha", "#c83a3a", "Só armadilhas (dano). Nenhum enfeite pode usar.");
-        S(p, g, "Rachadura (brilho)", "#ffd34d", "Parede quebrável pelo Paladino. Rachadura decorativa é escura, sem brilho.");
+        // (10/11/2026) a parede quebrável deixou de usar brilho dourado: agora o sinal é a rede grande de rachaduras escuras.
+        // Por isso nenhuma outra parede tem rachadura (só lascas, erosão e musgo). O dourado #ffd34d deixou de ser reservado.
         S(p, g, "Hera escalável (ramo)", "#4f5a2e", "Só parede escalável.");
         S(p, g, "Hera escalável (folha)", "#8a9a4e", "Só parede escalável.");
         S(p, g, "Praga (roxo)", "#5b2a6e", "Só a praga e o Tomo. O que identifica a praga é o PAR roxo + verde-ácido: o céu do pôr do sol pode ter roxo (o validador não checa o roxo nos fundos).");

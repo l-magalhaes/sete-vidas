@@ -29,7 +29,8 @@ paleta (EnvPalette.cs) ───┘      (metadados, à mão)      (importador, 
 
 O terreno não é colocado item por item: cada célula de chão do `FortressLayout` recebe o tile que o `TerrainAutotile` escolhe (vizinhos expostos + profundidade), conforme o material de `FortressTerrain.Regions()`.
 
-- **Materiais prontos:** `ext_solo` (grama, terra, transição, rocha) e `ext_rocha` (pedras, paredes de rocha-mãe). Células sem material ficam com o tile provisório.
+- **Materiais prontos:** `ext_solo` (grama, terra, transição, rocha), `ext_rocha` (pedras, paredes de rocha-mãe), `ext_terra_batida` (pátios) e a alvenaria por época: `cid_fundacao`, `cid_soluki`, `cid_reforma`, `cid_abandono` e `sol_madeira`. Células sem material ficam com o tile provisório.
+- **Alvenaria** pinta os três tilemaps: chão (topo com pedra de cobertura → miolo → meio-tom → interior escuro), parede do fundo (escura, roxa) e parede escalável (a pedra da época + ranhuras + hera seca). O `TerrainPainter` põe sozinho uma gárgula (ou calha, na madeira) no topo de toda vinha e os "acontecimentos" nas paredes do fundo. Arte: `Tools/EnvironmentSprites/ArchitectureSpriteGen.cs` → `Art/Environments/Citadel/Architecture`.
 - **Mudar o material de um trecho:** acrescente uma região em `Editor/Scenery/FortressTerrain.cs` (regiões listadas depois valem por cima).
 - **Rampas:** em `FortressLayout.Slopes()`; com material `ext_solo` e proporção 1:1 ou 1:2 usam a arte final, senão o triângulo provisório.
 - **Detalhes automáticos:** tufos e seixos na superfície, fendas na rocha funda (`TerrainAutotile.TopDetails` / `DeepDetails`), na camada `terreno_detalhe`. Para tirar de um trecho (ex.: fundo da lagoa), use `FortressTerrain.NoDetails()`.

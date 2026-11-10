@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_cid_arq_ameias_fundo
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_cid_arq_ameias_fundo
+    nome: Ameias no alto da parede do fundo
+    regiao: cid
+    categoria: arq
+    funcao: decorativo
+    material: pedra
+    epoca: soluki
+    tamanho_px: 1000000008000000i
+    sprites:
+    - Architecture/env_cid_arq_ameias_fundo.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: parede_fundo
+    sorting: -9
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - torre de escalada
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "No fundo (escuro, sem colis\xE3o): fecha o alto da torre. Nunca no plano do jogo (pareceria degrau)."
+    tags:
+    - torre
+  variants:
+  - {fileID: 21300000, guid: 8f5b9da28b3a507f73d6ee46ac1ffe27, type: 3}
+  frames: []

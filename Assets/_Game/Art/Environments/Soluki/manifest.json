@@ -1,0 +1,64 @@
+{
+  "regiao": "sol",
+  "assets": [
+    {
+      "id": "env_sol_obj_tenda",
+      "nome": "Tenda do pátio",
+      "categoria": "obj",
+      "funcao": "narrativo",
+      "material": "lona listrada, madeira",
+      "epoca": "reforma",
+      "tamanho_px": [112, 88],
+      "sprites": ["env_sol_obj_tenda.png"],
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "zonas": ["patio"] },
+      "leitura": "É o que faz a sombra jogável embaixo dela (LightZone com a mesma largura). Toda sombra precisa de um motivo visível.",
+      "tags": ["sombra", "furtividade", "ordem"]
+    },
+    {
+      "id": "env_sol_obj_toldo",
+      "nome": "Toldo da arquibancada",
+      "categoria": "obj",
+      "funcao": "decorativo",
+      "material": "lona listrada",
+      "epoca": "reforma",
+      "tamanho_px": [112, 18],
+      "sprites": ["env_sol_obj_toldo.png"],
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "livre", "zonas": ["patio"] },
+      "leitura": "Bem acima do topo da arquibancada (sem parecer plataforma): cobre o lugar do atirador.",
+      "tags": ["ordem", "tecido", "vento"]
+    },
+    {
+      "id": "env_sol_obj_poste_curto",
+      "nome": "Poste de sustentação (1 tile)",
+      "categoria": "obj",
+      "funcao": "decorativo",
+      "material": "madeira, ferro",
+      "epoca": "reforma",
+      "tamanho_px": [6, 16],
+      "sprites": ["env_sol_obj_poste_curto.png"],
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "zonas": ["patio"] },
+      "leitura": "Embaixo da arquibancada, nas pontas: mostra que ela se apoia no chão. Atrás do gato (a passagem baixa continua livre).",
+      "tags": ["estrutura"]
+    },
+    {
+      "id": "env_sol_obj_poste_toldo",
+      "nome": "Poste do toldo",
+      "categoria": "obj",
+      "funcao": "decorativo",
+      "material": "madeira, ferro",
+      "epoca": "reforma",
+      "tamanho_px": [6, 52],
+      "sprites": ["env_sol_obj_poste_toldo.png"],
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "zonas": ["patio"] },
+      "tags": ["estrutura"]
+    }
+  ]
+}

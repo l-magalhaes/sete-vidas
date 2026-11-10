@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_cid_parede_quebravel
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_cid_parede_quebravel
+    nome: "Parede quebr\xE1vel por \xE9poca (gate do Paladino)"
+    regiao: cid
+    categoria: arq
+    funcao: gate
+    material: alvenaria rachando
+    epoca: fundacao
+    tamanho_px: 1000000040000000i
+    sprites: []
+    sprites_prefixo: Architecture/env_cid_parede_quebravel_
+    espelhar: 0
+    camada: jogo
+    sorting: 1
+    colisor: BreakableWall (prefab)
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - "est\xE1bulo"
+      - sala do tomo
+      - fundos
+      - cofres
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Uma porta antiga fechada com alvenaria que est\xE1 cedendo: rede GRANDE de rachaduras escuras de cima a baixo, tijolos saltados, entulho no p\xE9. Sem dourado. As outras paredes n\xE3o t\xEAm rachaduras. O FortressSetup escolhe a \xE9poca pela pedra do lugar."
+    tags:
+    - gate
+    - paladino
+    - leitura
+  variants:
+  - {fileID: 21300000, guid: 49651f6e31ee02141cc930dd02cc4996, type: 3}
+  - {fileID: 21300000, guid: 16d7608f6c8a8c4e77ecca237b8a037d, type: 3}
+  - {fileID: 21300000, guid: 58622de1ee2cf5084f72d956a8fc9cb1, type: 3}
+  - {fileID: 21300000, guid: dc2ae93da94f1650b3bccf978f836c1e, type: 3}
+  - {fileID: 21300000, guid: c910da2828bfd9b838d4eee0f832f38e, type: 3}
+  - {fileID: 21300000, guid: 2697206d0ad4a35bc39b671cc5d88141, type: 3}
+  - {fileID: 21300000, guid: a587765980eafcf0776842dfdd2aa805, type: 3}
+  - {fileID: 21300000, guid: 05134c2748b8c0daaf17d6ea955c6f37, type: 3}
+  - {fileID: 21300000, guid: 73967e3c966054ae94590d05ec5c976f, type: 3}
+  - {fileID: 21300000, guid: 9694138d79f415e3e7976e1bac961e89, type: 3}
+  - {fileID: 21300000, guid: 89f6fd228b7815fe15d0454931fec580, type: 3}
+  - {fileID: 21300000, guid: 787c462f33f2e2f7d28c6be716c3f85c, type: 3}
+  frames: []

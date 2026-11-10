@@ -27,6 +27,30 @@ namespace SeteVidas.EditorTools
             R(r, TerrainAutotile.Rock, 13, -2, 21, -2, "leito da lagoa (pedras e seixos sob a água)");
             R(r, TerrainAutotile.Rock, 26, 0, 28, 1, "pedra de 2 (tutorial de pulo)");
             R(r, TerrainAutotile.Rock, 31, 0, 33, 2, "pedra de 3 (tutorial de pulo)");
+
+            // ===== Etapa 3: a Cidadela. A pedra conta a idade: quanto mais baixo e antigo, mais pesado e escuro (plano, 1.1)
+            const int WallWalk = FortressLayout.WallWalk, BellHall = FortressLayout.BellHall, SealFloor = FortressLayout.SealFloor;
+            // 3) Pátio de treino: chão de terra batida; arquibancada de madeira; torre de escalada dos escudeiros em Soluki
+            R(r, TerrainAutotile.PackedEarth, 44, -12, 111, -1, "pátio de treino (terra batida)");
+            R(r, TerrainAutotile.Wood, 50, 0, 55, 6, "arquibancada (inclui o fundo de tábuas da passagem baixa)");
+            R(r, TerrainAutotile.Soluki, 88, 0, 94, 18, "torre de escalada dos escudeiros");
+            // 4) Muralhas em degrau: cada etapa uma época (fundação embaixo, Soluki no meio, reforma em cima)
+            R(r, TerrainAutotile.Foundation, 112, -12, 254, 14, "base de tudo: fundação de Golden");
+            R(r, TerrainAutotile.Soluki, 112, 15, 135, 28, "muralha 2: Soluki");
+            R(r, TerrainAutotile.Reform, 112, 29, 135, WallWalk - 1, "muralha 3: reforma (andaimes, pedra nova)");
+            // 5–9) O maciço do castelo por altura
+            R(r, TerrainAutotile.Foundation, 136, 15, 234, WallWalk - 1, "maciço baixo: fundação");
+            R(r, TerrainAutotile.Soluki, 136, WallWalk, 234, BellHall - 1, "galeria e Torre do Sino: Soluki");
+            R(r, TerrainAutotile.Soluki, 136, BellHall, 175, SealFloor - 1, "galeria das armadilhas: Soluki (piso antigo)");
+            R(r, TerrainAutotile.Reform, 176, BellHall, 234, SealFloor - 1, "Salão dos Votos: reforma (o mais bem cuidado)");
+            R(r, TerrainAutotile.Foundation, 136, 82, 145, SealFloor - 1, "Torre do Selo: fundação");
+            R(r, TerrainAutotile.Foundation, 136, 92, 234, 116, "Câmara do Selo e o piso dela: fundação (a parte mais antiga)");
+            // 10) Os fundos: a parte esquecida
+            R(r, TerrainAutotile.Ruin, 186, SealFloor, 234, 116, "passagem dos fundos: abandono");
+            R(r, TerrainAutotile.Ruin, 217, -12, 234, SealFloor - 1, "poço e cofres: abandono");
+            // Fora do castelo, depois do portão dos fundos: a estrada para Miaravéu
+            R(r, TerrainAutotile.Soil, 235, -12, 250, 0, "estrada para Miaravéu");
+            R(r, TerrainAutotile.Rock, 251, -12, 254, 40, "rocha à direita");
             return r;
         }
 

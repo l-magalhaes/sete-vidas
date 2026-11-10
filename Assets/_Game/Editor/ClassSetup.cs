@@ -133,9 +133,12 @@ namespace SeteVidas.EditorTools
         {
             Directory.CreateDirectory(Path.GetDirectoryName(WallPrefabPath));
             AssetDatabase.Refresh();
-            var intact = MakeWallSprite("env_breakable_wall", cracked: false);
-            var cracked = MakeWallSprite("env_breakable_wall_cracked", cracked: true);
-            var rubbleSprite = MakeRubbleSprite();
+            // padrão: a parede de Soluki sem brilho dourado (Tools/EnvironmentSprites); a Fortaleza troca pela pedra do lugar.
+            // Se a arte ainda não foi gerada, usa o desenho antigo.
+            const string Arch = "Assets/_Game/Art/Environments/Citadel/Architecture";
+            var intact = AssetDatabase.LoadAssetAtPath<Sprite>($"{Arch}/env_cid_parede_quebravel_soluki_intacta.png") ?? MakeWallSprite("env_breakable_wall", cracked: false);
+            var cracked = AssetDatabase.LoadAssetAtPath<Sprite>($"{Arch}/env_cid_parede_quebravel_soluki_danificada.png") ?? MakeWallSprite("env_breakable_wall_cracked", cracked: true);
+            var rubbleSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{Arch}/env_cid_parede_quebravel_soluki_entulho.png") ?? MakeRubbleSprite();
 
             var root = new GameObject("BreakableWall") { layer = LayerMask.NameToLayer(GameConstants.Layers.Breakable) };
             var box = root.AddComponent<BoxCollider2D>();

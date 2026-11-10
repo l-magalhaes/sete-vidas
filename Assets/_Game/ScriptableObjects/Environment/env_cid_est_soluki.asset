@@ -1,0 +1,118 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_cid_est_soluki
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_cid_est_soluki
+    nome: Tijolo militar de Soluki (tileset)
+    regiao: cid
+    categoria: est
+    funcao: plataforma
+    material: "tijolo 16\xD78"
+    epoca: soluki
+    tamanho_px: 1000000010000000i
+    sprites: []
+    sprites_prefixo: Architecture/tile_cid_soluki_
+    espelhar: 0
+    camada: jogo
+    sorting: 0
+    colisor: tile cheio (Grid)
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta:
+    - '#7a748e'
+    - '#8e88a2'
+    - '#625c76'
+    - '#a29cb6'
+    - '#4a455c'
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - muralha 2
+      - galeria
+      - Torre do Sino
+      - galeria das armadilhas
+      - torre de treino
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: 
+    tags:
+    - tileset
+    - cidadela
+    - soluki
+  variants:
+  - {fileID: 21300000, guid: b15a72ab47b57ac1ddb73ec5addf6b91, type: 3}
+  - {fileID: 21300000, guid: 6e67c1509f51716f6bb7808fc56e6fdb, type: 3}
+  - {fileID: 21300000, guid: 1e844bb3d95436847d8be39ab11275fd, type: 3}
+  - {fileID: 21300000, guid: 154c48cd656a38b15730a599351ec1aa, type: 3}
+  - {fileID: 21300000, guid: 7df7194e4ae923eff23b0538e7e94b61, type: 3}
+  - {fileID: 21300000, guid: 2068fe3d506b4cfed65f69e83b599788, type: 3}
+  - {fileID: 21300000, guid: e15b63b883073141626c73adeb3ef5dd, type: 3}
+  - {fileID: 21300000, guid: 82838bf678f049e3eae379f2010b93d5, type: 3}
+  - {fileID: 21300000, guid: 7d677e5d7b8cfcb45334f9fdda1f9992, type: 3}
+  - {fileID: 21300000, guid: 7d10759f7e1c40f7e3aa847f31914c41, type: 3}
+  - {fileID: 21300000, guid: f6d0b8b8adaae5bc98199012a8a053e2, type: 3}
+  - {fileID: 21300000, guid: 0e22de37b137bf3f3a2bef44e54f14dc, type: 3}
+  - {fileID: 21300000, guid: 54d8a5b1dbddca1184576141fe00862a, type: 3}
+  - {fileID: 21300000, guid: 9fb9713fb445e69d5a3b33182a9e21e9, type: 3}
+  - {fileID: 21300000, guid: 556a75629432d5bc3e608e7134bdc7e8, type: 3}
+  - {fileID: 21300000, guid: 35191616d785f07c32d060af13bed683, type: 3}
+  - {fileID: 21300000, guid: c3bb60daaa3f4f64f952143158c1f968, type: 3}
+  - {fileID: 21300000, guid: 3393da5cd1bc426b5a59ebf911533fc6, type: 3}
+  - {fileID: 21300000, guid: 50931fff132988db028a8c5c86f2267c, type: 3}
+  - {fileID: 21300000, guid: 0be1331506a00ffa4b59f0c19999983e, type: 3}
+  - {fileID: 21300000, guid: c84143bd5ee742e56e8c753b237c5315, type: 3}
+  - {fileID: 21300000, guid: 7bee9f874afa5e0aab276311e0cdd594, type: 3}
+  - {fileID: 21300000, guid: 7df83cf9b8a15427b208b5f015be483d, type: 3}
+  - {fileID: 21300000, guid: 1533fa04d458e77ec59b8001b86f2109, type: 3}
+  - {fileID: 21300000, guid: e9522f195d66c5e85759c6623f119dba, type: 3}
+  - {fileID: 21300000, guid: 91d817b9150d456be977d74ef1bd57d0, type: 3}
+  - {fileID: 21300000, guid: 2cc5295e0aabe324db11101ed8e2ec8f, type: 3}
+  - {fileID: 21300000, guid: 01cf012d3d713cc6430c6a37f9672519, type: 3}
+  - {fileID: 21300000, guid: 61022b80cafd97c49bd540000f828835, type: 3}
+  - {fileID: 21300000, guid: aea7c0bbb54379b0951e45bc1404ac3b, type: 3}
+  - {fileID: 21300000, guid: f69386b69bb33d274d966ca3c8b0befb, type: 3}
+  - {fileID: 21300000, guid: 132936e8bb0fe8f6d152d77f9a05ecf5, type: 3}
+  - {fileID: 21300000, guid: db7edc26d8d754ee8c545c3b682e949f, type: 3}
+  - {fileID: 21300000, guid: 6bd4d106268f6dbea6414bf5b702a746, type: 3}
+  - {fileID: 21300000, guid: cf175e08c32e45d4c6bbcae1b4362afa, type: 3}
+  - {fileID: 21300000, guid: df138de444d505bdb6f449932f2ca91d, type: 3}
+  - {fileID: 21300000, guid: b4ae78733e2b1b260fa4c2d3ec305ab5, type: 3}
+  - {fileID: 21300000, guid: 588afcd133075d6955c05711e625390f, type: 3}
+  - {fileID: 21300000, guid: 10c8def7d61a0b01fc2ca0e75be75d23, type: 3}
+  - {fileID: 21300000, guid: cde456fe89e32e262bce2165cc26f665, type: 3}
+  - {fileID: 21300000, guid: 07d358e419310263fc8da01d90552867, type: 3}
+  - {fileID: 21300000, guid: 4dbca7f2dfbb469f8286e352c2711fde, type: 3}
+  - {fileID: 21300000, guid: 4c76daea08dc6ee93a16f1b58d10dacd, type: 3}
+  - {fileID: 21300000, guid: b4d9190febb6617647f93ce232f31a62, type: 3}
+  - {fileID: 21300000, guid: 98ac2cc4aa67851bf6f7fcf07e47f8a9, type: 3}
+  - {fileID: 21300000, guid: b1b5d35bf236afb9a0937356df29b403, type: 3}
+  frames: []

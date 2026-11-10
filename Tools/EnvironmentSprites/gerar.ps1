@@ -11,7 +11,7 @@ $root = (Resolve-Path (Join-Path $here '..\..')).Path
 $refs = Join-Path $root '..\SeteVidasDocs\Referencias'
 $meta = Join-Path $root 'Tools\LionSprites\sprite_meta_template.txt'
 Add-Type -ReferencedAssemblies System.Drawing -Path @((Join-Path $here 'EnvPalette.cs'), (Join-Path $root 'Tools\CharacterSprites\PixelKit.cs'), (Join-Path $here 'PropSpriteGen.cs'),
-    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'))
+    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'))
 
 # 1) paleta
 [EnvPalette]::Export($root, $refs)
@@ -24,6 +24,8 @@ Write-Host "objetos: tocha de parede (Common/env_com_obj_wall_torch_0..3)"
 Write-Host "terreno: tilesets ext_solo e ext_rocha, rampas, tufos, seixos, rochas, fosseis (Exterior), placas (Primates)"
 [WaterSpriteGen]::Run($root, $meta, $refs)
 Write-Host "agua: cachoeira, nascente, espuma e lagoa (Exterior/Water)"
+[ArchitectureSpriteGen]::Run($root, $meta, $refs)
+Write-Host "arquitetura: fundacao, soluki, reforma, abandono, madeira, terra batida, gargulas (Citadel/Architecture)"
 
 # 2) pastas da biblioteca (plano, 3.1 e 7.9). Unity cria os .meta das pastas ao abrir.
 $art = Join-Path $root 'Assets\_Game\Art\Environments'

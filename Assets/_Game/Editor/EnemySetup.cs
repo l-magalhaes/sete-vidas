@@ -320,6 +320,8 @@ namespace SeteVidas.EditorTools
             sr.sprite = shadeSprite;
             sr.color = new Color(0.04f, 0.03f, 0.1f, 0.5f);
             sr.sortingOrder = 8; // por cima do gato: ele escurece ao entrar na sombra
+            // borda suave: o sprite tem uma faixa pontilhada de 6 px que some para fora (9-slice), nada de retângulo duro
+            if (shadeSprite != null && shadeSprite.border.x > 0f) sr.drawMode = SpriteDrawMode.Sliced;
 
             var so = new SerializedObject(zone);
             so.FindProperty("shade").objectReferenceValue = sr;
@@ -328,14 +330,33 @@ namespace SeteVidas.EditorTools
             return zone;
         }
 
+        const string SoftShadowSpritePath = "Assets/_Game/Art/Environments/Placeholder/fx_shadow_zone_soft.png";
+
+        /// <summary>
+        /// Sombra de borda suave: 32×32 branco com uma faixa de 6 px pontilhada (Bayer 4×4) que vai sumindo para fora.
+        /// Usada em 9-slice (borda de 6 px): o meio estica para o tamanho da zona e a borda continua pixel a pixel.
+        /// A cor vem do SpriteRenderer. Fica no lugar do retângulo duro de antes.
+        /// </summary>
         internal static Sprite LoadShadowSprite()
         {
-            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ShadowSpritePath);
-            if (sprite != null) return sprite;
-            const int s = GameConstants.TileSize; // 16×16 branco = 1×1 tile; a cor vem do SpriteRenderer
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SoftShadowSpritePath);
+            if (sprite != null && sprite.border.x > 0f) return sprite;
+            const int s = 32, edge = 6;
+            int[] bayer = { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5 };
             var px = new Color32[s * s];
-            for (int i = 0; i < px.Length; i++) px[i] = new Color32(255, 255, 255, 255);
-            return SavePng(ShadowSpritePath, s, s, px);
+            for (int y = 0; y < s; y++)
+                for (int x = 0; x < s; x++)
+                {
+                    int d = Mathf.Min(Mathf.Min(x, s - 1 - x), Mathf.Min(y, s - 1 - y)); // distância à borda
+                    float t = Mathf.Clamp01((d + 0.5f) / edge);                          // 0 na borda, 1 no meio
+                    bool on = t >= 1f || t * 16f > bayer[(y % 4) * 4 + (x % 4)];
+                    px[y * s + x] = on ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 255, 0);
+                }
+            sprite = SavePng(SoftShadowSpritePath, s, s, px);
+            var importer = (TextureImporter)AssetImporter.GetAtPath(SoftShadowSpritePath);
+            importer.spriteBorder = new Vector4(edge, edge, edge, edge);
+            importer.SaveAndReimport();
+            return AssetDatabase.LoadAssetAtPath<Sprite>(SoftShadowSpritePath);
         }
 
         // ----------------------------------------------------------- sprites

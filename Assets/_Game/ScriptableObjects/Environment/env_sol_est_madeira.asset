@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_sol_est_madeira
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_sol_est_madeira
+    nome: Madeira da arquibancada (tileset)
+    regiao: sol
+    categoria: est
+    funcao: plataforma
+    material: "t\xE1buas"
+    epoca: reforma
+    tamanho_px: 1000000010000000i
+    sprites: []
+    sprites_prefixo: Architecture/tile_sol_madeira_
+    espelhar: 0
+    camada: jogo
+    sorting: 0
+    colisor: tile cheio (Grid)
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - "p\xE1tio"
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "T\xE1buas novas (claras) entre as velhas: a arquibancada foi consertada."
+    tags:
+    - tileset
+    - madeira
+  variants:
+  - {fileID: 21300000, guid: e597cfa82a8134c439d0a5ebb0e1b47e, type: 3}
+  - {fileID: 21300000, guid: 35566153e5cc47d7b356d166373e89dc, type: 3}
+  - {fileID: 21300000, guid: ade961931fd5d0e75b26c2e30a0c99e6, type: 3}
+  - {fileID: 21300000, guid: 10955fc36d607b3f91161e8a9b2961ed, type: 3}
+  - {fileID: 21300000, guid: ca045d2e51fcb3701165fbef33dfc1d5, type: 3}
+  - {fileID: 21300000, guid: ecd0245f00c8d32e615900819b0dcd92, type: 3}
+  - {fileID: 21300000, guid: d82dba43ab9027da8f91e9e0a04f05a0, type: 3}
+  - {fileID: 21300000, guid: 46900160099d8729c6003bea0c5f5663, type: 3}
+  - {fileID: 21300000, guid: 211566974f62b8c3f4053865af2f12e4, type: 3}
+  - {fileID: 21300000, guid: 8ea6ec549d524a848999e97d39b350d7, type: 3}
+  - {fileID: 21300000, guid: 79baf8796dde3fa696e11bc386e05060, type: 3}
+  - {fileID: 21300000, guid: 2ba06f8e1a64a08420bc6ae13dcb77c0, type: 3}
+  - {fileID: 21300000, guid: 08176f1e36fa526d3b8d29e320474659, type: 3}
+  - {fileID: 21300000, guid: e786d7cc4dcd630633c522e62ce9020a, type: 3}
+  - {fileID: 21300000, guid: 0c9618951a29d3b59a6b444b62d31f16, type: 3}
+  - {fileID: 21300000, guid: d2512b1ed49eeb6bb9b9e7e0d5495fad, type: 3}
+  - {fileID: 21300000, guid: 2040381ec358402b8893fc599d14b98d, type: 3}
+  - {fileID: 21300000, guid: 977b59c24bb108086611f00ea2a35c84, type: 3}
+  - {fileID: 21300000, guid: 3b14b29361a986fed35f01e3c9b6d9af, type: 3}
+  - {fileID: 21300000, guid: a8c6083da905677fcabe306cf1b53b57, type: 3}
+  - {fileID: 21300000, guid: 8d199d25d142cca0be26e9f5e2d4920d, type: 3}
+  - {fileID: 21300000, guid: 81ff855751d791f86b451b2cecbba60a, type: 3}
+  - {fileID: 21300000, guid: f359d3e8774fd2cd02890b7ced6cb2f2, type: 3}
+  - {fileID: 21300000, guid: 3a3eb1f5ddca7c44548cc3636dd20f53, type: 3}
+  - {fileID: 21300000, guid: 0841077ff1f498e4b881017d144ae13a, type: 3}
+  - {fileID: 21300000, guid: 184f3180759e64c0b55d88131f4298a2, type: 3}
+  - {fileID: 21300000, guid: 7abb9e84d16094186a5db58e45e9af12, type: 3}
+  - {fileID: 21300000, guid: 1da2d8c464538c52bad3ec4f74f6b5ec, type: 3}
+  - {fileID: 21300000, guid: a740892f25c0c3e922d86ad6ecf63e29, type: 3}
+  - {fileID: 21300000, guid: 441b1111eb65023cc282fe7006dedf0a, type: 3}
+  - {fileID: 21300000, guid: 79ae6c9249d5033c71eb71a49781d7f3, type: 3}
+  - {fileID: 21300000, guid: 43a9e937def7bedcb5f0a86e40fc1fdd, type: 3}
+  - {fileID: 21300000, guid: 5989529849472130df834e23f592ae17, type: 3}
+  - {fileID: 21300000, guid: 829b3fa730bde874f7acacfd050e76f8, type: 3}
+  - {fileID: 21300000, guid: f623fa8fbe075e09e5b9e092b455c99a, type: 3}
+  - {fileID: 21300000, guid: b98011412c176d6b40b671a508d57f04, type: 3}
+  - {fileID: 21300000, guid: 20ce9df18ffb37849ecd2ca2adf6f66f, type: 3}
+  - {fileID: 21300000, guid: 0e06166517b22568d6faef8861433c8a, type: 3}
+  - {fileID: 21300000, guid: dcf20a603fa6cd95f3c5a3a8b1c3e223, type: 3}
+  - {fileID: 21300000, guid: 3c07df492bf67abf8640b9bb1d1163fd, type: 3}
+  - {fileID: 21300000, guid: beac037d26dadcdc15aa1f3f1f494461, type: 3}
+  - {fileID: 21300000, guid: 0d76d00ba7d5ae463fffd9f44cd323d7, type: 3}
+  - {fileID: 21300000, guid: 674e2fbed95dc940a67bfefbb9405e2d, type: 3}
+  - {fileID: 21300000, guid: 29e086274cc724c21df4fa1c04959956, type: 3}
+  - {fileID: 21300000, guid: 23aa4d787a2ee2402219b04313f2aa76, type: 3}
+  - {fileID: 21300000, guid: dda08efa14aa64f3a93baebf9eaecbce, type: 3}
+  frames: []

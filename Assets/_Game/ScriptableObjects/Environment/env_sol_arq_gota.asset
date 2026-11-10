@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_sol_arq_gota
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_sol_arq_gota
+    nome: "Gota da g\xE1rgula"
+    regiao: sol
+    categoria: ani
+    funcao: decorativo
+    material: "\xE1gua"
+    epoca: natural
+    tamanho_px: 0700000030000000i
+    sprites:
+    - Architecture/env_sol_arq_gota_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: terreno_detalhe
+    sorting: 2
+    colisor: nenhum
+    animacao:
+      nome: pingando
+      quadros:
+      - Architecture/env_sol_arq_gota_0.png
+      - Architecture/env_sol_arq_gota_1.png
+      - Architecture/env_sol_arq_gota_2.png
+      - Architecture/env_sol_arq_gota_3.png
+      - Architecture/env_sol_arq_gota_4.png
+      - Architecture/env_sol_arq_gota_5.png
+      - Architecture/env_sol_arq_gota_6.png
+      - Architecture/env_sol_arq_gota_7.png
+      - Architecture/env_sol_arq_gota_8.png
+      - Architecture/env_sol_arq_gota_9.png
+      - Architecture/env_sol_arq_gota_10.png
+      - Architecture/env_sol_arq_gota_11.png
+      - Architecture/env_sol_arq_gota_12.png
+      - Architecture/env_sol_arq_gota_13.png
+      fps: 12
+      amplitude_px: 44
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - todas as vinhas
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Colocada sozinha embaixo de cada g\xE1rgula/calha (TerrainPainter), cada uma com atraso pr\xF3prio: forma, cai 3 tiles ao longo da vinha, espirra e pausa."
+    tags:
+    - agua
+    - vivo
+  variants:
+  - {fileID: 21300000, guid: bcf971cf36a5d479ec714c50a33b1203, type: 3}
+  frames:
+  - {fileID: 21300000, guid: bcf971cf36a5d479ec714c50a33b1203, type: 3}
+  - {fileID: 21300000, guid: 31479ba1ba14b0782695587eee196e28, type: 3}
+  - {fileID: 21300000, guid: 23565865bc8acf9b2d96813a1b0985f9, type: 3}
+  - {fileID: 21300000, guid: a5417bb373ade33a4a6de049b6e73488, type: 3}
+  - {fileID: 21300000, guid: 106a8ce27fa0cf2eee23f415b911e1dd, type: 3}
+  - {fileID: 21300000, guid: 15ba3fc30ac8d33ef8ec99fc60599f78, type: 3}
+  - {fileID: 21300000, guid: f5c47f1d9c76a828cb8021645e94fb6c, type: 3}
+  - {fileID: 21300000, guid: a227f816e710ade4a0cd9f6560941ad2, type: 3}
+  - {fileID: 21300000, guid: 0a3364f632eb7a5b0b4a83517f8f3589, type: 3}
+  - {fileID: 21300000, guid: 15920b30002acf6d42bcdfec2498912a, type: 3}
+  - {fileID: 21300000, guid: 951d0641342dc8671d4e76474ff7e8c2, type: 3}
+  - {fileID: 21300000, guid: aff1a86161f41f1223811f9fe565c466, type: 3}
+  - {fileID: 21300000, guid: e17bb586613c75e25409796439e824d3, type: 3}
+  - {fileID: 21300000, guid: 5f990471f598d56175da6774cf55c392, type: 3}

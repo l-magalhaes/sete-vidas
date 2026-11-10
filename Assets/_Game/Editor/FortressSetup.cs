@@ -6,6 +6,7 @@ using SeteVidas.Dialogue;
 using SeteVidas.Enemies;
 using SeteVidas.World;
 using SeteVidas.World.Traps;
+using SeteVidas.World.Scenery;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -101,7 +102,7 @@ namespace SeteVidas.EditorTools
             {
                 [FortressLayout.Map.Background] = SeteVidasSetup.CreateTilemap(grid, "Background", null, -10, false),
                 [FortressLayout.Map.Ground] = SeteVidasSetup.CreateTilemap(grid, "Ground", GameConstants.Layers.Ground, 0, true),
-                [FortressLayout.Map.Climbable] = SeteVidasSetup.CreateTilemap(grid, "Climbable", GameConstants.Layers.Climbable, 0, true),
+                [FortressLayout.Map.Climbable] = SeteVidasSetup.CreateTilemap(grid, "Climbable", GameConstants.Layers.Climbable, 1, true), // ordem 1: a vinha sempre por cima da pedra
             };
             SeteVidasSetup.CreateTilemap(grid, "Foreground", null, 10, false);
             BuildTiles(tiles, maps);
@@ -114,9 +115,9 @@ namespace SeteVidas.EditorTools
             // Terreno natural (Etapa 2 do plano de cenário): solo e rocha no lugar do tile provisório, com tufos e seixos
             var terrainDetails = new GameObject("Detalhes do terreno");
             SceneManager.MoveGameObjectToScene(terrainDetails, scene);
-            int painted = TerrainPainter.Paint(maps[FortressLayout.Map.Ground], maps[FortressLayout.Map.Climbable],
+            int painted = TerrainPainter.Paint(maps[FortressLayout.Map.Ground], maps[FortressLayout.Map.Climbable], maps[FortressLayout.Map.Background],
                 FortressLayout.Slopes(), terrainDetails.transform);
-            Debug.Log($"[Sete Vidas] Terreno natural: {painted} tiles, {terrainDetails.transform.childCount} tufos e seixos.");
+            Debug.Log($"[Sete Vidas] Terreno e arquitetura: {painted} tiles, {terrainDetails.transform.childCount} detalhes (tufos, seixos, fendas, gárgulas).");
 
             var root = new GameObject("Fortaleza");
             SceneManager.MoveGameObjectToScene(root, scene);
@@ -355,6 +356,25 @@ namespace SeteVidas.EditorTools
             var wall = go.GetComponent<BreakableWall>();
             var so = new SerializedObject(wall);
             so.FindProperty("wallId").stringValue = id;
+
+            // a parede quebrável usa a pedra do lugar (plano, Etapa 3): uma porta antiga fechada com a alvenaria da época
+            string material = FortressTerrain.MaterialAt(Mathf.FloorToInt(at.x), Mathf.FloorToInt(at.y));
+            if (TerrainAutotile.IsMasonry(material) && material != TerrainAutotile.Wood)
+            {
+                var intact = TerrainPainter.LoadSprite(TerrainAutotile.BreakableWallName(material, "intacta"));
+                var cracked = TerrainPainter.LoadSprite(TerrainAutotile.BreakableWallName(material, "danificada"));
+                var rubble = TerrainPainter.LoadSprite(TerrainAutotile.BreakableWallName(material, "entulho"));
+                if (intact != null && cracked != null)
+                {
+                    so.FindProperty("intactSprite").objectReferenceValue = intact;
+                    so.FindProperty("crackedSprite").objectReferenceValue = cracked;
+                    var sr = (SpriteRenderer)so.FindProperty("spriteRenderer").objectReferenceValue;
+                    if (sr != null) { sr.sprite = intact; PrefabUtility.RecordPrefabInstancePropertyModifications(sr); }
+                    var rubbleGo = (GameObject)so.FindProperty("rubble").objectReferenceValue;
+                    var rsr = rubbleGo != null ? rubbleGo.GetComponent<SpriteRenderer>() : null;
+                    if (rsr != null && rubble != null) { rsr.sprite = rubble; PrefabUtility.RecordPrefabInstancePropertyModifications(rsr); }
+                }
+            }
             so.ApplyModifiedPropertiesWithoutUndo();
             return wall;
         }

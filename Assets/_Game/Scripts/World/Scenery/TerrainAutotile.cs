@@ -19,7 +19,25 @@ namespace SeteVidas.World.Scenery
         public const string Soil = "ext_solo";
         /// <summary>Rocha natural (pedras do tutorial, paredes de rocha): só rocha, topo iluminado.</summary>
         public const string Rock = "ext_rocha";
-        public static readonly string[] Materials = { Soil, Rock };
+        /// <summary>Chão de terra batida do pátio (topo sem grama; embaixo, o mesmo solo do exterior).</summary>
+        public const string PackedEarth = "ext_terra_batida";
+
+        // Arquitetura (Etapa 3): uma pedra por época, para a idade da parede contar a história (plano, 1.1)
+        /// <summary>Fundação de Golden (ano 423): blocos grandes 32×16, escuros, juntas largas.</summary>
+        public const string Foundation = "cid_fundacao";
+        /// <summary>Ampliação de Soluki: tijolo militar 16×8.</summary>
+        public const string Soluki = "cid_soluki";
+        /// <summary>Reforma recente: tijolos novos e claros com argamassa fresca, misturados aos antigos.</summary>
+        public const string Reform = "cid_reforma";
+        /// <summary>Abandono: tijolos faltando, musgo e rachaduras escuras (nunca douradas).</summary>
+        public const string Ruin = "cid_abandono";
+        /// <summary>Madeira (arquibancada): tábuas velhas e algumas novas.</summary>
+        public const string Wood = "sol_madeira";
+
+        public static readonly string[] Materials = { Soil, Rock, PackedEarth, Foundation, Soluki, Reform, Ruin, Wood };
+        public static readonly string[] Masonry = { Foundation, Soluki, Reform, Ruin, Wood };
+
+        public static bool IsMasonry(string material) { return System.Array.IndexOf(Masonry, material) >= 0; }
 
         public const int Up = 1, Right = 2, Down = 4, Left = 8;
 
@@ -34,6 +52,7 @@ namespace SeteVidas.World.Scenery
         public static string Band(string material, int depth)
         {
             if (depth == 0) return "topo";
+            if (IsMasonry(material)) return "miolo"; // alvenaria: topo (com a pedra de cobertura) ou miolo
             if (material == Rock) return "rocha";
             if (depth <= 2) return "terra";
             return depth == 3 ? "transicao" : "rocha";
@@ -46,7 +65,10 @@ namespace SeteVidas.World.Scenery
 
         public static int VariantCount(string material, string band)
         {
-            if (band == "topo") return material == Soil ? 3 : 2;
+            if (material == Foundation) return 4; // (metade esquerda/direita do bloco de 32 px) × 2 desgastes
+            if (material == Ruin) return 4;       // limpa, um tijolo faltando, rachadura, musgo pesado
+            if (IsMasonry(material)) return 2;     // 2 desgastes
+            if (band == "topo") return material == Soil || material == PackedEarth ? 3 : 2;
             if (Phased(band)) return StrataPhases; // fase dos estratos pela coluna (x mod 4)
             return 3; // terra: lisa, com seixos, com raiz
         }
@@ -71,6 +93,8 @@ namespace SeteVidas.World.Scenery
 
         public static string TileName(string material, string band, int mask, int variant)
         {
+            // terra batida só tem o topo próprio; embaixo é o mesmo solo do exterior
+            if (material == PackedEarth && band != "topo") material = Soil;
             return "tile_" + material + "_" + band + "_" + mask.ToString("x") + "_" + variant;
         }
 
@@ -98,7 +122,23 @@ namespace SeteVidas.World.Scenery
             string band = Band(material, depth);
             int mask = Mask(solid, x, y);
             if (band != "topo") mask &= ~Up;
+            // alvenaria longe de qualquer espaço aberto: interior escuro (as bordas, onde se pisa e encosta, se destacam)
+            // em degraus, para não haver corte reto: cor cheia até 2 tiles do ar, meio-tom no 3º, escuro do 4º em diante
+            if (band == "miolo" && material != Wood && DeepInside(solid, x, y, InteriorDistance)) // madeira: estrutura fina, sem interior escuro
+                return TileName(material, DeepInside(solid, x, y, InteriorDistance + 1) ? "interno" : "meio", 0, Variant(material, "miolo", x, y));
             return TileName(material, band, mask, Variant(material, band, x, y));
+        }
+
+        /// <summary>Até esta distância do ar (em passos), a alvenaria fica com a cor cheia.</summary>
+        public const int InteriorDistance = 2;
+
+        /// <summary>Todas as células a até <paramref name="distance"/> passos (vizinhança de 4) são sólidas.</summary>
+        public static bool DeepInside(SolidAt solid, int x, int y, int distance)
+        {
+            for (int dx = -distance; dx <= distance; dx++)
+                for (int dy = -distance; dy <= distance; dy++)
+                    if (System.Math.Abs(dx) + System.Math.Abs(dy) <= distance && !solid(x + dx, y + dy)) return false;
+            return true;
         }
 
         /// <summary>
@@ -107,6 +147,9 @@ namespace SeteVidas.World.Scenery
         /// </summary>
         public static int Variant(string material, string band, int x, int y)
         {
+            // fundação: blocos de 32 px em fiadas alternadas (deslocadas 16 px); a paridade diz qual metade do bloco
+            if (material == Foundation) return Mod(x + y, 2) * 2 + (int)(Hash(x, y, 19) % 2u);
+            if (material == PackedEarth && band != "topo") return Variant(Soil, band, x, y);
             if (Phased(band)) return Mod(x, StrataPhases);
             int count = VariantCount(material, band);
             if (count <= 1) return 0;
@@ -123,7 +166,16 @@ namespace SeteVidas.World.Scenery
         public static List<string> AllTileNames(string material)
         {
             var names = new List<string>();
-            foreach (var band in new[] { "topo", "terra", "transicao", "rocha" })
+            if (IsMasonry(material))
+                for (int v = 0; v < VariantCount(material, "miolo"); v++)
+                {
+                    names.Add(TileName(material, "meio", 0, v));
+                    names.Add(TileName(material, "interno", 0, v));
+                }
+            string[] bands = IsMasonry(material) ? new[] { "topo", "miolo" }
+                           : material == PackedEarth ? new[] { "topo" }
+                           : new[] { "topo", "terra", "transicao", "rocha" };
+            foreach (var band in bands)
             {
                 if (material == Rock && (band == "terra" || band == "transicao")) continue;
                 for (int mask = 0; mask < 16; mask++)
@@ -135,6 +187,113 @@ namespace SeteVidas.World.Scenery
             }
             return names;
         }
+
+        // -------------------------------------- parede do fundo e paredes escaláveis
+
+        /// <summary>Parede do fundo (tilemap Background, sem colisão): a mesma alvenaria, mais escura e sem bordas.</summary>
+        public static string BackTileName(string material, int variant) { return "tile_" + material + "_fundo_" + variant; }
+
+        public static string BackTileFor(string material, int x, int y)
+        {
+            return IsMasonry(material) ? BackTileName(material, Variant(material, "miolo", x, y)) : "";
+        }
+
+        /// <summary>
+        /// Parede escalável por época: a pedra da época com as ranhuras de apoio e a hera seca (#4f5a2e / #8a9a4e),
+        /// a linguagem reservada do gate do Ladino. Lados: só esquerda/direita importam (a face onde o gato agarra).
+        /// </summary>
+        public static string ClimbTileName(string material, int sideMask, int variant)
+        {
+            return "tile_" + material + "_escalavel_" + sideMask.ToString("x") + "_" + variant;
+        }
+
+        public static string ClimbTileFor(string material, SolidAt solid, int x, int y)
+        {
+            if (!IsMasonry(material)) return "";
+            return ClimbTileName(material, Mask(solid, x, y) & (Left | Right), Variant(material, "miolo", x, y));
+        }
+
+        /// <summary>Sem rachadura: rachadura (grande, escura, de cima a baixo) é a linguagem da parede quebrável.</summary>
+        public static readonly string[] WallEvents = { "janela_tapada", "nicho", "remendo", "mancha" };
+        public static string WallEventName(string evento) { return "env_cid_parede_" + evento; }
+
+        /// <summary>Parede quebrável 16×64 na pedra da época: estado "intacta", "danificada" ou "entulho".</summary>
+        public static string BreakableWallName(string material, string state)
+        {
+            string era = material.StartsWith("cid_") ? material.Substring(4) : material;
+            return "env_cid_parede_quebravel_" + era + "_" + state;
+        }
+
+        /// <summary>
+        /// "Acontecimento" na parede do fundo (plano, 4.5: um a cada 8–12 tiles): janela tapada, nicho, remendo de
+        /// outra pedra, mancha de água ou rachadura escura. Só em salas com pelo menos 4 de altura livre, na altura de
+        /// 2 a 3 tiles acima do chão, e espaçados (no máximo um a cada 3 colunas, ~1 em 10). (x, y) = célula de fundo livre.
+        /// </summary>
+        public static Detail WallEvent(SolidAt solid, int x, int y)
+        {
+            if (solid(x, y) || Mod(x, 3) != 0) return null;
+            bool floor3 = solid(x, y - 3) && !solid(x, y - 1) && !solid(x, y - 2);
+            if (!floor3 || solid(x, y + 1)) return null;
+            if (Hash(x, y, 40) % 100 >= 30) return null; // 30% das colunas candidatas (1 a cada 3) ≈ 1 em 10
+            string ev = WallEvents[(int)(Hash(x, y, 41) % (uint)WallEvents.Length)];
+            return new Detail { Sprite = WallEventName(ev), X = x + 0.5f, Y = y - 1f };
+        }
+
+        public static List<string> AllBackAndClimbNames(string material)
+        {
+            var names = new List<string>();
+            if (!IsMasonry(material)) return names;
+            int count = VariantCount(material, "miolo");
+            for (int v = 0; v < count; v++)
+            {
+                names.Add(BackTileName(material, v));
+                foreach (int side in new[] { 0, Left, Right, Left | Right }) names.Add(ClimbTileName(material, side, v));
+            }
+            return names;
+        }
+
+        /// <summary>
+        /// Gárgula no topo de cada vinha (plano, 4.4: a água da chuva sai por ela e alimenta a vinha). Fica na face da
+        /// parede, logo acima da última célula escalável, apontando para fora (para o lado do ar).
+        /// </summary>
+        public static Detail Gargoyle(int x, int topY, bool faceLeft, string material)
+        {
+            const float px = 1f / 16f;
+            bool wood = material == Wood; // na madeira, uma calha de tábuas no lugar da cabeça de pedra
+            // a mísula (lado preso) encosta 1 px dentro da parede; o resto sai para o ar
+            float half = (wood ? 14f : 24f) * 0.5f * px;
+            return new Detail
+            {
+                Sprite = (wood ? "env_sol_arq_calha_" : "env_sol_arq_gargula_") + (faceLeft ? "l" : "r"),
+                X = faceLeft ? x - half + px : x + 1f + half - px,
+                Y = topY + (wood ? 6f : 2f) * px,
+            };
+        }
+
+        public const int DripFrames = 14;
+        public const float DripFps = 12f;
+        public static string DripFrameName(int frame) { return "env_sol_arq_gota_" + frame; }
+
+        /// <summary>
+        /// Gota animada que cai da boca da gárgula (ou da ponta da calha) ao longo da vinha: sprite 7×48, com o topo na
+        /// base da gárgula e o meio na coluna do fio d'água. Use a mesma chamada de <see cref="Gargoyle"/>.
+        /// </summary>
+        public static Detail GargoyleDrip(int x, int topY, bool faceLeft, string material)
+        {
+            const float px = 1f / 16f;
+            var g = Gargoyle(x, topY, faceLeft, material);
+            bool wood = material == Wood;
+            float stream = wood ? 4.5f : 7f;                     // distância do fio d'água ao meio do sprite (px)
+            return new Detail
+            {
+                Sprite = DripFrameName(0),
+                X = g.X + (faceLeft ? -stream : stream) * px,
+                Y = g.Y - 48f * px,
+            };
+        }
+
+        /// <summary>Atraso do ciclo da gota (s), pela posição: as gárgulas não pingam em sincronia.</summary>
+        public static float DripOffset(int x, int y) { return (Hash(x, y, 50) % 1000) / 1000f * DripFrames / DripFps; }
 
         // ------------------------------------------------------------ rampas
 
@@ -200,13 +359,16 @@ namespace SeteVidas.World.Scenery
         {
             var list = new List<Detail>();
             const float px = 1f / 16f;
-            if (material == Soil && Hash(x, y, 3) % 100 < 62)
+            // alvenaria cuidada: chão limpo; só o abandono tem entulho (seixos)
+            if (IsMasonry(material) && material != Ruin) return list;
+            int tuftChance = material == Soil ? 62 : material == PackedEarth ? 12 : 0; // no pátio o mato só invade as bordas
+            if (Hash(x, y, 3) % 100 < tuftChance)
             {
                 int v = (int)(Hash(x, y, 4) % TuftVariants);
                 int jitter = (int)(Hash(x, y, 5) % 7) - 3;
                 list.Add(new Detail { Sprite = TuftName(v), X = x + 0.5f + jitter * px, Y = y + 1f });
             }
-            if (Hash(x, y, 6) % 100 < (material == Rock ? 45 : 30))
+            if (Hash(x, y, 6) % 100 < (material == Rock || material == Ruin ? 45 : 30))
             {
                 int v = (int)(Hash(x, y, 7) % PebbleVariants);
                 int offset = (int)(Hash(x, y, 8) % 12) + 2;

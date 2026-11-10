@@ -11,7 +11,6 @@ Arquivos: `Docs/Arte/paleta_fortaleza.gpl` (abre no Aseprite e no GIMP), `Docs/A
 | Cor | Hex | Uso |
 |---|---|---|
 | Armadilha | `#c83a3a` | Só armadilhas (dano). Nenhum enfeite pode usar. |
-| Rachadura (brilho) | `#ffd34d` | Parede quebrável pelo Paladino. Rachadura decorativa é escura, sem brilho. |
 | Hera escalável (ramo) | `#4f5a2e` | Só parede escalável. |
 | Hera escalável (folha) | `#8a9a4e` | Só parede escalável. |
 | Praga (roxo) | `#5b2a6e` | Só a praga e o Tomo. O que identifica a praga é o PAR roxo + verde-ácido: o céu do pôr do sol pode ter roxo (o validador não checa o roxo nos fundos). |

@@ -16,12 +16,18 @@ namespace SeteVidas.EditorTools
     {
         public const string TerrainArt = "Assets/_Game/Art/Environments/Exterior/Terrain";
         public const string ExteriorArt = "Assets/_Game/Art/Environments/Exterior";
+        public const string ArchitectureArt = "Assets/_Game/Art/Environments/Citadel/Architecture";
         const string TileFolder = "Assets/_Game/ScriptableObjects/Environment/Tiles";
 
         static readonly Dictionary<string, Tile> s_tiles = new Dictionary<string, Tile>();
+        /// <summary>Acontecimentos na parede do fundo: por cima dela (-10) e atrás dos enfeites (-5).</summary>
+        const int WallEventOrder = -9;
 
-        /// <summary>Pinta o terreno e cria os detalhes. Devolve quantos tiles trocou.</summary>
-        public static int Paint(Tilemap ground, Tilemap climbable, IEnumerable<FortressLayout.SlopeRect> slopes, Transform detailsParent)
+        /// <summary>
+        /// Pinta o terreno e a arquitetura (chão, parede do fundo e paredes escaláveis por época) e cria os detalhes
+        /// (tufos, seixos, fendas e a gárgula em cima de cada vinha). Devolve quantos tiles trocou.
+        /// </summary>
+        public static int Paint(Tilemap ground, Tilemap climbable, Tilemap background, IEnumerable<FortressLayout.SlopeRect> slopes, Transform detailsParent)
         {
             s_tiles.Clear();
             var slopeSolid = new HashSet<Vector2Int>();
@@ -37,34 +43,85 @@ namespace SeteVidas.EditorTools
 
             int painted = 0, missing = 0;
             var detailSprites = new Dictionary<string, Sprite>();
+
+            void Detail(TerrainAutotile.Detail d, int order = 1)
+            {
+                if (detailsParent == null) return;
+                if (!detailSprites.TryGetValue(d.Sprite, out var sprite))
+                    detailSprites[d.Sprite] = sprite = LoadSprite(d.Sprite);
+                if (sprite == null) return;
+                var go = new GameObject(d.Sprite);
+                go.transform.SetParent(detailsParent, false);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = sprite;
+                sr.sortingOrder = order; // 1 = terreno_detalhe; -9 = acontecimento na parede do fundo
+                // pivot central: a base do sprite fica na superfície
+                go.transform.position = new Vector3(d.X, d.Y + sprite.bounds.extents.y, 0f);
+            }
+
+            // gota animada da gárgula: quadros env_sol_arq_gota_0..13 num SpriteLoop com atraso próprio
+            Sprite[] dripFrames = null;
+            void Drip(TerrainAutotile.Detail d, float offset)
+            {
+                if (detailsParent == null) return;
+                if (dripFrames == null)
+                {
+                    dripFrames = new Sprite[TerrainAutotile.DripFrames];
+                    for (int i = 0; i < dripFrames.Length; i++) dripFrames[i] = LoadSprite(TerrainAutotile.DripFrameName(i));
+                }
+                if (dripFrames[0] == null) return;
+                var go = new GameObject("env_sol_arq_gota");
+                go.transform.SetParent(detailsParent, false);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = dripFrames[0];
+                sr.sortingOrder = 2; // por cima da vinha (1), atrás do gato (5)
+                go.transform.position = new Vector3(d.X, d.Y + dripFrames[0].bounds.extents.y, 0f);
+                go.AddComponent<SeteVidas.World.SpriteLoop>().Configure(dripFrames, 1f / TerrainAutotile.DripFps, offset);
+            }
+
+            bool Set(Tilemap map, int x, int y, string spriteName)
+            {
+                if (string.IsNullOrEmpty(spriteName)) return false;
+                var tile = TileFor(spriteName);
+                if (tile == null) { missing++; return false; }
+                map.SetTile(new Vector3Int(x, y, 0), tile);
+                painted++;
+                return true;
+            }
+
             foreach (var cell in Cells())
             {
                 int x = cell.x, y = cell.y;
-                if (!ground.HasTile(new Vector3Int(x, y, 0))) continue;
+                var c = new Vector3Int(x, y, 0);
                 string mat = FortressTerrain.MaterialAt(x, y);
                 if (mat == "") continue;
-                var tile = TileFor(TerrainAutotile.TileFor(mat, Solid, FortressTerrain.MaterialAt, x, y));
-                if (tile == null) { missing++; continue; }
-                ground.SetTile(new Vector3Int(x, y, 0), tile);
-                painted++;
 
-                if (detailsParent == null || !FortressTerrain.DetailsAllowed(x, y)) continue;
+                // parede do fundo (interior): a mesma época, escura
+                if (background != null && background.HasTile(c) && Set(background, x, y, TerrainAutotile.BackTileFor(mat, x, y)))
+                {
+                    var ev = TerrainAutotile.WallEvent(Solid, x, y);
+                    if (ev != null) Detail(ev, WallEventOrder);
+                }
+
+                // parede escalável por época, com a gárgula (ou calha) em cima de cada vinha
+                if (climbable != null && climbable.HasTile(c) && Set(climbable, x, y, TerrainAutotile.ClimbTileFor(mat, Solid, x, y))
+                    && !climbable.HasTile(new Vector3Int(x, y + 1, 0)))
+                {
+                    bool airLeft = !Solid(x - 1, y), airRight = !Solid(x + 1, y);
+                    if (airLeft || airRight)
+                    {
+                        Detail(TerrainAutotile.Gargoyle(x, y, airLeft, mat));
+                        Drip(TerrainAutotile.GargoyleDrip(x, y, airLeft, mat), TerrainAutotile.DripOffset(x, y));
+                    }
+                }
+
+                if (!ground.HasTile(c)) continue;
+                if (!Set(ground, x, y, TerrainAutotile.TileFor(mat, Solid, FortressTerrain.MaterialAt, x, y))) continue;
+                if (!FortressTerrain.DetailsAllowed(x, y)) continue;
                 var details = Solid(x, y + 1)
                     ? TerrainAutotile.DeepDetails(TerrainAutotile.BandFor(mat, Solid, FortressTerrain.MaterialAt, x, y), x, y)
                     : TerrainAutotile.TopDetails(mat, x, y);
-                foreach (var d in details)
-                {
-                    if (!detailSprites.TryGetValue(d.Sprite, out var sprite))
-                        detailSprites[d.Sprite] = sprite = LoadSprite(d.Sprite);
-                    if (sprite == null) continue;
-                    var go = new GameObject(d.Sprite);
-                    go.transform.SetParent(detailsParent, false);
-                    var sr = go.AddComponent<SpriteRenderer>();
-                    sr.sprite = sprite;
-                    sr.sortingOrder = SceneryLayers.DefaultOrder(SceneryLayers.TerrainDetail);
-                    // pivot central: a base do sprite fica na superfície
-                    go.transform.position = new Vector3(d.X, d.Y + sprite.bounds.extents.y, 0f);
-                }
+                foreach (var d in details) Detail(d);
             }
             if (missing > 0)
                 Debug.LogError($"[Sete Vidas] Terreno: {missing} tile(s) sem arte. Rode Tools/EnvironmentSprites/gerar.ps1 e reimporte.");
@@ -85,7 +142,8 @@ namespace SeteVidas.EditorTools
         public static Sprite LoadSprite(string name)
         {
             var s = AssetDatabase.LoadAssetAtPath<Sprite>($"{TerrainArt}/{name}.png")
-                    ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{ExteriorArt}/{name}.png");
+                    ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{ExteriorArt}/{name}.png")
+                    ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{ArchitectureArt}/{name}.png");
             if (s == null) Debug.LogError($"[Sete Vidas] Terreno: falta {name}.png. Rode Tools/EnvironmentSprites/gerar.ps1");
             return s;
         }

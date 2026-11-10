@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 6;
+        public const int Version = 7;
 
         public enum Map { Ground, Climbable, Background }
 
@@ -95,6 +95,11 @@ namespace SeteVidas.EditorTools
             G(t, 88, 2, 89, 14, "coluna esquerda (porta de 2 embaixo)");
             V(t, 89, 2, 89, 14, "vinha da coluna esquerda");
             G(t, 93, 0, 94, 18, "coluna direita (topo 19)");
+            // Fundos sem colisão para nada flutuar no céu: as tábuas atrás/embaixo da arquibancada e a parede
+            // de trás da torre de escalada (entre as colunas; a porta de baixo da coluna esquerda vira porta de verdade)
+            B(t, 50, 0, 55, 6, "fundo de tábuas da arquibancada");
+            B(t, 88, 0, 94, 18, "parede de trás da torre de escalada");
+            B(t, 112, 0, 118, 3, "fundo do estábulo (atrás da porta rachada não pode aparecer o céu)");
             V(t, 93, 6, 93, 18, "vinha da coluna direita");
 
             // 4) Escalada: três muralhas em degrau com vinhas na face esquerda

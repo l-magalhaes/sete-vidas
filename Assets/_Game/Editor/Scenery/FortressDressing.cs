@@ -69,11 +69,32 @@ namespace SeteVidas.EditorTools
             Add(d, 3, Statue, "Estátua do guardião", 44.5f, 0f);
             Add(d, 3, Rack, "Suporte de armas", 67f, 0f);
             Add(d, 3, Target, "Alvo de arco", 70f, 0f);
+            // Nada flutua e toda sombra tem motivo (correções da revisão):
+            // a tenda faz a sombra do fardo de feno (sombra x 82..88, até 5 de altura)
+            Add(d, 3, "env_sol_obj_tenda", "Tenda do pátio", 85f, 0f);
+            // a arquibancada se apoia no chão (postes nas pontas da passagem baixa) e tem um toldo sobre o atirador
+            Add(d, 3, "env_sol_obj_poste_curto", "Poste da arquibancada (esquerda)", 50.2f, 0f);
+            Add(d, 3, "env_sol_obj_poste_curto", "Poste da arquibancada (direita)", 55.8f, 0f);
+            Add(d, 3, "env_sol_obj_poste_toldo", "Poste do toldo (esquerda)", 50.2f, 7f);
+            Add(d, 3, "env_sol_obj_poste_toldo", "Poste do toldo (direita)", 55.8f, 7f);
+            Add(d, 3, "env_sol_obj_toldo", "Toldo da arquibancada", 53f, 10.55f);
+            // o alto da torre de escalada (parede do fundo): ameias só sobre o fundo, nunca no topo da coluna onde se anda
+            Row(d, 3, "env_cid_arq_ameias_fundo", "Ameias da torre", 88.5f, 19f, 5, 1f);
 
             // ===== 5) Galeria da muralha
             Add(d, 5, Torch, "Tocha da galeria 1", 165f, WallWalk + 2.6f);
             Add(d, 5, Torch, "Tocha da galeria 2", 186f, WallWalk + 2.6f);
             Add(d, 5, Banner, "Estandarte da galeria", 170f, 51.9f);
+            // As sombras da galeria: a luz vem das tochas à direita; uma estátua gigante entre a tocha e a sombra
+            // bloqueia a luz, e a tocha de dentro da sombra está apagada (a ronda passou)
+            // A sombra é o fundo de uma alcova (recuo em arco na parede) onde a luz das tochas não chega:
+            // mesma largura e altura da sombra jogável (FortressLayout: A 10×5 em x 148, B 8×5 em x 176)
+            Add(d, 5, "env_cid_arq_alcova_10x5", "Alcova da sombra A", 148f, WallWalk);
+            Add(d, 5, "env_cid_arq_alcova_8x5", "Alcova da sombra B", 176f, WallWalk);
+            Add(d, 5, "env_cid_cul_estatua_gigante", "Estátua gigante da galeria A", 155.4f, WallWalk);
+            Add(d, 5, "env_com_obj_wall_torch_apagada", "Tocha apagada da sombra A", 148f, WallWalk + 2.6f);
+            Add(d, 5, "env_cid_cul_estatua_gigante", "Estátua gigante da galeria B", 181.2f, WallWalk);
+            Add(d, 5, "env_com_obj_wall_torch_apagada", "Tocha apagada da sombra B", 176f, WallWalk + 2.6f);
 
             // ===== 7) Salão dos Votos
             Add(d, 7, Window, "Vitral do salão 1", 186f, BellHall + 6f);

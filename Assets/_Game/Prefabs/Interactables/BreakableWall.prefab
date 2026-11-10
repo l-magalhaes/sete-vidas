@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: a4954537f174a7d45b79f9fa870754c0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 787c462f33f2e2f7d28c6be716c3f85c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -173,7 +173,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: f7258648b9f7b1d4b82c185a328053dd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 89f6fd228b7815fe15d0454931fec580, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -281,8 +281,8 @@ MonoBehaviour:
   maxHealth: 8
   requiredType: 1
   spriteRenderer: {fileID: 2512163454685524733}
-  intactSprite: {fileID: 21300000, guid: a4954537f174a7d45b79f9fa870754c0, type: 3}
-  crackedSprite: {fileID: 21300000, guid: 3514603b02a8ff847974868b3b4f30a1, type: 3}
+  intactSprite: {fileID: 21300000, guid: 787c462f33f2e2f7d28c6be716c3f85c, type: 3}
+  crackedSprite: {fileID: 21300000, guid: 9694138d79f415e3e7976e1bac961e89, type: 3}
   rubble: {fileID: 6574546241518126645}
   breakNoiseRadius: 8
   breakNoiseLoudness: 0.6

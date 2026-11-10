@@ -38,7 +38,14 @@ namespace SeteVidas.World
         {
             if (shade == null) return;
             shade.transform.localPosition = Vector3.zero;
-            shade.transform.localScale = new Vector3(size.x, size.y, 1f); // sprite de 1×1 tile
+            if (shade.drawMode == SpriteDrawMode.Simple)
+                shade.transform.localScale = new Vector3(size.x, size.y, 1f); // sprite de 1×1 tile
+            else
+            {
+                // sombra de borda suave (9-slice): a borda pontilhada fica no tamanho original, o meio estica
+                shade.transform.localScale = Vector3.one;
+                shade.size = size;
+            }
             var c = shade.color;
             c.a = Mathf.Lerp(0.6f, 0f, exposure); // mais escuro = mais opaco
             shade.color = c;

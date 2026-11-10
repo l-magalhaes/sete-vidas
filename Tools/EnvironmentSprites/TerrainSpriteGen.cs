@@ -23,7 +23,7 @@ public static class TerrainSpriteGen
         string terrain = Path.Combine(ext, "Terrain");
         string pri = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Primates");
 
-        foreach (var material in TerrainAutotile.Materials)
+        foreach (var material in new[] { TerrainAutotile.Soil, TerrainAutotile.Rock }) // arquitetura: ArchitectureSpriteGen
             foreach (var name in TerrainAutotile.AllTileNames(material))
                 Write(DrawTile(name), Path.Combine(terrain, name + ".png"));
 

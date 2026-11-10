@@ -28,6 +28,28 @@
       },
       "leitura": "Gerada por Tools/EnvironmentSprites (PropSpriteGen). Metal e madeira claros o bastante para aparecer na parede escura. Toda tocha acesa precisa de LightZone iluminada em volta; toda sombra jogável perto de tocha precisa de motivo (tocha apagada).",
       "tags": ["luz", "fogo", "furtividade", "vivo"]
+    },
+    {
+      "id": "env_com_obj_wall_torch_apagada",
+      "nome": "Tocha de parede apagada (fumegando)",
+      "categoria": "obj",
+      "funcao": "narrativo",
+      "material": "madeira, ferro, pano queimado",
+      "epoca": "reforma",
+      "tamanho_px": [12, 20],
+      "sprites": ["env_com_obj_wall_torch_apagada_0.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "animacao": {
+        "nome": "fumaça",
+        "quadros": ["env_com_obj_wall_torch_apagada_0.png", "env_com_obj_wall_torch_apagada_1.png"],
+        "fps": 3,
+        "amplitude_px": 1
+      },
+      "posicionamento": { "apoio": "parede", "zonas": ["galeria", "torres"] },
+      "leitura": "Dentro de cada sombra jogável de interior: a ronda apagou esta tocha, por isso está escuro aqui (plano, 4.4).",
+      "tags": ["sombra", "furtividade", "historia"]
     }
   ]
 }

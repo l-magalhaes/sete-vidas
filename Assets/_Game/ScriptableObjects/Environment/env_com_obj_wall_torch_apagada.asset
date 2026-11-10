@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_com_obj_wall_torch_apagada
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Common/manifest.json
+  entry:
+    id: env_com_obj_wall_torch_apagada
+    nome: Tocha de parede apagada (fumegando)
+    regiao: com
+    categoria: obj
+    funcao: narrativo
+    material: madeira, ferro, pano queimado
+    epoca: reforma
+    tamanho_px: 0c00000014000000i
+    sprites:
+    - env_com_obj_wall_torch_apagada_0.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: "fuma\xE7a"
+      quadros:
+      - env_com_obj_wall_torch_apagada_0.png
+      - env_com_obj_wall_torch_apagada_1.png
+      fps: 3
+      amplitude_px: 1
+    paleta: []
+    posicionamento:
+      apoio: parede
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - galeria
+      - torres
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Dentro de cada sombra jog\xE1vel de interior: a ronda apagou esta tocha, por isso est\xE1 escuro aqui (plano, 4.4)."
+    tags:
+    - sombra
+    - furtividade
+    - historia
+  variants:
+  - {fileID: 21300000, guid: 280d367fed482ab59f0f0c81688c077f, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 280d367fed482ab59f0f0c81688c077f, type: 3}
+  - {fileID: 21300000, guid: 195b51f21aa8dcd675ad3845cd308421, type: 3}

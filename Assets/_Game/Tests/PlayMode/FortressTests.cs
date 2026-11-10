@@ -102,11 +102,37 @@ namespace SeteVidas.Tests
             foreach (var sr in details.GetComponentsInChildren<SpriteRenderer>())
             {
                 Assert.IsNotNull(sr.sprite, sr.name);
-                Assert.AreEqual(1, sr.sortingOrder, "terreno_detalhe: por cima dos tiles, atrás do gato");
+                Assert.IsTrue(sr.sortingOrder == 1 || sr.sortingOrder == 2 || sr.sortingOrder == -9, $"{sr.name}: terreno_detalhe (1), gota da gárgula (2) ou acontecimento na parede do fundo (-9)");
             }
         }
 
         const int FortressLayoutTop = 60; // FortressLayout.CliffTop (o layout fica no editor)
+
+        static string SpriteAt(string map, int x, int y) => (Map(map).GetTile(new Vector3Int(x, y, 0)) as Tile)?.sprite?.name ?? "";
+
+        [UnityTest]
+        public IEnumerator Citadel_StoneTellsTheAge_AndEveryVineHasAGargoyle()
+        {
+            yield return Load();
+            // a pedra muda com a altura: fundação embaixo, Soluki no meio, reforma em cima (muralhas em degrau)
+            StringAssert.StartsWith("tile_cid_fundacao_", SpriteAt("Ground", 115, 10), "muralha 1: fundação");
+            StringAssert.StartsWith("tile_cid_soluki_", SpriteAt("Ground", 124, 20), "muralha 2: Soluki");
+            StringAssert.StartsWith("tile_cid_reforma_", SpriteAt("Ground", 132, 38), "muralha 3: reforma");
+            StringAssert.StartsWith("tile_ext_terra_batida_topo", SpriteAt("Ground", 70, -1), "pátio de terra batida");
+            StringAssert.StartsWith("tile_sol_madeira_", SpriteAt("Ground", 52, 6), "arquibancada de madeira");
+            StringAssert.StartsWith("tile_cid_soluki_fundo_", SpriteAt("Background", 160, 46), "parede do fundo da galeria");
+            StringAssert.StartsWith("tile_cid_fundacao_escalavel_", SpriteAt("Climbable", 112, 10), "vinha 1 na pedra da fundação");
+
+            var details = GameObject.Find("Detalhes do terreno").transform;
+            int gargoyles = 0, events = 0;
+            foreach (Transform d in details)
+            {
+                if (d.name.StartsWith("env_sol_arq_gargula") || d.name.StartsWith("env_sol_arq_calha")) gargoyles++;
+                if (d.name.StartsWith("env_cid_parede_")) events++;
+            }
+            Assert.GreaterOrEqual(gargoyles, 12, "Uma gárgula (ou calha) no topo de cada vinha (13 vinhas no mapa)");
+            Assert.Greater(events, 10, "Acontecimentos nas paredes do fundo (regra contra repetição)");
+        }
 
         [UnityTest]
         public IEnumerator Dressing_ComesFromTheSceneryLibrary()
@@ -114,8 +140,9 @@ namespace SeteVidas.Tests
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 27 itens no FortressDressing (11 da Montanha e da Trilha, Etapa 2), e os escudos do salão são uma fileira de 4: 30 objetos
-            Assert.AreEqual(30, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            // 40 itens no FortressDressing (Montanha, Trilha, tenda/arquibancada/torre, alcovas, estátuas e tochas apagadas), com 2 fileiras
+            // (4 escudos do salão, 5 ameias da torre): 47 objetos
+            Assert.AreEqual(47, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
                 Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
             Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,

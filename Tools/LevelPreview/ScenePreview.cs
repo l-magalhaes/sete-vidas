@@ -82,26 +82,52 @@ public static class ScenePreview
         string ph = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Placeholder");
         int x0 = (int)Math.Floor(left) - 1, x1 = (int)Math.Ceiling(left + W / (float)PPU) + 1;
         int y0 = (int)Math.Floor(top - H / (float)PPU) - 1, y1 = (int)Math.Ceiling(top) + 1;
+        string arch = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Citadel/Architecture");
+        string extArt = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Exterior");
+        Func<string, string> pathOf = name =>
+        {
+            foreach (var d in new[] { terrain, extArt, arch }) { string p = Path.Combine(d, name + ".png"); if (File.Exists(p)) return p; }
+            return Path.Combine(terrain, name + ".png");
+        };
+        TerrainAutotile.MaterialAt matAt = (mx, my) => FortressTerrain.MaterialAt(mx, my);
+        Action<TerrainAutotile.Detail, int> detailAt = (d, order) =>
+        {
+            var img = Img(pathOf(d.Sprite));
+            draws.Add(new Draw { Order = order, Image = img, X = (d.X - left) * PPU - img.Width / 2f, Y = (top - d.Y) * PPU - img.Height });
+        };
+        Action<TerrainAutotile.Detail> detail = d => detailAt(d, 1);
         for (int x = x0; x <= x1; x++)
             for (int y = y0; y <= y1; y++)
             {
                 long k = Key(x, y);
-                if (back.Contains(k)) AddCell(draws, Img(Path.Combine(ph, "tile_background_placeholder.png")), x, y, left, top, -10);
-                if (climb.Contains(k)) AddCell(draws, Img(Path.Combine(ph, "tile_climbable_placeholder.png")), x, y, left, top, 0);
-                if (!ground.Contains(k)) continue;
                 string mat = FortressTerrain.MaterialAt(x, y);
+                if (back.Contains(k))
+                {
+                    string b = TerrainAutotile.BackTileFor(mat, x, y);
+                    AddCell(draws, Img(b != "" ? pathOf(b) : Path.Combine(ph, "tile_background_placeholder.png")), x, y, left, top, -10);
+                    var ev = b != "" ? TerrainAutotile.WallEvent(solid, x, y) : null;
+                    if (ev != null) detailAt(ev, -9);
+                }
+                if (climb.Contains(k))
+                {
+                    string c = TerrainAutotile.ClimbTileFor(mat, solid, x, y);
+                    AddCell(draws, Img(c != "" ? pathOf(c) : Path.Combine(ph, "tile_climbable_placeholder.png")), x, y, left, top, 1);
+                    if (c != "" && !climb.Contains(Key(x, y + 1)) && (!solid(x - 1, y) || !solid(x + 1, y)))
+                    {
+                        detail(TerrainAutotile.Gargoyle(x, y, !solid(x - 1, y), mat));
+                        var drip = TerrainAutotile.GargoyleDrip(x, y, !solid(x - 1, y), mat);
+                        drip.Sprite = TerrainAutotile.DripFrameName(5); // a prévia mostra a gota em plena queda
+                        detailAt(drip, 2);
+                    }
+                }
+                if (!ground.Contains(k)) continue;
                 if (mat == "") { AddCell(draws, Img(Path.Combine(ph, "tile_ground_placeholder.png")), x, y, left, top, 0); continue; }
-                TerrainAutotile.MaterialAt matAt = (mx, my) => FortressTerrain.MaterialAt(mx, my);
-                AddCell(draws, Img(Path.Combine(terrain, TerrainAutotile.TileFor(mat, solid, matAt, x, y) + ".png")), x, y, left, top, 0);
+                AddCell(draws, Img(pathOf(TerrainAutotile.TileFor(mat, solid, matAt, x, y))), x, y, left, top, 0);
                 if (FortressTerrain.DetailsAllowed(x, y))
                     foreach (var d in solid(x, y + 1)
                                  ? TerrainAutotile.DeepDetails(TerrainAutotile.BandFor(mat, solid, matAt, x, y), x, y)
                                  : TerrainAutotile.TopDetails(mat, x, y))
-                    {
-                        string dir = d.Sprite.StartsWith("env_ext_ter_") ? terrain : Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Exterior");
-                        var img = Img(Path.Combine(dir, d.Sprite + ".png"));
-                        draws.Add(new Draw { Order = 1, Image = img, X = (d.X - left) * PPU - img.Width / 2f, Y = (top - d.Y) * PPU - img.Height });
-                    }
+                        detail(d);
             }
         foreach (var p in slopePieces)
             if (p.X >= x0 && p.X <= x1 && p.Y >= y0 && p.Y <= y1)
@@ -154,6 +180,29 @@ public static class ScenePreview
                 var img = Img(Path.Combine(art, "Environments/Traps/trap_spikes.png"));
                 for (int i = 0; i < (int)o.W; i++)
                     draws.Add(new Draw { Order = 2, Image = img, X = (o.X - o.W / 2f + i - left) * PPU, Y = (top - o.Y) * PPU - img.Height });
+            }
+            else if (o.Kind == "wall")
+            {
+                // parede quebrável na pedra do lugar (FortressSetup.Wall)
+                string m = FortressTerrain.MaterialAt((int)Math.Floor(o.X), (int)Math.Floor(o.Y));
+                string name = TerrainAutotile.IsMasonry(m) && m != TerrainAutotile.Wood ? TerrainAutotile.BreakableWallName(m, "intacta") : "";
+                string p = Path.Combine(art, "Environments/Citadel/Architecture/" + name + ".png");
+                if (name != "" && File.Exists(p)) AddCentered(draws, Img(p), o.X, o.Y + 2f, left, top, 1, false);
+            }
+            else if (o.Kind == "shadow")
+            {
+                // a sombra jogável: escuro translúcido com a borda pontilhada de 6 px (como o 9-slice do jogo)
+                int w = (int)(o.W * PPU), h = (int)(o.H * PPU);
+                var sh = new Bitmap(w, h);
+                int[] bayer = { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5 };
+                for (int sy = 0; sy < h; sy++)
+                    for (int sx = 0; sx < w; sx++)
+                    {
+                        int d = Math.Min(Math.Min(sx, w - 1 - sx), Math.Min(sy, h - 1 - sy));
+                        float t = Math.Min(1f, (d + 0.5f) / 6f);
+                        if (t >= 1f || t * 16f > bayer[(sy % 4) * 4 + (sx % 4)]) sh.SetPixel(sx, sy, Color.FromArgb(105, 10, 8, 26));
+                    }
+                draws.Add(new Draw { Order = 8, Image = sh, X = (o.X - o.W / 2f - left) * PPU, Y = (top - o.Y - o.H / 2f) * PPU });
             }
             else if (o.Kind == "coin")
                 AddCentered(draws, Img(Path.Combine(art, "Environments/Placeholder/item_gold_coin.png")), o.X, o.Y, left, top, 6, false);
