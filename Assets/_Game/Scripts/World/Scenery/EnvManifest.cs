@@ -116,6 +116,11 @@ namespace SeteVidas.World.Scenery
         /// <summary>Posição da camada quando a câmera está em cima dela [x, y], em tiles.</summary>
         public float[] ancora = new float[0];
         public bool repete;
+        /// <summary>
+        /// Cor (hex) que continua a camada para BAIXO, sem fim: com paralaxe, a câmera desce mais que a altura do
+        /// desenho (a queda de 60 tiles) e a borda de baixo entraria na tela, mostrando o céu atrás. Vazio = sem.
+        /// </summary>
+        public string preencher_abaixo = "";
         public float[] altitude_tiles = new float[0];
         public string[] estado_do_ceu = new string[0];
         public string lado_da_luz = "";

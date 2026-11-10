@@ -52,6 +52,7 @@ MonoBehaviour:
       - 0
       - 0
       repete: 0
+      preencher_abaixo: 
       altitude_tiles:
       - 0
       - 116

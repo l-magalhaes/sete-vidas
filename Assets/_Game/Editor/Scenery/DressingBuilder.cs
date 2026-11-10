@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using SeteVidas.World;
 using SeteVidas.World.Scenery;
+using UnityEditor;
 using UnityEngine;
 
 namespace SeteVidas.EditorTools
@@ -83,6 +84,7 @@ namespace SeteVidas.EditorTools
             var sprite = def.variants[0];
             bool wrap = def.entry.fundo.repete;
             float width = sprite.bounds.size.x;
+            bool fill = ColorUtility.TryParseHtmlString(def.entry.fundo.preencher_abaixo ?? "", out var fillColor);
             for (int i = wrap ? -1 : 0; i <= (wrap ? 1 : 0); i++)
             {
                 var child = new GameObject(wrap ? $"{name} {i + 2}" : name);
@@ -91,9 +93,47 @@ namespace SeteVidas.EditorTools
                 var sr = child.AddComponent<SpriteRenderer>();
                 sr.sprite = sprite;
                 sr.sortingOrder = def.SortingOrder;
+                if (fill) FillBelow(child.transform, sprite, fillColor, def.SortingOrder);
             }
             go.AddComponent<ParallaxLayer>().Configure(def.Parallax, def.Anchor, wrap ? width : 0f);
             return go;
+        }
+
+        /// <summary>Altura do preenchimento abaixo da camada (tiles): cobre qualquer descida da câmera na fase.</summary>
+        const float FillDepth = 200f;
+        const string PixelPath = "Assets/_Game/Art/Environments/Placeholder/px_branco.png";
+
+        /// <summary>
+        /// Continua a camada para baixo na cor da base dela (campo fundo.preencher_abaixo): com paralaxe, a borda de
+        /// baixo do desenho entrava na tela durante a queda do penhasco e aparecia o horizonte laranja do céu.
+        /// </summary>
+        static void FillBelow(Transform layer, Sprite sprite, Color color, int order)
+        {
+            var px = WhitePixel();
+            if (px == null) return;
+            var go = new GameObject("Preenchimento abaixo");
+            go.transform.SetParent(layer, false);
+            float w = sprite.bounds.size.x, top = -sprite.bounds.extents.y + Px; // 1 px de sobreposição: sem fresta
+            go.transform.localPosition = new Vector3(0f, top - FillDepth * 0.5f, 0f);
+            go.transform.localScale = new Vector3(w / px.bounds.size.x, FillDepth / px.bounds.size.y, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = px;
+            sr.color = color;
+            sr.sortingOrder = order;
+        }
+
+        /// <summary>Sprite branco 1×1 px (pivot central), criado uma vez; pintado pela cor do SpriteRenderer.</summary>
+        static Sprite WhitePixel()
+        {
+            var s = AssetDatabase.LoadAssetAtPath<Sprite>(PixelPath);
+            if (s != null) return s;
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            tex.SetPixel(0, 0, Color.white);
+            tex.Apply();
+            System.IO.File.WriteAllBytes(System.IO.Path.GetFullPath(PixelPath), tex.EncodeToPNG());
+            Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(PixelPath, ImportAssetOptions.ForceUpdate);
+            return AssetDatabase.LoadAssetAtPath<Sprite>(PixelPath);
         }
     }
 }

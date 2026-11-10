@@ -20,7 +20,7 @@ public static class ScenePreview
     {
         public string Dir; public List<string> Sprites = new List<string>(); public string Layer = "decor_atras";
         public int Sorting; public string Support = "livre"; public bool Flip; public int OffsetPx;
-        public float[] Parallax, Anchor; public bool Repeat;
+        public float[] Parallax, Anchor; public bool Repeat; public string FillBelow = "";
     }
 
     class Draw { public int Order; public Bitmap Image; public float X, Y; public bool Flip; public float Alpha = 1f; } // X,Y = canto sup. esq. em px de tela
@@ -50,6 +50,12 @@ public static class ScenePreview
             {
                 if (!e.Repeat && i != 0) continue;
                 AddCentered(draws, img, px + i * wTiles, py, left, top, Order(e), false);
+                if (e.FillBelow != "")
+                {
+                    // mesmo preenchimento do DressingBuilder: a cor da base continua para baixo (1 px de sobreposição)
+                    var fill = Solid(img.Width, H + 32, e.FillBelow);
+                    draws.Add(new Draw { Order = Order(e), Image = fill, X = (px + i * wTiles - left) * PPU - img.Width / 2f, Y = (top - py) * PPU + img.Height / 2f - 1 });
+                }
             }
         }
 
@@ -219,6 +225,17 @@ public static class ScenePreview
         }
     }
 
+    static Bitmap Solid(int w, int h, string hex)
+    {
+        string key = "solid:" + w + "x" + h + hex;
+        Bitmap b;
+        if (s_cache.TryGetValue(key, out b)) return b;
+        b = new Bitmap(w, h);
+        using (var g = Graphics.FromImage(b)) g.Clear(ColorTranslator.FromHtml(hex));
+        s_cache[key] = b;
+        return b;
+    }
+
     static Bitmap Img(string path)
     {
         Bitmap b;
@@ -264,6 +281,7 @@ public static class ScenePreview
                     var f = (Dictionary<string, object>)a["fundo"];
                     e.Parallax = Floats(f, "paralaxe"); e.Anchor = Floats(f, "ancora");
                     if (f.ContainsKey("repete")) e.Repeat = (bool)f["repete"];
+                    if (f.ContainsKey("preencher_abaixo")) e.FillBelow = (string)f["preencher_abaixo"] ?? "";
                 }
                 if (e.Sprites.Count > 0) s_lib[(string)a["id"]] = e;
             }

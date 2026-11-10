@@ -50,6 +50,7 @@ MonoBehaviour:
       paralaxe: []
       ancora: []
       repete: 0
+      preencher_abaixo: 
       altitude_tiles: []
       estado_do_ceu: []
       lado_da_luz: 
