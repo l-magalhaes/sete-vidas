@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ter_rampa
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/manifest.json
+  entry:
+    id: env_ext_ter_rampa
+    nome: "Rampa de solo (peda\xE7os 1:1 e 1:2)"
+    regiao: ext
+    categoria: ter
+    funcao: plataforma
+    material: grama, terra
+    epoca: natural
+    tamanho_px: 1000000010000000i
+    sprites: []
+    sprites_prefixo: Terrain/env_ext_ter_rampa_
+    espelhar: 0
+    camada: jogo
+    sorting: 0
+    colisor: PolygonCollider2D (SlopeSetup)
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - montanha
+      - trilha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Montada pelo SlopeSetup a partir de TerrainAutotile.SlopePieces: um peda\xE7o por coluna na diagonal e tiles de solo embaixo."
+    tags:
+    - rampa
+    - exterior
+  variants:
+  - {fileID: 21300000, guid: 5eadc64c979af853b779102078d7b8f3, type: 3}
+  - {fileID: 21300000, guid: f3b13366d8025e8995cb5064468556a8, type: 3}
+  - {fileID: 21300000, guid: ac354bab10b1954f64e8155cfab404d2, type: 3}
+  - {fileID: 21300000, guid: 26bb84e98c7d9169d0585fe240546389, type: 3}
+  - {fileID: 21300000, guid: 72a420375b210a4f8b0909433bf26af3, type: 3}
+  - {fileID: 21300000, guid: 52069a57bf3bbc9f81b4eb915934d550, type: 3}
+  frames: []

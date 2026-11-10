@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ter_tufo
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/manifest.json
+  entry:
+    id: env_ext_ter_tufo
+    nome: Tufo de grama
+    regiao: ext
+    categoria: veg
+    funcao: decorativo
+    material: grama
+    epoca: natural
+    tamanho_px: 1000000006000000i
+    sprites: []
+    sprites_prefixo: Terrain/env_ext_ter_tufo_
+    espelhar: 0
+    camada: terreno_detalhe
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - montanha
+      - trilha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Espalhado sozinho sobre o solo (TerrainAutotile.TopDetails): sobe 2-5 px e quebra a linha reta do ch\xE3o sem mudar a colis\xE3o. Atr\xE1s do gato."
+    tags:
+    - grama
+    - vento
+  variants:
+  - {fileID: 21300000, guid: c10bae7ac869ac33e6a4af6da7e61420, type: 3}
+  - {fileID: 21300000, guid: 8dac56ee1dc21ea7ea5f5b84695cde6e, type: 3}
+  - {fileID: 21300000, guid: d4ca62503102de9373661c367f984f1e, type: 3}
+  - {fileID: 21300000, guid: 336b8e1e99f86ea4a78b44dffef53523, type: 3}
+  frames: []

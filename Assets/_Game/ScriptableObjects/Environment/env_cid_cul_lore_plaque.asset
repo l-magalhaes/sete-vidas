@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_cid_cul_lore_plaque
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_cid_cul_lore_plaque
+    nome: Placa de pedra (lore)
+    regiao: cid
+    categoria: cul
+    funcao: interativo
+    material: pedra gravada
+    epoca: fundacao
+    tamanho_px: 1000000014000000i
+    sprites:
+    - decor_lore_plaque.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_atras
+    sorting: -4
+    colisor: trigger
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - todas
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Colocada pelas placas de lore do FortressLayout (tipo lore), n\xE3o pelo FortressDressing."
+    tags:
+    - lore
+    - interativo
+  variants:
+  - {fileID: 21300000, guid: fce060d962137d743988c4b2a5f9a8fc, type: 3}
+  frames: []

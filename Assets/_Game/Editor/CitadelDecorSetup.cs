@@ -40,34 +40,13 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>
-        /// Enfeite pelo tipo do layout (<see cref="FortressLayout"/>): statue, target, rack (apoiados no chão),
-        /// banner (pendurado no teto), torch, window, shield (centrados no ponto).
+        /// Desenha os sprites de enfeite que ainda faltam (só na primeira vez). A colocação na cena agora é feita
+        /// pela biblioteca de cenário: Art/Environments/Citadel/manifest.json + FortressDressing + DressingBuilder.
         /// </summary>
-        internal static void Prop(Transform parent, string name, string kind, Vector2 position)
+        internal static void EnsureSprites()
         {
-            switch (kind)
-            {
-                case "statue": Prop(parent, name, StatueSprite(), position, bottom: true); break;
-                case "target": Prop(parent, name, TargetSprite(), position, bottom: true); break;
-                case "rack": Prop(parent, name, RackSprite(), position, bottom: true); break;
-                case "banner": Prop(parent, name, BannerSprite(), position, top: true); break;
-                case "torch": Prop(parent, name, TorchSprite(), position); break;
-                case "window": Prop(parent, name, WindowSprite(), position); break;
-                case "shield": Prop(parent, name, ShieldSprite(), position); break;
-                default: Debug.LogWarning($"[Sete Vidas] Enfeite desconhecido: {kind}"); break;
-            }
-        }
-
-        static void Prop(Transform parent, string name, Sprite sprite, Vector2 position, bool bottom = false, bool top = false)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = sprite;
-            sr.sortingOrder = Behind;
-            // Sprites daqui têm pivot central: "bottom" apoia no chão, "top" pendura no teto
-            float half = sprite != null ? sprite.bounds.extents.y : 0f;
-            go.transform.position = position + (bottom ? Vector2.up * half : top ? Vector2.down * half : Vector2.zero);
+            StatueSprite(); TargetSprite(); RackSprite(); BannerSprite();
+            WindowSprite(); ShieldSprite(); PlaqueSprite();
         }
 
         internal static void Dummy(Transform parent, string name, Vector2 position, TrainingDummy.Side side)
@@ -268,19 +247,8 @@ namespace SeteVidas.EditorTools
             Emblem(set, 6, 7, Gold);
         });
 
-        /// <summary>Tocha de parede 8×16: suporte de ferro e chama.</summary>
-        static Sprite TorchSprite() => Draw("decor_torch", 8, 16, set =>
-        {
-            for (int y = 0; y <= 8; y++) set(3, y, Ink);
-            set(2, 8, Ink); set(4, 8, Ink); set(1, 9, Ink); set(5, 9, Ink);
-            for (int y = 9; y < 16; y++)
-            for (int x = 1; x <= 5; x++)
-            {
-                float d = Mathf.Abs(x - 3f) + (y - 9) * 0.5f;
-                if (d > 3f) continue;
-                set(x, y, d < 1.2f ? new Color32(0xff, 0xf2, 0xb0, 0xff) : d < 2.2f ? new Color32(0xff, 0xa8, 0x3a, 0xff) : new Color32(0xd8, 0x40, 0x2a, 0xff));
-            }
-        });
+        // A tocha de parede saiu daqui: agora é gerada por Tools/EnvironmentSprites (PropSpriteGen), com 4 quadros
+        // de chama, em Art/Environments/Common (id env_com_obj_wall_torch).
 
         /// <summary>Vitral em arco 16×32 com vidros azul e dourado e o emblema da Ordem no centro.</summary>
         static Sprite WindowSprite() => Draw("decor_stained_glass", 16, 32, set =>

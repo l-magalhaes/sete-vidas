@@ -1,0 +1,88 @@
+{
+  "regiao": "ext",
+  "assets": [
+    {
+      "id": "env_ext_ani_cachoeira",
+      "nome": "Cachoeira (coluna)",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [24, 32],
+      "sprites": ["env_ext_ani_cachoeira_0.png"],
+      "camada": "decor_atras",
+      "sorting": -6,
+      "animacao": {
+        "nome": "correnteza",
+        "quadros": ["env_ext_ani_cachoeira_0.png", "env_ext_ani_cachoeira_1.png", "env_ext_ani_cachoeira_2.png", "env_ext_ani_cachoeira_3.png"],
+        "fps": 10,
+        "amplitude_px": 8
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["montanha"] },
+      "leitura": "Gerada por WaterSpriteGen. Pedaços de 2 tiles empilhados, colados na face do rochedo (não por cima dela). Contorno ciano claro e corpo translúcido, como em Celeste.",
+      "tags": ["agua", "vivo"]
+    },
+    {
+      "id": "env_ext_ani_cachoeira_nascente",
+      "nome": "Nascente da cachoeira (fenda na rocha)",
+      "categoria": "ani",
+      "funcao": "narrativo",
+      "material": "água, rocha",
+      "epoca": "natural",
+      "tamanho_px": [32, 24],
+      "sprites": ["env_ext_ani_cachoeira_nascente_0.png"],
+      "camada": "terreno_detalhe",
+      "animacao": {
+        "nome": "correnteza",
+        "quadros": ["env_ext_ani_cachoeira_nascente_0.png", "env_ext_ani_cachoeira_nascente_1.png", "env_ext_ani_cachoeira_nascente_2.png", "env_ext_ani_cachoeira_nascente_3.png"],
+        "fps": 10,
+        "amplitude_px": 8
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["montanha"] },
+      "leitura": "Topo da cachoeira: a água sai de uma fenda na face do penhasco (a fenda fica sobre os tiles de rocha, x 0..10 do sprite) e faz a curva até virar a coluna (x 8..31).",
+      "tags": ["agua", "vivo", "nascente"]
+    },
+    {
+      "id": "env_ext_ani_cachoeira_espuma",
+      "nome": "Espuma da cachoeira",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [40, 14],
+      "sprites": ["env_ext_ani_cachoeira_espuma_0.png"],
+      "camada": "decor_frente",
+      "sorting": 9,
+      "animacao": {
+        "nome": "espuma",
+        "quadros": ["env_ext_ani_cachoeira_espuma_0.png", "env_ext_ani_cachoeira_espuma_1.png", "env_ext_ani_cachoeira_espuma_2.png", "env_ext_ani_cachoeira_espuma_3.png"],
+        "fps": 8,
+        "amplitude_px": 2
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["montanha"] },
+      "leitura": "Onde a cachoeira bate na lagoa: a linha da água fica na linha 9 do sprite.",
+      "tags": ["agua", "vivo"]
+    },
+    {
+      "id": "env_ext_ani_lagoa",
+      "nome": "Lagoa (tile de água)",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [16, 16],
+      "sprites": ["env_ext_ani_lagoa_0.png"],
+      "camada": "decor_frente",
+      "sorting": 8,
+      "animacao": {
+        "nome": "ondas",
+        "quadros": ["env_ext_ani_lagoa_0.png", "env_ext_ani_lagoa_1.png", "env_ext_ani_lagoa_2.png", "env_ext_ani_lagoa_3.png"],
+        "fps": 4,
+        "amplitude_px": 1
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["montanha", "trilha"] },
+      "leitura": "Um tile por célula da bacia, na frente do gato (ele cai dentro). Superfície 2 px abaixo do topo do tile; as ondas emendam entre tiles.",
+      "tags": ["agua", "vivo"]
+    }
+  ]
+}

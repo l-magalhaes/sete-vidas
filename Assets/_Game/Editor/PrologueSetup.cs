@@ -18,7 +18,7 @@ namespace SeteVidas.EditorTools
         const string Art = "Assets/_Game/Art/UI/Prologue";
         const string BoxSprite = "Assets/_Game/Art/UI/Dialogue/ui_dialog_box.png";
         const string FrameSprite = "Assets/_Game/Art/UI/Dialogue/ui_portrait_frame.png";
-        const string TorchSprite = "Assets/_Game/Art/Environments/Citadel/decor_torch.png";
+        const string TorchSprite = "Assets/_Game/Art/Environments/Common/env_com_obj_wall_torch_0.png";
         const float UiPixelScale = 100f / 16f;
 
         static readonly Color32 Ink = new Color32(0x3b, 0x2a, 0x1e, 0xff);
@@ -59,8 +59,8 @@ namespace SeteVidas.EditorTools
             var torch = AssetDatabase.LoadAssetAtPath<Sprite>(TorchSprite);
             if (torch != null)
             {
-                Img(root, "Vela esquerda", torch, new Vector2(-200f, 20f), new Vector2(16f, 32f));
-                Img(root, "Vela direita", torch, new Vector2(200f, 20f), new Vector2(16f, 32f));
+                Img(root, "Vela esquerda", torch, new Vector2(-200f, 20f), new Vector2(24f, 40f)); // tocha 12×20 em escala 2
+                Img(root, "Vela direita", torch, new Vector2(200f, 20f), new Vector2(24f, 40f));
             }
             var parchment = Img(root, "Pergaminho", AssetDatabase.LoadAssetAtPath<Sprite>(BoxSprite), new Vector2(0f, 12f), new Vector2(300f, 196f));
             parchment.type = Image.Type.Sliced;

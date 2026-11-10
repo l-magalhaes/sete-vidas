@@ -2,7 +2,8 @@
 
 **Cena:** `Scenes/World/Fortress_MVP`, gerada por **Tools > Sete Vidas > 13. Fase 6: Fortaleza**. É onde o **Novo jogo** começa, logo depois do contrato.
 
-**Fonte do mapa:** `Assets/_Game/Editor/FortressLayout.cs` reúne todos os tiles e objetos como dados.
+**Fonte do mapa:** `Assets/_Game/Editor/FortressLayout.cs` reúne todos os tiles e objetos jogáveis como dados.
+- **Enfeites** (estátuas, estandartes, vitrais, tochas, escudos...) ficam à parte, em `Assets/_Game/Editor/Scenery/FortressDressing.cs`, e apontam para ids da biblioteca de cenário (`Docs/Arte/biblioteca-cenario.md`). Na prévia, aparecem como losangos bege.
 - **Prévia sem abrir o Unity:** rode `Tools/LevelPreview/gerar_mapa.ps1`. Ela grava `SeteVidasDocs/Referencias/fortaleza_mapa.png`.
 - **Para mudar o mapa:** edite o layout, gere a prévia, confira, e só então rode o menu 13.
 - **Atenção:** o gerador recria a cena do zero.
@@ -43,10 +44,12 @@
 - **O que tem:**
   - narração D-FORT-01: "Do alto da montanha, a Cidadela do Sol Eterno brilha no pôr do sol";
   - placa "salto de fé: corra e pule";
-  - a **cachoeira** desce ao lado da queda;
-  - o gato cai **60 tiles** e pousa na **lagoa** (D-FORT-02: "Água. Claro que tinha que ser água."). Queda não machuca: "sempre cai de pé".
+  - a **cachoeira** nasce de uma fenda na face do penhasco (topo da água em 55, abaixo da corrida do salto) e desce colada na face (x 13,0–14,5) ao lado da queda;
+  - o gato cai **60 tiles** e pousa na **lagoa** (D-FORT-02: "Água. Claro que tinha que ser água."). Queda não machuca: "sempre cai de pé";
+  - a lagoa é uma **bacia de 1 tile de fundo** (x 13..22, fundo em −1) no pé do penhasco; a margem direita é uma **rampa 1:1** (x 22) e sai-se andando para a trilha;
+  - **morrinho** de 1 tile atrás do início (x −10..−8, topo 61) com **rampa 1:2** (x −7..−5). Só relevo: a corrida até o salto (x 4..12) continua plana.
 - **Fundo:** céu de pôr do sol, montanhas ao longe com a silhueta da Cidadela e morros com pinheiros (paralaxe).
-- **Risco de softlock:** nenhum.
+- **Risco de softlock:** nenhum. O morrinho tem 1 tile e se sobe andando pela rampa ou pulando.
 
 ### Área 2 — Trilha
 - **Propósito:** tutorial de pulo.

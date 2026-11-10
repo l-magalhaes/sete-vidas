@@ -66,6 +66,15 @@ public static class FortressPreview
             // personagem no início
             Mark(g, PX(FortressLayout.SpawnX), PY(FortressLayout.SpawnY), S, Color.White, "▲", bold, "início");
 
+            // enfeites (FortressDressing): losango bege pequeno, só para ver a distribuição pela fase
+            using (var b = new SolidBrush(Color.FromArgb(200, 230, 210, 170)))
+                foreach (var it in SeteVidas.EditorTools.FortressDressing.Items())
+                    for (int i = 0; i < Math.Max(1, it.Count); i++)
+                    {
+                        int dx = PX(it.X + it.Step * i), dy = PY(it.Y);
+                        g.FillPolygon(b, new[] { new Point(dx, dy - 3), new Point(dx + 3, dy), new Point(dx, dy + 3), new Point(dx - 3, dy) });
+                    }
+
             foreach (var o in FortressLayout.Objects())
             {
                 int x = PX(o.X), y = PY(o.Y);

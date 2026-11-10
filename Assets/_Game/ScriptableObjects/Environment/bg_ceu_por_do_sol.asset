@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_ceu_por_do_sol
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Outdoors/manifest.json
+  entry:
+    id: bg_ceu_por_do_sol
+    nome: "C\xE9u do p\xF4r do sol"
+    regiao: ext
+    categoria: plx
+    funcao: decorativo
+    material: "c\xE9u"
+    epoca: natural
+    tamanho_px: e00100000e010000i
+    sprites:
+    - env_sky_sunset.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: ceu
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0
+      - 0
+      ancora:
+      - 0
+      - 0
+      repete: 0
+      altitude_tiles:
+      - 0
+      - 116
+      estado_do_ceu:
+      - por_do_sol
+      lado_da_luz: direita
+      valor_max: 0.9
+      conjuntos:
+      - A
+    leitura: "Preso \xE0 c\xE2mera. Na Etapa 6 vira um dos 4 c\xE9us escolhidos pela altura."
+    tags:
+    - ceu
+    - fundo
+  variants:
+  - {fileID: 21300000, guid: 02c17d4e5abf6ddaa88cf8c8d31fe75e, type: 3}
+  frames: []

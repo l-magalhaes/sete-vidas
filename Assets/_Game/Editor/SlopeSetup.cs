@@ -1,3 +1,4 @@
+using SeteVidas.World.Scenery;
 using System.IO;
 using System.Linq;
 using SeteVidas.Core;
@@ -24,7 +25,9 @@ namespace SeteVidas.EditorTools
         /// <paramref name="risesRight"/> = o lado alto fica à direita. Encoste o lado alto num bloco de tiles
         /// com topo em y0+height para a emenda ficar lisa.
         /// </summary>
-        internal static GameObject Create(Transform parent, string name, int x0, int y0, int width, int height, bool risesRight)
+        /// <param name="material">Material do terreno (ex.: <see cref="TerrainAutotile.Soil"/>): usa os pedaços de arte final
+        /// do <see cref="TerrainAutotile.SlopePieces"/>. Vazio, ou proporção sem arte = triângulo placeholder.</param>
+        internal static GameObject Create(Transform parent, string name, int x0, int y0, int width, int height, bool risesRight, string material = "")
         {
             var go = new GameObject(name);
             if (parent != null) go.transform.SetParent(parent, false);
@@ -39,6 +42,25 @@ namespace SeteVidas.EditorTools
 
             var art = new GameObject("Visual");
             art.transform.SetParent(go.transform, false);
+
+            var pieces = string.IsNullOrEmpty(material)
+                ? new System.Collections.Generic.List<TerrainAutotile.Piece>()
+                : TerrainAutotile.SlopePieces(material, x0, y0, width, height, risesRight);
+            if (pieces.Count > 0)
+            {
+                // arte final: um sprite 16×16 por célula (diagonal + terra/rocha embaixo), pivot central
+                foreach (var p in pieces)
+                {
+                    var piece = new GameObject(p.Sprite);
+                    piece.transform.SetParent(art.transform, false);
+                    piece.transform.position = new Vector3(p.X + 0.5f, p.Y + 0.5f, 0f);
+                    var psr = piece.AddComponent<SpriteRenderer>();
+                    psr.sprite = TerrainPainter.LoadSprite(p.Sprite);
+                    psr.sortingOrder = 0;
+                }
+                return go;
+            }
+
             art.transform.localPosition = new Vector3(width * 0.5f, height * 0.5f, 0f); // sprites de cenário têm pivot no centro
             var sr = art.AddComponent<SpriteRenderer>();
             sr.sprite = SlopeSprite(width, height, risesRight);

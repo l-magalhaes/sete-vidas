@@ -71,6 +71,55 @@ namespace SeteVidas.Tests
             Assert.IsNotNull(GameObject.Find("Fortaleza/Cachoeira"), "Cachoeira no penhasco do início");
             Assert.IsNotNull(GameObject.Find("Fortaleza/Lagoa"), "Lagoa onde o gato cai");
             Assert.IsNotNull(GameObject.Find("Céu e montanhas"), "Céu do pôr do sol e montanhas");
+            Assert.IsNotNull(GameObject.Find("Céu e montanhas/Morros com pinheiros").GetComponent<SeteVidas.World.ParallaxLayer>(),
+                "Fundo montado pela biblioteca de cenário, com paralaxe");
+        }
+
+        [UnityTest]
+        public IEnumerator Exterior_HasNaturalTerrain_Slope_AndDetails()
+        {
+            yield return Load();
+            var ground = Map("Ground");
+            var top = ground.GetTile(new Vector3Int(0, FortressLayoutTop - 1, 0)) as Tile;
+            Assert.IsNotNull(top, "Chão do alto da montanha");
+            StringAssert.StartsWith("tile_ext_solo_topo", top.sprite.name, "Superfície da montanha com grama (TerrainPainter)");
+            Assert.AreEqual(Tile.ColliderType.Grid, top.colliderType, "O desenho muda, a colisão continua o quadrado cheio");
+            var rock = ground.GetTile(new Vector3Int(27, 1, 0)) as Tile;
+            StringAssert.StartsWith("tile_ext_rocha_topo", rock.sprite.name, "Pedra de 2 da trilha é rocha");
+
+            Assert.IsNull(ground.GetTile(new Vector3Int(15, -1, 0)), "Bacia da lagoa: 1 tile de fundo no pé do penhasco");
+            Assert.IsNotNull(GameObject.Find("Rampas/Rampa da margem da lagoa"), "Margem da lagoa em rampa: sai-se andando");
+            Assert.IsNotNull(GameObject.Find("Fortaleza/Cachoeira/Nascente"), "A cachoeira nasce de uma fenda no penhasco");
+
+            var slope = GameObject.Find("Rampas/Rampa do morrinho");
+            Assert.IsNotNull(slope, "Rampa do morrinho atrás do início");
+            Assert.IsNotNull(slope.GetComponent<PolygonCollider2D>());
+            Assert.AreEqual(2, slope.GetComponentsInChildren<SpriteRenderer>().Length, "Rampa 1:2 de 2 tiles: dois pedaços de arte final");
+
+            var details = GameObject.Find("Detalhes do terreno");
+            Assert.IsNotNull(details);
+            Assert.Greater(details.transform.childCount, 30, "Tufos, seixos e fendas espalhados pelo exterior");
+            foreach (var sr in details.GetComponentsInChildren<SpriteRenderer>())
+            {
+                Assert.IsNotNull(sr.sprite, sr.name);
+                Assert.AreEqual(1, sr.sortingOrder, "terreno_detalhe: por cima dos tiles, atrás do gato");
+            }
+        }
+
+        const int FortressLayoutTop = 60; // FortressLayout.CliffTop (o layout fica no editor)
+
+        [UnityTest]
+        public IEnumerator Dressing_ComesFromTheSceneryLibrary()
+        {
+            yield return Load();
+            var dressing = GameObject.Find("Fortaleza/Enfeites");
+            Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
+            // 27 itens no FortressDressing (11 da Montanha e da Trilha, Etapa 2), e os escudos do salão são uma fileira de 4: 30 objetos
+            Assert.AreEqual(30, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
+                Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
+            Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,
+                "Camada decor_atras");
             Assert.IsNotNull(Map("Ground").GetTile(new Vector3Int(12, 59, 0)), "Borda do penhasco (topo em 60)");
             Assert.IsNull(Map("Ground").GetTile(new Vector3Int(15, 30, 0)), "Vão livre para o salto de fé");
         }

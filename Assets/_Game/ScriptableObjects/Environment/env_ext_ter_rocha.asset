@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ter_rocha
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/manifest.json
+  entry:
+    id: env_ext_ter_rocha
+    nome: Rocha natural (tileset)
+    regiao: ext
+    categoria: ter
+    funcao: plataforma
+    material: rocha
+    epoca: natural
+    tamanho_px: 1000000010000000i
+    sprites: []
+    sprites_prefixo: Terrain/tile_ext_rocha_
+    espelhar: 0
+    camada: jogo
+    sorting: 0
+    colisor: tile cheio (Grid)
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta:
+    - '#2a2434'
+    - '#3b3346'
+    - '#574c62'
+    - '#7b6d80'
+    - '#a08f98'
+    - '#36524a'
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - montanha
+      - trilha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Pedras do tutorial de pulo e paredes de rocha. Estratos caindo para a direita, cont\xEDnuos entre tiles (fase x par/\xEDmpar)."
+    tags:
+    - tileset
+    - exterior
+    - rocha
+  variants:
+  - {fileID: 21300000, guid: caf719e6e4ec16a9e0aba42654ac423d, type: 3}
+  - {fileID: 21300000, guid: 7ca4948c603a6ccb144a402abfba13eb, type: 3}
+  - {fileID: 21300000, guid: 8808acd6f8ae852e2507470496fd139d, type: 3}
+  - {fileID: 21300000, guid: 440d1e65f93b0698bbb8a9bed5d2629c, type: 3}
+  - {fileID: 21300000, guid: 9dc9db2e5375bb392995e8c8111daa77, type: 3}
+  - {fileID: 21300000, guid: 6b36cd2f8aa2ee491a4ac0f6d7a4e09d, type: 3}
+  - {fileID: 21300000, guid: 4013e8b44e657145160f3810fc2c4555, type: 3}
+  - {fileID: 21300000, guid: 41b2ae522cfdac0433817bfa2834d3db, type: 3}
+  - {fileID: 21300000, guid: 9c4b830a751bd38cb626a72fb8f2d78b, type: 3}
+  - {fileID: 21300000, guid: 6e231c0738c243d0076795d2597c881b, type: 3}
+  - {fileID: 21300000, guid: 761dda3f10998d7d791f06b4ac0ad00d, type: 3}
+  - {fileID: 21300000, guid: 94b2f7f3d062917eb484a0420141cf6d, type: 3}
+  - {fileID: 21300000, guid: e6d45fe0665d622e19ec0e3336ba47d7, type: 3}
+  - {fileID: 21300000, guid: 32be8c6e97695df0b7911ad881294830, type: 3}
+  - {fileID: 21300000, guid: d4afc3f04f202357204e4f6aeca281f9, type: 3}
+  - {fileID: 21300000, guid: 2629b0c6ceee497f68da5c9374b653d2, type: 3}
+  - {fileID: 21300000, guid: 8870ed2259a98d08880b2955fded1640, type: 3}
+  - {fileID: 21300000, guid: 2ef6ea433713a73be399113d9185950c, type: 3}
+  - {fileID: 21300000, guid: f1b5e099e635aa978d868016b3b469bc, type: 3}
+  - {fileID: 21300000, guid: 7fa15369e17d640a98437bc098ca0193, type: 3}
+  - {fileID: 21300000, guid: f3326e6248f05a833af41fba596bce2d, type: 3}
+  - {fileID: 21300000, guid: baa43ef3cfafdc6c8e7bcff149c0dfa4, type: 3}
+  - {fileID: 21300000, guid: ed9eeaa8408c1ba680bd4d82d15463c3, type: 3}
+  - {fileID: 21300000, guid: 41efd2989f70a197e7f1165a1330c038, type: 3}
+  - {fileID: 21300000, guid: 406c05fa19c19b85f4d906f420439b12, type: 3}
+  - {fileID: 21300000, guid: 6b0ee568e2bc2d1dfb1dfd743295b3ec, type: 3}
+  - {fileID: 21300000, guid: f0264aecad02e7e85a9487dda74eef9e, type: 3}
+  - {fileID: 21300000, guid: e6888f99b4e9c81cd34a1ef828e9e69e, type: 3}
+  - {fileID: 21300000, guid: c1454ca415d9c9c0ca3368fbe7230da9, type: 3}
+  - {fileID: 21300000, guid: 143d715761ec1292a6e1c870eee7d643, type: 3}
+  - {fileID: 21300000, guid: e739e6c36a722b8f00d6565bbd08c404, type: 3}
+  - {fileID: 21300000, guid: 7e133291bb1c92fdec56dcd697167e64, type: 3}
+  - {fileID: 21300000, guid: 7a8f9d5c670c5f09003d3d0b3ecbb05c, type: 3}
+  - {fileID: 21300000, guid: 263543c345fd1d2d23ba6813bbc04ffd, type: 3}
+  - {fileID: 21300000, guid: 6f2fe11296a410726ce69d639a091732, type: 3}
+  - {fileID: 21300000, guid: 2a4c0d9654604280eab92cc63cf10ce1, type: 3}
+  - {fileID: 21300000, guid: b6f59881998048c74cd3d4a68a489ad7, type: 3}
+  - {fileID: 21300000, guid: 8e904079ef02a0bd88cf0db40b90da5c, type: 3}
+  - {fileID: 21300000, guid: 8b34b1f49520efc8af6447c35be18cba, type: 3}
+  - {fileID: 21300000, guid: 117428107d64a184c1c84bc9059241f6, type: 3}
+  - {fileID: 21300000, guid: 93286a9a3249888503be48e40e5d0403, type: 3}
+  - {fileID: 21300000, guid: 5779e2d8f6200814b3c72b85e36561af, type: 3}
+  - {fileID: 21300000, guid: 798382e2d40369d10fe9faa19850fb9d, type: 3}
+  - {fileID: 21300000, guid: d09678bf8b13b35a2e59467f91756593, type: 3}
+  - {fileID: 21300000, guid: 10e4e6892515a51501e928410128b615, type: 3}
+  - {fileID: 21300000, guid: 1963d31197ff202d936513395c534a64, type: 3}
+  - {fileID: 21300000, guid: d20f5352c76b5818692cf387f2a67211, type: 3}
+  - {fileID: 21300000, guid: 7eb3c06e194e691d2cabc7312cd0b617, type: 3}
+  frames: []

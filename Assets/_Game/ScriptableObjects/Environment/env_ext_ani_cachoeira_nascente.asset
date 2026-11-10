@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ani_cachoeira_nascente
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Water/manifest.json
+  entry:
+    id: env_ext_ani_cachoeira_nascente
+    nome: Nascente da cachoeira (fenda na rocha)
+    regiao: ext
+    categoria: ani
+    funcao: narrativo
+    material: "\xE1gua, rocha"
+    epoca: natural
+    tamanho_px: 2000000018000000i
+    sprites:
+    - env_ext_ani_cachoeira_nascente_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: terreno_detalhe
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: correnteza
+      quadros:
+      - env_ext_ani_cachoeira_nascente_0.png
+      - env_ext_ani_cachoeira_nascente_1.png
+      - env_ext_ani_cachoeira_nascente_2.png
+      - env_ext_ani_cachoeira_nascente_3.png
+      fps: 10
+      amplitude_px: 8
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - montanha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Topo da cachoeira: a \xE1gua sai de uma fenda na face do penhasco (a fenda fica sobre os tiles de rocha, x 0..10 do sprite) e faz a curva at\xE9 virar a coluna (x 8..31)."
+    tags:
+    - agua
+    - vivo
+    - nascente
+  variants:
+  - {fileID: 21300000, guid: 7ce7c705b178b765cfb8543019ce22e2, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 7ce7c705b178b765cfb8543019ce22e2, type: 3}
+  - {fileID: 21300000, guid: b66470a26dd94f6330cf000151da0034, type: 3}
+  - {fileID: 21300000, guid: bd8ce6b44514b0c38fb0425050be5671, type: 3}
+  - {fileID: 21300000, guid: 32e4bef0959c67aa747a033c968dcac0, type: 3}

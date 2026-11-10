@@ -22,7 +22,6 @@ namespace SeteVidas.EditorTools
     /// </summary>
     public static class FortressSetup
     {
-        const string OutdoorArt = "Assets/_Game/Art/Environments/Outdoors";
         const string CoinPrefabPath = "Assets/_Game/Prefabs/Interactables/Coin.prefab";
 
         [MenuItem("Tools/Sete Vidas/13. Fase 6: Fortaleza (gera a cena do jogo)", priority = 49)]
@@ -90,6 +89,13 @@ namespace SeteVidas.EditorTools
             // agora, senão as referências salvas ficam vazias (a narração não tocava)
             var dialogues = CreateDialogues();
 
+            // Biblioteca de cenário: garante os sprites desenhados no editor e lê os manifest.json
+            CitadelDecorSetup.EnsureFolder();
+            CitadelDecorSetup.EnsureSprites();
+            var library = EnvLibrary.ImportAll();
+            if (library.Problems.Count > 0)
+                Debug.LogWarning($"[Sete Vidas] Biblioteca de cenário com {library.Problems.Count} problema(s); a Fortaleza é gerada mesmo assim.");
+
             var grid = SeteVidasSetup.CreateGrid();
             var maps = new Dictionary<FortressLayout.Map, Tilemap>
             {
@@ -103,11 +109,21 @@ namespace SeteVidas.EditorTools
             var slopes = new GameObject("Rampas");
             SceneManager.MoveGameObjectToScene(slopes, scene);
             foreach (var r in FortressLayout.Slopes())
-                SlopeSetup.Create(slopes.transform, "Rampa " + r.Note, r.X0, r.Y0, r.W, r.H, r.RisesRight);
+                SlopeSetup.Create(slopes.transform, "Rampa " + r.Note, r.X0, r.Y0, r.W, r.H, r.RisesRight, FortressTerrain.MaterialAt(r.X0, r.Y0));
+
+            // Terreno natural (Etapa 2 do plano de cenário): solo e rocha no lugar do tile provisório, com tufos e seixos
+            var terrainDetails = new GameObject("Detalhes do terreno");
+            SceneManager.MoveGameObjectToScene(terrainDetails, scene);
+            int painted = TerrainPainter.Paint(maps[FortressLayout.Map.Ground], maps[FortressLayout.Map.Climbable],
+                FortressLayout.Slopes(), terrainDetails.transform);
+            Debug.Log($"[Sete Vidas] Terreno natural: {painted} tiles, {terrainDetails.transform.childCount} tufos e seixos.");
 
             var root = new GameObject("Fortaleza");
             SceneManager.MoveGameObjectToScene(root, scene);
             PlaceObjects(scene, root.transform, dialogues);
+            var dressing = new GameObject("Enfeites");
+            dressing.transform.SetParent(root.transform, false);
+            DressingBuilder.Build(dressing.transform, FortressDressing.Items());
             BuildScenery(scene);
 
             SeteVidasSetup.BuildTileColliders(scene);
@@ -198,12 +214,6 @@ namespace SeteVidas.EditorTools
                 case "lore":
                     if (dialogues.TryGetValue(o.Id, out var text)) CitadelDecorSetup.Sign(t, o.Name, o.X, o.Y, text);
                     else Debug.LogWarning($"[Sete Vidas] Placa sem texto: {o.Id}");
-                    break;
-                case "prop":
-                    CitadelDecorSetup.Prop(t, o.Name, o.Text, at);
-                    break;
-                case "shield":
-                    for (int i = 0; i < (int)o.W; i++) CitadelDecorSetup.Prop(t, $"{o.Name} {i + 1}", "shield", at + Vector2.right * (o.A * i));
                     break;
                 case "dummy":
                     CitadelDecorSetup.Dummy(t, o.Name, at, o.Facing >= 0 ? TrainingDummy.Side.Right : TrainingDummy.Side.Left);
@@ -384,19 +394,6 @@ namespace SeteVidas.EditorTools
 
         // ---------------------------------------------------------- cenário
 
-        static Sprite Outdoor(string name)
-        {
-            var s = AssetDatabase.LoadAssetAtPath<Sprite>($"{OutdoorArt}/{name}.png");
-            if (s == null) Debug.LogWarning($"[Sete Vidas] Falta {name}.png. Rode Tools/CharacterSprites/gerar.ps1");
-            return s;
-        }
-
-        static Sprite[] Frames(string prefix, int count)
-        {
-            var list = new Sprite[count];
-            for (int i = 0; i < count; i++) list[i] = Outdoor(prefix + i);
-            return list;
-        }
 
         static SpriteRenderer Renderer(Transform parent, string name, Sprite sprite, Vector3 local, int order)
         {
@@ -411,60 +408,81 @@ namespace SeteVidas.EditorTools
 
         /// <summary>
         /// Céu do pôr do sol (preso à câmera), montanhas ao longe com a Cidadela e morros com pinheiros (paralaxe).
+        /// Paralaxe, âncora, repetição e ordem vêm do manifesto (Art/Environments/Outdoors/manifest.json).
         /// Dentro do castelo o fundo de pedra cobre tudo; do lado de fora, o pôr do sol aparece.
+        /// Os conjuntos de fundo por área e altura (A–H) entram na Etapa 6 do plano de cenário.
         /// </summary>
         static void BuildScenery(Scene scene)
         {
             var root = new GameObject("Céu e montanhas");
             SceneManager.MoveGameObjectToScene(root, scene);
-
-            var sky = Renderer(root.transform, "Céu do pôr do sol", Outdoor("env_sky_sunset"), Vector3.zero, -100);
-            sky.gameObject.AddComponent<ParallaxLayer>().Configure(Vector2.zero, Vector2.zero, 0f);
-
-            Layer(root.transform, "Montanhas ao longe", Outdoor("env_mountains_far"), new Vector2(0.06f, 0.06f), new Vector2(0f, 4f), -95);
-            Layer(root.transform, "Morros com pinheiros", Outdoor("env_hills_near"), new Vector2(0.15f, 0.15f), new Vector2(0f, 1f), -90);
+            DressingBuilder.Background(root.transform, "bg_ceu_por_do_sol", "Céu do pôr do sol");
+            DressingBuilder.Background(root.transform, "bg_ext_cordilheira_cidadela", "Montanhas ao longe");
+            DressingBuilder.Background(root.transform, "bg_ext_morros_pinheiros", "Morros com pinheiros");
         }
 
-        static void Layer(Transform parent, string name, Sprite sprite, Vector2 factor, Vector2 anchor, int order)
+        /// <summary>Quadros e tempo por quadro de um asset animado da biblioteca.</summary>
+        static (Sprite[] frames, float frameTime, int order) Animated(string id)
         {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            float width = sprite != null ? sprite.bounds.size.x : 40f;
-            for (int i = -1; i <= 1; i++) Renderer(go.transform, $"{name} {i + 2}", sprite, new Vector3(i * width, 0f, 0f), order);
-            go.AddComponent<ParallaxLayer>().Configure(factor, anchor, width);
+            var def = EnvLibrary.Get(id);
+            if (def == null || def.frames.Length == 0) return (new Sprite[] { null }, 0.1f, 0);
+            return (def.frames, 1f / def.entry.animacao.fps, def.SortingOrder);
         }
 
-        /// <summary>Cachoeira do penhasco: coluna de pedaços de 2×2 tiles que descem juntos, com espuma na lagoa.</summary>
-        static void Waterfall(Transform parent, string name, float x, float bottom, float height)
+        /// <summary>
+        /// Cachoeira: nasce de uma fenda na face do penhasco (sprite da nascente, sobre a rocha), desce colada na face
+        /// em pedaços de 2 tiles e bate na lagoa com espuma. <paramref name="x"/> = meio da coluna (24 px),
+        /// <paramref name="surface"/> = linha da água da lagoa, <paramref name="height"/> = da superfície ao topo da água.
+        /// </summary>
+        static void Waterfall(Transform parent, string name, float x, float surface, float height)
         {
+            const float Px = 1f / 16f;
+            float top = surface + height;
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
-            go.transform.position = new Vector3(x, bottom, 0f);
-            var frames = Frames("env_waterfall_", 4);
-            for (float y = 1f; y < height + 1f; y += 2f) Renderer(go.transform, "Água", frames[0], new Vector3(0f, y, 0f), -6);
-            go.AddComponent<SpriteLoop>().Configure(frames, 0.08f);
+            go.transform.position = new Vector3(x, surface, 0f);
 
+            // nascente 32×24: a coluna ocupa x 8..31 do sprite (meio em 19,5 px) e as 8 linhas de baixo
+            var spring = Animated("env_ext_ani_cachoeira_nascente");
+            var springGo = new GameObject("Nascente");
+            springGo.transform.SetParent(go.transform, false);
+            springGo.transform.position = new Vector3(x - (19.5f - 16f) * Px, top - 12f * Px, 0f);
+            Renderer(springGo.transform, "Nascente", spring.frames[0], Vector3.zero, spring.order);
+            springGo.AddComponent<SpriteLoop>().Configure(spring.frames, spring.frameTime);
+
+            // coluna: de cima para baixo, começando onde a nascente termina (sem sobrepor: duas águas translúcidas
+            // juntas escurecem); o último pedaço pode
+            // passar da linha da água (fica atrás do chão e da lagoa)
+            var water = Animated("env_ext_ani_cachoeira");
+            var column = new GameObject("Coluna");
+            column.transform.SetParent(go.transform, false);
+            for (float pieceTop = top - 24f * Px; pieceTop > surface; pieceTop -= 2f)
+                Renderer(column.transform, "Água", water.frames[0], new Vector3(x, pieceTop - 1f, 0f) - go.transform.position, water.order);
+            column.AddComponent<SpriteLoop>().Configure(water.frames, water.frameTime);
+
+            // espuma: a linha da água fica na linha 9 do sprite (2 px abaixo do meio)
+            var foamAnim = Animated("env_ext_ani_cachoeira_espuma");
             var foam = new GameObject("Espuma");
             foam.transform.SetParent(parent, false);
-            foam.transform.position = new Vector3(x, bottom + 0.4f, 0f);
-            var foamFrames = Frames("env_waterfall_foam_", 2);
-            Renderer(foam.transform, "Espuma", foamFrames[0], Vector3.zero, 9);
-            foam.AddComponent<SpriteLoop>().Configure(foamFrames, 0.2f);
+            foam.transform.position = new Vector3(x, surface + 2f * Px, 0f);
+            Renderer(foam.transform, "Espuma", foamAnim.frames[0], Vector3.zero, foamAnim.order);
+            foam.AddComponent<SpriteLoop>().Configure(foamAnim.frames, foamAnim.frameTime);
         }
 
-        /// <summary>Lagoa ao pé da cachoeira: água na frente do gato (ele "cai de pé" dentro dela).</summary>
+        /// <summary>
+        /// Lagoa: um tile de água por célula da bacia, na frente do gato (ele "cai de pé" dentro dela). A água é
+        /// translúcida no próprio sprite; a superfície fica 2 px abaixo do topo do tile.
+        /// </summary>
         static void Pool(Transform parent, string name, float centerX, float floorY, int width)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
-            go.transform.position = new Vector3(centerX, floorY, 0f);
-            var frames = Frames("env_pool_", 2);
+            int firstCell = Mathf.RoundToInt(centerX - width * 0.5f);
+            go.transform.position = new Vector3(firstCell, floorY, 0f);
+            var pool = Animated("env_ext_ani_lagoa");
             for (int i = 0; i < width; i++)
-            {
-                var sr = Renderer(go.transform, "Água", frames[0], new Vector3(i - (width - 1) * 0.5f, 0.625f, 0f), 8);
-                sr.color = new Color(1f, 1f, 1f, 0.78f);
-            }
-            go.AddComponent<SpriteLoop>().Configure(frames, 0.5f);
+                Renderer(go.transform, "Água", pool.frames[0], new Vector3(i + 0.5f, 0.5f, 0f), pool.order);
+            go.AddComponent<SpriteLoop>().Configure(pool.frames, pool.frameTime);
         }
     }
 }

@@ -1,0 +1,33 @@
+{
+  "regiao": "com",
+  "assets": [
+    {
+      "id": "env_com_obj_wall_torch",
+      "nome": "Tocha de parede",
+      "categoria": "obj",
+      "funcao": "luz",
+      "material": "madeira, ferro, pano, fogo",
+      "epoca": "reforma",
+      "tamanho_px": [12, 20],
+      "sprites": ["env_com_obj_wall_torch_0.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "animacao": {
+        "nome": "chama",
+        "quadros": ["env_com_obj_wall_torch_0.png", "env_com_obj_wall_torch_1.png", "env_com_obj_wall_torch_2.png", "env_com_obj_wall_torch_3.png"],
+        "fps": 10,
+        "amplitude_px": 1
+      },
+      "paleta": ["#fff2b0", "#ffc86a", "#ffa83a", "#e0702a", "#5a5868", "#8e8ca4", "#c8874a", "#6e4a32", "#b08a5a", "#6b4a2b"],
+      "posicionamento": {
+        "apoio": "parede",
+        "distancia_minima_mesmo_id": 8,
+        "nao_perto_de": ["zona de sombra jogável sem tocha apagada"],
+        "zonas": ["galeria", "torres", "salao"]
+      },
+      "leitura": "Gerada por Tools/EnvironmentSprites (PropSpriteGen). Metal e madeira claros o bastante para aparecer na parede escura. Toda tocha acesa precisa de LightZone iluminada em volta; toda sombra jogável perto de tocha precisa de motivo (tocha apagada).",
+      "tags": ["luz", "fogo", "furtividade", "vivo"]
+    }
+  ]
+}

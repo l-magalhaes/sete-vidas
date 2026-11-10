@@ -1,0 +1,77 @@
+GIMP Palette
+Name: Sete Vidas - Fortaleza
+Columns: 8
+#
+200  58  58	Reservadas (jogo) / Armadilha
+255 211  77	Reservadas (jogo) / Rachadura (brilho)
+ 79  90  46	Reservadas (jogo) / Hera escalável (ramo)
+138 154  78	Reservadas (jogo) / Hera escalável (folha)
+ 91  42 110	Reservadas (jogo) / Praga (roxo)
+143 209  79	Reservadas (jogo) / Praga (verde-ácido)
+ 69 102  51	Reservadas (jogo) / Matinho (esconderijo)
+232 240 255	Objetos barulhentos / Cacos de vidro (brilho)
+160  88  46	Objetos barulhentos / Folhas secas
+110  58  34	Objetos barulhentos / Folhas secas (sombra)
+176 138  58	Objetos barulhentos / Sininhos (latão)
+ 31  21  51	Céu do pôr do sol / Céu 1
+ 46  26  66	Céu do pôr do sol / Céu 2
+ 74  33  80	Céu do pôr do sol / Céu 3
+110  42  90	Céu do pôr do sol / Céu 4
+154  58  90	Céu do pôr do sol / Céu 5
+196  80  79	Céu do pôr do sol / Céu 6
+224 112  63	Céu do pôr do sol / Céu 7
+240 154  69	Céu do pôr do sol / Céu 8
+247 192  99	Céu do pôr do sol / Céu 9
+255 233 168	Céu do pôr do sol / Sol
+255 208 112	Céu do pôr do sol / Sol (borda)
+232 138 122	Céu do pôr do sol / Nuvem
+242 176 160	Céu do pôr do sol / Nuvem (luz)
+ 58  34  71	Silhuetas de fundo / Montanha longe
+106  58 106	Silhuetas de fundo / Montanha longe (luz)
+138  90 122	Silhuetas de fundo / Montanha longe (névoa)
+ 42  24  56	Silhuetas de fundo / Cidadela longe
+ 36  22  47	Silhuetas de fundo / Morro
+ 51  32  63	Silhuetas de fundo / Morro (luz)
+ 26  16  36	Silhuetas de fundo / Pinheiro longe
+ 59  51  70	Rocha natural (quente) / Rocha escura
+ 87  76  98	Rocha natural (quente) / Rocha
+123 109 128	Rocha natural (quente) / Rocha clara
+160 143 152	Rocha natural (quente) / Rocha (luz)
+ 74  69  92	Pedra trabalhada (fria) / Fundação
+ 94  88 114	Pedra trabalhada (fria) / Fundação (luz)
+122 116 142	Pedra trabalhada (fria) / Soluki
+154 148 170	Pedra trabalhada (fria) / Reforma
+200 194 184	Pedra trabalhada (fria) / Argamassa nova
+ 90  85 110	Pedra trabalhada (fria) / Placeholder chão
+ 58  54  74	Pedra trabalhada (fria) / Placeholder borda
+119 114 140	Pedra trabalhada (fria) / Placeholder luz
+107  74  43	Madeira / Madeira velha
+154 112  68	Madeira / Madeira velha (luz)
+176 138  90	Madeira / Madeira nova
+143  42  42	Ordem da Presa Dourada / Carmesim
+ 90  22  28	Ordem da Presa Dourada / Carmesim escuro
+217 164  65	Ordem da Presa Dourada / Dourado
+138  98  30	Ordem da Presa Dourada / Dourado escuro
+ 42  74 143	Ordem da Presa Dourada / Vitral azul
+ 74 122 200	Ordem da Presa Dourada / Vitral azul (luz)
+233 220 184	Ordem da Presa Dourada / Pergaminho
+ 43  61  44	Vegetação / Folha escura
+ 63  90  52	Vegetação / Folha
+111 138  69	Vegetação / Folha clara
+ 61  42  34	Vegetação / Tronco escuro
+ 94  64  48	Vegetação / Tronco
+125  90  62	Vegetação / Tronco claro
+ 54  82  74	Vegetação / Hera decorativa
+224 160  96	Vegetação / Luz de borda do pôr do sol
+230 242 200	Vegetação / Vaga-lume
+159 212 240	Água / Água
+111 176 224	Água / Água média
+232 248 255	Água / Espuma
+ 74 134 192	Água / Água funda
+255 242 176	Fogo e luz / Chama (miolo)
+255 168  58	Fogo e luz / Chama
+224 112  42	Fogo e luz / Chama (ponta)
+ 21  23  28	Primatas / Estrada negra
+ 42  46  54	Primatas / Estrada negra (luz)
+127 216 224	Primatas / Cristal de Éter
+ 28  26  36	Tinta / Tinta

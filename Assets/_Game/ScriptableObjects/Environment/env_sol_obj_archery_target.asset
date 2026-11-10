@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_sol_obj_archery_target
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_sol_obj_archery_target
+    nome: Alvo de arco
+    regiao: sol
+    categoria: obj
+    funcao: decorativo
+    material: palha, tecido, madeira
+    epoca: reforma
+    tamanho_px: 1000000018000000i
+    sprites:
+    - decor_archery_target.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      fps: 0
+      amplitude_px: 0
+    paleta:
+    - '#8f2a2a'
+    - '#c9a25a'
+    - '#e9dcb8'
+    - '#8a621e'
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de:
+      - env_sol_obj_weapon_rack
+      densidade: 
+      zonas:
+      - patio
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "An\xE9is em carmesim da Ordem, n\xE3o no vermelho das armadilhas."
+    tags:
+    - treino
+  variants:
+  - {fileID: 21300000, guid: 8be3bcaecb74f344088ee8b5126f786f, type: 3}
+  frames: []

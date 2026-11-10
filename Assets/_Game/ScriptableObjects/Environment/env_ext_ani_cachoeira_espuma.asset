@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ani_cachoeira_espuma
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Water/manifest.json
+  entry:
+    id: env_ext_ani_cachoeira_espuma
+    nome: Espuma da cachoeira
+    regiao: ext
+    categoria: ani
+    funcao: decorativo
+    material: "\xE1gua"
+    epoca: natural
+    tamanho_px: 280000000e000000i
+    sprites:
+    - env_ext_ani_cachoeira_espuma_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_frente
+    sorting: 9
+    colisor: nenhum
+    animacao:
+      nome: espuma
+      quadros:
+      - env_ext_ani_cachoeira_espuma_0.png
+      - env_ext_ani_cachoeira_espuma_1.png
+      - env_ext_ani_cachoeira_espuma_2.png
+      - env_ext_ani_cachoeira_espuma_3.png
+      fps: 8
+      amplitude_px: 2
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - montanha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Onde a cachoeira bate na lagoa: a linha da \xE1gua fica na linha 9 do sprite."
+    tags:
+    - agua
+    - vivo
+  variants:
+  - {fileID: 21300000, guid: 592d8389c874694c77e7e34971c93862, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 592d8389c874694c77e7e34971c93862, type: 3}
+  - {fileID: 21300000, guid: 7242dbbe514e6424db0421459eaee86f, type: 3}
+  - {fileID: 21300000, guid: c7bfe3bb4e3afc372e3212fecd3ea00e, type: 3}
+  - {fileID: 21300000, guid: 6ea3c5544d5a6a0d706c22d6ececa36b, type: 3}

@@ -1,0 +1,27 @@
+{
+  "regiao": "pri",
+  "assets": [
+    {
+      "id": "env_pri_ter_placa",
+      "nome": "Placa da estrada negra",
+      "categoria": "pri",
+      "funcao": "narrativo",
+      "material": "pedra negra lisa, cristal apagado",
+      "epoca": "primata",
+      "tamanho_px": [32, 8],
+      "sprites_prefixo": "env_pri_ter_placa_",
+      "espelhar": true,
+      "camada": "terreno_detalhe",
+      "colisor": "nenhum",
+      "paleta": ["#15171c", "#2a2e36", "#454c5a", "#7fd8e0"],
+      "posicionamento": {
+        "apoio": "livre",
+        "distancia_minima_mesmo_id": 8,
+        "nao_perto_de": ["borda de pulo"],
+        "zonas": ["montanha", "trilha", "base das muralhas", "poço"]
+      },
+      "leitura": "Meio enterrada no chão ou embutida na rocha, nunca saindo para fora (pareceria plataforma). Reta demais para ser natural: é o sinal de que algo muito antigo está embaixo. O cristal pulsa na Etapa 7.",
+      "tags": ["primatas", "lore", "vestigio"]
+    }
+  ]
+}

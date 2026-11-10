@@ -1,0 +1,161 @@
+{
+  "regiao": "cid",
+  "assets": [
+    {
+      "id": "env_cid_cul_statue_paladin",
+      "nome": "Estátua de cão paladino",
+      "regiao": "cid",
+      "categoria": "cul",
+      "funcao": "decorativo",
+      "material": "pedra trabalhada",
+      "epoca": "fundacao",
+      "tamanho_px": [24, 48],
+      "sprites": ["decor_statue.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "paleta": ["#7a748e", "#4a455c", "#d9a441"],
+      "posicionamento": {
+        "apoio": "chao",
+        "distancia_minima_mesmo_id": 6,
+        "deslocamento_px": 0,
+        "nao_perto_de": ["armadilha < 2 tiles"],
+        "perto_de": ["env_cid_cul_banner_order", "env_cid_arq_stained_glass"],
+        "densidade": "1-2 por sala cerimonial",
+        "zonas": ["patio", "salao", "camara"]
+      },
+      "leitura": "Atrás dos personagens. Não pode parecer inimigo: sem olho claro, cor de pedra.",
+      "tags": ["ordem", "cerimonia", "golden"]
+    },
+    {
+      "id": "env_cid_cul_banner_order",
+      "nome": "Estandarte da Ordem",
+      "regiao": "cid",
+      "categoria": "cul",
+      "funcao": "decorativo",
+      "material": "tecido carmesim, haste de madeira",
+      "epoca": "reforma",
+      "tamanho_px": [16, 40],
+      "sprites": ["decor_banner.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "paleta": ["#8f2a2a", "#5a161c", "#d9a441", "#8a621e"],
+      "posicionamento": {
+        "apoio": "teto",
+        "distancia_minima_mesmo_id": 8,
+        "zonas": ["galeria", "salao", "camara"]
+      },
+      "leitura": "Carmesim #8f2a2a é da Ordem; nunca usar o vermelho das armadilhas #c83a3a. Emblema não espelha.",
+      "tags": ["ordem", "tecido", "vento"]
+    },
+    {
+      "id": "env_cid_arq_stained_glass",
+      "nome": "Vitral em arco",
+      "regiao": "cid",
+      "categoria": "arq",
+      "funcao": "decorativo",
+      "material": "vidro, chumbo, pedra",
+      "epoca": "soluki",
+      "tamanho_px": [16, 32],
+      "sprites": ["decor_stained_glass.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "paleta": ["#3a5a9a", "#d9a441", "#4a455c"],
+      "posicionamento": {
+        "apoio": "parede",
+        "distancia_minima_mesmo_id": 6,
+        "zonas": ["salao", "camara"]
+      },
+      "leitura": "Mais tarde vira janela com máscara mostrando o céu daquela altura (plano, 7.5).",
+      "tags": ["ordem", "luz", "janela"]
+    },
+    {
+      "id": "env_cid_cul_shield_paladin",
+      "nome": "Escudo de paladino caído",
+      "regiao": "cid",
+      "categoria": "cul",
+      "funcao": "narrativo",
+      "material": "metal pintado",
+      "epoca": "soluki",
+      "tamanho_px": [12, 14],
+      "sprites": ["decor_shield.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "paleta": ["#8f2a2a", "#d9a441", "#4a455c"],
+      "posicionamento": {
+        "apoio": "parede",
+        "distancia_minima_mesmo_id": 2,
+        "zonas": ["salao"]
+      },
+      "leitura": "Em fileira na parede do salão, um por paladino caído.",
+      "tags": ["ordem", "memoria"]
+    },
+    {
+      "id": "env_cid_cul_lore_plaque",
+      "nome": "Placa de pedra (lore)",
+      "regiao": "cid",
+      "categoria": "cul",
+      "funcao": "interativo",
+      "material": "pedra gravada",
+      "epoca": "fundacao",
+      "tamanho_px": [16, 20],
+      "sprites": ["decor_lore_plaque.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "sorting": -4,
+      "colisor": "trigger",
+      "posicionamento": { "apoio": "chao", "zonas": ["todas"] },
+      "leitura": "Colocada pelas placas de lore do FortressLayout (tipo lore), não pelo FortressDressing.",
+      "tags": ["lore", "interativo"]
+    },
+    {
+      "id": "env_sol_obj_weapon_rack",
+      "nome": "Suporte de armas de treino",
+      "regiao": "sol",
+      "categoria": "obj",
+      "funcao": "decorativo",
+      "material": "madeira",
+      "epoca": "reforma",
+      "tamanho_px": [24, 24],
+      "sprites": ["decor_weapon_rack.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "paleta": ["#6b4a2b", "#9a7044", "#c0c6d2"],
+      "posicionamento": {
+        "apoio": "chao",
+        "distancia_minima_mesmo_id": 6,
+        "perto_de": ["boneco de treino", "env_sol_obj_archery_target"],
+        "zonas": ["patio"]
+      },
+      "leitura": "Armas de madeira: não brilham como arma de verdade.",
+      "tags": ["treino"]
+    },
+    {
+      "id": "env_sol_obj_archery_target",
+      "nome": "Alvo de arco",
+      "regiao": "sol",
+      "categoria": "obj",
+      "funcao": "decorativo",
+      "material": "palha, tecido, madeira",
+      "epoca": "reforma",
+      "tamanho_px": [16, 24],
+      "sprites": ["decor_archery_target.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "paleta": ["#8f2a2a", "#c9a25a", "#e9dcb8", "#8a621e"],
+      "posicionamento": {
+        "apoio": "chao",
+        "distancia_minima_mesmo_id": 4,
+        "perto_de": ["env_sol_obj_weapon_rack"],
+        "zonas": ["patio"]
+      },
+      "leitura": "Anéis em carmesim da Ordem, não no vermelho das armadilhas.",
+      "tags": ["treino"]
+    }
+  ]
+}

@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 3;
+        public const int Version = 6;
 
         public enum Map { Ground, Climbable, Background }
 
@@ -75,6 +75,12 @@ namespace SeteVidas.EditorTools
             // 1) Montanha: penhasco com topo em 60 (x -14..12); parede de rocha atrás do início
             G(t, -14, 0, 12, CliffTop - 1, "penhasco");
             G(t, -14, CliffTop, -11, 90, "rocha atrás do início");
+            // Morrinho de 1 tile atrás do início (relevo natural; a corrida até o salto, x 4..12, continua plana).
+            // A rampa 1:2 de x -7 a -5 sobe até ele (ver Slopes).
+            G(t, -10, CliffTop, -8, CliffTop, "morrinho atrás do início (topo 61)");
+            // Lagoa: bacia de 1 tile de fundo no pé do penhasco, onde a cachoeira cai e o gato pousa.
+            // A parede esquerda é o próprio penhasco; a margem direita é uma rampa 1:1 (x 22, ver Slopes): sai-se andando.
+            C(t, 13, -1, 22, -1, "bacia da lagoa (fundo em -1)");
 
             // 2) Trilha: pedras de 2 e 3, fosso de 4 com espinhos no fundo (2 tiles abaixo)
             G(t, 26, 0, 28, 1, "pedra de 2");
@@ -160,10 +166,14 @@ namespace SeteVidas.EditorTools
 
         // ---------------------------------------------------------------- rampas
 
-        /// <summary>Rampas do mapa. Vazio por enquanto: entram na Etapa 2 do plano de cenário (relevo do exterior).</summary>
+        /// <summary>Rampas do mapa (relevo natural; Etapa 2 do plano de cenário). Andáveis: 1:1 e 1:2.</summary>
         public static List<SlopeRect> Slopes()
         {
             var s = new List<SlopeRect>();
+            // 1) Montanha: sobe do chão do penhasco (60) para o morrinho (61), lado alto à esquerda, encostado nele
+            S(s, -7, CliffTop, 2, 1, false, "do morrinho");
+            // 2) Trilha: margem da lagoa, do fundo da bacia (-1) até o chão (0), lado alto à direita
+            S(s, 22, -1, 1, 1, true, "da margem da lagoa");
             return s;
         }
 
@@ -191,8 +201,10 @@ namespace SeteVidas.EditorTools
             // ===== 1) Montanha: alto do penhasco, cachoeira, salto de fé até a lagoa
             Add(o, "trigger", "Chegada", 4f, CliffTop + 1.5f, w: 4f, h: 3f, id: "D-FORT-01", link: "intro_fortaleza");
             Add(o, "sign", "Placa do salto", 9.5f, CliffTop + 2.6f, text: "salto de fé: corra e pule →");
-            Add(o, "waterfall", "Cachoeira", 13.5f, 0f, h: CliffTop);
-            Add(o, "pool", "Lagoa", 18.5f, 0f, w: 12f);
+            // Cachoeira: nasce de uma fenda na face do penhasco (topo da água em 55, longe da corrida do salto) e cai
+            // colada na face (x 13,0..14,5) até a superfície da lagoa (-0,125). Y = superfície, H = altura até o topo.
+            Add(o, "waterfall", "Cachoeira", 13.75f, -0.125f, h: 55.125f);
+            Add(o, "pool", "Lagoa", 18f, -1f, w: 10f); // bacia x 13..23, fundo em -1
             Add(o, "trigger", "Lagoa", 18.5f, 1.5f, w: 10f, h: 3f, id: "D-FORT-02", link: "lagoa_fortaleza");
 
             // ===== 2) Trilha
@@ -203,7 +215,6 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda (sobre o fosso)", 39f, 3.2f, id: "fort_fosso", value: 1);
 
             // ===== 3) Pátio de treino dos guardas
-            Add(o, "prop", "Estátua do guardião", 44.5f, 0f, text: "statue");
             Add(o, "tripwire", "Fio do pátio", 46.5f, 0f, w: 1.6f, link: "Lançador do pátio");
             Add(o, "launcher", "Lançador do pátio", 49.6f, 1.2f, facing: -1, a: 0f);
             Add(o, "sign", "Placa da arquibancada", 46.5f, 3f, text: "S: agachar (passe por baixo)");
@@ -212,8 +223,6 @@ namespace SeteVidas.EditorTools
             Add(o, "lore", "Placa do pátio", 58f, 0f, id: "D-PLACA-01");
             Add(o, "dummy", "Boneco de treino 1", 60.5f, 0f, facing: 1);
             Add(o, "dummy", "Boneco de treino 2", 64.5f, 0f, facing: -1);
-            Add(o, "prop", "Suporte de armas", 67f, 0f, text: "rack");
-            Add(o, "prop", "Alvo de arco", 70f, 0f, text: "target");
             Add(o, "sign", "Placa dos bonecos", 62.5f, 3.4f, text: "bonecos: pelas costas dói mais");
             Add(o, "sentinel", "Instrutor do pátio", 76f, 0f, facing: -1, a: 72f, b: 80f);
             Add(o, "shadow", "Sombra da tenda", 85f, 2.5f, w: 6f, h: 5f);
@@ -256,9 +265,6 @@ namespace SeteVidas.EditorTools
             Add(o, "spears", "Lanças da galeria", 199f, WallWalk);
             Add(o, "sentinel", "Guarda da torre do sino", 202f, WallWalk, facing: 1, a: 200f, b: 206f);
             Add(o, "coin", "Moeda (pé da torre)", 205.5f, WallWalk + 0.6f, id: "fort_sino_base", value: 1);
-            Add(o, "prop", "Tocha da galeria 1", 165f, WallWalk + 2.6f, text: "torch");
-            Add(o, "prop", "Tocha da galeria 2", 186f, WallWalk + 2.6f, text: "torch");
-            Add(o, "prop", "Estandarte da galeria", 170f, 51.9f, text: "banner");
 
             // ===== 6) Torre do Sino
             Add(o, "sign", "Placa da torre", 206f, WallWalk + 4.5f, text: "↑ pule de parede em parede");
@@ -275,10 +281,6 @@ namespace SeteVidas.EditorTools
             Add(o, "sentinel", "Sentinela do salão C", 179.5f, BellHall, facing: -1, a: 176f, b: 183f);
             Add(o, "coin", "Moeda (plataforma do salão)", 191.5f, 75.6f, id: "fort_salao", value: 1);
             Add(o, "archer", "Atirador da sacada", 201f, 78f, facing: -1);
-            Add(o, "prop", "Vitral do salão 1", 186f, BellHall + 6f, text: "window");
-            Add(o, "prop", "Vitral do salão 2", 198f, BellHall + 6f, text: "window");
-            Add(o, "prop", "Estandarte do salão", 192f, 81.9f, text: "banner");
-            Add(o, "shield", "Escudos do salão", 178f, BellHall + 3.3f, w: 4f, a: 8f);
             Add(o, "sign", "Placa das armadilhas", 176f, BellHall + 4.5f, text: "← cuidado: armadilhas");
             for (int i = 0; i < 6; i++)
                 Add(o, "flame", "Jato " + (i + 1), 172.5f - 2f * i, BellHall, a: i * 0.35f);
@@ -296,12 +298,6 @@ namespace SeteVidas.EditorTools
 
             // ===== 9) Câmara do Selo (o chefe e o tomo vêm do BossSetup.PlaceArena)
             Add(o, "lore", "Placa da câmara", 143.5f, SealFloor, id: "D-PLACA-04");
-            Add(o, "prop", "Estátua da câmara 1", 149f, SealFloor, text: "statue");
-            Add(o, "prop", "Estátua da câmara 2", 174.5f, SealFloor, text: "statue");
-            Add(o, "prop", "Vitral da câmara 1", 155f, SealFloor + 5.5f, text: "window");
-            Add(o, "prop", "Vitral da câmara 2", 168f, SealFloor + 5.5f, text: "window");
-            Add(o, "prop", "Estandarte do selo", 161.5f, 109.9f, text: "banner");
-            Add(o, "prop", "Estandarte do tomo", 181.5f, 106.9f, text: "banner");
 
             // ===== 10) Depois do Paladino: porta rachada do tomo, passagem, poço e cofres, estrada
             Add(o, "wall", "Porta rachada da sala do tomo", 185.5f, SealFloor, id: "fortaleza_tomo_fundos");

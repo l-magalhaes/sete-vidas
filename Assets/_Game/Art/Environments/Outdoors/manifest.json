@@ -1,0 +1,74 @@
+{
+  "regiao": "ext",
+  "assets": [
+    {
+      "id": "bg_ceu_por_do_sol",
+      "nome": "Céu do pôr do sol",
+      "categoria": "plx",
+      "funcao": "decorativo",
+      "material": "céu",
+      "epoca": "natural",
+      "tamanho_px": [480, 270],
+      "sprites": ["env_sky_sunset.png"],
+      "camada": "ceu",
+      "fundo": {
+        "paralaxe": [0, 0],
+        "ancora": [0, 0],
+        "repete": false,
+        "altitude_tiles": [0, 116],
+        "estado_do_ceu": ["por_do_sol"],
+        "lado_da_luz": "direita",
+        "valor_max": 0.9,
+        "conjuntos": ["A"]
+      },
+      "leitura": "Preso à câmera. Na Etapa 6 vira um dos 4 céus escolhidos pela altura.",
+      "tags": ["ceu", "fundo"]
+    },
+    {
+      "id": "bg_ext_cordilheira_cidadela",
+      "nome": "Montanhas ao longe com a Cidadela",
+      "categoria": "plx",
+      "funcao": "decorativo",
+      "material": "silhueta",
+      "epoca": "natural",
+      "tamanho_px": [640, 200],
+      "sprites": ["env_mountains_far.png"],
+      "camada": "bg_longe",
+      "fundo": {
+        "paralaxe": [0.06, 0.06],
+        "ancora": [0, 4],
+        "repete": true,
+        "altitude_tiles": [0, 116],
+        "estado_do_ceu": ["por_do_sol"],
+        "lado_da_luz": "direita",
+        "valor_max": 0.35,
+        "conjuntos": ["A"]
+      },
+      "leitura": "Etapa 6: refazer em 960 px e paralaxe vertical 0,15 (plano, 7.3).",
+      "tags": ["montanha", "cidadela", "fundo"]
+    },
+    {
+      "id": "bg_ext_morros_pinheiros",
+      "nome": "Morros com pinheiros",
+      "categoria": "plx",
+      "funcao": "decorativo",
+      "material": "silhueta",
+      "epoca": "natural",
+      "tamanho_px": [640, 140],
+      "sprites": ["env_hills_near.png"],
+      "camada": "bg_medio",
+      "fundo": {
+        "paralaxe": [0.15, 0.15],
+        "ancora": [0, 1],
+        "repete": true,
+        "altitude_tiles": [0, 116],
+        "estado_do_ceu": ["por_do_sol"],
+        "lado_da_luz": "direita",
+        "valor_max": 0.28,
+        "conjuntos": ["A"]
+      },
+      "leitura": "Repetição de 640 px aparece na tela: Etapa 6 refaz com 960 px e um acontecimento único por volta.",
+      "tags": ["floresta", "fundo"]
+    }
+  ]
+}

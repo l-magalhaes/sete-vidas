@@ -15,7 +15,7 @@ public static class EnvironmentSpriteGen
         for (int i = 0; i < sky.Length; i++) PixelKit.P((char)('0' + i), sky[i]);
         PixelKit.P('S', "#ffe9a8"); PixelKit.P('s', "#ffd070"); PixelKit.P('c', "#e88a7a"); PixelKit.P('C', "#f2b0a0"); // sol e nuvens
         PixelKit.P('M', "#3a2247"); PixelKit.P('m', "#6a3a6a"); PixelKit.P('n', "#8a5a7a");                         // montanhas longe
-        PixelKit.P('K', "#2a1838"); PixelKit.P('k', "#ffd070");                                                       // a Cidadela e janelas
+        PixelKit.P('K', "#2a1838"); PixelKit.P('k', "#ffd070"); PixelKit.P('Q', "#301c3d");                                                     // a Cidadela e janelas
         PixelKit.P('H', "#24162f"); PixelKit.P('h', "#33203f"); PixelKit.P('T', "#1a1024");                          // morros e pinheiros
         PixelKit.P('W', "#9fd4f0"); PixelKit.P('w', "#6fb0e0"); PixelKit.P('L', "#e8f8ff"); PixelKit.P('D', "#4a86c0"); // água
     }
@@ -80,19 +80,61 @@ public static class EnvironmentSpriteGen
                 cv.Px[x, y] = c;
             }
         }
-        // a Cidadela do Sol Eterno ao longe, num pico à direita: muralha, torres e janelas acesas
-        int cx = 395; int baseY = (int)Ridge(cx, W, 90f, 60f, 1) + 4;
-        Block(cv, cx - 26, baseY - 14, cx + 26, baseY + 24, 'K');                   // muralha (com a base dentro da montanha)
-
-        // a encosta sob a Cidadela: some na montanha
-
-        for (int x = cx - 34; x <= cx + 34; x++) for (int y = baseY + 6; y < baseY + 26; y++) if (cv.Get(x, y) == 'K' && (x < cx - 26 || x > cx + 26)) cv.Force(x, y, 'M');        Block(cv, cx - 22, baseY - 30, cx - 14, baseY, 'K');                        // torre do sino
-        Block(cv, cx + 12, baseY - 26, cx + 20, baseY, 'K');
-        Block(cv, cx - 4, baseY - 44, cx + 4, baseY, 'K');                          // a Torre do Selo, a mais alta
-        Spire(cv, cx, baseY - 44, 7); Spire(cv, cx - 18, baseY - 30, 5); Spire(cv, cx + 16, baseY - 26, 5);
-        for (int i = 0; i < 6; i++) cv.Force(cx - 24 + i * 9, baseY - 8, 'k');
-        cv.Force(cx, baseY - 36, 'k'); cv.Force(cx - 18, baseY - 22, 'k'); cv.Force(cx + 16, baseY - 18, 'k');
+        Citadel(cv, W, 395);
         return cv;
+    }
+
+    /// <summary>
+    /// A Cidadela do Sol Eterno ao longe, sem base quadrada: as muralhas seguem a encosta em degraus e as torres
+    /// nascem da montanha (o corpo do castelo só existe ACIMA da linha da montanha). Cor quase a da montanha
+    /// (perspectiva atmosférica), luz de borda do lado do sol (direita) e poucas janelas acesas.
+    /// </summary>
+    static void Citadel(PixelCanvas cv, int W, int cx)
+    {
+        Func<int, int> ridge = x => (int)Ridge(x, W, 90f, 60f, 1);
+
+        // muralhas: trechos de 7 px com o topo reto, em degraus que acompanham a encosta
+        for (int seg = cx - 42; seg <= cx + 42; seg += 7)
+        {
+            int segTop = int.MaxValue;
+            for (int x = seg; x < seg + 7; x++) segTop = Math.Min(segTop, ridge(x));
+            int wallH = 6 + (Math.Abs(seg - cx) < 20 ? 3 : 0) - (Math.Abs(seg - cx) > 34 ? 2 : 0);
+            int top = segTop - wallH;
+            for (int x = seg; x < seg + 7; x++)
+            {
+                for (int y = top; y <= ridge(x); y++) cv.Force(x, y, 'Q');
+                if ((x - seg) % 3 == 0) cv.Force(x, top - 1, 'Q');                // ameias
+            }
+            cv.Force(seg + 6, top, 'm');                                            // quina do degrau pega luz
+        }
+
+        // torres: (deslocamento, largura, altura acima da muralha); a do meio é a Torre do Selo
+        int[,] towers = { { -33, 5, 12 }, { -21, 7, 22 }, { -9, 5, 15 }, { 0, 8, 40 }, { 11, 6, 18 }, { 22, 7, 26 }, { 33, 5, 11 } };
+        for (int i = 0; i < towers.GetLength(0); i++)
+        {
+            int tx = cx + towers[i, 0], tw = towers[i, 1], th = towers[i, 2];
+            int ground = int.MaxValue;
+            for (int x = tx - tw / 2; x <= tx + tw / 2; x++) ground = Math.Min(ground, ridge(x));
+            int top = ground - 8 - th;
+            for (int x = tx - tw / 2; x <= tx + tw / 2; x++)
+                for (int y = top; y <= ridge(x); y++)
+                    cv.Force(x, y, x == tx + tw / 2 && y < ground - 4 ? 'm' : 'Q');      // borda direita iluminada
+            // telhado cônico (as altas) ou ameias (as baixas)
+            if (th >= 18)
+                for (int k = 1; k <= tw; k++)
+                    for (int dx = -(tw - k) / 2; dx <= (tw - k) / 2; dx++) cv.Force(tx + dx, top - k, dx == (tw - k) / 2 && k < tw - 1 ? 'm' : 'Q');
+            else
+                for (int x = tx - tw / 2; x <= tx + tw / 2; x += 2) cv.Force(x, top - 1, 'Q');
+            // janelas acesas (1 px), só algumas
+            if (i % 2 == 1 || i == 3) cv.Force(tx, top + th / 3, 'k');
+            if (i == 3) { cv.Force(tx, top + 6, 'k'); cv.Force(tx - 1, top + 18, 'k'); }
+        }
+        // a luz da encosta (linha clara logo abaixo da cumeeira) some embaixo do castelo: ele está na frente dela
+        for (int x = cx - 44; x <= cx + 50; x++)
+            for (int y = ridge(x) + 1; y <= ridge(x) + 3; y++)
+                if (cv.Get(x, y) == 'm' || cv.Get(x, y) == 'n') cv.Force(x, y, 'M');
+        // poucas luzes na muralha
+        for (int x = cx - 30; x <= cx + 30; x += 13) cv.Force(x, ridge(x) - 3, 'k');
     }
 
     static void Block(PixelCanvas cv, int x0, int y0, int x1, int y1, char c)
@@ -187,9 +229,7 @@ public static class EnvironmentSpriteGen
         var sky = Sky(); write(sky, "env_sky_sunset");
         var far = FarMountains(); write(far, "env_mountains_far");
         var near = NearHills(); write(near, "env_hills_near");
-        for (int i = 0; i < 4; i++) write(Waterfall(i), "env_waterfall_" + i);
-        for (int i = 0; i < 2; i++) write(Foam(i), "env_waterfall_foam_" + i);
-        for (int i = 0; i < 2; i++) write(Pool(i), "env_pool_" + i);
+        // A cachoeira e a lagoa agora vêm de Tools/EnvironmentSprites/WaterSpriteGen.cs (Exterior/Water).
         if (!string.IsNullOrEmpty(previewDir)) Preview(sky, far, near, System.IO.Path.Combine(previewDir, "fortaleza_cenario.png"));
         return log.ToString();
     }
@@ -200,8 +240,6 @@ public static class EnvironmentSpriteGen
         var comp = sky.Clone();
         Overlay(comp, far, 0, 270 - 200 + 10);
         Overlay(comp, near, 0, 270 - 140 + 30);
-        for (int y = 0; y < 270; y += 32) Overlay(comp, Waterfall(0), 60, y);
-        Overlay(comp, Foam(0), 52, 250);
         using (var b = PixelKit.ToBitmap(comp))
         using (var big = new Bitmap(480 * 3, 270 * 3))
         using (var g = Graphics.FromImage(big))
