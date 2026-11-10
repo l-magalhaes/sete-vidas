@@ -1,5 +1,7 @@
 # Fortaleza dos Paladinos — área do MVP (Fase 6)
 
+> **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
+
 Cena: `Scenes/World/Fortress_MVP`, gerada por **Tools > Sete Vidas > 13. Fase 6: Fortaleza**. É onde o **Novo jogo** começa. A Playground continua sendo só a área de testes (menu "Área de testes", com save separado).
 Coordenadas em tiles. Chão de baixo com topo em y 0; **andar de cima com topo em y 14**.
 

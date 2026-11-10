@@ -1,4 +1,6 @@
 # Troca de classe e o Paladino
+
+> **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
 **Pilar:** 1 (sete corações, sete classes) e 2 (gating por habilidade) | **Escopo:** MVP, Fase 5 | **Status:** rascunho para teste
 
 ## Objetivo de experiência

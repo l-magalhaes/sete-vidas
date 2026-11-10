@@ -2,6 +2,7 @@ using System.IO;
 using SeteVidas.Core;
 using SeteVidas.Dialogue;
 using SeteVidas.Enemies.Boss;
+using SeteVidas.Player;
 using SeteVidas.UI;
 using SeteVidas.World;
 using UnityEditor;
@@ -21,6 +22,8 @@ namespace SeteVidas.EditorTools
         const string GoldenArt = "Assets/_Game/Art/Characters/Golden";
         const string EnvArt = "Assets/_Game/Art/Environments/Placeholder";
         const string ContractorArt = "Assets/_Game/Art/Characters/Contractor";
+        const string KodaAnimationsPath = "Assets/_Game/ScriptableObjects/Characters/KodaAnimationSet.asset";
+        const string ContractorAnimationsPath = "Assets/_Game/ScriptableObjects/Characters/ContractorAnimationSet.asset";
         const string WhiteSquare = "Assets/_Game/Art/Environments/Placeholder/fx_shadow_zone.png";
         const string SettingsPath = "Assets/_Game/ScriptableObjects/Enemies/GoldenBossSettings.asset";
         public const string BossPrefabPath = "Assets/_Game/Prefabs/Enemies/GoldenBoss.prefab";
@@ -52,7 +55,7 @@ namespace SeteVidas.EditorTools
 
         // ----------------------------------------------------------- conversas
 
-        public struct ArenaDialogues { public DialogueDefinition Intro, Defeat, Take, Curse, Villain, VillainLeave; }
+        public struct ArenaDialogues { public DialogueDefinition Intro, Defeat, Take, Seal, Curse, Villain, VillainLeave; }
 
         public static ArenaDialogues CreateDialogues()
         {
@@ -60,34 +63,38 @@ namespace SeteVidas.EditorTools
             var capy = DialogueSetup.ContractorSpeaker();
             var result = new ArenaDialogues
             {
-                Intro = DialogueSetup.Conversation("D-GOLDEN-00", true, 1,
-                    (golden, "", "Alto, ladrão. Esse tomo dorme selado há cem anos. E vai continuar dormindo."),
+                Intro = DialogueSetup.Conversation("D-GOLDEN-00", true, 3,
+                    (golden, "serio", "Alto, ladrão. Esse tomo dorme selado há cinco séculos. E vai continuar dormindo."),
                     (cat, "ironico", "Engraçado. Meu contratante jurou que ele estava bem acordado."),
                     (golden, "", "Então volte e diga a ele que encontrou um paladino no caminho.")),
-                Defeat = DialogueSetup.Conversation("D-GOLDEN-DERROTA", true, 1,
-                    (golden, "", "Chega... Você é rápido, admito. Rápido demais para o próprio bem."),
-                    (golden, "", "Pegue, se precisa. Mas o selo cobra um preço que ninguém paga duas vezes."),
+                Defeat = DialogueSetup.Conversation("D-GOLDEN-DERROTA", true, 2,
+                    (golden, "ferido", "Chega... Você é rápido, admito. Rápido demais para o próprio bem."),
+                    (golden, "ferido", "Pegue, se precisa. Mas o selo cobra um preço que ninguém paga duas vezes."),
                     (cat, "ironico", "Todo mundo diz isso. Ninguém cobra.")),
                 Take = DialogueSetup.Conversation("D-TOMO-01", true, 2,
                     (null, "", "O tomo é pesado e frio. As runas acendem sob as suas patas."),
                     (cat, "", "...Ele está me olhando?"),
                     (null, "", "O selo se rompe com um estalo seco. Algo puxa o ar dos seus pulmões.")),
-                Curse = DialogueSetup.Conversation("D-TOMO-02", true, 2,
-                    (null, "", "Uma a uma, seis das suas sete vidas se apagam."),
-                    (cat, "", "Não... não, não, não. Isso não estava no contrato."),
-                    (null, "", "Resta uma última centelha. E ela está se apagando.")),
+                // Koda, derrotado, crava a marreta no chão e segura a última vida (Lore Oficial §X)
+                Seal = DialogueSetup.Conversation("D-KODA-SELO", true, 2,
+                    (null, "", "A última centelha vacila. O roxo avança sobre ela."),
+                    (golden, "serio", "Não! Nenhuma morte reclama o que ainda pertence à vida!")),
+                Curse = DialogueSetup.Conversation("D-TOMO-02", true, 3,
+                    (null, "", "Um clarão dourado detém a maldição. O paladino tomba, sem forças."),
+                    (null, "", "Seis das suas sete vidas se foram. Resta uma última centelha."),
+                    (cat, "", "Não... não, não, não. Isso não estava no contrato.")),
                 // O contratante (capivara necromante) aparece com o gato caído
-                Villain = DialogueSetup.Conversation("D-CAPIVARA-01", true, 2,
-                    (capy, "", "Ah, estava sim. Cláusula sete. Você leu... e achou graça."),
+                Villain = DialogueSetup.Conversation("D-CAPIVARA-01", true, 4,
+                    (capy, "deboche", "Ah, estava sim. Cláusula sete. Você leu... e achou graça."),
                     (cat, "", "Você... o contratante. O que você fez comigo?"),
-                    (capy, "", "Eu? Nada. O tomo dorme há cem anos e só acorda bebendo vidas."),
-                    (capy, "", "Sete vidas de gato. Raras. Deliciosas. Exatamente o que ele precisava."),
+                    (capy, "", "Eu? Nada. O tomo dorme há cinco séculos e só acorda bebendo vidas."),
+                    (capy, "revelacao", "Sete vidas de gato. Raras. Deliciosas. Exatamente o que ele precisava."),
                     (cat, "", "Você me usou... desde o começo."),
-                    (capy, "", "Como se usa uma chave, gatinho. E chaves não reclamam da porta.")),
-                VillainLeave = DialogueSetup.Conversation("D-CAPIVARA-02", true, 1,
+                    (capy, "deboche", "Como se usa uma chave, gatinho. E chaves não reclamam da porta.")),
+                VillainLeave = DialogueSetup.Conversation("D-CAPIVARA-02", true, 2,
                     (null, "", "Uma moeda de ouro tilinta no chão, ao lado do seu focinho."),
-                    (capy, "", "O pagamento está feito pelos seus serviços. Não diga que não sou honesto."),
-                    (capy, "", "Adeus. Aproveite a sua última vida. Ela não vai durar."),
+                    (capy, "deboche", "O pagamento está feito pelos seus serviços. Não diga que não sou honesto."),
+                    (capy, "deboche", "Adeus. Aproveite a sua última vida. Ela não vai durar."),
                     (null, "", "Ele some numa névoa roxa, levando o tomo. Só a moeda fica para trás.")),
             };
             AssetDatabase.SaveAssets();
@@ -159,6 +166,7 @@ namespace SeteVidas.EditorTools
             tso.FindProperty("golden").objectReferenceValue = boss.GetComponent<GoldenBoss>();
             tso.FindProperty("goldenBond").objectReferenceValue = boss.GetComponentInChildren<CompanionBond>(true);
             tso.FindProperty("takeDialogue").objectReferenceValue = dialogues.Take;
+            tso.FindProperty("sealDialogue").objectReferenceValue = dialogues.Seal;
             tso.FindProperty("curseDialogue").objectReferenceValue = dialogues.Curse;
             tso.FindProperty("villainDialogue").objectReferenceValue = dialogues.Villain;
             tso.FindProperty("villainLeaveDialogue").objectReferenceValue = dialogues.VillainLeave;
@@ -246,6 +254,10 @@ namespace SeteVidas.EditorTools
             walk.arraySize = 2;
             walk.GetArrayElementAtIndex(0).objectReferenceValue = Pose("chr_golden_boss_walk_1", GoldenPose.WalkA);
             walk.GetArrayElementAtIndex(1).objectReferenceValue = Pose("chr_golden_boss_walk_2", GoldenPose.WalkB);
+            // arte do Koda (Tools/CharacterSprites/gerar.ps1); sem ela, ficam as poses provisórias acima
+            var koda = AssetDatabase.LoadAssetAtPath<CharacterAnimationSet>(KodaAnimationsPath);
+            so.FindProperty("animations").objectReferenceValue = koda;
+            if (koda != null && koda.Get("idle") != null) sr.sprite = koda.Get("idle").frames[0].sprite;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             // Companheiro (depois da maldição): conversa de vínculo e falas seguintes. Desligado até lá.
@@ -339,6 +351,16 @@ namespace SeteVidas.EditorTools
             var contractor = contractorGo.AddComponent<SpriteRenderer>();
             contractor.sprite = ContractorSprite();
             contractor.sortingOrder = 4;
+            // arte do Contratante: surge na névoa, pega o tomo com a mão de osso, joga a moeda e some
+            var capyArt = AssetDatabase.LoadAssetAtPath<CharacterAnimationSet>(ContractorAnimationsPath);
+            if (capyArt != null)
+            {
+                var visual = contractorGo.AddComponent<ContractorVisual>();
+                var vso = new SerializedObject(visual);
+                vso.FindProperty("animations").objectReferenceValue = capyArt;
+                vso.ApplyModifiedPropertiesWithoutUndo();
+                if (capyArt.Get("idle") != null) contractor.sprite = capyArt.Get("idle").frames[0].sprite;
+            }
             var held = Child(contractorGo, "Tomo nas patas", new Vector3(-0.55f, 1.05f, 0f)).AddComponent<SpriteRenderer>();
             held.sprite = book.sprite;
             held.sortingOrder = 5;

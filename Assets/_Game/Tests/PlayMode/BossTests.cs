@@ -62,6 +62,36 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator KodaArt_KneelsWhenDefeated()
+        {
+            yield return Load();
+            yield return null;
+            var sr = _boss.GetComponentInChildren<SpriteRenderer>();
+            Assert.That(sr.sprite != null && sr.sprite.name.StartsWith("chr_koda_"),
+                "O chefe deveria usar a arte do Koda. Rode Tools/CharacterSprites/gerar.ps1 e Tools > Sete Vidas > 10");
+            Defeat();
+            yield return null;
+            Assert.AreEqual("kneel", _boss.CurrentClipName, "Derrotado, Koda fica de joelhos (não morre)");
+        }
+
+        [UnityTest]
+        public IEnumerator Contractor_UsesCapybaraArt_InTomeScene()
+        {
+            yield return Load();
+            Defeat();
+            var contractor = _tome.transform.Find("Contratante");
+            Assert.IsNotNull(contractor.GetComponent<ContractorVisual>(), "Contratante sem animações. Rode Tools > Sete Vidas > 10");
+            _tome.StartCoroutine(_tome.Take(_health));
+            float t = 0f;
+            while (!contractor.gameObject.activeSelf && t < 15f) { SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
+            Assert.IsTrue(contractor.gameObject.activeSelf, "O contratante surge na cena do tomo");
+            yield return null;
+            var sr = contractor.GetComponent<SpriteRenderer>();
+            StringAssert.StartsWith("chr_contractor_", sr.sprite.name);
+            while (_tome.IsRunning && t < 25f) { SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
+        }
+
+        [UnityTest]
         public IEnumerator Entering_ClosesGate_AndStartsFight()
         {
             yield return Load();

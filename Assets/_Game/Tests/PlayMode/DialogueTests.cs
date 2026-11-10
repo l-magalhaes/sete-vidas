@@ -80,7 +80,7 @@ namespace SeteVidas.Tests
 
             golden.Interact(health);
             Assert.IsTrue(runner.IsOpen);
-            Assert.AreEqual("Golden", runner.CurrentLine.Speaker.DisplayName);
+            Assert.AreEqual("Koda", runner.CurrentLine.Speaker.DisplayName);
             Assert.AreEqual(2, health.HeartsRecovered, "Conversar de novo não dá outro coração");
         }
     }

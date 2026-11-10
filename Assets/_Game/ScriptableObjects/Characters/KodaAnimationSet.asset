@@ -1,0 +1,383 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e7a1c0d9b8f4e2a8c3d6f1b2a4e7c90, type: 3}
+  m_Name: KodaAnimationSet
+  m_EditorClassIdentifier: 
+  clips:
+  - name: idle
+    frameTime: 0.25
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 32040bf089946d854ec39739e877b099, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 12a7c6649372cb82c24ae1467989e3de, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 198f091ca9b89f4b0349cc0e66d2ab29, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 39f78510dd468002ac97e562ae33c850, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: walk
+    frameTime: 0.16
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 246f8900cc674ac0eeb711a5c6d60944, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 080da7bb0e758181668a775fff2b1fe9, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 29bb2e7c0d6b951f22d3e66f029aa2dc, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: c4a8a54cad0759bc25b0be132e40ff45, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: swing_windup
+    frameTime: 0.15
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 05b332dabd39535b318c94e31c68114a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 6ea608256f4a6444dd935ff8e4e9b525, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: swing_active
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 615974c1954a71446a5baa8d134aca9a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 6c911c4d4bd686847aaec2df1befe857, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: swing_recover
+    frameTime: 0.15
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 7d7ba8c2e7f2d1a44d6a087544791e9b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 554aef070694afb5197d1dd19fd66508, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: leap_windup
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 361bb1bdca443224176bdea3693dc878, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 85cf52fddbfdfbed46f2ae7b9aa38e2b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: leap_air
+    frameTime: 0.12
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 126ed46e74e44ae849074a458be78a08, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: e73b4b7023ed70fbcc5d96a90f54cf66, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: leap_recover
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: fff32a4f5fc87e9f69d75bc16e108443, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 1fc7691173a300baf02a3732ae36fb34, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 96d8234cdba7e02e63d765ac4c43fd7d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: heal
+    frameTime: 0.3
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 081e2bb75901ce97eb883fd4d9682cd3, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: efb026d4f9814033238535e5fa3d015f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: stagger
+    frameTime: 0.2
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: c717301f6466081dcca563bf83f7dbbd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 1351e136666719d5e1f547e96c003db0, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: cast
+    frameTime: 0.12
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: de68134ebc7dabf1c22ae16fb25c71c1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 48047e6bf8beac8173020a7cae85716e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: lightning
+    frameTime: 0.1
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 4fcb137845911ea5e5833a6bca4c10ca, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: f3af37a81d97b8b4e06e7110ce865e66, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: kneel
+    frameTime: 0.4
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 4ab043831b9cd7a1a3c49c0b77197934, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 206609a1170a82485780e312e9fe33a4, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: seal_windup
+    frameTime: 0.15
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: f84c98da41644eb30196ebbf8e7c9069, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: seal_strike
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: fe42e72488494b443991a4a1319d08e6, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 07301e61dd6c2310985861547388afe6, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: companion
+    frameTime: 0.3
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 69c93f541128daccf82d8a22a0ede90a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 3fe1514e647b1f8109c2deb6b07882c5, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: f660a20801f0fc1920ceb3b12c480ad7, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 424fca3c090f6208686779cc68bb98cb, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0

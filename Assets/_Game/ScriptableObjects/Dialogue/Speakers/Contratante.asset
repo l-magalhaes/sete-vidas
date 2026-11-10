@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.SpeakerProfile
   DisplayName: Contratante
   Portrait: {fileID: 21300000, guid: 489412fb99920a94db553d59b0c1f062, type: 3}
-  Expressions: []
+  Expressions:
+  - Key: deboche
+    Portrait: {fileID: 21300000, guid: e48e8ec8257299dbde080d7f248358b1, type: 3}
+  - Key: revelacao
+    Portrait: {fileID: 21300000, guid: ad5044863a6eb957079fabd2499b8763, type: 3}
   Side: 1
   NameColor: {r: 0.78431374, g: 0.6117647, b: 1, a: 1}
   VoicePitch: 0.6

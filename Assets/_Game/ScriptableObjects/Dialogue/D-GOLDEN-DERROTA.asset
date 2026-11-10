@@ -17,10 +17,10 @@ MonoBehaviour:
   Revision: 1
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
+    Expression: ferido
     Text: "Chega... Voc\xEA \xE9 r\xE1pido, admito. R\xE1pido demais para o pr\xF3prio bem."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
+    Expression: ferido
     Text: "Pegue, se precisa. Mas o selo cobra um pre\xE7o que ningu\xE9m paga duas vezes."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico

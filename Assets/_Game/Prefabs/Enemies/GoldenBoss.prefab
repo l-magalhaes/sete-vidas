@@ -348,6 +348,7 @@ MonoBehaviour:
   heal: {fileID: 21300000, guid: d609f1a5dfee410479f555d403b56cd2, type: 3}
   cast: {fileID: 21300000, guid: 3ab1fd6c0ef82154895b08cd10acdd16, type: 3}
   kneel: {fileID: 21300000, guid: 48c405ffe7f16724db10c1bec822e4d6, type: 3}
+  animations: {fileID: 11400000, guid: d4b2e6a8c1f3459b8e0a2c4d6f8b1e35, type: 2}
   healAura: {fileID: 9001458327939313141}
 --- !u!1 &7191954002493039162
 GameObject:
@@ -430,7 +431,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b61d90123473e4d40aa4c06d1ef94bce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 32040bf089946d854ec39739e877b099, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

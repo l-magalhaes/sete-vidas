@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-FORT-01
   Required: 1
-  Revision: 2
+  Revision: 3
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "A Cidadela da Ordem, onde os c\xE3es viram templ\xE1rios e os templ\xE1rios, paladinos."
+    Text: "A Cidadela do Sol Eterno, onde os c\xE3es viram templ\xE1rios e os templ\xE1rios, paladinos."
   - Speaker: {fileID: 0}
     Expression: 
     Text: "Em algum lugar l\xE1 dentro, um tomo selado. E uma bolsa de ouro esperando l\xE1 fora."

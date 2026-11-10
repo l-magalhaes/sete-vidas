@@ -1,5 +1,7 @@
 # Cena Playground (testes)
 
+> **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
+
 Cena de testes de movimento, gerada por `Tools > Sete Vidas > 2. Criar cenas`. Não é uma fase do jogo: ela é recriada sempre que o comando roda.
 
 Coordenadas em células (1 célula = 1 tile). A superfície do chão fica em y = 0.

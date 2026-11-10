@@ -133,8 +133,8 @@ namespace SeteVidas.EditorTools
             var (cat, _) = DialogueSetup.Speakers();
             var result = new FortressDialogues
             {
-                Intro = DialogueSetup.Conversation("D-FORT-01", true, 3,
-                    (null, "", "A Cidadela da Ordem, onde os cães viram templários e os templários, paladinos."),
+                Intro = DialogueSetup.Conversation("D-FORT-01", true, 4,
+                    (null, "", "A Cidadela do Sol Eterno, onde os cães viram templários e os templários, paladinos."),
                     (cat, "ironico", "Muralhas, sentinelas, armadilhas. O contratante não exagerou."),
                     (cat, "", "Bom. Seria chato se fosse fácil.")),
                 End = DialogueSetup.Conversation("D-FIM", true, 2,
@@ -245,7 +245,7 @@ namespace SeteVidas.EditorTools
                 SanctuaryId = "fortaleza_camara", SanctuaryName = "Antes da câmara",
             });
 
-            // Cenário da Cidadela da Ordem (estandartes, estátuas, pátio de treino, vitrais, placas de lore)
+            // Cenário da Cidadela do Sol Eterno (estandartes, estátuas, pátio de treino, vitrais, placas de lore)
             CitadelDecorSetup.PlaceInFortress(t);
         }
 

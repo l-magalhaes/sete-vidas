@@ -30,7 +30,7 @@
 
 O jogador controla um pequeno gato ladino, integrante de um clã de ladrões, contratado para roubar um tomo mágico protegido por uma ordem de paladinos caninos.
 
-O roubo desencadeia uma maldição que destrói seis de suas sete vidas. Salvo por um paladino Golden Retriever, o protagonista descobre que foi manipulado por uma capivara necromante para libertar uma praga ancestral.
+O roubo desencadeia uma maldição que destrói seis de suas sete vidas. Salvo por Koda, o Dourado, paladino Golden Retriever, o protagonista descobre que foi manipulado por uma capivara necromante para libertar uma praga ancestral.
 
 Agora, com apenas uma vida restante, o gato precisa atravessar um reino em decadência, conquistar aliados e recuperar seus corações perdidos.
 
@@ -58,9 +58,9 @@ Cada coração recuperado está associado a um personagem importante e a uma mis
 
 ### 3.1. Prólogo — O último roubo
 
-O protagonista pertence a um clã de ladrões felinos conhecido provisoriamente como **Clã das Sombras**. Especializados em infiltração e roubos impossíveis, seus integrantes possuem a reputação de entrar em qualquer fortaleza sem serem vistos.
+O protagonista pertence a um guilda de ladrões de Miaravéu, a **Guilda das Nove Sombras**. Especializados em infiltração e roubos impossíveis, seus integrantes possuem a reputação de entrar em qualquer fortaleza sem serem vistos.
 
-Certo dia, um contratante misterioso oferece uma recompensa extraordinária para recuperar um tomo mantido na fortaleza da Ordem dos Paladinos Cães.
+Certo dia, um contratante misterioso oferece uma recompensa extraordinária para recuperar um tomo mantido na fortaleza da Ordem da Presa Dourada.
 
 A missão parece simples: entrar, localizar o livro e escapar.
 
@@ -74,7 +74,7 @@ Quando resta só a última centelha, o contratante aparece num clarão roxo.
 
 Ele revela sua verdadeira identidade: uma **capivara necromante** que precisava de um ser com sete vidas para despertar o tomo, que só acorda bebendo vidas. Ele toma o tomo, joga uma moeda de ouro ao lado do gato ("o pagamento está feito pelos seus serviços") e some, deixando-o para morrer.
 
-O paladino Golden Retriever, guardião da câmara, salva o gato e pede ajuda para recuperar e destruir o tomo. O gato jura, movido pela vingança contra quem o usou.
+Koda, o Dourado, paladino Golden Retriever e guardião da câmara, segura a última vida do gato com a marreta, salva o gato e pede ajuda para recuperar e destruir o tomo. O gato jura, movido pela vingança contra quem o usou.
 
 O gato nunca foi contratado para roubar o livro. Ele foi escolhido para servir como receptáculo da maldição.
 
@@ -86,7 +86,7 @@ O protagonista desperta entre os escombros da fortaleza.
 
 Seis corações foram destruídos, e o sétimo está enfraquecido. A maldição continua dentro dele.
 
-O Golden Retriever explica que a energia libertada corrompe animais, florestas e criaturas mágicas.
+Koda explica que a energia libertada corrompe animais, florestas e criaturas mágicas.
 
 A única possibilidade de deter a praga é reconstruir o poder das sete vidas.
 
@@ -121,7 +121,7 @@ Cada coração possui três funções: representar uma vida recuperada, armazena
 - **Habilidades:** agachar para furtividade, escalar paredes específicas, golpes rápidos e ataques pelas costas com dano aumentado.
 - **Exploração:** atravessar passagens baixas e subir superfícies escaláveis.
 
-#### 2. Paladino — Golden Retriever
+#### 2. Paladino — Koda, o Dourado (Golden Retriever)
 
 - **Arma:** marreta sagrada.
 - **Habilidades:** golpes pesados, dano divino e quebra de estruturas.
@@ -258,7 +258,7 @@ O mapa será interconectado, com áreas que podem ser revisitadas conforme novas
 
 ```mermaid
 flowchart TD
-    A[Fortaleza dos Paladinos - Tutorial Ladino] --> B[Resgate do Golden Retriever - Paladino]
+    A[Fortaleza dos Paladinos - Tutorial Ladino] --> B[Resgate de Koda - Paladino]
     B --> C[Encruzilhada do Reino - Hub central]
     C --> D[Floresta das Cinzas - Mago]
     C --> E[Mosteiro dos Ventos - Monge]
@@ -464,7 +464,7 @@ A estimativa não é um compromisso de prazo e depende da experiência da equipe
 
 Após validar o MVP, o próximo objetivo será criar uma pequena experiência com qualidade próxima da versão final.
 
-Ela deverá incluir o tutorial da fortaleza, a cena do roubo, a maldição, a intervenção do Golden Retriever, um chefe ou encontro de combate marcante e a primeira recuperação de coração.
+Ela deverá incluir o tutorial da fortaleza, a cena do roubo, a maldição, a intervenção de Koda, um chefe ou encontro de combate marcante e a primeira recuperação de coração.
 
 Esse trecho poderá servir como demonstração jogável do conceito.
 

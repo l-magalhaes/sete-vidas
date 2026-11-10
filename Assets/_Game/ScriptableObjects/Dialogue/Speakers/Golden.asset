@@ -12,9 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb526adf39578f498c16a9243e62e82, type: 3}
   m_Name: Golden
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.SpeakerProfile
-  DisplayName: Golden
+  DisplayName: Koda
   Portrait: {fileID: 21300000, guid: 060ad662eaabacb47b22a080b6934349, type: 3}
-  Expressions: []
+  Expressions:
+  - Key: serio
+    Portrait: {fileID: 21300000, guid: 48c66f892893331ddbc2d07ae360727b, type: 3}
+  - Key: ferido
+    Portrait: {fileID: 21300000, guid: daa958f6e390509d822f15231202d31a, type: 3}
+  - Key: sorriso
+    Portrait: {fileID: 21300000, guid: ce265204c22859a5ef0b33db9347b032, type: 3}
   Side: 1
   NameColor: {r: 1, g: 0.84705883, b: 0.5019608, a: 1}
   VoicePitch: 0.8

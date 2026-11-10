@@ -18,10 +18,10 @@ MonoBehaviour:
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: Uma a uma, seis das suas sete vidas se apagam.
+    Text: "Um clar\xE3o dourado det\xE9m a maldi\xE7\xE3o. O paladino tomba, sem for\xE7as."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Seis das suas sete vidas se foram. Resta uma \xFAltima centelha."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
     Text: "N\xE3o... n\xE3o, n\xE3o, n\xE3o. Isso n\xE3o estava no contrato."
-  - Speaker: {fileID: 0}
-    Expression: 
-    Text: "Resta uma \xFAltima centelha. E ela est\xE1 se apagando."

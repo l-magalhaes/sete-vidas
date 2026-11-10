@@ -49,18 +49,18 @@ namespace SeteVidas.EditorTools
             var result = new GoldenDialogues
             {
                 // D-GOLDEN-01 (rev. 3): o resgate. O Golden chega depois que o contratante levou o tomo
-                Bond = Conversation("D-GOLDEN-01", true, 3,
-                    (golden, "", "Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco."),
+                Bond = Conversation("D-GOLDEN-01", true, 4,
+                    (golden, "ferido", "Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco."),
                     (cat, "ironico", "Ótimo. Agora o cão de lata vai me dar sermão antes de eu morrer."),
                     (golden, "", "Sermão nenhum. Quem fez isso? Quem levou o tomo?"),
                     (cat, "", "O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas."),
                     (golden, "", "Com o tomo desperto, a praga vai se espalhar. Sozinho, não chego a tempo."),
-                    (golden, "", "Jure me ajudar a recuperar o tomo e destruí-lo. Em troca, minha força é sua.")),
+                    (golden, "serio", "Jure me ajudar a recuperar o tomo e destruí-lo. Em troca, minha força é sua.")),
                 // D-GOLDEN-01b: o gato aceita, movido pela vingança
-                BondFollowUp = Conversation("D-GOLDEN-01b", true, 1,
+                BondFollowUp = Conversation("D-GOLDEN-01b", true, 2,
                     (cat, "", "Destruir o tomo... tanto faz. Eu quero a capivara."),
                     (cat, "", "Ninguém me usa como chave e me paga com troco. Ninguém."),
-                    (golden, "", "Vingança é um começo ruim. Mas é um começo. Jure, e levante."),
+                    (golden, "serio", "Vingança é um começo ruim. Mas é um começo. Jure, e levante."),
                     (cat, "", "Eu juro. Pelo tomo, pela moeda... e pelas seis vidas que ele me tirou.")),
                 Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 1,
                     (null, "", "Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.")),
@@ -71,8 +71,8 @@ namespace SeteVidas.EditorTools
                     Conversation("D-GOLDEN-02b", false, 3,
                         (golden, "", "Onde aquela capivara for, a praga vai atrás. Vamos alcançá-la."),
                         (cat, "ironico", "E devolver a moeda. Enfiada onde ela não gosta.")),
-                    Conversation("D-GOLDEN-02c", false, 2,
-                        (golden, "", "Força não substitui cuidado. Volte inteiro, ladrãozinho."),
+                    Conversation("D-GOLDEN-02c", false, 3,
+                        (golden, "sorriso", "Força não substitui cuidado. Volte inteiro, ladrãozinho."),
                         (cat, "ironico", "Inteiro é o que eu menos estou.")),
                 },
             };
@@ -86,8 +86,32 @@ namespace SeteVidas.EditorTools
             Directory.CreateDirectory(DataFolder + "/Speakers");
             Directory.CreateDirectory(PortraitArt);
             AssetDatabase.Refresh();
-            return Speaker("Contratante", "Contratante", SpeakerProfile.ScreenSide.Right, new Color32(0xc8, 0x9c, 0xff, 0xff), 0.6f,
+            var capy = Speaker("Contratante", "Contratante", SpeakerProfile.ScreenSide.Right, new Color32(0xc8, 0x9c, 0xff, 0xff), 0.6f,
                 ContractorPortrait());
+            AddExpressions(capy, ContractorExpressions);
+            return capy;
+        }
+
+        /// <summary>Retratos gerados por Tools/CharacterSprites/gerar.ps1 (Koda e Contratante).</summary>
+        static readonly (string key, string file)[] KodaExpressions =
+        {
+            ("serio", "portrait_koda_serious"), ("ferido", "portrait_koda_hurt"), ("sorriso", "portrait_koda_smile"),
+        };
+        static readonly (string key, string file)[] ContractorExpressions =
+        {
+            ("deboche", "portrait_contractor_grin"), ("revelacao", "portrait_contractor_reveal"),
+        };
+
+        static void AddExpressions(SpeakerProfile profile, (string key, string file)[] list)
+        {
+            foreach (var (key, file) in list)
+            {
+                if (profile.Expressions.Exists(e => e.Key == key)) continue;
+                var sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{PortraitArt}/{file}.png");
+                if (sprite == null) continue;
+                profile.Expressions.Add(new SpeakerProfile.Expression { Key = key, Portrait = sprite });
+                EditorUtility.SetDirty(profile);
+            }
         }
 
         /// <summary>
@@ -176,8 +200,9 @@ namespace SeteVidas.EditorTools
                 cat.Expressions.Add(new SpeakerProfile.Expression { Key = key, Portrait = sprite });
                 EditorUtility.SetDirty(cat);
             }
-            var golden = Speaker("Golden", "Golden", SpeakerProfile.ScreenSide.Right, new Color32(0xff, 0xd8, 0x80, 0xff), 0.8f,
+            var golden = Speaker("Golden", "Koda", SpeakerProfile.ScreenSide.Right, new Color32(0xff, 0xd8, 0x80, 0xff), 0.8f,
                 GoldenPortrait());
+            AddExpressions(golden, KodaExpressions);
             return (cat, golden);
         }
 

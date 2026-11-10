@@ -1,4 +1,6 @@
 # Sistema de diálogo
+
+> **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
 **Pilar:** 4 (companheiros com histórias próprias) | **Escopo:** MVP (antes da Fase 6) | **Status:** rascunho para teste
 
 ## Objetivo de experiência

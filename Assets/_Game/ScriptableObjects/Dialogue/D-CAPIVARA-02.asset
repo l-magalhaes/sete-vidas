@@ -20,10 +20,10 @@ MonoBehaviour:
     Expression: 
     Text: "Uma moeda de ouro tilinta no ch\xE3o, ao lado do seu focinho."
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
-    Expression: 
+    Expression: deboche
     Text: "O pagamento est\xE1 feito pelos seus servi\xE7os. N\xE3o diga que n\xE3o sou honesto."
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
-    Expression: 
+    Expression: deboche
     Text: "Adeus. Aproveite a sua \xFAltima vida. Ela n\xE3o vai durar."
   - Speaker: {fileID: 0}
     Expression: 

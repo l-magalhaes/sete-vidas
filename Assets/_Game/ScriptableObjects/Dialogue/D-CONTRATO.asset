@@ -19,19 +19,19 @@ MonoBehaviour:
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Ao Cl\xE3 das Sombras, a Guilda dos Ladr\xF5es.\nAos cuidados do melhor gatuno da casa."
+    Text: "\xC0 Guilda das Nove Sombras, em Miarav\xE9u.\nAos cuidados do melhor gatuno da casa."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Objeto: um tomo de capa roxa, guardado na C\xE2mara do Selo da Cidadela da Ordem dos Paladinos C\xE3es."
+    Text: "Objeto: um tomo de capa roxa, guardado na C\xE2mara do Selo da Cidadela do Sol Eterno, sede da Ordem da Presa Dourada."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Sou colecionador de rel\xEDquias antigas. A Ordem esconde esse livro h\xE1 cem anos e se recusa a vend\xEA-lo, emprest\xE1-lo ou sequer mostr\xE1-lo a quem n\xE3o late."
+    Text: "Sou colecionador de rel\xEDquias antigas. A Ordem esconde esse livro h\xE1 cinco s\xE9culos e se recusa a vend\xEA-lo, emprest\xE1-lo ou sequer mostr\xE1-lo a quem n\xE3o late."
   - Speaker: {fileID: 0}
     Expression: 
     Text: "A Cidadela tem muralhas altas, sentinelas que n\xE3o dormem, armadilhas em cada corredor e um paladino de guarda diante do selo."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Mandei soldados. Mandei mercen\xE1rios. Mandei magos. Nenhum voltou.\n\nS\xF3 a Guilda dos Ladr\xF5es entra onde ningu\xE9m entra e sai sem que ningu\xE9m perceba. Por isso escrevo a voc\xEAs."
+    Text: "Mandei soldados. Mandei mercen\xE1rios. Mandei magos. Nenhum voltou.\n\nS\xF3 a Guilda das Nove Sombras entra onde ningu\xE9m entra e sai sem que ningu\xE9m perceba. Por isso escrevo a voc\xEAs."
   - Speaker: {fileID: 0}
     Expression: 
     Text: "Pagamento: uma bolsa de ouro, entregue em m\xE3os assim que o tomo deixar o pedestal."

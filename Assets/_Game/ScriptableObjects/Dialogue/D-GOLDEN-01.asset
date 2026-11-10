@@ -17,7 +17,7 @@ MonoBehaviour:
   Revision: 3
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
+    Expression: ferido
     Text: "Ladr\xE3ozinho! Aguente firme. Seu \xFAltimo cora\xE7\xE3o ainda bate... por pouco."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
@@ -32,5 +32,5 @@ MonoBehaviour:
     Expression: 
     Text: "Com o tomo desperto, a praga vai se espalhar. Sozinho, n\xE3o chego a tempo."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
+    Expression: serio
     Text: "Jure me ajudar a recuperar o tomo e destru\xED-lo. Em troca, minha for\xE7a \xE9 sua."

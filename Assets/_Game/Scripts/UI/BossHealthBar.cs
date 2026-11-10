@@ -11,7 +11,7 @@ namespace SeteVidas.UI
         [SerializeField] Image fill;
         [SerializeField] Image trail;
         [SerializeField] Text title;
-        [SerializeField] string bossTitle = "Golden, Guardião do Tomo";
+        [SerializeField] string bossTitle = "Koda, o Dourado";
         [Tooltip("Velocidade com que a parte clara alcança a vida atual (fração/s)")]
         [SerializeField] float trailSpeed = 0.5f;
 

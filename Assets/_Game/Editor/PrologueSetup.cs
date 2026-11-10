@@ -113,12 +113,12 @@ namespace SeteVidas.EditorTools
         public static DialogueDefinition CreateContract()
         {
             var (cat, _) = DialogueSetup.Speakers();
-            var d = DialogueSetup.Conversation("D-CONTRATO", true, 1,
-                (null, "", "Ao Clã das Sombras, a Guilda dos Ladrões.\nAos cuidados do melhor gatuno da casa."),
-                (null, "", "Objeto: um tomo de capa roxa, guardado na Câmara do Selo da Cidadela da Ordem dos Paladinos Cães."),
-                (null, "", "Sou colecionador de relíquias antigas. A Ordem esconde esse livro há cem anos e se recusa a vendê-lo, emprestá-lo ou sequer mostrá-lo a quem não late."),
+            var d = DialogueSetup.Conversation("D-CONTRATO", true, 2,
+                (null, "", "À Guilda das Nove Sombras, em Miaravéu.\nAos cuidados do melhor gatuno da casa."),
+                (null, "", "Objeto: um tomo de capa roxa, guardado na Câmara do Selo da Cidadela do Sol Eterno, sede da Ordem da Presa Dourada."),
+                (null, "", "Sou colecionador de relíquias antigas. A Ordem esconde esse livro há cinco séculos e se recusa a vendê-lo, emprestá-lo ou sequer mostrá-lo a quem não late."),
                 (null, "", "A Cidadela tem muralhas altas, sentinelas que não dormem, armadilhas em cada corredor e um paladino de guarda diante do selo."),
-                (null, "", "Mandei soldados. Mandei mercenários. Mandei magos. Nenhum voltou.\n\nSó a Guilda dos Ladrões entra onde ninguém entra e sai sem que ninguém perceba. Por isso escrevo a vocês."),
+                (null, "", "Mandei soldados. Mandei mercenários. Mandei magos. Nenhum voltou.\n\nSó a Guilda das Nove Sombras entra onde ninguém entra e sai sem que ninguém perceba. Por isso escrevo a vocês."),
                 (null, "", "Pagamento: uma bolsa de ouro, entregue em mãos assim que o tomo deixar o pedestal."),
                 (null, "miuda", "Cláusula 7: o portador assume, de livre vontade, todos os custos pessoais decorrentes do manuseio do objeto."),
                 (null, "selo", "Assinado,\n\nO Contratante"),

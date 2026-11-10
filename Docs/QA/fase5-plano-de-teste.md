@@ -1,5 +1,7 @@
 # Plano de teste — Fase 5 (troca de classe e o Paladino)
 
+> **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
+
 > **Atualizado:** o Golden agora é o chefão da arena e o vínculo acontece depois do tomo. Os casos GLD-01 a GLD-05 foram substituídos pelo [plano do chefe](chefe-plano-de-teste.md) (BOS e TOM).
 
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080.

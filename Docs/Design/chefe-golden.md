@@ -1,4 +1,7 @@
-# Chefão: Golden, guardião do tomo
+# Chefão: Koda, o Dourado, guardião do tomo
+
+> **Nome (10/11/2026):** o paladino se chama **Koda, o Dourado**, descendente de Golden, o Dourado (fundador da Cidadela). "Golden" continua só nos nomes do código (`GoldenBoss`, `GoldenBossSettings`). Ficha: `SeteVidasDocs/Personagens.md` §2.
+
 **Pilar:** 1 (sete corações, sete classes) e 3 (combate) | **Escopo:** MVP | **Status:** rascunho para teste
 
 ## História (decisão de 09/11/2026)
@@ -11,7 +14,7 @@ Uma luta de leitura: cada golpe do Golden tem um aviso claro e uma resposta clar
 1. Da laje do trecho I, o gato segue para a direita até a **arena** (x 180–210). Santuário antes, em x 172.
 2. Ao entrar, a **grade de trás fecha** e o Golden fala (D-GOLDEN-00). A luta começa ao fim da conversa.
 3. **Vitória:** o Golden ajoelha, as duas grades abrem e a vitória vai para o save (`chefe_golden_derrotado`). Conversa D-GOLDEN-DERROTA.
-4. **Sala do tomo:** E pega o tomo (D-TOMO-01) → clarão roxo → **corações se apagam um a um (7 → 1)** → o gato cai → D-TOMO-02 → **o Contratante (capivara necromante) surge num clarão roxo**, revela o plano (D-CAPIVARA-01), **toma o tomo**, **joga uma moeda de ouro** e some (D-CAPIVARA-02) → tela escurece → o Golden aparece ao lado → **resgate e juramento por vingança** (D-GOLDEN-01 e 01b) → **+1 coração (2) e Paladino** → dica de troca de classe. A moeda fica no chão.
+4. **Sala do tomo:** E pega o tomo (D-TOMO-01) → clarão roxo → **corações se apagam um a um (7 → 1)** → o gato cai → **D-KODA-SELO: Koda, de joelhos, crava a marreta no chão (`GoldenBoss.SealStrike`), clarão dourado, e a maldição para na última vida** → D-TOMO-02 → **o Contratante (capivara necromante) surge num clarão roxo**, revela o plano (D-CAPIVARA-01), **toma o tomo**, **joga uma moeda de ouro** e some (D-CAPIVARA-02) → tela escurece → o Golden aparece ao lado → **resgate e juramento por vingança** (D-GOLDEN-01 e 01b) → **+1 coração (2) e Paladino** → dica de troca de classe. A moeda fica no chão.
 5. **Morrer na luta** (ou descansar): a arena reinicia (grade aberta, Golden com vida cheia).
 6. Estado recuperável: fechar o jogo no meio da cena do tomo deixa o Golden de pé ao lado do pedestal; falar com ele faz o juramento.
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using SeteVidas.Combat;
 using SeteVidas.Core;
@@ -46,6 +47,8 @@ namespace SeteVidas.Enemies.Boss
         [SerializeField] Sprite heal;
         [SerializeField] Sprite cast;
         [SerializeField] Sprite kneel;
+        [Tooltip("Animações do Koda (KodaAnimationSet, gerado por Tools/CharacterSprites). Vazio = sprites acima")]
+        [SerializeField] CharacterAnimationSet animations;
         [Tooltip("Brilho dourado da cura")]
         [SerializeField] SpriteRenderer healAura;
 
@@ -62,6 +65,9 @@ namespace SeteVidas.Enemies.Boss
         int _wavesLeft;
         float _blinkUntil;
         bool _swingHit;
+        Sprite _poseOverride;
+        string _poseClip;
+        float _poseTime, _stateTime, _stateDuration;
         readonly List<LightningStrike> _strikes = new List<LightningStrike>();
 
         public static GoldenBoss Active { get; private set; }
@@ -127,6 +133,25 @@ namespace SeteVidas.Enemies.Boss
             transform.position = _spawn;
             Enter(State.Defeated, 0f);
         }
+
+        /// <summary>
+        /// Derrotado, Koda ergue a marreta e a crava no chão para segurar a última vida do gato (cena do tomo).
+        /// Só muda a pose por um instante; ele continua de joelhos depois.
+        /// </summary>
+        public IEnumerator SealStrike(float windup = 0.35f, float hold = 0.45f)
+        {
+            if (Current != State.Defeated) yield break;
+            _poseOverride = swingWindup; _poseClip = "seal_windup"; _poseTime = 0f;
+            yield return new WaitForSeconds(windup);
+            _poseOverride = swing; _poseClip = "seal_strike"; _poseTime = 0f;
+            if (healAura != null) healAura.enabled = true;   // brilho dourado do golpe
+            yield return new WaitForSeconds(hold);
+            if (healAura != null) healAura.enabled = false;
+            _poseOverride = null; _poseClip = null;
+        }
+
+        /// <summary>Animação mostrada neste quadro (testes e depuração; vazio sem <c>animations</c>).</summary>
+        public string CurrentClipName { get; private set; } = "";
 
         /// <summary>Levanta como companheiro em <paramref name="feet"/>, olhando para <paramref name="facing"/>.</summary>
         public void StandAsCompanion(Vector2 feet, int facing)
@@ -293,6 +318,8 @@ namespace SeteVidas.Enemies.Boss
         {
             Current = state;
             _timer = time;
+            _stateTime = 0f;
+            _stateDuration = time;
             if (_box != null) _box.enabled = state != State.Dormant && state != State.Defeated && state != State.Companion;
             if (healAura != null) healAura.enabled = state == State.Heal;
         }
@@ -370,7 +397,10 @@ namespace SeteVidas.Enemies.Boss
         {
             if (spriteRenderer == null) return;
             spriteRenderer.flipX = _facing < 0;
-            spriteRenderer.sprite = Current switch
+            _stateTime += Time.deltaTime;
+            _poseTime += Time.deltaTime;
+            if (animations != null) ApplyAnimation();
+            else spriteRenderer.sprite = Current switch
             {
                 State.Walk => walk != null && walk.Length > 0 ? walk[(int)(Time.time * 6f) % walk.Length] : idle,
                 State.SwingWindup => swingWindup,
@@ -383,6 +413,7 @@ namespace SeteVidas.Enemies.Boss
                 State.Defeated => kneel,
                 _ => idle,
             } ?? idle;
+            if (animations == null && _poseOverride != null && Current == State.Defeated) spriteRenderer.sprite = _poseOverride;
             spriteRenderer.enabled = Time.time >= _blinkUntil || ((int)(Time.time * 30f) & 1) == 0;
             if (Current == State.Stagger) spriteRenderer.color = ((int)(Time.time * 8f) & 1) == 0 ? Color.white : new Color(1f, 0.85f, 0.6f);
             else spriteRenderer.color = Color.white;
@@ -392,6 +423,44 @@ namespace SeteVidas.Enemies.Boss
                 float pulse = 0.35f + 0.25f * Mathf.Sin(Time.time * 6f);
                 var c = healAura.color; c.a = pulse; healAura.color = c;
             }
+        }
+
+        /// <summary>
+        /// Animações do Koda: golpes e salto seguem o tempo de cada fase (mudar os tempos no Inspector não
+        /// dessincroniza a arte); os demais estados tocam em loop. Spec: SeteVidasDocs/Personagens.md §2.4.
+        /// </summary>
+        void ApplyAnimation()
+        {
+            string key; bool timed = false;
+            switch (Current)
+            {
+                case State.Walk: key = "walk"; break;
+                case State.SwingWindup: key = "swing_windup"; timed = true; break;
+                case State.SwingActive: key = "swing_active"; timed = true; break;
+                case State.SwingRecover: key = "swing_recover"; timed = true; break;
+                case State.LeapWindup: key = "leap_windup"; timed = true; break;
+                case State.LeapAir: key = "leap_air"; break;
+                case State.LeapRecover: key = "leap_recover"; timed = true; break;
+                case State.Heal: key = "heal"; break;
+                case State.Stagger: key = "stagger"; break;
+                case State.LightningCast: key = "cast"; break;
+                case State.Lightning: key = "lightning"; break;
+                case State.Defeated: key = "kneel"; break;
+                case State.Companion: key = "companion"; break;
+                default: key = "idle"; break;
+            }
+            SpriteClip clip;
+            SpriteFrame frame;
+            if (_poseClip != null && Current == State.Defeated && (clip = animations.Get(_poseClip)) != null)
+                frame = clip.At(_poseTime);
+            else
+            {
+                clip = animations.Get(key) ?? animations.Get("idle");
+                if (clip == null) return;
+                frame = timed && _stateDuration > 0f ? clip.AtNormalized(_stateTime / _stateDuration) : clip.At(_stateTime);
+            }
+            CurrentClipName = clip.name;
+            if (frame != null && frame.sprite != null) spriteRenderer.sprite = frame.sprite;
         }
 
         [ContextMenu("Depuração: salto")] void DebugLeap() => ForceMove(BossMove.Leap);

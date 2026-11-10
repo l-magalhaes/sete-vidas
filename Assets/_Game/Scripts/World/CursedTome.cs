@@ -10,10 +10,11 @@ namespace SeteVidas.World
 {
     /// <summary>
     /// O tomo corrompido, atrás da grade da arena. E pega o tomo e dispara a maldição (spec:
-    /// Docs/Design/chefe-golden.md): clarão roxo, seis corações se apagam um a um (7 → 1), o gato cai quase
-    /// morto e o contratante (capivara necromante) surge, toma o tomo e joga uma moeda de ouro. A tela escurece e o
-    /// Golden aparece ao lado do gato. A conversa de vínculo (juramento de destruir o
-    /// tomo) devolve o 2º coração e dá o Paladino. Estado recuperável: fechar o jogo no meio não trava nada.
+    /// Docs/Design/chefe-golden.md): clarão roxo, seis corações se apagam um a um (7 → 1) e o gato cai. Antes que a
+    /// última se apague, Koda (o chefe, caído) crava a marreta no chão: clarão dourado, a maldição para (Lore Oficial
+    /// §X). O contratante (capivara necromante) surge, toma o tomo e joga uma moeda de ouro. A tela escurece e Koda
+    /// aparece ao lado do gato. A conversa de vínculo (juramento de destruir o tomo) devolve o 2º coração e dá o
+    /// Paladino. Estado recuperável: fechar o jogo no meio não trava nada.
     /// </summary>
     [RequireComponent(typeof(BoxCollider2D))]
     public class CursedTome : MonoBehaviour
@@ -31,7 +32,9 @@ namespace SeteVidas.World
         [Header("Conversas")]
         [Tooltip("Ao pegar o tomo (narração)")]
         [SerializeField] DialogueDefinition takeDialogue;
-        [Tooltip("Depois dos corações se apagarem (narração)")]
+        [Tooltip("A última centelha vacila e Koda, caído, crava a marreta para segurá-la (D-KODA-SELO)")]
+        [SerializeField] DialogueDefinition sealDialogue;
+        [Tooltip("Depois do clarão dourado (narração)")]
         [SerializeField] DialogueDefinition curseDialogue;
         [Tooltip("O contratante aparece e revela o plano (D-CAPIVARA-01)")]
         [SerializeField] DialogueDefinition villainDialogue;
@@ -50,6 +53,8 @@ namespace SeteVidas.World
         [Header("Ritmo da maldição")]
         [SerializeField] float heartBreakInterval = 0.3f;
         [SerializeField] Color curseColor = new Color32(0x6b, 0x2a, 0x8a, 0xff);
+        [Tooltip("Clarão da marreta do Koda que segura a última vida")]
+        [SerializeField] Color sealColor = new Color32(0xff, 0xd8, 0x80, 0xff);
         [Tooltip("Corações que sobram (GDD: a maldição apaga 6 das 7 vidas)")]
         [SerializeField, Min(1)] int heartsLeft = 1;
 
@@ -123,6 +128,12 @@ namespace SeteVidas.World
             player.ApplyCurse(heartsLeft); // grava: corações e flag do tomo
             player.SetCollapsed(true);
 
+            // Antes que a última se apague, Koda (caído) crava a marreta no chão: clarão dourado, a maldição para
+            yield return new WaitForSeconds(0.5f);
+            yield return Talk(runner, sealDialogue, input);
+            if (golden != null) StartCoroutine(golden.SealStrike());
+            yield return new WaitForSeconds(0.35f);
+            if (fader != null) StartCoroutine(fader.Flash(sealColor, 0.85f, 0.06f, 0.7f));
             yield return new WaitForSeconds(0.8f);
             yield return Talk(runner, curseDialogue, input);
 
@@ -158,33 +169,66 @@ namespace SeteVidas.World
             t.position = feet + new Vector3(2.4f, 0f, 0f);
             contractor.flipX = true; // olha para o gato caído
             if (contractorBook != null) contractorBook.enabled = false;
+            var anim = contractor.GetComponent<ContractorVisual>();
+            bool animated = anim != null && anim.HasAnimations;
 
-            // Teleporte de chegada
+            // Teleporte de chegada: surge na névoa roxa
             if (fader != null) StartCoroutine(fader.Flash(teleportColor, 0.8f, 0.08f, 0.5f));
             contractor.gameObject.SetActive(true);
-            yield return FadeSprite(contractor, 0f, 1f, 0.35f);
+            if (animated)
+            {
+                SetAlpha(contractor, 1f);
+                anim.Play("appear", "gloat");
+                yield return new WaitForSeconds(anim.Duration("appear"));
+            }
+            else yield return FadeSprite(contractor, 0f, 1f, 0.35f);
             yield return Talk(runner, villainDialogue, input);
 
-            // Toma o tomo das patas do gato
-            if (contractorBook != null) contractorBook.enabled = true;
-            yield return new WaitForSeconds(0.4f);
+            // Toma o tomo das patas do gato, com a mão de osso
+            if (animated)
+            {
+                anim.Play("take", "hold");
+                yield return new WaitForSeconds(anim.Duration("take") + 0.2f);
+            }
+            else
+            {
+                if (contractorBook != null) contractorBook.enabled = true;
+                yield return new WaitForSeconds(0.4f);
+            }
 
-            // Joga a moeda: "o pagamento está feito"
+            // Joga a moeda num peteleco: "o pagamento está feito"
+            Vector3 hand = t.position + Vector3.up * 1.2f;
+            if (animated)
+            {
+                anim.Play("toss", "hold");
+                yield return new WaitForSeconds(anim.Duration("toss") * 0.5f);         // a moeda sai no 3º frame
+                hand = t.position + new Vector3(contractor.flipX ? -0.75f : 0.75f, 1.5f, 0f);
+            }
             if (coin != null)
             {
                 coin.gameObject.SetActive(true);
-                yield return Toss(coin, t.position + Vector3.up * 1.2f, feet + new Vector3(0.9f, 0.05f, 0f), 0.45f);
+                yield return Toss(coin, hand, feet + new Vector3(0.9f, 0.05f, 0f), 0.45f);
             }
             yield return Talk(runner, villainLeaveDialogue, input);
 
             // Teleporte de saída, levando o tomo
             if (fader != null) StartCoroutine(fader.Flash(teleportColor, 0.8f, 0.08f, 0.5f));
-            yield return FadeSprite(contractor, 1f, 0f, 0.3f);
+            if (animated)
+            {
+                anim.Play("vanish");
+                yield return new WaitForSeconds(anim.Duration("vanish"));
+            }
+            else yield return FadeSprite(contractor, 1f, 0f, 0.3f);
             contractor.gameObject.SetActive(false);
             var data = SaveManager.Data;
             data.SetFlag(StolenFlag);
             SaveManager.Save();
             yield return new WaitForSeconds(0.6f);
+        }
+
+        static void SetAlpha(SpriteRenderer sr, float a)
+        {
+            foreach (var r in sr.GetComponentsInChildren<SpriteRenderer>()) { var c = r.color; c.a = a; r.color = c; }
         }
 
         static IEnumerator FadeSprite(SpriteRenderer sr, float from, float to, float duration)

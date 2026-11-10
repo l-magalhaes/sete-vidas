@@ -16380,6 +16380,10 @@ PrefabInstance:
       propertyPath: curseDialogue
       value: 
       objectReference: {fileID: 11400000, guid: 954616dcb359aca41a8a8f615d940c57, type: 2}
+    - target: {fileID: 1026259034271162657, guid: 8272e458733590a4aa4b7124049856aa, type: 3}
+      propertyPath: sealDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: b5d1e7f3a9c24e6b8d0f2a4c6e8b1d37, type: 2}
     - target: {fileID: 1790914258886061061, guid: 8272e458733590a4aa4b7124049856aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 216.5

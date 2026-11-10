@@ -9,7 +9,7 @@ using UnityEngine;
 namespace SeteVidas.EditorTools
 {
     /// <summary>
-    /// Cenário da Cidadela da Ordem dos Paladinos Cães, onde os filhotes viram templários e os templários,
+    /// Cenário da Cidadela do Sol Eterno (Ordem da Presa Dourada), onde os filhotes viram templários e os templários,
     /// paladinos: estandartes, estátuas, pátio de treino (bonecos, alvos, armas), escudos, tochas, vitrais e
     /// placas de lore (E para ler). Chamado pelo FortressSetup. Spec de arte: Docs/Arte/decisoes.md.
     /// </summary>
@@ -145,15 +145,15 @@ namespace SeteVidas.EditorTools
                 Yard = DialogueSetup.Conversation("D-PLACA-01", false, 1,
                     (null, "", "Pátio dos Escudeiros. Aqui o filhote vira templário, e o templário, paladino."),
                     (null, "", "Quem não aguenta o boneco de palha não aguenta a praga.")),
-                Barracks = DialogueSetup.Conversation("D-PLACA-02", false, 1,
+                Barracks = DialogueSetup.Conversation("D-PLACA-02", false, 2,
                     (null, "", "Alojamento dos Templários. Silêncio depois do toque do sino."),
-                    (null, "", "Arranhado embaixo, com letra torta: \"o Golden ronca\"."),
+                    (null, "", "Arranhado embaixo, com letra torta: \"o Koda ronca\"."),
                     (cat, "ironico", "Bom saber.")),
                 Oath = DialogueSetup.Conversation("D-PLACA-03", false, 1,
                     (null, "", "Juramento da Ordem: guardar o selo. Servir o reino. Nunca abandonar um ferido."),
                     (cat, "ironico", "Bonito. Pena que eu não sou do reino.")),
-                Seal = DialogueSetup.Conversation("D-PLACA-04", false, 1,
-                    (null, "", "Câmara do Selo. Há cem anos a Ordem prendeu aqui um tomo que bebe vidas."),
+                Seal = DialogueSetup.Conversation("D-PLACA-04", false, 2,
+                    (null, "", "Câmara do Selo. Há cinco séculos, Golden, o Dourado, prendeu aqui um tomo que bebe vidas."),
                     (null, "", "Que ninguém o desperte. Que nenhum guardião o abandone."),
                     (cat, "", "...Ninguém falou nada de beber vidas.")),
             };

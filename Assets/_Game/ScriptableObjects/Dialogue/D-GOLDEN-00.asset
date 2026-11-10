@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-00
   Required: 1
-  Revision: 1
+  Revision: 2
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
-    Text: "Alto, ladr\xE3o. Esse tomo dorme selado h\xE1 cem anos. E vai continuar dormindo."
+    Expression: serio
+    Text: "Alto, ladr\xE3o. Esse tomo dorme selado h\xE1 cinco s\xE9culos. E vai continuar dormindo."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
     Text: "Engra\xE7ado. Meu contratante jurou que ele estava bem acordado."

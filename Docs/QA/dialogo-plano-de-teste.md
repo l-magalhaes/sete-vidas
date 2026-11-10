@@ -1,5 +1,7 @@
 # Plano de teste — Sistema de diálogo
 
+> **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
+
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080.
 Antes: rode **Tools > Sete Vidas > 9. Diálogos** e **Tools > Sete Vidas > Save > Apagar save**. O Golden fica em cima da laje em x 168,5 (Position X do `Player` = 153, depois agarre a borda em x 156).
 

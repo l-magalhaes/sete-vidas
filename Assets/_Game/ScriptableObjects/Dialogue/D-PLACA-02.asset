@@ -21,7 +21,7 @@ MonoBehaviour:
     Text: "Alojamento dos Templ\xE1rios. Sil\xEAncio depois do toque do sino."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: 'Arranhado embaixo, com letra torta: "o Golden ronca".'
+    Text: 'Arranhado embaixo, com letra torta: "o Koda ronca".'
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
     Text: Bom saber.

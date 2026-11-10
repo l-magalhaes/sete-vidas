@@ -23,7 +23,7 @@ MonoBehaviour:
     Expression: 
     Text: "Ningu\xE9m me usa como chave e me paga com troco. Ningu\xE9m."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
+    Expression: serio
     Text: "Vingan\xE7a \xE9 um come\xE7o ruim. Mas \xE9 um come\xE7o. Jure, e levante."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 

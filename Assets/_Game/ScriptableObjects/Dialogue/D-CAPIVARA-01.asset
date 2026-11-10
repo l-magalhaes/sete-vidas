@@ -14,23 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-CAPIVARA-01
   Required: 1
-  Revision: 1
+  Revision: 3
   Lines:
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
-    Expression: 
+    Expression: deboche
     Text: "Ah, estava sim. Nas letras mi\xFAdas. Que voc\xEA, claro, n\xE3o leu."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
     Text: "Voc\xEA... o contratante. O que voc\xEA fez comigo?"
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
     Expression: 
-    Text: "Eu? Nada. O tomo dorme h\xE1 cem anos e s\xF3 acorda bebendo vidas."
+    Text: "Eu? Nada. O tomo dorme h\xE1 cinco s\xE9culos e s\xF3 acorda bebendo vidas."
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
-    Expression: 
+    Expression: revelacao
     Text: Sete vidas de gato. Raras. Deliciosas. Exatamente o que ele precisava.
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
     Text: "Voc\xEA me usou... desde o come\xE7o."
   - Speaker: {fileID: 11400000, guid: 0aa0ea6dc3ac1df4db4f50e17bf70cd2, type: 2}
-    Expression: 
+    Expression: deboche
     Text: "Como se usa uma chave, gatinho. E chaves n\xE3o reclamam da porta."
