@@ -105,7 +105,10 @@ namespace SeteVidas.World
             yield return Talk(runner, takeDialogue, input);
 
             // Pega o tomo: o selo se rompe
+            var visual = player.GetComponentInChildren<PlayerVisual>();
+            if (visual != null && visual.PlayAction("grab_tome", hold: true)) yield return new WaitForSeconds(0.6f);
             if (book != null) book.enabled = false;
+            if (visual != null) visual.PlayAction("curse_kneel", hold: true);
             var data = SaveManager.Data;
             data.SetFlag(TakenFlag);
             var fader = ScreenFader.Active;

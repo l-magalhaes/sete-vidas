@@ -25,6 +25,7 @@ namespace SeteVidas.EditorTools
         const string ClimbSettingsPath = "Assets/_Game/ScriptableObjects/Player/WallClimbSettings.asset";
         const string DaggersPath = "Assets/_Game/ScriptableObjects/Combat/RogueDaggers.asset";
         const string StealthPath = "Assets/_Game/ScriptableObjects/Player/StealthSettings.asset";
+        const string LionAnimationsPath = "Assets/_Game/ScriptableObjects/Player/LionAnimationSet.asset";
         const string MaterialPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
         const string ControlsPath = "Assets/_Game/Settings/Input/GameControls.inputactions";
         public const string PrefabPath = "Assets/_Game/Prefabs/Player/Player.prefab";
@@ -330,6 +331,9 @@ namespace SeteVidas.EditorTools
             SetArray(visual, "run", sprites.Run1, sprites.Run2);
             SetArray(visual, "climb", sprites.Climb1, sprites.Climb2);
             SetArray(visual, "slash", sprites.Slash1, sprites.Slash2);
+            // Arte final do Lion (gerada por Tools/LionSprites/gerar.ps1). Sem ela, o visual usa os placeholders acima.
+            var lion = AssetDatabase.LoadAssetAtPath<CharacterAnimationSet>(LionAnimationsPath);
+            if (lion != null) SetRef(visual, "animationSet", lion);
 
             // Corte da adaga: fora do "Visual" para não herdar o espelhamento do corpo
             var slashGo = new GameObject("Slash");

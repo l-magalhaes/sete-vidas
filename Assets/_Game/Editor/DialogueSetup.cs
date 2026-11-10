@@ -166,11 +166,14 @@ namespace SeteVidas.EditorTools
             Directory.CreateDirectory(DataFolder + "/Speakers");
             Directory.CreateDirectory(PortraitArt);
             AssetDatabase.Refresh();
-            var cat = Speaker("Gato", "Gato", SpeakerProfile.ScreenSide.Left, new Color32(0xc9, 0xd6, 0xff, 0xff), 1.35f,
-                Portrait("portrait_cat_neutral", CatFace.Neutral));
-            if (cat.Expressions.Count == 0)
+            var cat = Speaker("Gato", "Lionel", SpeakerProfile.ScreenSide.Left, new Color32(0xf4, 0xd6, 0xa3, 0xff), 1.35f,
+                LionPortrait("portrait_cat_neutral"));
+            foreach (var (key, file) in LionExpressions)
             {
-                cat.Expressions.Add(new SpeakerProfile.Expression { Key = "ironico", Portrait = Portrait("portrait_cat_ironic", CatFace.Ironic) });
+                if (cat.Expressions.Exists(e => e.Key == key)) continue;
+                var sprite = LionPortrait(file);
+                if (sprite == null) continue;
+                cat.Expressions.Add(new SpeakerProfile.Expression { Key = key, Portrait = sprite });
                 EditorUtility.SetDirty(cat);
             }
             var golden = Speaker("Golden", "Golden", SpeakerProfile.ScreenSide.Right, new Color32(0xff, 0xd8, 0x80, 0xff), 0.8f,
@@ -363,7 +366,22 @@ namespace SeteVidas.EditorTools
 
         // ---------------------------------------------------------- retratos
 
-        enum CatFace { Neutral, Ironic }
+        /// <summary>
+        /// Retratos do Lionel: gerados por Tools/LionSprites/gerar.ps1 (LionPortraits.cs) a partir da ficha em
+        /// SeteVidasDocs/Personagens.md. Aqui só são carregados.
+        /// </summary>
+        static readonly (string key, string file)[] LionExpressions =
+        {
+            ("ironico", "portrait_cat_ironic"), ("surpreso", "portrait_cat_surprised"), ("ferido", "portrait_cat_hurt"),
+            ("serio", "portrait_cat_serious"), ("terno", "portrait_cat_tender"),
+        };
+
+        static Sprite LionPortrait(string file)
+        {
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{PortraitArt}/{file}.png");
+            if (sprite == null) Debug.LogWarning($"Retrato {file} não encontrado. Rode Tools/LionSprites/gerar.ps1.");
+            return sprite;
+        }
 
         static void Ellipse(System.Action<int, int, Color32> set, float cx, float cy, float rx, float ry, Color32 fill, Color32? edge = null)
         {
@@ -392,45 +410,6 @@ namespace SeteVidas.EditorTools
         }
 
         static float Cross(Vector2 p, Vector2 a, Vector2 b) => (p.x - b.x) * (a.y - b.y) - (a.x - b.x) * (p.y - b.y);
-
-        /// <summary>
-        /// Gato 48×48 (olhando para a direita, ele fica à esquerda da tela): cabeça azul-noite, orelhas com
-        /// interior rosado, olhos amarelos de pupila fina e o lenço escuro do Clã das Sombras.
-        /// Irônico: pálpebras a meio pau e sorriso torto.
-        /// </summary>
-        static Sprite Portrait(string name, CatFace face) => Draw($"{PortraitArt}/{name}.png", 48, 48, set =>
-        {
-            var fur = new Color32(0x2b, 0x3a, 0x67, 0xff);
-            var furLight = new Color32(0x3d, 0x52, 0x8c, 0xff);
-            var outline = new Color32(0x16, 0x1d, 0x38, 0xff);
-            var earIn = new Color32(0xb8, 0x6a, 0x8a, 0xff);
-            var eye = new Color32(0xf2, 0xd0, 0x4b, 0xff);
-            var pupil = new Color32(0x10, 0x10, 0x18, 0xff);
-            var nose = new Color32(0xe0, 0x8a, 0xa8, 0xff);
-            var scarf = new Color32(0x16, 0x1d, 0x38, 0xff);
-            var scarfLight = new Color32(0x2a, 0x30, 0x52, 0xff);
-
-            Ellipse(set, 24f, 4f, 17f, 8f, fur, outline);                                       // ombros
-            Triangle(set, new Vector2(9, 28), new Vector2(19, 31), new Vector2(11, 44), outline); // orelhas
-            Triangle(set, new Vector2(29, 31), new Vector2(39, 28), new Vector2(37, 44), outline);
-            Triangle(set, new Vector2(11, 29), new Vector2(17, 31), new Vector2(12, 40), earIn);
-            Triangle(set, new Vector2(31, 31), new Vector2(37, 29), new Vector2(36, 40), earIn);
-            Ellipse(set, 24f, 23f, 15f, 13f, fur, outline);                                     // cabeça
-            Ellipse(set, 25f, 17f, 6f, 4f, furLight);                                           // focinho claro
-            for (int x = 7; x <= 41; x++) for (int y = 7; y <= 10; y++) set(x, y, (x + y) % 4 == 0 ? scarfLight : scarf); // lenço
-            Triangle(set, new Vector2(30, 10), new Vector2(38, 10), new Vector2(36, 2), scarf);   // nó do lenço
-
-            foreach (int ex in new[] { 18, 31 })
-            {
-                Ellipse(set, ex, 24f, 3.5f, 3.5f, eye);
-                for (int y = 22; y <= 26; y++) set(ex + 1, y, pupil);                              // pupila fina, olhando para a direita
-                if (face == CatFace.Ironic)
-                    for (int x = ex - 4; x <= ex + 4; x++) { set(x, 25, outline); set(x, 26, fur); set(x, 27, fur); } // pálpebra
-            }
-            set(25, 19, nose); set(26, 19, nose);
-            if (face == CatFace.Ironic) { set(24, 15, outline); set(25, 15, outline); set(26, 16, outline); set(27, 16, outline); set(28, 17, outline); } // sorriso torto
-            else { set(24, 16, outline); set(25, 15, outline); set(26, 16, outline); set(27, 15, outline); set(28, 16, outline); }  // boca em "w"
-        });
 
         /// <summary>Golden 48×48 (olhando para a esquerda, ele fica à direita): orelhas caídas, focinho claro e gola de armadura.</summary>
         static Sprite GoldenPortrait() => Draw($"{PortraitArt}/portrait_golden.png", 48, 48, set =>

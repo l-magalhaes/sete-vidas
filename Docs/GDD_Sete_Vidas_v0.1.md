@@ -151,7 +151,7 @@ Cada coração possui três funções: representar uma vida recuperada, armazena
 - **Habilidades:** dash horizontal, ataques à distância e flecha com corda.
 - **Exploração:** atravessar grandes abismos e se pendurar em pontos de ancoragem.
 
-#### 7. Druida — Cervo
+#### 7. Druida — Lobo-guará
 
 - **Arma:** Chicote de espinhos.
 - **Habilidades:** invocar plataformas temporarias de flores e transformar-se em inseto.

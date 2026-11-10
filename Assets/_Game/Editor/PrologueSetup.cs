@@ -82,7 +82,7 @@ namespace SeteVidas.EditorTools
             frame.type = Image.Type.Sliced;
             frame.pixelsPerUnitMultiplier = UiPixelScale;
             var face = Img(frame.rectTransform, "Retrato", null, Vector2.zero, new Vector2(48f, 48f));
-            var name = Label(speakerBox.transform, "Nome", "Gato", 10, Light, new Vector2(0.5f, 0.5f), new Vector2(-190f, -76f), new Vector2(80f, 14f));
+            var name = Label(speakerBox.transform, "Nome", "Lionel", 10, Light, new Vector2(0.5f, 0.5f), new Vector2(-190f, -76f), new Vector2(80f, 14f));
             name.fontStyle = FontStyle.Bold;
             speakerBox.SetActive(false);
 

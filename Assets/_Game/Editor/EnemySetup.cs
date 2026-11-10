@@ -2,6 +2,7 @@ using System.IO;
 using SeteVidas.Combat;
 using SeteVidas.Core;
 using SeteVidas.Enemies;
+using SeteVidas.Player;
 using SeteVidas.World;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -19,6 +20,7 @@ namespace SeteVidas.EditorTools
         const string SentinelArtFolder = "Assets/_Game/Art/Enemies/Sentinel";
         const string ShadowSpritePath = "Assets/_Game/Art/Environments/Placeholder/fx_shadow_zone.png";
         const string SettingsPath = "Assets/_Game/ScriptableObjects/Enemies/SentinelSettings.asset";
+        const string TemplarAnimationsPath = "Assets/_Game/ScriptableObjects/Enemies/TemplarAnimationSet.asset";
         const string NoFrictionPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
         public const string SentinelPrefabPath = "Assets/_Game/Prefabs/Enemies/Sentinel.prefab";
         public const string BushPrefabPath = "Assets/_Game/Prefabs/Interactables/Bush.prefab";
@@ -98,6 +100,10 @@ namespace SeteVidas.EditorTools
             so.FindProperty("idle").objectReferenceValue = sprites.Idle;
             so.FindProperty("windup").objectReferenceValue = sprites.Windup;
             so.FindProperty("attack").objectReferenceValue = sprites.Attack;
+            // arte do Cão Templário (Tools/EnemySprites/gerar.ps1); sem ela, ficam os sprites provisórios acima
+            var templar = AssetDatabase.LoadAssetAtPath<CharacterAnimationSet>(TemplarAnimationsPath);
+            so.FindProperty("animations").objectReferenceValue = templar;
+            if (templar != null && templar.Get("idle") != null) sr.sprite = templar.Get("idle").frames[0].sprite;
             so.FindProperty("alertIcon").objectReferenceValue = icon;
             so.FindProperty("debugLabel").objectReferenceValue = label;
             so.FindProperty("groundLayers").intValue = LayerMask.GetMask(

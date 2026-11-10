@@ -35,6 +35,8 @@ namespace SeteVidas.Enemies
         [SerializeField] Sprite[] walk;
         [SerializeField] Sprite windup;
         [SerializeField] Sprite attack;
+        [Tooltip("Animações em pixel art (ex.: TemplarAnimationSet, gerado por Tools/EnemySprites). Vazio = sprites acima")]
+        [SerializeField] CharacterAnimationSet animations;
         [Tooltip("\"?\" e \"!\" sobre a cabeça")]
         [SerializeField] TextMesh alertIcon;
         [Tooltip("Estado e suspeita (depuração)")]
@@ -57,7 +59,13 @@ namespace SeteVidas.Enemies
         float _deathTimer;
         float _respawnAt = -1f;
         float _blinkUntil;
+        float _hurtAt = -99f;
+        string _animKey;
+        float _animTime;
         Vector2 _spawn;
+
+        /// <summary>Animação mostrada neste quadro (testes e depuração; vazio sem <c>animations</c>).</summary>
+        public string CurrentClipName { get; private set; } = "";
 
         public event Action<EnemyAI> Died;
 
@@ -282,6 +290,7 @@ namespace SeteVidas.Enemies
 
             _health = Mathf.Max(0, _health - info.Amount);
             _blinkUntil = Time.time + 0.2f;
+            _hurtAt = Time.time;
             DamagePopup.Spawn(transform.position + Vector3.up * 2.1f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
 
             Vector2 attacker = info.Source != null ? (Vector2)info.Source.transform.position : _body.position - info.Direction;
@@ -348,6 +357,7 @@ namespace SeteVidas.Enemies
         {
             if (spriteRenderer == null) return;
             var t = spriteRenderer.transform;
+            if (animations != null) { UpdateAnimation(t); return; }
 
             if (IsDead)
             {
@@ -370,6 +380,59 @@ namespace SeteVidas.Enemies
             else if (Mathf.Abs(_body.linearVelocity.x) > 0.1f && walk != null && walk.Length > 0)
                 s = walk[(int)(Time.time * 6f) % walk.Length];
             if (s != null) spriteRenderer.sprite = s;
+        }
+
+        /// <summary>
+        /// Animações do <see cref="animations"/>: a estocada segue as fases do ataque (preparar, ativo, recuperar),
+        /// a morte toca inteira (cai de costas) e depois o corpo some. Spec: SeteVidasDocs/Inimigos_Arte.md.
+        /// </summary>
+        void UpdateAnimation(Transform t)
+        {
+            t.localRotation = Quaternion.identity;
+            spriteRenderer.flipX = _facing < 0;
+            var color = spriteRenderer.color;
+            SpriteFrame frame;
+
+            if (IsDead)
+            {
+                var death = animations.Get("death");
+                frame = death != null ? death.At(_deathTimer) : null;
+                CurrentClipName = "death";
+                // deitado um instante, depois some
+                float lie = death != null ? death.Duration : 0f;
+                float fade = Mathf.Clamp01((_deathTimer - lie - 0.4f) / 0.4f);
+                color.a = 1f - fade;
+                spriteRenderer.color = color;
+                spriteRenderer.enabled = fade < 1f;
+                if (frame != null) spriteRenderer.sprite = frame.sprite;
+                return;
+            }
+
+            color.a = 1f;
+            spriteRenderer.color = color;
+            spriteRenderer.enabled = Time.time >= _blinkUntil || ((int)(Time.time * 30f) & 1) == 0;
+
+            string key;
+            float normalized = -1f; // >= 0: frame pelo progresso da fase
+            if (_attackPhase != AttackPhase.None)
+            {
+                float duration = _attackPhase == AttackPhase.Windup ? settings.AttackWindup
+                               : _attackPhase == AttackPhase.Active ? settings.AttackActive : settings.AttackRecovery;
+                key = _attackPhase == AttackPhase.Windup ? "attack_windup" : _attackPhase == AttackPhase.Active ? "attack_active" : "attack_recovery";
+                normalized = duration > 0f ? 1f - Mathf.Clamp01(_attackTimer / duration) : 1f;
+            }
+            else if (Time.time - _hurtAt < 0.2f) key = "hurt";
+            else if (Mathf.Abs(_body.linearVelocity.x) > 0.1f) key = _brain.State == AlertState.Combat ? "run" : "walk";
+            else if (_brain.State == AlertState.Suspicious || _brain.State == AlertState.Investigating || _brain.State == AlertState.Combat) key = "alert";
+            else key = "idle";
+
+            var clip = animations.Get(key) ?? animations.Get("idle");
+            if (clip == null) return;
+            if (key != _animKey) { _animKey = key; _animTime = 0f; }
+            _animTime += Time.deltaTime;
+            frame = normalized >= 0f ? clip.AtNormalized(normalized) : clip.At(_animTime);
+            CurrentClipName = clip.name;
+            if (frame != null && frame.sprite != null) spriteRenderer.sprite = frame.sprite;
         }
 
         void UpdateLabels()

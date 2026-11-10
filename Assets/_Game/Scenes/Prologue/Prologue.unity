@@ -861,7 +861,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Gato
+  m_Text: Lionel
 --- !u!222 &1325531137
 CanvasRenderer:
   m_ObjectHideFlags: 0

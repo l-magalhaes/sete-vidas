@@ -260,6 +260,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 14cf16e65b9b2ae449146e9724a8f66e, type: 3}
   windup: {fileID: 21300000, guid: 1f135a42060b0aa4c90dd3d43d67ee1f, type: 3}
   attack: {fileID: 21300000, guid: 895e8765ac5cc404ab16e0e1727e606b, type: 3}
+  animations: {fileID: 11400000, guid: c7e3a1f05b9d4c2e8a6f0d1b3c5e7a92, type: 2}
   alertIcon: {fileID: 6313013600712559648}
   debugLabel: {fileID: 8310502607012671390}
   showDebugLabel: 1
@@ -344,7 +345,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5e9e196e312c82e45894f7429401e2b2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 63cff27e77d7bbeef1f439b2e3382e0d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

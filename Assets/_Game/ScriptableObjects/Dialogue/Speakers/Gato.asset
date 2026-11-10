@@ -12,11 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb526adf39578f498c16a9243e62e82, type: 3}
   m_Name: Gato
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.SpeakerProfile
-  DisplayName: Gato
+  DisplayName: Lionel
   Portrait: {fileID: 21300000, guid: 35eb8b7c4f91c944aaa0f5187b60039e, type: 3}
   Expressions:
   - Key: ironico
     Portrait: {fileID: 21300000, guid: 72a6a91597b1d904f9b5ec1b26ddf8a2, type: 3}
+  - Key: surpreso
+    Portrait: {fileID: 21300000, guid: 2be0831503efa28db3c079694d25be77, type: 3}
+  - Key: ferido
+    Portrait: {fileID: 21300000, guid: a210206fe232badcf84b056b54f11ab0, type: 3}
+  - Key: serio
+    Portrait: {fileID: 21300000, guid: 097b794e3b8292e31abebee29e9244a0, type: 3}
+  - Key: terno
+    Portrait: {fileID: 21300000, guid: 460bb4dcc156a5b40466e97e03ae648c, type: 3}
   Side: 0
-  NameColor: {r: 0.7882353, g: 0.8392157, b: 1, a: 1}
+  NameColor: {r: 0.95686275, g: 0.8392157, b: 0.6392157, a: 1}
   VoicePitch: 1.35

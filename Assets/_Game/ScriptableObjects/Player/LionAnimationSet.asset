@@ -1,0 +1,1244 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e7a1c0d9b8f4e2a8c3d6f1b2a4e7c90, type: 3}
+  m_Name: LionAnimationSet
+  m_EditorClassIdentifier: 
+  clips:
+  - name: idle
+    frameTime: 0.16
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: d203dbf609cf085076c4da09727d93e1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 23f53bd251d3313ba299effd2c82291b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 4152898ac24fe9c10b886fa4b04d453d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 1c5d871872f122694d2c7dbc437456b7, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: idle_blink
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 2261d184aeba7e2d97d4a6e27de08f56, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: idle_groom
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 16f02faf388db5f1f34a71720f61ddbc, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 2e4bf75917f3b0248f93ce842a98a5bf, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: cf8b49c1adec9b38c360ae8d172adfd6, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 4015983cec5108971ea30ea3dba1dddd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 7329e33c980c9e810029c2214fa08991, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: b8e86ed6ed40a9999186e35004665379, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 15878a4a73e2be21d0fbc301273de4ec, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 7d0345390d5d3a4da64cfa0ef965a5c0, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: f5d0afea5c4f99755012441d8071c363, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: e7a360b5a43694f3229358ba1e289efa, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: idle_key
+    frameTime: 0.09
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: d07aa3546e53ee1f452ea8125d1d4202, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 76d16c1de231cffce4f227a429fe453d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 2c15d67c5ca7b9f2d2a2911ce520a422, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 68a6b012e3aa94e5b2f70ef77b4a380f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: f99455c850aac471650e759b9317db26, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: c39bb8db0c25e6fc35ff55712adb6da3, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 78f53d646f13ddad08479d05e275e076, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: d834429c4ed1b057775e5710556c204b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: run
+    frameTime: 0.08
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 5ef59916cdc516ee7992c322116f3c2b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 48561d7435f38f655113bb67779d4e6a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 5.5}
+      chest: {x: 1.5, y: 8.5}
+      trim: {x: -2.5, y: 9}
+      body: {x: 1, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: cd1a8fe4adf48e71db8728fe441fa773, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 941d1cab51dab46c0c893f5b13c03060, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 1cbecd20a8bb5b391d868226a33e5f34, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 5.5}
+      chest: {x: 1.5, y: 8.5}
+      trim: {x: -2.5, y: 9}
+      body: {x: 1, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 2612b59b6299c4dd8c2545cd8cefd890, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: jump_up
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 56488e8e971e17565e4d6e85d845d16b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: d422d8df92b1a9ea5ac34a63461c6e3b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: jump_apex
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: ad3d305d38dd38fa7fd06e279411349f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: fall
+    frameTime: 0.1
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 272270fd9983820642f597b9edeff85c, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: d0112aae9786fe4d71d47c0cb8e38902, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: land
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 8b186c396dfd91b1bd889e1f6d1c7bbb, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 4.5}
+      chest: {x: 0.5, y: 7.5}
+      trim: {x: -3.5, y: 8}
+      body: {x: 0, y: -2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 50d0b22fa50225ad54b7bd33f85d9e3b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: land_heavy
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: a243d5545757ad15a3bbec5188924530, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 75aec2ad91174938be17758a7055cee3, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 84ee92e8c8fdae404c5c20a89c775466, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 4.5}
+      chest: {x: 0.5, y: 7.5}
+      trim: {x: -3.5, y: 8}
+      body: {x: 0, y: -2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: e7b16704697c910513425fc7f5100a83, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: crouch
+    frameTime: 0.05
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 47f6684d75403ab19f2c549c5eb1cc3f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 4.5}
+      chest: {x: 0.5, y: 7.5}
+      trim: {x: -3.5, y: 8}
+      body: {x: 0, y: -2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: fbdf0339616d657051ef41eb3bcfefd7, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+  - name: crouch_walk
+    frameTime: 0.12
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: ff916c22b224d8e2a2e1fc6b6548452d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 5c33877e02f7a5479edaa7cac3002b1f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: effb5d9e7cd842a8b458402c327ebe1b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: fafa58679317df02c637bb5ad7e9f4a2, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+  - name: ledge_hang
+    frameTime: 0.3
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: b88588e40b0b781c7d342f591f0deaac, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 3.5}
+      chest: {x: 0.5, y: 6.5}
+      trim: {x: -3.5, y: 7}
+      body: {x: 0, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 4408378112c2103011b0a491bcf499fb, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 3.5}
+      chest: {x: 0.5, y: 6.5}
+      trim: {x: -3.5, y: 7}
+      body: {x: 0, y: -3}
+      hasTail: 1
+      hasTrim: 1
+  - name: ledge_climb
+    frameTime: 0.05
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 14c3933508cc176fb4d8e5bb206c5b6d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 8f3479b35682a77336021bd6588c29b9, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 319fb9d82b89849e57ff921265761198, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 5185b413ccfc98fdf98fcf623cdf8c99, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: wall_climb
+    frameTime: 0.1
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: d38aca305838395c23f2c5c7b8b1f42e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -8.5, y: 6.5}
+      chest: {x: -2.5, y: 9.5}
+      trim: {x: -6.5, y: 10}
+      body: {x: -3, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 4b6119a20392655e15271727785997b1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -8.5, y: 7.5}
+      chest: {x: -2.5, y: 10.5}
+      trim: {x: -6.5, y: 11}
+      body: {x: -3, y: 1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 8d201904c8ff940e2de81d5c2e0cbee3, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -8.5, y: 6.5}
+      chest: {x: -2.5, y: 9.5}
+      trim: {x: -6.5, y: 10}
+      body: {x: -3, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 9862da684720080337afa6057e5b1e76, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -8.5, y: 7.5}
+      chest: {x: -2.5, y: 10.5}
+      trim: {x: -6.5, y: 11}
+      body: {x: -3, y: 1}
+      hasTail: 1
+      hasTrim: 1
+  - name: wall_jump
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 004ece4cfb3d5f9606f713191cb98e95, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 7418eab22b8d2f626808802eb6376cb2, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger1_windup
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: a913af7e612bebb1c249d1a95190d4b8, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger1_active
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: dc81669b742cb11addea6dedfc367515, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: c42efd834e7c9ac16e03679e879076cf, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger1_recovery
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 97bf34bd1e0b94c929f0b2ce9570717c, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger2_windup
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 04177f35c3198ed52a96fa51e515727b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger2_active
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: d8abfb92b7da5aaaaee820aefa341f2d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: cd4e642901ec878662e1af91ca8ea49e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 5.5}
+      chest: {x: 1.5, y: 8.5}
+      trim: {x: -2.5, y: 9}
+      body: {x: 1, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger2_recovery
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 413ab69f00f6132cd780d542d36e27e3, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: af2684baa9af8e1ef73f726215a0af4b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger1_air_windup
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 9af49429fa1486332a0693872ed8fa54, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger1_air_active
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 816b18435e67cb6506b4d15cecf2ab3b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 4490eb0cf7b918963ae835e626e4c47e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger1_air_recovery
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 3e74d4d27f2ae7154cfca2b3b93a9d37, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger2_air_windup
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: c7c156a2d28ebb1a535694ae2fb114ae, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger2_air_active
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 738ca4cba421ab4ab60674ec4cc49030, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 955bb0b18e714d9bb75832ce5e88f296, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 5.5}
+      chest: {x: 1.5, y: 8.5}
+      trim: {x: -2.5, y: 9}
+      body: {x: 1, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger2_air_recovery
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: d54f250a412a3d3b46198c205dd3fffb, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 18c1a5d2f83889e0da2a63b242592d5a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger_crouch_windup
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 9e0c12a50d6511e3aa7227fcdccdffc9, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 3}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger_crouch_active
+    frameTime: 0.04
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 06b8dcdb8a8020740f381960132fb43c, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: f422d47aa469cdcb7475b2e12bfd4d31, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+  - name: dagger_crouch_recovery
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 9bcc809ff7c04d57dc9b0c5004e9fade, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer1_windup
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 72281049f6cba8de590153edb80062cc, type: 3}
+      overlay: {fileID: 21300000, guid: aa89644c6f4b215932b3deac2fa89821, type: 3}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: c5fbd855d7f1a03d56359da245841347, type: 3}
+      overlay: {fileID: 21300000, guid: 62ddd9e6bd62e1f9a63a46774513b36d, type: 3}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 1b03d9a09ccf6de2552d1e8409f75288, type: 3}
+      overlay: {fileID: 21300000, guid: 723d9f147aef965ca840bf34ec87192c, type: 3}
+      tail: {x: -6.5, y: 6.5}
+      chest: {x: -0.5, y: 9.5}
+      trim: {x: -4.5, y: 10}
+      body: {x: -1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer1_active
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 01f04358e1ea722496470cea2ba01606, type: 3}
+      overlay: {fileID: 21300000, guid: 39772a498172b276a8a2e4c42db45fd9, type: 3}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 9a1d076a96d9f84db6533cda89c065d9, type: 3}
+      overlay: {fileID: 21300000, guid: 8f1c3ad3f1bf4b0123d9afcda5ed2f21, type: 3}
+      tail: {x: -3.5, y: 5.5}
+      chest: {x: 2.5, y: 8.5}
+      trim: {x: -1.5, y: 9}
+      body: {x: 2, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer1_recovery
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 414e59f41488a53e579dbf5e81017778, type: 3}
+      overlay: {fileID: 21300000, guid: f423a172c497e63eabbeaec9cb9c1ddb, type: 3}
+      tail: {x: -3.5, y: 5.5}
+      chest: {x: 2.5, y: 8.5}
+      trim: {x: -1.5, y: 9}
+      body: {x: 2, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: cafa525576469132b31e94ca46132994, type: 3}
+      overlay: {fileID: 21300000, guid: a26fc0eaa78129bddb4bb0380c162b58, type: 3}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer1_air_windup
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 6792f595d970cc54bc6d734e2a4fe0ea, type: 3}
+      overlay: {fileID: 21300000, guid: a7f821994bba1ce583281ccbd2a52a73, type: 3}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: c91854f82fb688583fbc550c1b8b4d4b, type: 3}
+      overlay: {fileID: 21300000, guid: 28f8fadcecdb070c4333e489c10d78d2, type: 3}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 994a4a70fbf793b494783bc0dc8eb328, type: 3}
+      overlay: {fileID: 21300000, guid: e919a5ed2a13722ec84dc9b1999d1844, type: 3}
+      tail: {x: -6.5, y: 6.5}
+      chest: {x: -0.5, y: 9.5}
+      trim: {x: -4.5, y: 10}
+      body: {x: -1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer1_air_active
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: c08da9a85be4660331acbfd6654287c1, type: 3}
+      overlay: {fileID: 21300000, guid: f2a052f193bec20afea52cf92e5cdaeb, type: 3}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: b6ecdc735d3f03a14f39030c66b92fdc, type: 3}
+      overlay: {fileID: 21300000, guid: 2878144882eeda114fc918415346da51, type: 3}
+      tail: {x: -3.5, y: 5.5}
+      chest: {x: 2.5, y: 8.5}
+      trim: {x: -1.5, y: 9}
+      body: {x: 2, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer1_air_recovery
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 1aad59842bd1433cc8a2368123a7a968, type: 3}
+      overlay: {fileID: 21300000, guid: 261ecc2e340464b1ebe73165042b23ee, type: 3}
+      tail: {x: -3.5, y: 5.5}
+      chest: {x: 2.5, y: 8.5}
+      trim: {x: -1.5, y: 9}
+      body: {x: 2, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 1169a3758d882499f6dc05f87a19b8b2, type: 3}
+      overlay: {fileID: 21300000, guid: b4d273bcfc9518a06ae280db9776464a, type: 3}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: hurt
+    frameTime: 0.08
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 3a31a1770458f6bda9452e9f946bf9ff, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -6.5, y: 6.5}
+      chest: {x: -0.5, y: 9.5}
+      trim: {x: -4.5, y: 10}
+      body: {x: -1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 38c1cf4d929a626c8875f115cd451238, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: death
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 5161a2ab0b1398be99a54c77e7786000, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -6.5, y: 6.5}
+      chest: {x: -0.5, y: 9.5}
+      trim: {x: -4.5, y: 10}
+      body: {x: -1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: respawn
+    frameTime: 0.06
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 4e1cafc8ca64ff90978e9f8539d9d193, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: 0, y: 0}
+      body: {x: -3, y: -3}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 004ead47a6830e9d4c3b072e8c6f63f4, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: 0, y: 0}
+      body: {x: -3, y: -3}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 9fa459928e37450cf3f2c78845cf9259, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: 0, y: 0}
+      body: {x: -3, y: -3}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: f6204d07e290ae86268237c2d03c6c0e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: 0, y: 0}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: c2d0f792b7beb90e2ddf232f7dc38f97, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 7f064356b086d60e77fbcd61fe70159d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+  - name: hurt_flash
+    frameTime: 0.05
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: ff746fdbd195120f66b4ea3bf15389c8, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -6.5, y: 6.5}
+      chest: {x: -0.5, y: 9.5}
+      trim: {x: 0, y: 0}
+      body: {x: -1, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: lying
+    frameTime: 0.5
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 0878819caff92df5e1a61ebef50a9a91, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 12.5}
+      chest: {x: -1.5, y: 6.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+  - name: curse_kneel
+    frameTime: 0.14
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 9df9fe0309f707a295cdbd119617ec50, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 557c50bff831e0d65e0a32f49757ab0d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 3735e225bdd17b453c1ab061d24091cd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 4.5}
+      chest: {x: 0.5, y: 7.5}
+      trim: {x: -3.5, y: 8}
+      body: {x: 0, y: -2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: a87e7952886b73aa24b80489430855ed, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 79d57e1df0771662f07e52a203e6d540, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 706b90caaa22b8213c1076a2ce7a21a9, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 12.5}
+      chest: {x: -1.5, y: 6.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+  - name: get_up
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: a42f5a3c1741c4f3a6dfdb286c567b56, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 12.5}
+      chest: {x: -1.5, y: 6.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: ac3907794567628a80a223513f6bb084, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 41a4ae79f0a3af1cb08b0eb84b2d6613, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 3436c0ab28b55606da4605cd948d784f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 4.5}
+      chest: {x: 0.5, y: 7.5}
+      trim: {x: -3.5, y: 8}
+      body: {x: 0, y: -2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 5cac31742227b223d110d098b7ba1d0c, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 5fcc61c1ba9e343f21c65fd2514168c5, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: grab_tome
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: a7104dfee615185d05fbdd0ac3098c19, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 4869e7460ea828452fa710962b68b001, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 07eba8a07964fdaafaa0c668fab1897b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: a1c1711f4270d59df77cf7adc1a84a51, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 619f5c3f45f2fd5a50a2e211805d7594, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: look_up
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: d30f54a1145cd7ce5fd0b5e4f50b423a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: look_down
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 2d46f76e45041450ac879b58d0ff1a8d, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer_back
+    frameTime: 1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 8b8252ddaf1f9cf8eae373e0162e7698, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  dustJump:
+  - {fileID: 21300000, guid: bc798726e9252b4cf6e264f1c7f08dc3, type: 3}
+  - {fileID: 21300000, guid: 049b6d6f1efaff3e6516d69f99c1008b, type: 3}
+  - {fileID: 21300000, guid: ffe0506253d6a86327353d7820061c4d, type: 3}
+  - {fileID: 21300000, guid: 6803652104d5a08dddae56b6e783158e, type: 3}
+  - {fileID: 21300000, guid: f7922ddd1ee3f6c3d7562db9e3befabd, type: 3}
+  dustLand:
+  - {fileID: 21300000, guid: 0736c0857e0bda1f30c8d3f4581199d2, type: 3}
+  - {fileID: 21300000, guid: ba1832943b84b794ca569d8b11afd9a8, type: 3}
+  - {fileID: 21300000, guid: c1890c789d5f94b8404e20ed24d240de, type: 3}
+  - {fileID: 21300000, guid: 9ea9c54569e2a4303f4cb4c31999b242, type: 3}
+  - {fileID: 21300000, guid: 09b56de459dc83caec7822fd23cf7ba4, type: 3}
+  - {fileID: 21300000, guid: bd3fbf6a83de0ce4083f9101c774c274, type: 3}
+  dustStep:
+  - {fileID: 21300000, guid: 493228c6553681cda5a956b17ae904c3, type: 3}
+  - {fileID: 21300000, guid: 9b6c79482a489dcd20f5444db81edb02, type: 3}
+  - {fileID: 21300000, guid: 9b848bce896d67beb23bfb40f081df1f, type: 3}
+  dustWall:
+  - {fileID: 21300000, guid: db9b6f6bed8c1228cd2fa141c08f2a73, type: 3}
+  - {fileID: 21300000, guid: e3ef28e8df4a761a3f7c5e5e7851b0d3, type: 3}
+  - {fileID: 21300000, guid: 0ea9b2c39f8e46948de9ab962e859690, type: 3}
+  backstab:
+  - {fileID: 21300000, guid: a3d3fffd7c8c87b3940960fbf0efd697, type: 3}
+  - {fileID: 21300000, guid: b9fab86fa2030d7dc743b4903975cd81, type: 3}
+  - {fileID: 21300000, guid: 14f1566bd63bb294df21777157451b1f, type: 3}
+  - {fileID: 21300000, guid: 3217fdff624549091c3c04caaa5a0246, type: 3}
+  spark:
+  - {fileID: 21300000, guid: 570cd8fb3a9889a414f612d1c9e9acec, type: 3}
+  - {fileID: 21300000, guid: c66e0c9150a2e9773b40ffdf16670c23, type: 3}
+  classSwitch:
+  - {fileID: 21300000, guid: a072b5c0fd6e50c501f0a35930096a99, type: 3}
+  - {fileID: 21300000, guid: 8a88fbe930601665c9354c81ad5c0e8f, type: 3}
+  - {fileID: 21300000, guid: 4bb54c561ebe44036c58cc484a529a51, type: 3}
+  - {fileID: 21300000, guid: c932b3706682ed82e8a8decaa1314cfc, type: 3}
+  - {fileID: 21300000, guid: 82653c0536441623bdee260d1670da81, type: 3}
+  trimPixel: {fileID: 21300000, guid: fe53bbda4f3e0c83254c7cb4d49c6a26, type: 3}
+  chestSpark: {fileID: 21300000, guid: c2280ef5f87590b595098173a3a9d369, type: 3}
