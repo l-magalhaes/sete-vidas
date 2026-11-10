@@ -66,7 +66,19 @@ namespace SeteVidas.EditorTools
             go.transform.position = new Vector3(at.x + offset * Px, at.y + dy, 0f);
 
             if (def.frames.Length > 1 && def.entry.animacao.fps > 0f)
-                go.AddComponent<SpriteLoop>().Configure(def.frames, 1f / def.entry.animacao.fps);
+            {
+                // animação por variação (árvores): só o bloco de quadros da variação escolhida
+                var frames = def.frames;
+                int per = def.entry.animacao.quadros_por_variacao;
+                if (per > 0 && frames.Length >= (variant + 1) * per)
+                {
+                    frames = new Sprite[per];
+                    System.Array.Copy(def.frames, variant * per, frames, 0, per);
+                }
+                // cada um começa num ponto diferente do ciclo: árvores e tochas lado a lado não balançam juntas
+                float cycle = frames.Length / def.entry.animacao.fps;
+                go.AddComponent<SpriteLoop>().Configure(frames, 1f / def.entry.animacao.fps, DressingRules.Value(seed, 5) * cycle);
+            }
             return variant;
         }
 

@@ -34,6 +34,7 @@ MonoBehaviour:
       quadros:
       - env_com_obj_wall_torch_apagada_0.png
       - env_com_obj_wall_torch_apagada_1.png
+      quadros_por_variacao: 0
       fps: 3
       amplitude_px: 1
     paleta: []

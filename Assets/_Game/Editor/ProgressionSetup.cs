@@ -323,21 +323,40 @@ namespace SeteVidas.EditorTools
         {
             Directory.CreateDirectory(Path.GetDirectoryName(SanctuaryPrefabPath));
             AssetDatabase.Refresh();
-            var unlit = SanctuarySprite("env_sanctuary_unlit", lit: false);
-            var lit = SanctuarySprite("env_sanctuary_lit", lit: true);
+            // arte final (Tools/EnvironmentSprites/PropSpriteGen: fonte, cesta de frutas e caixinha de areia);
+            // sem ela, o desenho provisório antigo
+            const string art = "Assets/_Game/Art/Environments/Common/env_com_obj_santuario_";
+            var frames = new System.Collections.Generic.List<Sprite>();
+            for (int i = 0; i < 4; i++) { var s = AssetDatabase.LoadAssetAtPath<Sprite>(art + "ativo_" + i + ".png"); if (s != null) frames.Add(s); }
+            var unlit = AssetDatabase.LoadAssetAtPath<Sprite>(art + "seco.png");
+            if (unlit == null || frames.Count == 0) { unlit = SanctuarySprite("env_sanctuary_unlit", lit: false); frames.Clear(); }
+            var lit = frames.Count > 0 ? frames[0] : SanctuarySprite("env_sanctuary_lit", lit: true);
 
             var root = new GameObject("Sanctuary") { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             var box = root.AddComponent<BoxCollider2D>();
             box.isTrigger = true;
-            box.size = new Vector2(2.5f, 2f);
-            box.offset = new Vector2(0f, 1f);
+            box.size = new Vector2(4.5f, 2f);
+            box.offset = new Vector2(0.5f, 1f);  // fonte + caixinha de areia
 
             var visual = new GameObject("Visual");
             visual.transform.SetParent(root.transform, false);
-            visual.transform.localPosition = new Vector3(0f, 1f, 0f); // sprite 32×32 com pivot central
+            visual.transform.localPosition = new Vector3(0.5f, 1f, 0f); // 80×32, pivot central: a fonte fica no meio do santuário
             var sr = visual.AddComponent<SpriteRenderer>();
             sr.sprite = unlit;
             sr.sortingOrder = 2; // atrás do gato
+
+            // borda da frente da caixinha de areia: só aparece com o gato cochilando dentro (Sanctuary.RestRoutine)
+            SpriteRenderer front = null;
+            var frontSprite = AssetDatabase.LoadAssetAtPath<Sprite>(art + "frente.png");
+            if (frontSprite != null)
+            {
+                var frontGo = new GameObject("FrenteDaCaixinha");
+                frontGo.transform.SetParent(visual.transform, false);
+                front = frontGo.AddComponent<SpriteRenderer>();
+                front.sprite = frontSprite;
+                front.sortingOrder = 6; // na frente do gato (5)
+                front.enabled = false;
+            }
 
             var promptGo = new GameObject("Prompt");
             promptGo.transform.SetParent(root.transform, false);
@@ -350,7 +369,11 @@ namespace SeteVidas.EditorTools
             so.FindProperty("spriteRenderer").objectReferenceValue = sr;
             so.FindProperty("unlitSprite").objectReferenceValue = unlit;
             so.FindProperty("litSprite").objectReferenceValue = lit;
+            var framesProp = so.FindProperty("litFrames");
+            framesProp.arraySize = frames.Count;
+            for (int i = 0; i < frames.Count; i++) framesProp.GetArrayElementAtIndex(i).objectReferenceValue = frames[i];
             so.FindProperty("prompt").objectReferenceValue = prompt;
+            so.FindProperty("sandboxFront").objectReferenceValue = front;
             so.ApplyModifiedPropertiesWithoutUndo();
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, SanctuaryPrefabPath);

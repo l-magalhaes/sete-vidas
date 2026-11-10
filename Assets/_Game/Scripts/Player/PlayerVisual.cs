@@ -163,7 +163,7 @@ namespace SeteVidas.Player
         {
             if (f == null || f.sprite == null) return false;
             string n = f.sprite.name;
-            return n.StartsWith("chr_lion_lying") || n.StartsWith("chr_lion_curse_writhe") || n == "chr_lion_curse_kneel_6" || n == "chr_lion_get_up_0";
+            return n.StartsWith("chr_lion_lying") || n.StartsWith("chr_lion_nap_") && !n.StartsWith("chr_lion_nap_wake_") || n == "chr_lion_nap_wake_0" || n == "chr_lion_nap_wake_1" || n == "chr_lion_nap_wake_2" || n == "chr_lion_nap_wake_3" || n == "chr_lion_nap_wake_4" || n.StartsWith("chr_lion_curse_writhe") || n == "chr_lion_curse_kneel_6" || n == "chr_lion_get_up_0";
         }
 
         static readonly Color HealGold = new Color32(0xff, 0xd3, 0x4d, 0xff);
@@ -402,7 +402,8 @@ namespace SeteVidas.Player
 
             // levantou depois da maldição
             bool collapsed = health != null && health.IsCollapsed;
-            if (!collapsed && _wasCollapsed) PlayAction("get_up");
+            // (do cochilo no santuário ele acorda como gatinho: boceja, espreguiça e levanta)
+            if (!collapsed && _wasCollapsed) PlayAction(_action != null && _action.name == "nap" && animationSet != null && animationSet.Get("nap_wake") != null ? "nap_wake" : "get_up");
         }
 
         SpriteFrame PickFrame(float dt, bool attacking, out bool bodyVisible, out bool overlayAllowed)
@@ -448,7 +449,7 @@ namespace SeteVidas.Player
             if (collapsed)
             {
                 overlayAllowed = false;
-                if (_action != null && (_action.name == "curse_kneel" || _action.name == "curse_writhe")) return Show(_action, _actionTime);
+                if (_action != null && (_action.name == "curse_kneel" || _action.name == "curse_writhe" || _action.name == "nap")) return Show(_action, _actionTime);
                 return Show(set.Get("lying"), 0f);
             }
             if (_action != null)

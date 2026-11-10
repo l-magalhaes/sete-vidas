@@ -36,6 +36,7 @@ MonoBehaviour:
       - env_ext_ani_cachoeira_1.png
       - env_ext_ani_cachoeira_2.png
       - env_ext_ani_cachoeira_3.png
+      quadros_por_variacao: 0
       fps: 10
       amplitude_px: 8
     paleta: []

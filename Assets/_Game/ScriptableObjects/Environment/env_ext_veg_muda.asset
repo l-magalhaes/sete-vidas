@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_veg_muda
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Vegetation/manifest.json
+  entry:
+    id: env_ext_veg_muda
+    nome: "Muda de \xE1rvore"
+    regiao: ext
+    categoria: veg
+    funcao: decorativo
+    material: planta
+    epoca: natural
+    tamanho_px: 0a0000000c000000i
+    sprites:
+    - env_ext_veg_muda_a_0.png
+    - env_ext_veg_muda_b_0.png
+    - env_ext_veg_muda_c_0.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: vento
+      quadros: []
+      quadros_por_variacao: 4
+      fps: 5
+      amplitude_px: 1
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 2
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - entre os tocos perto da muralha
+      - montanha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Mudas nascendo entre os tocos mostram que a manuten\xE7\xE3o da zona de tiro falhou (plano, 4.4)."
+    tags:
+    - arvore
+    - vento
+    - abandono
+  variants:
+  - {fileID: 21300000, guid: e92a59b01906bf816d0c94ce5e6fdd12, type: 3}
+  - {fileID: 21300000, guid: e57988875a092bf23a5d177aeb1bb0f9, type: 3}
+  - {fileID: 21300000, guid: 9805db9fe7252656a74f48d98efdc673, type: 3}
+  frames:
+  - {fileID: 21300000, guid: e92a59b01906bf816d0c94ce5e6fdd12, type: 3}
+  - {fileID: 21300000, guid: 96b651ac5a8ce40af7fec7b111d1beb3, type: 3}
+  - {fileID: 21300000, guid: 3f9493cac1cdefeb06bc0a32270f4028, type: 3}
+  - {fileID: 21300000, guid: 112850b0cb5d4b9a1f4ac6964f56310b, type: 3}
+  - {fileID: 21300000, guid: e57988875a092bf23a5d177aeb1bb0f9, type: 3}
+  - {fileID: 21300000, guid: 9b8e4e7a759aaed36395fce187b7b615, type: 3}
+  - {fileID: 21300000, guid: 58af8939113398e02a1d06d9c963aca7, type: 3}
+  - {fileID: 21300000, guid: 7b57c31a1aa56ef774a1632341a5f53b, type: 3}
+  - {fileID: 21300000, guid: 9805db9fe7252656a74f48d98efdc673, type: 3}
+  - {fileID: 21300000, guid: ed3267cb805328fbdf27bdd0cca7bbe6, type: 3}
+  - {fileID: 21300000, guid: 76308603e36b911e5b3b04a62f13200e, type: 3}
+  - {fileID: 21300000, guid: 2afb8ce20a492fdee6baff3479b62efa, type: 3}

@@ -45,7 +45,7 @@ namespace SeteVidas.EditorTools
         /// </summary>
         internal static void EnsureSprites()
         {
-            StatueSprite(); TargetSprite(); RackSprite(); BannerSprite();
+            TargetSprite(); RackSprite(); BannerSprite();
             WindowSprite(); ShieldSprite(); PlaqueSprite();
         }
 
@@ -187,22 +187,6 @@ namespace SeteVidas.EditorTools
                 set(x, y, x == 2 || x == 13 ? CrimsonDark : x == 3 || x == 12 ? Gold : Crimson);
             }
             Emblem(set, 8, 22, Gold);
-        });
-
-        /// <summary>Estátua 24×48 de um cão paladino de pedra, de pé, com a marreta apoiada, sobre um pedestal.</summary>
-        static Sprite StatueSprite() => Draw("decor_statue", 24, 48, set =>
-        {
-            Rect(set, 2, 0, 21, 6, Stone, StoneDark);          // pedestal
-            for (int x = 3; x <= 20; x += 4) set(x, 3, StoneDark);
-            Rect(set, 7, 6, 16, 28, Stone, StoneDark);          // corpo de armadura
-            Rect(set, 9, 10, 14, 24, StoneDark, StoneDark);     // tabardo esculpido
-            Emblem(set, 11, 17, Stone);
-            Rect(set, 7, 28, 16, 38, Stone, StoneDark);         // cabeça
-            Rect(set, 16, 30, 20, 33, Stone, StoneDark);        // focinho
-            Rect(set, 4, 27, 6, 36, StoneDark, StoneDark);      // orelha caída
-            set(13, 35, Ink);                                    // olho
-            for (int y = 6; y <= 30; y++) set(20, y, StoneDark); // cabo da marreta
-            Rect(set, 18, 30, 23, 35, Stone, StoneDark);        // cabeça da marreta (para cima)
         });
 
         /// <summary>Alvo de palha 16×24 num cavalete, com anéis vermelhos e uma flecha cravada.</summary>

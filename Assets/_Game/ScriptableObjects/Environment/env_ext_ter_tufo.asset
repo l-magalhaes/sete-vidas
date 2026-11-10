@@ -31,6 +31,7 @@ MonoBehaviour:
     animacao:
       nome: 
       quadros: []
+      quadros_por_variacao: 0
       fps: 0
       amplitude_px: 0
     paleta: []
@@ -61,7 +62,15 @@ MonoBehaviour:
     - vento
   variants:
   - {fileID: 21300000, guid: c10bae7ac869ac33e6a4af6da7e61420, type: 3}
+  - {fileID: 21300000, guid: 9d4d452554c161ada6c43f427cada346, type: 3}
+  - {fileID: 21300000, guid: ab634737ec8f0a81e267f3b324a76705, type: 3}
   - {fileID: 21300000, guid: 8dac56ee1dc21ea7ea5f5b84695cde6e, type: 3}
+  - {fileID: 21300000, guid: 709c86757bfa212d82353d18fef486e9, type: 3}
+  - {fileID: 21300000, guid: 8af9b1def135582648df24d3911e2e27, type: 3}
   - {fileID: 21300000, guid: d4ca62503102de9373661c367f984f1e, type: 3}
+  - {fileID: 21300000, guid: def56c4e9245bd57ebae8c03e31e1181, type: 3}
+  - {fileID: 21300000, guid: 92c3f9851f17703e757f8213d2553252, type: 3}
   - {fileID: 21300000, guid: 336b8e1e99f86ea4a78b44dffef53523, type: 3}
+  - {fileID: 21300000, guid: 216feb2928a0fdd1dde0ca3f89179de9, type: 3}
+  - {fileID: 21300000, guid: 8ae9626cb9cab2ec9251307e75074969, type: 3}
   frames: []

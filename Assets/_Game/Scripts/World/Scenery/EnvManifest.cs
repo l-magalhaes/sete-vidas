@@ -88,6 +88,11 @@ namespace SeteVidas.World.Scenery
         public string nome = "";
         /// <summary>Quadros, relativos à pasta do manifesto. Vazio = sem animação.</summary>
         public string[] quadros = new string[0];
+        /// <summary>
+        /// Animação POR VARIAÇÃO (árvores): cada sprite de <c>sprites</c> termina em "_0.png" e tem os irmãos
+        /// "_1.png" … até este número de quadros. Quando > 0, <see cref="quadros"/> é ignorado.
+        /// </summary>
+        public int quadros_por_variacao;
         public float fps;
         public int amplitude_px;
     }

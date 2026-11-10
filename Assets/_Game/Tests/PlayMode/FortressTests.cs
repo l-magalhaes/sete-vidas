@@ -135,14 +135,34 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator Vegetation_DensityFalls_FromMountainToWall_AndGrassReacts()
+        {
+            yield return Load();
+            int mountain = 0, patio = 0, swaying = 0;
+            foreach (Transform t in GameObject.Find("Fortaleza/Enfeites").transform)
+            {
+                if (!t.name.StartsWith("Anciã") && !t.name.StartsWith("Jovem") && !t.name.StartsWith("Muda") && !t.name.StartsWith("Adulta") &&
+                    !t.name.StartsWith("Arbusto") && !t.name.StartsWith("Árvore") && !t.name.StartsWith("Toco") && !t.name.StartsWith("Mato")) continue;
+                if (t.position.x < 13f) mountain++;
+                else if (t.position.x >= 44f && t.position.x < 112f) patio++;
+                if (t.GetComponent<SeteVidas.World.SpriteLoop>() != null) swaying++;
+            }
+            Assert.Greater(mountain, patio, "mais vegetação na montanha que no pátio (a mata só invade as bordas do forte)");
+            Assert.Greater(swaying, 10, "copas e arbustos balançando com o vento");
+
+            int bending = Object.FindObjectsByType<SeteVidas.World.Scenery.BendOnPass>(FindObjectsInactive.Include).Length;
+            Assert.Greater(bending, 30, "tufos de grama que curvam quando o gato passa");
+        }
+
+        [UnityTest]
         public IEnumerator Dressing_ComesFromTheSceneryLibrary()
         {
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 40 itens no FortressDressing (Montanha, Trilha, tenda/arquibancada/torre, alcovas, estátuas e tochas apagadas), com 2 fileiras
-            // (4 escudos do salão, 5 ameias da torre): 47 objetos
-            Assert.AreEqual(47, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            // 67 itens no FortressDressing (Etapas 1–4: enfeites, rochas, fósseis, estruturas, alcovas, vegetação), com 2 fileiras
+            // (4 escudos do salão, 5 ameias da torre): 74 objetos
+            Assert.AreEqual(74, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
                 Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
             Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,

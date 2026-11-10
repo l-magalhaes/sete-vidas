@@ -36,6 +36,7 @@ MonoBehaviour:
       - env_com_obj_wall_torch_1.png
       - env_com_obj_wall_torch_2.png
       - env_com_obj_wall_torch_3.png
+      quadros_por_variacao: 0
       fps: 10
       amplitude_px: 1
     paleta:

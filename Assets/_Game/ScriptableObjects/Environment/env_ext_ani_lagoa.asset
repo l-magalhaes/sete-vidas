@@ -36,6 +36,7 @@ MonoBehaviour:
       - env_ext_ani_lagoa_1.png
       - env_ext_ani_lagoa_2.png
       - env_ext_ani_lagoa_3.png
+      quadros_por_variacao: 0
       fps: 4
       amplitude_px: 1
     paleta: []

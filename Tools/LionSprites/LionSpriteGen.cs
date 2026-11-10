@@ -634,6 +634,29 @@ public static partial class LionSpriteGen
         getUp.Frames.Add(MakeFrame("get_up_4", LandMid()));
         getUp.Frames.Add(MakeFrame("get_up_5", std));
         Clips.Add(getUp);
+        // cochilo de gatinho na caixinha de areia do santuário: enrolado, respira devagar, mexe uma orelha de vez em quando
+        var nap = new Clip("nap", 0.3f, true);
+        nap.Frames.Add(Nap("nap_0", 0, "sleep"));
+        nap.Frames.Add(Nap("nap_1", 0, "sleep"));
+        nap.Frames.Add(Nap("nap_2", 1, "sleep"));
+        nap.Frames.Add(Nap("nap_3", 1, "sleep"));
+        nap.Frames.Add(Nap("nap_4", 0, "sleep"));
+        nap.Frames.Add(Nap("nap_5", 0, "sleep"));
+        nap.Frames.Add(Nap("nap_6", 0, "sleepflick"));
+        nap.Frames.Add(Nap("nap_7", 0, "sleep"));
+        Clips.Add(nap);
+        // acorda: abre os olhos, boceja, espreguiça com as patas lá na frente e levanta
+        var wake = new Clip("nap_wake", 0.12f, false);
+        wake.Frames.Add(Nap("nap_wake_0", 0, "n"));
+        wake.Frames.Add(Nap("nap_wake_1", 1, "yawn"));
+        wake.Frames.Add(Nap("nap_wake_2", 1, "yawn"));
+        wake.Frames.Add(Lying("nap_wake_3", "blink", new Point(7, 0), 0, 0));
+        wake.Frames.Add(Lying("nap_wake_4", "n", new Point(5, 1), 1, 0));
+        wake.Frames.Add(MakeFrame("nap_wake_5", With(CrouchPose(), p => p.HeadV = "blink")));
+        wake.Frames.Add(MakeFrame("nap_wake_6", LandLow()));
+        wake.Frames.Add(MakeFrame("nap_wake_7", LandMid()));
+        wake.Frames.Add(MakeFrame("nap_wake_8", std));
+        Clips.Add(wake);
         Add("grab_tome", 0.12f, false,
             With(std, p => p.FrontHand = new Point(16, 13)),
             With(std, p => { p.FrontHand = new Point(16, 12); p.HeadV = "down"; }),
@@ -725,6 +748,64 @@ public static partial class LionSpriteGen
 
     // Deitado de lado: o corpo em pé (sem contorno) girado 90° (cabeça para a direita), apoiado no chão.
     static Frame Lying(string name, string head) { return Lying(name, head, new Point(4, 0), 0, 0); }
+
+    // Enrolado como um gatinho (cabeça para a direita, deitada nas patinhas): o corpo é uma bolinha com a capa por
+    // cima, a calça no quadril e a pata de trás dobrada embaixo. A cauda (SoftBody) sai de trás e se deita no chão.
+    // <paramref name="breathe"/>: as costas sobem 1 px (inspira). <paramref name="head"/>: "sleep" (olhos fechados),
+    // "sleepflick" (dormindo, orelha mexe), "n" (acordou) ou "yawn" (bocejo, cabeça 1 px mais alta).
+    static Frame Nap(string name, int breathe, string head)
+    {
+        var fin = new Canvas();
+        const int ground = 39;
+        // bolinha do corpo
+        // costas em domo (mais alto no meio, caindo para o quadril), faixas da capa curvas seguindo a bolinha
+        float cx = 18f, cy = 37.5f, rx = 8.5f, ry = 7f + breathe;
+        for (int x = 9; x <= 27; x++)
+            for (int y = 28; y <= ground; y++)
+            {
+                float nx = (x + 0.5f - cx) / rx, ny = (y + 0.5f - cy) / ry;
+                if (y + 0.5f > cy) ny = (y + 0.5f - cy) / 2.2f;              // embaixo é achatado (apoiado no chão)
+                float d = (float)Math.Sqrt(nx * nx + ny * ny);
+                if (d > 1f) continue;
+                char c;
+                if (ny < 0 && d > 0.72f) c = nx > 0.1f && ny < -0.6f ? 'G' : 'H';   // capa nas costas, luz em cima
+                else if (ny < 0 && d > 0.58f) c = 'T';                               // faixa da capa (cor da classe)
+                else if (ny < 0 && d > 0.5f) c = 't';
+                else if (nx < -0.35f) c = ny > 0.4f ? 'f' : 'F';                     // quadril de pelo (pata de trás dobrada)
+                else c = ny > 0.4f ? 'v' : 'V';                                      // colete de couro
+                fin.Px[x, y] = c;
+            }
+        for (int x = 12; x <= 14; x++) fin.Px[x, ground - 3] = 'f';                   // dobra da coxa
+        // pata de trás dobrada embaixo do corpo
+        for (int x = 10; x <= 13; x++) fin.Px[x, ground] = x == 10 ? 'L' : 'F';
+        fin.Px[11, ground - 1] = 'f';
+        // cabeça deitada nas patinhas
+        string variant = head == "sleep" ? "blink" : head == "sleepflick" ? "earflick" : head == "yawn" ? "blink" : "n";
+        var hd = Head(variant);
+        if (head == "sleepflick")
+            for (int r = 0; r < hd.Length; r++) hd[r] = hd[r].Replace('E', 'F');      // dormindo: olhos fechados
+        if (head == "yawn")
+        {
+            var a = hd[8].ToCharArray(); a[7] = 'o'; a[8] = 'N'; a[9] = 'o'; hd[8] = new string(a);    // boca bem aberta
+            var b = hd[9].ToCharArray(); b[7] = 'o'; b[8] = 'N'; b[9] = 'o'; hd[9] = new string(b);
+            hd[0] = "...L....L..."; hd[1] = "..LFf..LFf..";                                  // orelhas esticadas para trás
+        }
+        int lift = head == "yawn" ? 2 : 0;
+        int hx = 22, hy = ground - lift - (hd.Length - 1);
+        for (int r = 0; r < hd.Length; r++)
+            for (int c = 0; c < hd[r].Length; c++)
+            {
+                char ch = hd[r][c]; if (ch == '.' || ch == ' ') continue;
+                int x = hx + c, y = hy + r;
+                if (x >= 0 && y >= 0 && x < W && y < H) fin.Px[x, y] = ch;
+            }
+        // patinhas da frente aparecendo embaixo do queixo
+        for (int x = 31; x <= 35; x++) if (fin.Px[x, ground] == '.' || x >= 33) fin.Px[x, ground] = x == 35 ? 'L' : (x % 2 == 0 ? 'L' : 'F');
+        fin.Px[34, ground - 1] = 'F';
+        Outline(fin, 'o');
+        Func<int, int, PointF> at = (x, y) => new PointF(x + 0.5f - 24f, 40f - (y + 0.5f));
+        return new Frame { Name = name, Body = fin, Tail = at(10, 36), Chest = at(18, 35), BodyOffset = new Point(0, 0), HasTail = true };
+    }
 
     // Caído de bruços (cabeça para a direita): o corpo em pé (sem cabeça e sem braço) girado 90°, de barriga no
     // chão; a cabeça é carimbada em pé na ponta, para o rosto ficar legível.

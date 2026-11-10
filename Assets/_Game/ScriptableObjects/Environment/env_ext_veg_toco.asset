@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_veg_toco
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Vegetation/manifest.json
+  entry:
+    id: env_ext_veg_toco
+    nome: Toco cortado
+    regiao: ext
+    categoria: veg
+    funcao: narrativo
+    material: madeira
+    epoca: abandono
+    tamanho_px: 0e0000000a000000i
+    sprites:
+    - env_ext_veg_toco_a.png
+    - env_ext_veg_toco_b.png
+    - env_ext_veg_toco_c.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 2
+      nao_perto_de:
+      - borda de pulo (parece degrau)
+      perto_de: []
+      densidade: 
+      zonas:
+      - perto das muralhas (zona de tiro limpa)
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "A Ordem cortou as \xE1rvores perto do muro para ter linha de tiro (plano, 4.4). O toco b tem um broto."
+    tags:
+    - abandono
+    - historia
+  variants:
+  - {fileID: 21300000, guid: 5a5c6a030ef4cfd5d40b24a89c230739, type: 3}
+  - {fileID: 21300000, guid: 1eeba04200d3bc2fe78c53a8f03f6e78, type: 3}
+  - {fileID: 21300000, guid: ff13bbed6c4f31655c0ee238641d6b95, type: 3}
+  frames: []

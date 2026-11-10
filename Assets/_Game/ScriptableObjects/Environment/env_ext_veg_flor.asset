@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_veg_flor
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Vegetation/manifest.json
+  entry:
+    id: env_ext_veg_flor
+    nome: Flores silvestres
+    regiao: ext
+    categoria: veg
+    funcao: decorativo
+    material: planta
+    epoca: natural
+    tamanho_px: 0600000007000000i
+    sprites: []
+    sprites_prefixo: env_ext_veg_flor_
+    espelhar: 0
+    camada: terreno_detalhe
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - montanha
+      - trilha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Espalhadas sozinhas (TerrainAutotile.TopDetails, 5% do solo). Rosa, lil\xE1s e branco: nunca amarelo (moeda)."
+    tags:
+    - flor
+  variants:
+  - {fileID: 21300000, guid: f9f2e54486ea10323e4fa3b6c6135737, type: 3}
+  - {fileID: 21300000, guid: 52c0645959e97646c7abcb2c46c74ebe, type: 3}
+  - {fileID: 21300000, guid: ce392e017231d1fe2d97d64c4b92fd61, type: 3}
+  frames: []

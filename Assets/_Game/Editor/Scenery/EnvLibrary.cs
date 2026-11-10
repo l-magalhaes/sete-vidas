@@ -66,7 +66,7 @@ namespace SeteVidas.EditorTools
                     def.manifestPath = manifestPath;
                     def.entry = entry;
                     def.variants = LoadSprites(dir, ExpandPrefix(dir, entry), entry.id, report);
-                    def.frames = LoadSprites(dir, entry.animacao != null ? entry.animacao.quadros : null, entry.id, report);
+                    def.frames = LoadSprites(dir, FrameFiles(dir, entry), entry.id, report);
                     EditorUtility.SetDirty(def);
                     report.Imported++;
                 }
@@ -103,6 +103,25 @@ namespace SeteVidas.EditorTools
         }
 
         static List<string> Validate(EnvManifestEntry e) => EnvManifest.Validate(e);
+
+        /// <summary>
+        /// Quadros da animação. Com quadros_por_variacao = n: para cada variação "..._0.png", os n quadros
+        /// "..._0" … "..._{n-1}" em sequência (a montagem pega o bloco da variação escolhida).
+        /// </summary>
+        static string[] FrameFiles(string dir, EnvManifestEntry entry)
+        {
+            if (entry.animacao == null) return new string[0];
+            int n = entry.animacao.quadros_por_variacao;
+            if (n <= 0) return entry.animacao.quadros ?? new string[0];
+            var list = new List<string>();
+            foreach (var v in ExpandPrefix(dir, entry))
+            {
+                if (!v.EndsWith("_0.png")) { list.Add(v); continue; }
+                string stem = v.Substring(0, v.Length - "0.png".Length);
+                for (int i = 0; i < n; i++) list.Add(stem + i + ".png");
+            }
+            return list.ToArray();
+        }
 
         /// <summary>sprites + todos os PNGs que começam com sprites_prefixo (ordem alfabética), relativos à pasta.</summary>
         static string[] ExpandPrefix(string dir, EnvManifestEntry entry)

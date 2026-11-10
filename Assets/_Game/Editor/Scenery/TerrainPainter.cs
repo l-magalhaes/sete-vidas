@@ -17,6 +17,7 @@ namespace SeteVidas.EditorTools
         public const string TerrainArt = "Assets/_Game/Art/Environments/Exterior/Terrain";
         public const string ExteriorArt = "Assets/_Game/Art/Environments/Exterior";
         public const string ArchitectureArt = "Assets/_Game/Art/Environments/Citadel/Architecture";
+        public const string VegetationArt = "Assets/_Game/Art/Environments/Exterior/Vegetation";
         const string TileFolder = "Assets/_Game/ScriptableObjects/Environment/Tiles";
 
         static readonly Dictionary<string, Tile> s_tiles = new Dictionary<string, Tile>();
@@ -57,6 +58,20 @@ namespace SeteVidas.EditorTools
                 sr.sortingOrder = order; // 1 = terreno_detalhe; -9 = acontecimento na parede do fundo
                 // pivot central: a base do sprite fica na superfície
                 go.transform.position = new Vector3(d.X, d.Y + sprite.bounds.extents.y, 0f);
+
+                // tufo de grama: curva quando o gato passa (Etapa 4)
+                if (d.Sprite.StartsWith("env_ext_ter_tufo_"))
+                {
+                    var left = LoadCached(d.Sprite + "_l");
+                    var right = LoadCached(d.Sprite + "_r");
+                    if (left != null && right != null) go.AddComponent<BendOnPass>().Configure(sr, sprite, left, right);
+                }
+            }
+
+            Sprite LoadCached(string name)
+            {
+                if (!detailSprites.TryGetValue(name, out var s)) detailSprites[name] = s = LoadSprite(name);
+                return s;
             }
 
             // gota animada da gárgula: quadros env_sol_arq_gota_0..13 num SpriteLoop com atraso próprio
@@ -122,6 +137,7 @@ namespace SeteVidas.EditorTools
                     ? TerrainAutotile.DeepDetails(TerrainAutotile.BandFor(mat, Solid, FortressTerrain.MaterialAt, x, y), x, y)
                     : TerrainAutotile.TopDetails(mat, x, y);
                 foreach (var d in details) Detail(d);
+                if (!Solid(x, y - 1)) foreach (var d in TerrainAutotile.CeilingDetails(mat, x, y)) Detail(d); // raízes no teto
             }
             if (missing > 0)
                 Debug.LogError($"[Sete Vidas] Terreno: {missing} tile(s) sem arte. Rode Tools/EnvironmentSprites/gerar.ps1 e reimporte.");
@@ -143,7 +159,8 @@ namespace SeteVidas.EditorTools
         {
             var s = AssetDatabase.LoadAssetAtPath<Sprite>($"{TerrainArt}/{name}.png")
                     ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{ExteriorArt}/{name}.png")
-                    ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{ArchitectureArt}/{name}.png");
+                    ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{ArchitectureArt}/{name}.png")
+                    ?? AssetDatabase.LoadAssetAtPath<Sprite>($"{VegetationArt}/{name}.png");
             if (s == null) Debug.LogError($"[Sete Vidas] Terreno: falta {name}.png. Rode Tools/EnvironmentSprites/gerar.ps1");
             return s;
         }

@@ -1185,6 +1185,150 @@ MonoBehaviour:
       body: {x: 0, y: 0}
       hasTail: 1
       hasTrim: 1
+  - name: nap
+    frameTime: 0.3
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 0107d4c8bc7663436f145c13c49734da, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 1b20950ac151a553a296641ec57daa3e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 9908c53e5f22d63e0b9ef5ff4bbb04c1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: e770483eb0b837cb203d62b347677ce1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 4a4c21901b1e71d4ed81818e515f5c8a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 76f5229e1045a7a50a3ad4c5a75ea265, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: c46a05504c65694257e14ee452f374a2, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: b0379d73a59308e1a8cc7ad8e201f5a5, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+  - name: nap_wake
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: bbd0d9534bcf0bcdb4ad4f5d81f31730, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 2ade33a424015c8e9b25fa1d6074680f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 294861b3da0a0701dcf381cf2b27b4c0, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -13.5, y: 3.5}
+      chest: {x: -5.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: d9d4a6ac9aa32ea3d4a2b42730bf4214, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -3.5, y: 10.5}
+      chest: {x: -0.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 845addc03b76a667084e833ba29bf9d9, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -3.5, y: 10.5}
+      chest: {x: -0.5, y: 4.5}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: e33122a4f729fb2bb490eb88db87f494, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -7.5, y: 3.5}
+      chest: {x: -1.5, y: 3.5}
+      trim: {x: -4.5, y: 4}
+      body: {x: -3, y: -3}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 52b6f07ada215266a0211478f21667a5, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 4.5}
+      chest: {x: 0.5, y: 7.5}
+      trim: {x: -3.5, y: 8}
+      body: {x: 0, y: -2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: bd535d27a00f089b4ad65e9466f078b7, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 5.5}
+      chest: {x: 0.5, y: 8.5}
+      trim: {x: -3.5, y: 9}
+      body: {x: 0, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: f37a4756a69de2cb51e060f686b62a5e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
   - name: grab_tome
     frameTime: 0.12
     loop: 0

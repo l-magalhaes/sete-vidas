@@ -65,6 +65,41 @@ namespace SeteVidas.EditorTools
             Fixed(d, 2, Fossil, Bone, "Fóssil no fosso", 36.45f, -1.5f);
             Fixed(d, 2, Fossil, Spine, "Fóssil na terra da trilha", 29.5f, -2.4f);
 
+            // ===== Etapa 4: vegetação. A densidade cai da montanha (mata antiga) para a trilha (mata invadindo a estrada)
+            // e para o pátio (só nas bordas); perto da muralha, a zona de tiro limpa: tocos com mudas voltando.
+            // Nada na corrida do salto (x 4..12 só com a árvore morta, atrás), nas placas, nos pulos nem nas patrulhas.
+            const string Seedling = "env_ext_veg_muda", Young = "env_ext_veg_jovem", Adult = "env_ext_veg_adulta", Ancient = "env_ext_veg_ancia";
+            const string Dead = "env_ext_veg_morta", Stump = "env_ext_veg_toco", Shrub = "env_ext_veg_arbusto_fundo", Fg = "env_ext_veg_galho_frente";
+            // 1) Montanha
+            Fixed(d, 1, Ancient, 1, "Anciã do morrinho", -9f, Cliff + 1f);       // no alto do morrinho, meio atrás da rocha
+            Fixed(d, 1, Ancient, 0, "Anciã do início", -1f, Cliff);              // sobre o rochedo, perto do início
+            Add(d, 1, Young, "Jovem do início", 4.3f, Cliff);
+            Add(d, 1, Seedling, "Muda da rampa", -4.9f, Cliff);
+            Fixed(d, 1, Dead, 0, "Árvore morta na beira do salto", 11.6f, Cliff); // castigada pelo vento, na beira do penhasco
+            Add(d, 1, Shrub, "Arbusto do início", -6.3f, Cliff);
+            Add(d, 1, Shrub, "Arbusto da corrida", 6.8f, Cliff);
+            Fixed(d, 1, Fg, 0, "Galho na frente (esquerda)", -6f, 72.5f);        // no alto da tela, nunca no meio
+            Fixed(d, 1, Fg, 1, "Galho na frente (direita)", 9f, 73f);
+            // 2) Trilha (a lagoa, as pedras do tutorial e o fosso ficam livres)
+            Add(d, 2, Adult, "Adulta entre as pedras", 29.6f, 0f);
+            Add(d, 2, Young, "Jovem antes do fosso", 35.1f, 0f);
+            Add(d, 2, Shrub, "Arbusto do marco", 24.4f, 0f);
+            Add(d, 2, Shrub, "Arbusto depois do fosso", 42.7f, 0f);
+            // 3) Pátio: zona de tiro limpa perto da muralha (o guarda patrulha na frente, os tocos ficam atrás)
+            Add(d, 3, Stump, "Toco da zona de tiro 1", 97.2f, 0f);
+            Fixed(d, 3, Stump, 1, "Toco da zona de tiro 2 (com broto)", 101f, 0f);
+            Add(d, 3, Stump, "Toco da zona de tiro 3", 104.6f, 0f);
+            Add(d, 3, Seedling, "Muda entre os tocos 1", 99.1f, 0f);
+            Add(d, 3, Seedling, "Muda entre os tocos 2", 102.8f, 0f);
+            Add(d, 3, Shrub, "Mato na borda do pátio", 98.6f, 0f);   // saiu de 106,2: lá fica a cesta do santuário
+            // 10) A estrada para Miaravéu, depois do portão dos fundos: a mata volta
+            Add(d, 10, Adult, "Adulta da estrada 1", 236.6f, 0f);
+            Add(d, 10, Young, "Jovem da estrada", 241.2f, 0f);
+            Fixed(d, 10, Ancient, 0, "Anciã da estrada", 248.4f, 0f);
+            Add(d, 10, "env_ext_veg_tronco_caido", "Tronco caído da estrada", 243.8f, 0f);
+            Add(d, 10, Shrub, "Arbusto da estrada 1", 239.4f, 0f);
+            Add(d, 10, Shrub, "Arbusto da estrada 2", 246.2f, 0f);
+
             // ===== 3) Pátio de treino
             Add(d, 3, Statue, "Estátua do guardião", 44.5f, 0f);
             Add(d, 3, Rack, "Suporte de armas", 67f, 0f);
@@ -105,6 +140,9 @@ namespace SeteVidas.EditorTools
             // ===== 9) Câmara do Selo
             Add(d, 9, Statue, "Estátua da câmara 1", 149f, SealFloor);
             Add(d, 9, Statue, "Estátua da câmara 2", 174.5f, SealFloor);
+            // perto do Tomo a vida some: plantas secas nos vasos ao pé das estátuas (Etapa 4)
+            Add(d, 9, "env_nec_veg_vaso_seco", "Vaso seco da câmara 1", 150.7f, SealFloor);
+            Add(d, 9, "env_nec_veg_vaso_seco", "Vaso seco da câmara 2", 172.8f, SealFloor);
             Add(d, 9, Window, "Vitral da câmara 1", 155f, SealFloor + 5.5f);
             Add(d, 9, Window, "Vitral da câmara 2", 168f, SealFloor + 5.5f);
             Add(d, 9, Banner, "Estandarte do selo", 161.5f, 109.9f);

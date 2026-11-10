@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_veg_adulta
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Vegetation/manifest.json
+  entry:
+    id: env_ext_veg_adulta
+    nome: "\xC1rvore adulta"
+    regiao: ext
+    categoria: veg
+    funcao: decorativo
+    material: "\xE1rvore"
+    epoca: natural
+    tamanho_px: 2c0000003c000000i
+    sprites:
+    - env_ext_veg_adulta_a_0.png
+    - env_ext_veg_adulta_b_0.png
+    - env_ext_veg_adulta_c_0.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: vento
+      quadros: []
+      quadros_por_variacao: 4
+      fps: 4
+      amplitude_px: 1
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 5
+      deslocamento_px: 3
+      nao_perto_de:
+      - muralha < 8 tiles
+      perto_de: []
+      densidade: 
+      zonas:
+      - trilha
+      - montanha
+      - estrada
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Folhagem atr\xE1s do gato; nunca na frente do caminho."
+    tags:
+    - arvore
+    - vento
+  variants:
+  - {fileID: 21300000, guid: 1ecdb9bc324f2758e4cd82e03a6c0424, type: 3}
+  - {fileID: 21300000, guid: 7c953645930c02947c876203db9e1d7a, type: 3}
+  - {fileID: 21300000, guid: 6803b2f9e273cadb531562eda05cd774, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 1ecdb9bc324f2758e4cd82e03a6c0424, type: 3}
+  - {fileID: 21300000, guid: 4cd3f6e90010751808a89c196a97dc65, type: 3}
+  - {fileID: 21300000, guid: c7bc957cbdd4ae37cf8b4073f2d6a7dd, type: 3}
+  - {fileID: 21300000, guid: 246f2c7653dabda938b4d96edcaf51d8, type: 3}
+  - {fileID: 21300000, guid: 7c953645930c02947c876203db9e1d7a, type: 3}
+  - {fileID: 21300000, guid: 5946ec11c52b3092de941aa5857e67fb, type: 3}
+  - {fileID: 21300000, guid: 51e8960701e336b4346fddac1ad5ffd4, type: 3}
+  - {fileID: 21300000, guid: c7634695ebc79cf25b53edbbb70d1594, type: 3}
+  - {fileID: 21300000, guid: 6803b2f9e273cadb531562eda05cd774, type: 3}
+  - {fileID: 21300000, guid: 301b31562847a071fe0a2892ceae5367, type: 3}
+  - {fileID: 21300000, guid: b19a005d952e73e33495731f92f22245, type: 3}
+  - {fileID: 21300000, guid: 8b0ab37888e78e26e298c1afb44f12fa, type: 3}

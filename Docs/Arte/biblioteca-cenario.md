@@ -41,7 +41,9 @@ O terreno não é colocado item por item: cada célula de chão do `FortressLayo
 
 `powershell -ExecutionPolicy Bypass -File Tools/LevelPreview/gerar_cena.ps1 <x> <y> <nome>` monta uma tela 480×270 com a câmera em (x, y) usando a arte real (fundo, terreno, rampas, detalhes, enfeites, cachoeira, espinhos, moedas e o gato) e grava `SeteVidasDocs/Referencias/cena_<nome>.png` e a versão `_cinza` (teste de leitura). Sem luz 2D nem animação.
 
-**Animação:** `animacao.quadros` + `animacao.fps`. A montagem põe um `SpriteLoop`.
+**Animação:** `animacao.quadros` + `animacao.fps`. A montagem põe um `SpriteLoop`, e cada objeto começa num ponto diferente do ciclo (pela semente da posição). Para assets com variações animadas (árvores), use `animacao.quadros_por_variacao: n`: cada sprite de `sprites` termina em `_0.png` e tem os irmãos `_1` … `_{n-1}`; a montagem pega os quadros da variação escolhida.
+
+**Vegetação:** coloque árvores, arbustos e tocos em `FortressDressing.Items()` (são poucos e cada um conta história). Tufos, flores, seixos, fendas e raízes são espalhados sozinhos pelo `TerrainPainter`. Tufos ganham o `BendOnPass` (curvam quando o gato passa). Regras: verdes azulados (nunca os da hera escalável nem o #456633 do matinho), arbustos decorativos sempre mais escuros e maiores que o matinho, nada em borda de pulo, placa ou patrulha.
 
 **Fundo (categoria `plx`):** preencha `fundo.paralaxe` [x, y], `fundo.ancora` [x, y] e `fundo.repete`. Detalhes na seção 7 do plano.
 

@@ -1,0 +1,21 @@
+{
+  "regiao": "nec",
+  "assets": [
+    {
+      "id": "env_nec_veg_vaso_seco",
+      "nome": "Vaso com planta morta",
+      "categoria": "veg",
+      "funcao": "narrativo",
+      "material": "barro, planta seca",
+      "epoca": "praga",
+      "tamanho_px": [12, 16],
+      "sprites_prefixo": "env_nec_veg_vaso_seco_",
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "zonas": ["Câmara do Selo"] },
+      "leitura": "Perto do Tomo a vida some (plano, 6.3): plantas secas nos vasos da câmara.",
+      "tags": ["praga", "historia"]
+    }
+  ]
+}

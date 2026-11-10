@@ -228,6 +228,15 @@ namespace SeteVidas.EditorTools
                 case "bush":
                     EnemySetup.PlaceBush(AssetDatabase.LoadAssetAtPath<GameObject>(EnemySetup.BushPrefabPath), t, o.Name, o.X);
                     MoveLast(t, o.Y);
+                    // o esconderijo funciona igual (mesmo tamanho e altura); só o desenho muda conforme o lugar:
+                    // matinho no exterior, caixotes dentro do castelo, fardo de feno no pátio
+                    if (!string.IsNullOrEmpty(o.Text))
+                    {
+                        var look = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/_Game/Art/Environments/Soluki/env_sol_obj_esconderijo_{o.Text}.png");
+                        var sr = t.GetChild(t.childCount - 1).GetComponentInChildren<SpriteRenderer>();
+                        if (look != null && sr != null) { sr.sprite = look; PrefabUtility.RecordPrefabInstancePropertyModifications(sr); }
+                        else Debug.LogWarning($"[Sete Vidas] Esconderijo \"{o.Name}\": falta env_sol_obj_esconderijo_{o.Text}.png (rode Tools/EnvironmentSprites/gerar.ps1)");
+                    }
                     break;
                 case "shadow":
                     made = EnemySetup.CreateShadow(t, o.Name, at, new Vector2(o.W, o.H), 0.3f, EnemySetup.LoadShadowSprite());

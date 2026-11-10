@@ -368,12 +368,38 @@ namespace SeteVidas.World.Scenery
                 int jitter = (int)(Hash(x, y, 5) % 7) - 3;
                 list.Add(new Detail { Sprite = TuftName(v), X = x + 0.5f + jitter * px, Y = y + 1f });
             }
+            // flores silvestres raras no solo (sem amarelo: não parecer moeda)
+            if (material == Soil && Hash(x, y, 12) % 100 < 5)
+            {
+                int fv = (int)(Hash(x, y, 13) % FlowerVariants);
+                list.Add(new Detail { Sprite = FlowerName(fv), X = x + ((int)(Hash(x, y, 14) % 10) + 3) * px, Y = y + 1f });
+            }
             if (Hash(x, y, 6) % 100 < (material == Rock || material == Ruin ? 45 : 30))
             {
                 int v = (int)(Hash(x, y, 7) % PebbleVariants);
                 int offset = (int)(Hash(x, y, 8) % 12) + 2;
                 list.Add(new Detail { Sprite = PebbleName(v), X = x + offset * px, Y = y + 1f });
             }
+            return list;
+        }
+
+        public const int FlowerVariants = 3, RootVariants = 3;
+        public static string FlowerName(int v) { return "env_ext_veg_flor_" + v; }
+        public static string RootName(int v) { return "env_ext_veg_raiz_" + v; }
+        /// <summary>Tufos têm 3 desenhos: parado e curvado para cada lado (BendOnPass).</summary>
+        public static string TuftBentName(int v, bool right) { return TuftName(v) + (right ? "_r" : "_l"); }
+
+        /// <summary>
+        /// Raízes pendendo do teto na parte abandonada (a mata entra por cima: plano, 1.2), em ~18% das células de
+        /// teto do abandono. (x, y) = célula com o lado de baixo exposto; o topo da raiz fica no teto.
+        /// </summary>
+        public static List<Detail> CeilingDetails(string material, int x, int y)
+        {
+            var list = new List<Detail>();
+            if (material != Ruin || Hash(x, y, 60) % 100 >= 18) return list;
+            int v = (int)(Hash(x, y, 61) % RootVariants);
+            int h = 10 + v * 3; // alturas dos desenhos: 10, 13, 16 px
+            list.Add(new Detail { Sprite = RootName(v), X = x + ((int)(Hash(x, y, 62) % 9) + 4) / 16f, Y = y - h / 16f });
             return list;
         }
 

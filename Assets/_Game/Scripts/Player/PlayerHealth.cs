@@ -62,11 +62,14 @@ namespace SeteVidas.Player
             Changed?.Invoke();
         }
 
+        /// <summary>Sem dano e sem piscar (cenas em que o gato fica de pé parado, ex.: a tela escurecendo no santuário).</summary>
+        public bool Shielded { get; set; }
+
         // ------------------------------------------------------------- dano
 
         public void TakeDamage(in DamageInfo info)
         {
-            if (IsDead || IsCollapsed || IsInvulnerable || info.Amount <= 0) return;
+            if (IsDead || IsCollapsed || IsInvulnerable || Shielded || info.Amount <= 0) return;
             var s = _player.Settings;
 
             CurrentHits = HealthRules.ApplyDamage(CurrentHits, info.Amount);
@@ -206,12 +209,15 @@ namespace SeteVidas.Player
             Changed?.Invoke();
         }
 
-        /// <summary>Caído (deitado, sem dano) durante a cena da maldição.</summary>
-        public void SetCollapsed(bool collapsed)
+        /// <summary>
+        /// Caído (deitado, sem dano): cena da maldição e o cochilo na caixinha de areia do santuário. Ao levantar, o
+        /// visual toca "get_up" e o gato fica <paramref name="graceAfter"/> s invulnerável (0 = sem piscar).
+        /// </summary>
+        public void SetCollapsed(bool collapsed, float graceAfter = 1f)
         {
             IsCollapsed = collapsed;
             if (collapsed) _invulnerableUntil = float.MaxValue;
-            else _invulnerableUntil = Time.time + 1f;
+            else _invulnerableUntil = Time.time + graceAfter;
         }
 
         // ------------------------------------------------------- depuração

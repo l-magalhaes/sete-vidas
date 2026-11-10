@@ -200,6 +200,52 @@ namespace SeteVidas.Tests
             for (int x = 0; x < 60; x++) Assert.IsNull(TerrainAutotile.WallEvent(LowRoom, x, 2), "sala baixa demais");
         }
 
+        // ------------------------------------------------------- vegetação (Etapa 4)
+
+        const string VegetationArt = "Assets/_Game/Art/Environments/Exterior/Vegetation";
+
+        [Test]
+        public void VegetationArt_HasTreesWithWindFrames_BentTufts_FlowersAndRoots()
+        {
+            var missing = new List<string>();
+            void Need(string path) { if (!File.Exists(path)) missing.Add(path); }
+            foreach (var kind in new[] { "muda_a", "muda_b", "muda_c", "jovem_a", "jovem_b", "jovem_c", "adulta_a", "adulta_b", "adulta_c", "ancia_a", "ancia_b" })
+                for (int f = 0; f < 4; f++) Need($"{VegetationArt}/env_ext_veg_{kind}_{f}.png");
+            for (int v = 0; v < TerrainAutotile.TuftVariants; v++)
+                foreach (bool right in new[] { false, true }) Need($"{TerrainArt}/{TerrainAutotile.TuftBentName(v, right)}.png");
+            for (int v = 0; v < TerrainAutotile.FlowerVariants; v++) Need($"{VegetationArt}/{TerrainAutotile.FlowerName(v)}.png");
+            for (int v = 0; v < TerrainAutotile.RootVariants; v++) Need($"{VegetationArt}/{TerrainAutotile.RootName(v)}.png");
+            Assert.IsEmpty(missing, "Rode Tools/EnvironmentSprites/gerar.ps1. Faltam: " + string.Join(", ", missing));
+        }
+
+        [Test]
+        public void Roots_HangOnlyFromRuinCeilings()
+        {
+            int roots = 0;
+            for (int x = 0; x < 200; x++)
+            {
+                Assert.IsEmpty(TerrainAutotile.CeilingDetails(TerrainAutotile.Soluki, x, 5), "só no abandono");
+                foreach (var d in TerrainAutotile.CeilingDetails(TerrainAutotile.Ruin, x, 5))
+                {
+                    roots++;
+                    Assert.Less(d.Y, 5f, "pendurada: a base fica abaixo do teto");
+                }
+            }
+            Assert.That(roots, Is.InRange(15, 60), "cerca de 18% dos tetos");
+        }
+
+        [Test]
+        public void Flowers_AreRare_AndOnlyOnSoil()
+        {
+            int flowers = 0;
+            for (int x = 0; x < 400; x++)
+            {
+                foreach (var d in TerrainAutotile.TopDetails(TerrainAutotile.Soil, x, -1)) if (d.Sprite.Contains("flor")) flowers++;
+                foreach (var d in TerrainAutotile.TopDetails(TerrainAutotile.Soluki, x, -1)) Assert.IsFalse(d.Sprite.Contains("flor"));
+            }
+            Assert.That(flowers, Is.InRange(8, 40), "cerca de 5% do solo");
+        }
+
         [Test]
         public void TopDetails_AreStable_AndSitOnTheSurface()
         {

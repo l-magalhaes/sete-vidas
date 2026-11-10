@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 7;
+        public const int Version = 8;
 
         public enum Map { Ground, Climbable, Background }
 
@@ -231,7 +231,7 @@ namespace SeteVidas.EditorTools
             Add(o, "sign", "Placa dos bonecos", 62.5f, 3.4f, text: "bonecos: pelas costas dói mais");
             Add(o, "sentinel", "Instrutor do pátio", 76f, 0f, facing: -1, a: 72f, b: 80f);
             Add(o, "shadow", "Sombra da tenda", 85f, 2.5f, w: 6f, h: 5f);
-            Add(o, "bush", "Fardo de feno", 85f, 0f);
+            Add(o, "bush", "Fardo de feno", 85f, 0f, text: "feno");        // esconderijo: o desenho é um fardo de feno de verdade
             Add(o, "sign", "Placa da torre de escalada", 91f, 3.6f, text: "↑ pule de parede em parede");
             Add(o, "launcher", "Seteira da torre de escalada", 93.4f, 10.2f, facing: -1, a: 1.8f);
             Add(o, "coin", "Moeda (torre de escalada)", 93.5f, 19.6f, id: "fort_torre", value: 1);
@@ -258,7 +258,7 @@ namespace SeteVidas.EditorTools
             Add(o, "sanctuary", "Portão da muralha", 139f, WallWalk, id: "fortaleza_muralha", text: "Portão da muralha");
             Add(o, "lore", "Placa do alojamento", 144f, WallWalk, id: "D-PLACA-02");
             Add(o, "shadow", "Sombra da galeria A", 148f, WallWalk + 2.5f, w: 10f, h: 5f);
-            Add(o, "bush", "Caixotes", 150f, WallWalk);
+            Add(o, "bush", "Caixotes", 150f, WallWalk, text: "caixotes"); // esconderijo dentro do castelo: caixotes, não moita
             Add(o, "sign", "Placa da sombra", 146f, WallWalk + 3.4f, text: "sombra e caixotes: agache para sumir");
             Add(o, "sentinel", "Sentinela da galeria", 159f, WallWalk, facing: -1, a: 155f, b: 164f);
             Add(o, "coin", "Moeda (passarela)", 160f, 48.6f, id: "fort_passarela", value: 1);

@@ -36,6 +36,7 @@ MonoBehaviour:
       - env_ext_ani_cachoeira_espuma_1.png
       - env_ext_ani_cachoeira_espuma_2.png
       - env_ext_ani_cachoeira_espuma_3.png
+      quadros_por_variacao: 0
       fps: 8
       amplitude_px: 2
     paleta: []

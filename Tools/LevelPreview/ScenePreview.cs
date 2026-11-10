@@ -86,7 +86,7 @@ public static class ScenePreview
         string extArt = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Exterior");
         Func<string, string> pathOf = name =>
         {
-            foreach (var d in new[] { terrain, extArt, arch }) { string p = Path.Combine(d, name + ".png"); if (File.Exists(p)) return p; }
+            foreach (var d in new[] { terrain, extArt, arch, Path.Combine(extArt, "Vegetation") }) { string p = Path.Combine(d, name + ".png"); if (File.Exists(p)) return p; }
             return Path.Combine(terrain, name + ".png");
         };
         TerrainAutotile.MaterialAt matAt = (mx, my) => FortressTerrain.MaterialAt(mx, my);
@@ -128,6 +128,7 @@ public static class ScenePreview
                                  ? TerrainAutotile.DeepDetails(TerrainAutotile.BandFor(mat, solid, matAt, x, y), x, y)
                                  : TerrainAutotile.TopDetails(mat, x, y))
                         detail(d);
+                if (!solid(x, y - 1)) foreach (var d in TerrainAutotile.CeilingDetails(mat, x, y)) detail(d);
             }
         foreach (var p in slopePieces)
             if (p.X >= x0 && p.X <= x1 && p.Y >= y0 && p.Y <= y1)
@@ -203,6 +204,18 @@ public static class ScenePreview
                         if (t >= 1f || t * 16f > bayer[(sy % 4) * 4 + (sx % 4)]) sh.SetPixel(sx, sy, Color.FromArgb(105, 10, 8, 26));
                     }
                 draws.Add(new Draw { Order = 8, Image = sh, X = (o.X - o.W / 2f - left) * PPU, Y = (top - o.Y - o.H / 2f) * PPU });
+            }
+            else if (o.Kind == "bush")
+            {
+                // esconderijo (FortressSetup "bush"): matinho, ou o desenho do texto (caixotes, feno), base no y, na frente do gato
+                string p = string.IsNullOrEmpty(o.Text) ? Path.Combine(art, "Environments/Placeholder/env_hiding_bush.png")
+                    : Path.Combine(art, "Environments/Soluki/env_sol_obj_esconderijo_" + o.Text + ".png");
+                if (File.Exists(p)) AddCentered(draws, Img(p), o.X, o.Y + 0.5f, left, top, 7, false);
+            }
+            else if (o.Kind == "sanctuary")
+            {
+                string p = Path.Combine(art, "Environments/Common/env_com_obj_santuario_seco.png");
+                if (File.Exists(p)) AddCentered(draws, Img(p), o.X + 0.5f, o.Y + 1f, left, top, 2, false); // 80×32, fonte no x do santuário
             }
             else if (o.Kind == "coin")
                 AddCentered(draws, Img(Path.Combine(art, "Environments/Placeholder/item_gold_coin.png")), o.X, o.Y, left, top, 6, false);

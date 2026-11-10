@@ -31,7 +31,14 @@ public static class TerrainSpriteGen
             foreach (bool right in new[] { true, false })
                 Write(DrawSlopePiece(kind, right), Path.Combine(terrain, TerrainAutotile.SlopePieceName(kind, right) + ".png"));
 
-        for (int v = 0; v < TerrainAutotile.TuftVariants; v++) Write(DrawTuft(v), Path.Combine(terrain, TerrainAutotile.TuftName(v) + ".png"));
+        for (int v = 0; v < TerrainAutotile.TuftVariants; v++)
+        {
+            var tuft = DrawTuft(v);
+            Write(tuft, Path.Combine(terrain, TerrainAutotile.TuftName(v) + ".png"));
+            // curvado quando o gato passa (Etapa 4): as 3 linhas de cima deitam 1 px para o lado
+            Write(Bend(tuft, -1), Path.Combine(terrain, TerrainAutotile.TuftName(v) + "_l.png"));
+            Write(Bend(tuft, 1), Path.Combine(terrain, TerrainAutotile.TuftName(v) + "_r.png"));
+        }
         for (int v = 0; v < TerrainAutotile.PebbleVariants; v++) Write(DrawPebble(v), Path.Combine(ext, TerrainAutotile.PebbleName(v) + ".png"));
         for (int v = 0; v < TerrainAutotile.CrackVariants; v++) Write(DrawCrack(v), Path.Combine(ext, TerrainAutotile.CrackName(v) + ".png"));
         string[] fossils = { "a_cranio", "b_costelas", "c_osso", "d_coluna" };
@@ -271,6 +278,20 @@ public static class TerrainSpriteGen
             }
             if (hgt >= 4 && N(x, 7, 430 + v) > 0.75f) cv.Force(x, 6 - hgt, 'f');
         }
+        return cv;
+    }
+
+    /// <summary>Tufo curvado: as linhas de cima deslocadas dx px (as pontas mais que o meio), a base parada.</summary>
+    static PixelCanvas Bend(PixelCanvas src, int dx)
+    {
+        var cv = new PixelCanvas(src.W, src.H);
+        for (int x = 0; x < src.W; x++)
+            for (int y = 0; y < src.H; y++)
+            {
+                int shift = y <= 1 ? dx * 2 : y <= 3 ? dx : 0;
+                char c = src.Get(x - shift, y);
+                if (c != '.') cv.Force(x, y, c);
+            }
         return cv;
     }
 

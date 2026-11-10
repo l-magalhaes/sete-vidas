@@ -46,6 +46,7 @@ MonoBehaviour:
       - Architecture/env_sol_arq_gota_11.png
       - Architecture/env_sol_arq_gota_12.png
       - Architecture/env_sol_arq_gota_13.png
+      quadros_por_variacao: 0
       fps: 12
       amplitude_px: 44
     paleta: []

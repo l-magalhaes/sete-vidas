@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_veg_raiz
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Vegetation/manifest.json
+  entry:
+    id: env_ext_veg_raiz
+    nome: Raiz pendurada
+    regiao: ext
+    categoria: veg
+    funcao: narrativo
+    material: raiz
+    epoca: abandono
+    tamanho_px: 0800000010000000i
+    sprites: []
+    sprites_prefixo: env_ext_veg_raiz_
+    espelhar: 0
+    camada: terreno_detalhe
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: teto
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - passagem dos fundos
+      - "po\xE7o"
+      - cofres
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Colocadas sozinhas nos tetos da alvenaria abandonada (TerrainAutotile.CeilingDetails): a mata est\xE1 entrando."
+    tags:
+    - abandono
+  variants:
+  - {fileID: 21300000, guid: d2f54b597f2a5d4c76a6d7b979189224, type: 3}
+  - {fileID: 21300000, guid: 9d55bda167700d0e4844a0cbf78a9225, type: 3}
+  - {fileID: 21300000, guid: 426d8618e31a1cd23466baa68a454475, type: 3}
+  frames: []
