@@ -62,8 +62,9 @@ namespace SeteVidas.EditorTools
                     (cat, "", "Ninguém me usa como chave e me paga com troco. Ninguém."),
                     (golden, "serio", "Vingança é um começo ruim. Mas é um começo. Jure, e levante."),
                     (cat, "", "Eu juro. Pelo tomo, pela moeda... e pelas seis vidas que ele me tirou.")),
-                Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 1,
-                    (null, "", "Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.")),
+                Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 2,
+                    (null, "", "Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe."),
+                    (null, "", "Magia de cura aprendida! Aperte F para curar 1 coração. 3 usos; o santuário recarrega.")),
                 // D-GOLDEN-02 (rev. 2), em rodízio: lembram o juramento
                 Idle = new[]
                 {

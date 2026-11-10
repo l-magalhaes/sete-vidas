@@ -624,6 +624,11 @@ public static partial class LionSpriteGen
             With(std, p => { p.FrontHand = new Point(15, 7); p.FrontItem = new Item("tome", 0); p.HeadV = "wide"; }));
         Add("look_up", 0.1f, false, With(std, p => p.HeadV = "up"));
         Add("look_down", 0.1f, false, With(std, p => p.HeadV = "down"));
+        // magia de cura (aprendida com o Koda): patas juntas no peito, olhos fechados; o código acende a luz dourada
+        Add("heal", 0.12f, false,
+            With(std, p => { p.FrontHand = new Point(13, 12); p.BackHand = new Point(12, 12); p.BackArmInFront = true; }),
+            With(std, p => { p.FrontHand = new Point(12, 11); p.BackHand = new Point(12, 11); p.BackArmInFront = true; p.HeadV = "blink"; }),
+            With(std, p => { p.TorsoDy = 1; p.FrontHand = new Point(12, 12); p.BackHand = new Point(11, 12); p.BackArmInFront = true; p.HeadV = "blink"; }));
 
         // ---------------- camada da marreta nas costas (classe Paladino, locomoção)
         var back = new Clip("hammer_back", 1f, false) { Overlay = true };

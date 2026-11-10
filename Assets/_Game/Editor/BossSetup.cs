@@ -55,7 +55,7 @@ namespace SeteVidas.EditorTools
 
         // ----------------------------------------------------------- conversas
 
-        public struct ArenaDialogues { public DialogueDefinition Intro, Defeat, Take, Seal, Curse, Villain, VillainLeave; }
+        public struct ArenaDialogues { public DialogueDefinition Intro, Defeat, Take, Seal, Curse, Villain, VillainLeave, Coin; }
 
         public static ArenaDialogues CreateDialogues()
         {
@@ -96,6 +96,11 @@ namespace SeteVidas.EditorTools
                     (capy, "deboche", "O pagamento está feito pelos seus serviços. Não diga que não sou honesto."),
                     (capy, "deboche", "Adeus. Aproveite a sua última vida. Ela não vai durar."),
                     (null, "", "Ele some numa névoa roxa, levando o tomo. Só a moeda fica para trás.")),
+                // Pegar a moeda do Contratante: a primeira da bolsa, vale 100 (Docs/Design/moedas.md)
+                Coin = DialogueSetup.Conversation("D-MOEDA-01", true, 1,
+                    (null, "", "Uma moeda de ouro pesada, cunhada com um olho roxo. Vale 100 moedas comuns."),
+                    (cat, "ironico", "Cem moedas por seis vidas. Já fiz negócios piores. Não lembro quando."),
+                    (cat, "", "Vou guardar. Um dia eu devolvo... com juros.")),
             };
             AssetDatabase.SaveAssets();
             return result;
@@ -171,6 +176,13 @@ namespace SeteVidas.EditorTools
             tso.FindProperty("villainDialogue").objectReferenceValue = dialogues.Villain;
             tso.FindProperty("villainLeaveDialogue").objectReferenceValue = dialogues.VillainLeave;
             tso.ApplyModifiedPropertiesWithoutUndo();
+            var payment = tome.GetComponentInChildren<CoinPickup>(true);
+            if (payment != null)
+            {
+                var pso = new SerializedObject(payment);
+                pso.FindProperty("pickupDialogue").objectReferenceValue = dialogues.Coin;
+                pso.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             // Santuário antes da arena, em cima da laje
             var sanctuary = AssetDatabase.LoadAssetAtPath<GameObject>(ProgressionSetup.SanctuaryPrefabPath);
@@ -366,10 +378,25 @@ namespace SeteVidas.EditorTools
             held.sortingOrder = 5;
             held.enabled = false;
             contractorGo.SetActive(false);
-            var coin = Child(root, "Moeda de ouro", new Vector3(-1.4f, 0.05f, 0f));
+            var coin = Child(root, "Moeda de ouro", new Vector3(-1.4f, 0.45f, 0f));
             var coinSr = coin.AddComponent<SpriteRenderer>();
             coinSr.sprite = CoinSprite();
             coinSr.sortingOrder = 6;
+            // a primeira moeda da bolsa: vale 100, só pode ser pega depois da cena do tomo
+            coin.AddComponent<CircleCollider2D>().isTrigger = true;
+            coin.GetComponent<CircleCollider2D>().radius = 0.45f;
+            var payment = coin.AddComponent<CoinPickup>();
+            var cso = new SerializedObject(payment);
+            cso.FindProperty("value").intValue = 100;
+            cso.FindProperty("pickupId").stringValue = "moeda_do_contratante";
+            cso.FindProperty("collectable").boolValue = false;
+            cso.FindProperty("spriteRenderer").objectReferenceValue = coinSr;
+            var spin = cso.FindProperty("spin");
+            spin.arraySize = 4;
+            for (int i = 0; i < 4; i++)
+                spin.GetArrayElementAtIndex(i).objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/_Game/Art/Items/Coins/item_coin_contractor_{i}.png");
+            cso.ApplyModifiedPropertiesWithoutUndo();
+            if (spin.GetArrayElementAtIndex(0).objectReferenceValue is Sprite first) coinSr.sprite = first;
             coin.SetActive(false);
 
             var tome = root.AddComponent<CursedTome>();

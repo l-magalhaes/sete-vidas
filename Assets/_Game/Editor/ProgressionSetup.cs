@@ -138,6 +138,12 @@ namespace SeteVidas.EditorTools
             so.FindProperty("locked").objectReferenceValue = locked;
             so.ApplyModifiedPropertiesWithoutUndo();
 
+            // Bolsa de moedas: contador abaixo dos corações (o ícone é gerado por Tools/CharacterSprites/gerar.ps1)
+            var coins = root.AddComponent<CoinHud>();
+            var cso = new SerializedObject(coins);
+            cso.FindProperty("icon").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>(UiArtFolder + "/ui_coin.png");
+            cso.ApplyModifiedPropertiesWithoutUndo();
+
             // Ícone da classe ativa, à esquerda dos corações
             var iconRt = UiChild(root, "ClassIcon");
             iconRt.anchorMin = iconRt.anchorMax = iconRt.pivot = new Vector2(0f, 1f);

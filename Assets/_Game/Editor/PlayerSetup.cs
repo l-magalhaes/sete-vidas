@@ -284,6 +284,7 @@ namespace SeteVidas.EditorTools
             var daggersAbility = root.AddComponent<MeleeWeaponAbility>();
             var hammerAbility = root.AddComponent<MeleeWeaponAbility>();
             root.AddComponent<ClassSwitchFeedback>();
+            root.AddComponent<HealingSpell>(); // magia de cura do Paladino (F): 3 usos, recarrega no santuário
             SetArray(classes, "classes", assets.Classes.Rogue, assets.Classes.Paladin);
             SetRef(classes, "input", reader);
             SetRef(classes, "combat", combat);

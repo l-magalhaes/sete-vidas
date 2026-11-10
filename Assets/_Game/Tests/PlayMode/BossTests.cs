@@ -88,6 +88,8 @@ namespace SeteVidas.Tests
             yield return null;
             var sr = contractor.GetComponent<SpriteRenderer>();
             StringAssert.StartsWith("chr_contractor_", sr.sprite.name);
+            var coinDuring = _tome.transform.Find("Moeda de ouro").GetComponent<CoinPickup>();
+            Assert.IsFalse(coinDuring.Collectable, "No meio da cena, o gato caído não pega a moeda");
             while (_tome.IsRunning && t < 25f) { SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
         }
 
@@ -184,7 +186,15 @@ namespace SeteVidas.Tests
             Assert.IsTrue(onDisk.HasFlag(CursedTome.StolenFlag), "O contratante levou o tomo");
             var coin = _tome.transform.Find("Moeda de ouro");
             Assert.IsNotNull(coin, "Tomo sem a moeda. Rode Tools > Sete Vidas > 10 ou 13");
-            Assert.IsTrue(coin.gameObject.activeSelf, "A moeda do pagamento fica no chão");
+            // A moeda do pagamento é a primeira da bolsa: vale 100 e só pode ser pega depois da cena
+            var pay = coin.GetComponent<CoinPickup>();
+            Assert.IsNotNull(pay, "A moeda do Contratante deveria ser uma CoinPickup");
+            Assert.AreEqual(100, pay.Value);
+            Assert.IsTrue(pay.Collectable, "Depois do juramento, a moeda pode ser pega");
+            if (coin.gameObject.activeSelf) pay.Collect(_health);   // o gato pode já ter pegado ao encostar
+            SkipDialogues();
+            Assert.AreEqual(100, SeteVidas.Progression.CoinPurse.Coins, "A moeda do Contratante vale 100");
+            Assert.IsTrue(SaveStore.Read(SaveManager.FilePath).HasFlag(SeteVidas.Progression.CoinPurse.FlagFor("moeda_do_contratante")));
             var contractor = _tome.transform.Find("Contratante");
             Assert.IsFalse(contractor.gameObject.activeSelf, "O contratante sumiu no teleporte");
         }

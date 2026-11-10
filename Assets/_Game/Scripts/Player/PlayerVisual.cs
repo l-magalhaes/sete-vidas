@@ -155,6 +155,38 @@ namespace SeteVidas.Player
 
         public void StopAction() => _action = null;
 
+        static readonly Color HealGold = new Color32(0xff, 0xd3, 0x4d, 0xff);
+
+        /// <summary>
+        /// Magia de cura (<see cref="HealingSpell"/>): na concentração, centelhas douradas sobem até o peito;
+        /// ao curar (<paramref name="done"/>), o gato brilha em dourado e um anel de luz se abre.
+        /// </summary>
+        public void HealFx(bool done)
+        {
+            if (animationSet == null || spriteRenderer == null) return;
+            Vector3 chest = ChestWorld();
+            int layer = spriteRenderer.sortingLayerID, order = spriteRenderer.sortingOrder + 3;
+            if (!done)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    float a = (200f + i * 35f) * Mathf.Deg2Rad;
+                    Vector3 from = chest + new Vector3(Mathf.Cos(a), Mathf.Sin(a) * 0.6f - 0.4f, 0f) * 0.9f;
+                    var fx = SpriteFx.Play(animationSet.spark, 0.06f, from, false, HealGold, layer, order, default, 0.4f, true);
+                    if (fx != null) fx.Toward(chest);
+                }
+                return;
+            }
+            _flashColor = HealGold;
+            _flashUntil = Time.time + switchFlashTime * 1.6f;
+            SpriteFx.Play(animationSet.classSwitch, 0.04f, chest, false, HealGold, layer, order);
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 vel = new Vector3((i - 1.5f) * 0.6f, 2.2f + (i % 2) * 0.6f, 0f);
+                SpriteFx.Play(animationSet.spark, 0.06f, chest, false, Color.Lerp(HealGold, Color.white, 0.4f), layer, order, vel, 0.45f, true);
+            }
+        }
+
         // ------------------------------------------------------------ eventos
 
         void OnClassChanged(ClassDefinition previous, ClassDefinition next)

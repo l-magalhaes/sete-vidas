@@ -75,6 +75,11 @@ CONTRATANTE: Adeus. Aproveite a sua última vida. Ela não vai durar.
 SISTEMA: Ele some numa névoa roxa, levando o tomo. Só a moeda fica para trás.
 [AÇÃO: clarão roxo; a tela escurece; o Koda chega]
 
+## D-MOEDA-01 — A moeda do Contratante (obrigatório, uma vez, ao pegar a moeda depois do juramento)
+SISTEMA: Uma moeda de ouro pesada, cunhada com um olho roxo. Vale 100 moedas comuns.
+GATO (irônico): Cem moedas por seis vidas. Já fiz negócios piores. Não lembro quando.
+GATO: Vou guardar. Um dia eu devolvo... com juros.
+
 ## D-GOLDEN-01 — O resgate (obrigatório; rev. 3)
 KODA: Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco.
 GATO (irônico): Ótimo. Agora o cão de lata vai me dar sermão antes de eu morrer.

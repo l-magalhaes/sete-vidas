@@ -24,6 +24,11 @@ namespace SeteVidas.Save
         public string lastSanctuaryName = "";
         /// <summary>Nome da cena do último santuário.</summary>
         public string scene = "";
+        /// <summary>Moedas na bolsa do gato (gastas na loja). As moedas pegas no mundo viram marcas "moeda:&lt;id&gt;" em <see cref="flags"/>.</summary>
+        public int coins;
+        /// <summary>Usos da magia de cura (Paladino). Recarrega ao descansar no santuário.</summary>
+        public int healCharges = MaxHealCharges;
+        public const int MaxHealCharges = 3;
         /// <summary>Marcas do mundo: paredes quebradas, missões, diálogos vistos.</summary>
         public List<string> flags = new List<string>();
 

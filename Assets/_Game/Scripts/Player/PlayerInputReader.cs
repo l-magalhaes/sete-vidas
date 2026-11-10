@@ -5,7 +5,7 @@ namespace SeteVidas.Player
 {
     /// <summary>
     /// Lê o asset GameControls (mapa "Player") e expõe os valores que o controlador usa.
-    /// Inclui a troca de classe (R/Q e 1–7).
+    /// Inclui a troca de classe (R/Q e 1–7) e a magia de cura (F).
     /// </summary>
     public class PlayerInputReader : MonoBehaviour
     {
@@ -14,7 +14,7 @@ namespace SeteVidas.Player
         [SerializeField] InputActionAsset actions;
 
         InputActionMap _map;
-        InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass;
+        InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass, _heal;
         readonly InputAction[] _classSlots = new InputAction[7];
 
         /// <summary>
@@ -68,6 +68,8 @@ namespace SeteVidas.Player
         public bool InteractPressedThisFrame => !GameplayLocked && _interact != null && _interact.WasPressedThisFrame();
         public bool NextClassPressedThisFrame => !GameplayLocked && _nextClass != null && _nextClass.WasPressedThisFrame();
         public bool PrevClassPressedThisFrame => !GameplayLocked && _prevClass != null && _prevClass.WasPressedThisFrame();
+        /// <summary>F (ou gatilho esquerdo): magia de cura do Paladino.</summary>
+        public bool HealPressedThisFrame => !GameplayLocked && _heal != null && _heal.WasPressedThisFrame();
 
         /// <summary>Tecla de classe apertada neste frame: 1 a 7, ou 0 se nenhuma.</summary>
         public int ClassSlotPressedThisFrame
@@ -97,6 +99,7 @@ namespace SeteVidas.Player
             _interact = _map.FindAction("Interact", throwIfNotFound: true);
             _nextClass = _map.FindAction("NextClass", throwIfNotFound: false);
             _prevClass = _map.FindAction("PrevClass", throwIfNotFound: false);
+            _heal = _map.FindAction("Heal", throwIfNotFound: false);
             for (int i = 0; i < _classSlots.Length; i++)
                 _classSlots[i] = _map.FindAction($"SelectClass{i + 1}", throwIfNotFound: false);
         }

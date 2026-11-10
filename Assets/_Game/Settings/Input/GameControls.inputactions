@@ -60,6 +60,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Heal",
+                    "type": "Button",
+                    "id": "4c1e8a2b-7d3f-4e6a-9b05-1f2e3d4c5b6a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Dash",
                     "type": "Button",
                     "id": "78b1385d-3cfe-4240-b581-e0319a3059a3",
@@ -555,6 +564,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "SelectClass7",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8a3b5c7d-9e1f-4a2b-8c4d-6e8f0a1b2c3d",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Heal",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b2d4f6a8-0c1e-4f3a-a5b7-c9d1e3f5a7b9",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Heal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

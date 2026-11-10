@@ -70,11 +70,13 @@ namespace SeteVidas.World
             if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame) Rest(_playerInRange);
         }
 
-        /// <summary>Descansa aqui: vida cheia, salva, vira o checkpoint e os inimigos voltam.</summary>
+        /// <summary>Descansa aqui: vida cheia, magia de cura recarregada, salva, vira o checkpoint e os inimigos voltam.</summary>
         public void Rest(PlayerHealth health)
         {
             if (health == null || health.IsDead) return;
             health.RestoreFull();
+            var heal = health.GetComponent<HealingSpell>();
+            if (heal != null) heal.Refill();                         // magia de cura volta aos 3 usos
             SaveManager.SaveAtSanctuary(sanctuaryId, displayName);
             GameEvents.RaiseWorldReset();
             DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, "Salvo", new Color32(0xff, 0xd3, 0x4d, 0xff));

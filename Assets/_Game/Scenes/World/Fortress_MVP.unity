@@ -127657,6 +127657,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7701000101}
+  - {fileID: 7701000103}
+  - {fileID: 7701000105}
+  - {fileID: 7701000107}
+  - {fileID: 7701000109}
+  - {fileID: 7701000111}
+  - {fileID: 7701000113}
+  - {fileID: 7701000115}
   - {fileID: 445070099}
   - {fileID: 394024121}
   - {fileID: 706362198}
@@ -129078,6 +129086,535 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.5, y: 2}
   m_EdgeRadius: 0
+--- !u!1001 &7701000100
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (pedra alta)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_pedra
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000101 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000100}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000102
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (sobre o fosso)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 21.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_fosso
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000103 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000102}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000104
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (passagem baixa)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_passagem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000105 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000104}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000106
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (hera da muralha)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 71.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_hera
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000107 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000106}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000108
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (passarela)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 92
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 19.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_passarela
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000109 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000108}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000110
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (fim do salao)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 14.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_salao
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000111 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000110}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000112
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (antes da camara)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 182.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 14.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_camara
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000113 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000112}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7701000114
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1846422911}
+    m_Modifications:
+    - target: {fileID: 600684618207771634, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_Name
+      value: "Moeda (atras da parede rachada)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 84
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1461503451734194566, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+      propertyPath: pickupId
+      value: fort_saida
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+--- !u!4 &7701000115 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2085693533817631569, guid: e4f6a8b0c2d34e9f8a1c3e5b7d9f0a2c, type: 3}
+  m_PrefabInstance: {fileID: 7701000114}
+  m_PrefabAsset: {fileID: 0}
+
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

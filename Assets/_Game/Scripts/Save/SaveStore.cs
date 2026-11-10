@@ -82,6 +82,8 @@ namespace SeteVidas.Save
         public static void Sanitize(SaveData data)
         {
             data.heartsRecovered = HealthRules.ClampHearts(data.heartsRecovered);
+            data.coins = Math.Max(0, data.coins);
+            data.healCharges = Math.Max(0, Math.Min(SaveData.MaxHealCharges, data.healCharges));
 
             var valid = new List<string>();
             foreach (var name in data.unlockedClasses ?? new List<string>())

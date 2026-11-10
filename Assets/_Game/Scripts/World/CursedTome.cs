@@ -48,6 +48,8 @@ namespace SeteVidas.World
         [SerializeField] SpriteRenderer contractorBook;
         [Tooltip("Moeda de ouro jogada no chão (\"o pagamento\")")]
         [SerializeField] Transform coin;
+        /// <summary>Altura do centro da moeda pousada (o sprite tem pivô no centro: meia moeda + folga para flutuar).</summary>
+        const float CoinRestHeight = 0.45f;
         [SerializeField] Color teleportColor = new Color32(0x4a, 0x22, 0x66, 0xff);
 
         [Header("Ritmo da maldição")]
@@ -157,6 +159,8 @@ namespace SeteVidas.World
             while (!done) yield return null;
 
             player.SetCollapsed(false);
+            // a moeda do Contratante: a primeira da bolsa (vale 100), pode ser pega agora
+            if (coin != null) { var pay = coin.GetComponent<CoinPickup>(); if (pay != null) pay.SetCollectable(true); }
             if (input != null) input.SetLock(this, false);
             _running = false;
         }
@@ -206,8 +210,10 @@ namespace SeteVidas.World
             }
             if (coin != null)
             {
+                var pickup = coin.GetComponent<CoinPickup>();
+                if (pickup != null) pickup.SetCollectable(false);   // o gato caído não pega a moeda no meio da cena
                 coin.gameObject.SetActive(true);
-                yield return Toss(coin, hand, feet + new Vector3(0.9f, 0.05f, 0f), 0.45f);
+                yield return Toss(coin, hand, feet + new Vector3(0.9f, CoinRestHeight, 0f), 0.45f);
             }
             yield return Talk(runner, villainLeaveDialogue, input);
 
@@ -272,7 +278,14 @@ namespace SeteVidas.World
             if (golden != null) golden.StandAsCompanion((Vector2)transform.position + Vector2.left * 1.6f, +1);
             if (goldenBond != null) goldenBond.enabled = true; // se o vínculo não terminou, falar com ele recomeça
             if (contractor != null) contractor.gameObject.SetActive(false);
-            if (coin != null) coin.gameObject.SetActive(true); // a moeda continua no chão: o "pagamento"
+            if (coin != null)
+            {
+                // a moeda continua no chão (o "pagamento") até o gato pegá-la: 100 moedas na bolsa
+                var pay = coin.GetComponent<CoinPickup>();
+                bool taken = pay != null && pay.AlreadyCollected;
+                coin.gameObject.SetActive(!taken);
+                if (pay != null && !taken) pay.SetCollectable(true);
+            }
         }
     }
 }

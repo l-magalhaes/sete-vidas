@@ -71,3 +71,6 @@ A marreta não substitui as adagas: na furtividade, o Ladino continua matando em
 - [PROPOSTA] Marreta sem bônus de ataque pelas costas.
 - [PROPOSTA] Quebrar a parede salva na hora (o atalho nunca se perde), sem esperar o santuário.
 - [PROPOSTA] Trocar de classe é instantâneo (sem tempo de recarga).
+
+## Magia de cura
+Junto com o Paladino, o Lion aprende a **magia de cura**: F (ou LT) cura 1 coração, 3 usos, recarrega no santuário. Spec: `magia-cura.md`.

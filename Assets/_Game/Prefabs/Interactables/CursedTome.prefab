@@ -196,6 +196,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1884269183848575581}
   - component: {fileID: 7139469370733492299}
+  - component: {fileID: 8817263544190023451}
+  - component: {fileID: 8817263544190023452}
   m_Layer: 14
   m_Name: Moeda de ouro
   m_TagString: Untagged
@@ -212,7 +214,7 @@ Transform:
   m_GameObject: {fileID: 4343575464267403361}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4, y: 0.05, z: 0}
+  m_LocalPosition: {x: -1.4, y: 0.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -267,7 +269,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 6
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 4a81259e8bbba6d4fa85b929ada90243, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4d6e02b16407b627ec40e0a2b8d62207, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -690,3 +692,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animations: {fileID: 11400000, guid: e7c3a9f1b5d2468a9c0e4b6d8f1a3c57, type: 2}
+--- !u!58 &8817263544190023451
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343575464267403361}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.45
+--- !u!114 &8817263544190023452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4343575464267403361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d4f6a8e0b14c7d9f1b3d5f7a9c2e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.CoinPickup
+  value: 100
+  pickupId: moeda_do_contratante
+  collectable: 0
+  spriteRenderer: {fileID: 7139469370733492299}
+  spin:
+  - {fileID: 21300000, guid: 4d6e02b16407b627ec40e0a2b8d62207, type: 3}
+  - {fileID: 21300000, guid: 6e030d1fc8f554a1d07bc0ceacbd7626, type: 3}
+  - {fileID: 21300000, guid: 1519689f91a878a9de2cabba6467dcb8, type: 3}
+  - {fileID: 21300000, guid: f4e7e91e6bf36f923e05aae9ceec6c77, type: 3}
+  frameTime: 0.14
+  bob: 0.05
+  pickupDialogue: {fileID: 11400000, guid: f5a7c9e1b3d54f0a8c2e4a6c8e0b2d47, type: 2}

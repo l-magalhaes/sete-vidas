@@ -864,6 +864,7 @@ GameObject:
   - component: {fileID: 8701021201271857760}
   - component: {fileID: 3352719616212840751}
   - component: {fileID: 8475858061822963212}
+  - component: {fileID: 6620481937515502938}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -1822,3 +1823,19 @@ RectTransform:
   m_AnchoredPosition: {x: 28, y: -8}
   m_SizeDelta: {x: 126, y: 16}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &6620481937515502938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5369570566461691557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3e5a7c9f1b24d8e0a2c4e6a8c0e2f5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.UI.CoinHud
+  icon: {fileID: 21300000, guid: fa4e9f8e5ea3ed74fb0cf474445e78ee, type: 3}
+  position: {x: 28, y: -38}
+  textColor: {r: 1, g: 0.9137255, b: 0.65882355, a: 1}
+  gainColor: {r: 1, g: 0.827451, b: 0.3019608, a: 1}
