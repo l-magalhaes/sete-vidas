@@ -333,8 +333,10 @@ namespace SeteVidas.Tests
             var trigger = GameObject.Find("Conversa: Chegada").GetComponent<DialogueTrigger>();
             Assert.IsTrue(trigger.HasDialogue, "Gatilho sem conversa ligada. Rode Tools > Sete Vidas > 13 de novo");
             var health = PlayerHealth.Active;
-            Assert.IsTrue(trigger.Play(health), "Primeira vez: narração de chegada");
             var runner = SeteVidas.Dialogue.DialogueRunner.Active;
+            // o gato nasce dentro da área de chegada: a narração pode já ter começado sozinha (é o comportamento certo)
+            if (!runner.IsOpen) Assert.IsTrue(trigger.Play(health), "Primeira vez: narração de chegada");
+            Assert.IsTrue(runner.IsOpen, "A narração de chegada está tocando");
             for (int i = 0; i < 20 && runner.IsOpen; i++) runner.Advance();
             Assert.IsFalse(trigger.Play(health), "Depois: não repete");
         }

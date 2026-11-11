@@ -77,6 +77,13 @@ namespace SeteVidas.EditorTools
             SceneManager.MoveGameObjectToScene(parent, scene);
             PlaceSanctuary(sanctuary, parent.transform, "playground_inicio", "Início da Playground", 3f);
             PlaceSanctuary(sanctuary, parent.transform, "playground_furtividade", "Antes da Sentinela", 119.5f);
+
+            // moedas do percurso (antes colocadas à mão: sumiam quando a cena era recriada; os testes de moeda usam pg_inicio)
+            var coins = new GameObject("Moedas");
+            SceneManager.MoveGameObjectToScene(coins, scene);
+            FortressSetup.Coin(coins.transform, "Moeda (inicio)", new Vector2(6f, 0.6f), "pg_inicio", 1);
+            FortressSetup.Coin(coins.transform, "Moeda (perto do mato)", new Vector2(110f, 0.6f), "pg_mato", 1);
+            FortressSetup.Coin(coins.transform, "Moeda (depois do santuario)", new Vector2(125f, 0.6f), "pg_furtividade", 1);
         }
 
         /// <summary>

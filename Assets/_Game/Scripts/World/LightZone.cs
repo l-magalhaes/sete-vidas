@@ -25,7 +25,13 @@ namespace SeteVidas.World
 
         void OnEnable() { if (!s_active.Contains(this)) s_active.Add(this); ApplyVisual(); }
         void OnDisable() => s_active.Remove(this);
-        void OnValidate() => ApplyVisual();
+        void OnValidate()
+        {
+#if UNITY_EDITOR
+            // mudar o tamanho de um sprite em 9-slice manda uma mensagem que o Unity não aceita dentro do OnValidate
+            UnityEditor.EditorApplication.delayCall += () => { if (this != null) ApplyVisual(); };
+#endif
+        }
 
         public void Configure(float newExposure, Vector2 newSize)
         {
@@ -44,7 +50,7 @@ namespace SeteVidas.World
             {
                 // sombra de borda suave (9-slice): a borda pontilhada fica no tamanho original, o meio estica
                 shade.transform.localScale = Vector3.one;
-                shade.size = size;
+                if (shade.size != size) shade.size = size;   // só quando muda: mudar dispara mensagem (proibida no Awake)
             }
             var c = shade.color;
             c.a = Mathf.Lerp(0.6f, 0f, exposure); // mais escuro = mais opaco

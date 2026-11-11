@@ -402,7 +402,7 @@ namespace SeteVidas.EditorTools
             return wall;
         }
 
-        static CoinPickup Coin(Transform parent, string name, Vector2 at, string id, int value)
+        internal static CoinPickup Coin(Transform parent, string name, Vector2 at, string id, int value)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CoinPrefabPath);
             if (prefab == null) { Debug.LogWarning("[Sete Vidas] Coin.prefab não encontrado"); return null; }

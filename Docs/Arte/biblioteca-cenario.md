@@ -2,6 +2,8 @@
 
 Base do guia de assets (Etapa 9 do plano `SeteVidasDocs/Sete Vidas — Assets e Cenários da Fortaleza.md`). Vale para a Fortaleza e para as próximas fases.
 
+> Para montar uma área nova, comece pelo **`guia-de-assets.md`** (ordem de montagem e regras de leitura). Todos os assets com miniatura: **`catalogo-cenario.md`** (gerado).
+
 ## Como funciona
 
 ```

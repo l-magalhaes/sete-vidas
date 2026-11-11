@@ -56,8 +56,8 @@ namespace SeteVidas.Tests
             // Em seguida, a linha de sistema (sem retrato) com a dica da troca
             Assert.IsTrue(runner.IsOpen);
             Assert.IsNull(runner.CurrentLine.Speaker, "Dica de troca é linha de sistema");
-            runner.Advance();
-            runner.Advance();
+            // duas caixas de sistema: o Paladino e a magia de cura (D-GOLDEN-01-SISTEMA)
+            for (int guard = 0; guard < 8 && runner.IsOpen; guard++) runner.Advance();
             Assert.IsFalse(runner.IsOpen);
             Assert.AreEqual(1f, Time.timeScale, "O jogo volta a correr");
 
