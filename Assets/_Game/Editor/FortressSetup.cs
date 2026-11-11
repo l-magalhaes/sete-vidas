@@ -195,6 +195,7 @@ namespace SeteVidas.EditorTools
                 CeilingHeight = FortressLayout.ArenaCeiling, EntryGateX = FortressLayout.ArenaEntryGateX,
                 ExitGateX = FortressLayout.ArenaExitGateX, BossX = FortressLayout.BossX, TomeX = FortressLayout.TomeX,
                 SanctuaryX = FortressLayout.SealSanctuaryX, SanctuaryId = "fortaleza_camara", SanctuaryName = "Antes da câmara",
+                CompactSanctuary = true,   // entre a parede de fora (x 136) e a chaminé (x 140) só cabem 4 tiles
             });
         }
 
@@ -307,6 +308,9 @@ namespace SeteVidas.EditorTools
                     break;
                 case "pool":
                     Pool(t, o.Name, o.X, o.Y, (int)o.W);
+                    break;
+                case "noisy":
+                    made = Noisy(t, o.Name, o.X, o.Y, o.Text, Mathf.Max(1, Mathf.RoundToInt(o.W)));
                     break;
                 default:
                     Debug.LogWarning($"[Sete Vidas] Objeto de layout desconhecido: {o.Kind} ({o.Name})");
@@ -463,6 +467,58 @@ namespace SeteVidas.EditorTools
         /// em pedaços de 2 tiles e bate na lagoa com espuma. <paramref name="x"/> = meio da coluna (24 px),
         /// <paramref name="surface"/> = linha da água da lagoa, <paramref name="height"/> = da superfície ao topo da água.
         /// </summary>
+        /// <summary>
+        /// Objeto barulhento (Etapa 5A, Docs/Design/objetos-barulhentos.md): cacos, folhas secas e palha (tapete de
+        /// <paramref name="widthTiles"/> tiles no chão), sininhos (passagem com sininhos a 17–21 px do chão) e balde.
+        /// Arte em Art/Environments/Common/Noisy/env_com_obj_{tipo}_{0..n}.png (0 = repouso, o resto = reação).
+        /// </summary>
+        static NoisyObject Noisy(Transform parent, string name, float x, float floor, string type, int widthTiles)
+        {
+            NoisyObjectKind kind; int frames; float fps = 12f;
+            switch (type)
+            {
+                case "cacos": kind = NoisyObjectKind.Glass; frames = 4; break;
+                case "folhas_secas": case "palha": kind = NoisyObjectKind.DryLeaves; frames = 4; break;
+                case "sininhos": kind = NoisyObjectKind.Chimes; frames = 5; fps = 10f; break;
+                case "balde": kind = NoisyObjectKind.Bucket; frames = 5; break;
+                default: Debug.LogWarning($"[Sete Vidas] Objeto barulhento desconhecido: {type} ({name})"); return null;
+            }
+            var sprites = new List<Sprite>();
+            for (int i = 0; i < frames; i++)
+            {
+                var s = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/_Game/Art/Environments/Common/Noisy/env_com_obj_{type}_{i}.png");
+                if (s != null) sprites.Add(s);
+            }
+            if (sprites.Count == 0) { Debug.LogWarning($"[Sete Vidas] Falta a arte de {type} (rode Tools/EnvironmentSprites/gerar.ps1)"); return null; }
+
+            var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3(x, floor, 0f);
+            var box = go.AddComponent<BoxCollider2D>();
+            box.isTrigger = true;
+            bool carpet = kind == NoisyObjectKind.Glass || kind == NoisyObjectKind.DryLeaves;
+            if (carpet) { box.size = new Vector2(widthTiles, 0.5f); box.offset = new Vector2(0f, 0.25f); }
+            else if (kind == NoisyObjectKind.Chimes) { box.size = new Vector2(1f, 0.45f); box.offset = new Vector2(0f, 19f / 16f); } // altura dos sininhos
+            else { box.size = new Vector2(0.7f, 0.6f); box.offset = new Vector2(0f, 0.3f); }
+
+            var rest = sprites[0];
+            var visual = new GameObject("Visual");
+            visual.transform.SetParent(go.transform, false);
+            visual.transform.localPosition = new Vector3(0f, rest.rect.height / 32f, 0f);   // pivot central, base no chão
+            var sr = visual.AddComponent<SpriteRenderer>();
+            sr.sprite = rest;
+            sr.sortingOrder = 2;                                                           // atrás do gato (5)
+            if (carpet)
+            {
+                sr.drawMode = SpriteDrawMode.Tiled;
+                sr.size = new Vector2(widthTiles, rest.rect.height / 16f);
+            }
+            var noisy = go.AddComponent<NoisyObject>();
+            noisy.Setup(kind, sr, sprites.GetRange(1, sprites.Count - 1).ToArray(), fps);
+            EditorUtility.SetDirty(noisy);
+            return noisy;
+        }
+
         static void Waterfall(Transform parent, string name, float x, float surface, float height)
         {
             const float Px = 1f / 16f;

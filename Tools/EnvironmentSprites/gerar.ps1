@@ -11,7 +11,7 @@ $root = (Resolve-Path (Join-Path $here '..\..')).Path
 $refs = Join-Path $root '..\SeteVidasDocs\Referencias'
 $meta = Join-Path $root 'Tools\LionSprites\sprite_meta_template.txt'
 Add-Type -ReferencedAssemblies System.Drawing -Path @((Join-Path $here 'EnvPalette.cs'), (Join-Path $root 'Tools\CharacterSprites\PixelKit.cs'), (Join-Path $here 'PropSpriteGen.cs'),
-    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'))
+    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.Culture.cs'))
 
 # 1) paleta
 [EnvPalette]::Export($root, $refs)
@@ -28,6 +28,8 @@ Write-Host "agua: cachoeira, nascente, espuma e lagoa (Exterior/Water)"
 Write-Host "arquitetura: fundacao, soluki, reforma, abandono, madeira, terra batida, gargulas (Citadel/Architecture)"
 [VegetationSpriteGen]::Run($root, $meta, $refs)
 Write-Host "vegetacao: arvores por idade, morta, tocos, arbustos, galhos, flores, raizes (Exterior/Vegetation), vasos secos (Necro)"
+[ObjectSpriteGen]::Run($root, $meta, $refs)
+Write-Host "objetos (Etapa 5A): treino, defesa, alojamento, servico (Soluki/Objects), armadilhas (Citadel/Traps), exterior (Exterior/Objects), barulhentos (Common/Noisy)"
 
 # 2) pastas da biblioteca (plano, 3.1 e 7.9). Unity cria os .meta das pastas ao abrir.
 $art = Join-Path $root 'Assets\_Game\Art\Environments'
@@ -79,7 +81,8 @@ foreach ($m in Get-ChildItem $art -Recurse -Filter manifest.json) {
                 # sprites desenhados pelo editor (CitadelDecorSetup) podem ainda não existir num clone novo
                 Write-Host "AVISO $where : imagem ainda não existe $img (é criada ao gerar a cena?)" -ForegroundColor Yellow; $warnings++; continue
             }
-            if ($checkColors -contains $func) {
+            # a praga (época "praga": veias, fissuras) é exatamente quem usa o roxo e o verde-ácido reservados
+            if ($checkColors -contains $func -and $a.epoca -ne 'praga') {
                 foreach ($hit in [EnvValidator]::FindReserved($path, $a.categoria -eq 'plx')) {
                     Write-Host "AVISO $where : $img usa cor reservada $hit" -ForegroundColor Yellow; $warnings++
                 }

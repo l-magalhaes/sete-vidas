@@ -38,6 +38,29 @@ namespace SeteVidas.World
             if (spriteRenderer != null) _rest = spriteRenderer.sprite;
         }
 
+        void OnEnable() => GameEvents.WorldReset += ResetState;
+        void OnDisable() => GameEvents.WorldReset -= ResetState;
+
+        /// <summary>Volta ao estado inicial (o balde derrubado fica em pé de novo ao descansar no santuário).</summary>
+        public void ResetState()
+        {
+            _spent = false;
+            _reactTime = -1f;
+            _lastEmit = -999f;
+            if (spriteRenderer != null && _rest != null) spriteRenderer.sprite = _rest;
+        }
+
+        /// <summary>Montagem pelo editor (FortressSetup): tipo, desenho em repouso e quadros da reação.</summary>
+        public void Setup(NoisyObjectKind newKind, SpriteRenderer renderer, Sprite[] frames, float fps)
+        {
+            kind = newKind;
+            usePreset = true;
+            spriteRenderer = renderer;
+            reactFrames = frames;
+            reactFps = fps;
+            if (renderer != null) _rest = renderer.sprite;
+        }
+
         void OnTriggerStay2D(Collider2D other)
         {
             var player = other.GetComponentInParent<PlayerController>();

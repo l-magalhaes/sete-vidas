@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_sol_obj_porta_fechada
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Soluki/Objects/manifest.json
+  entry:
+    id: env_sol_obj_porta_fechada
+    nome: Porta de madeira fechada
+    regiao: sol
+    categoria: arq
+    funcao: decorativo
+    material: madeira, ferro, pedra
+    epoca: soluki
+    tamanho_px: 1800000023000000i
+    sprites:
+    - env_sol_obj_porta_fechada_0.png
+    - env_sol_obj_porta_fechada_1.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - alojamento
+      - salao
+      - servico
+      - camara
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Corredor que existe mas o gato n\xC3\xA3o usa: tranca com cadeado (v0) ou t\xC3\xA1buas pregadas (v1). Nunca rachada nem dourada (n\xC3\xA3o \xC3\xA9 parede quebr\xC3\xA1vel). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5)."
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: 30cf742a6c9e757c3492268b0d7ad195, type: 3}
+  - {fileID: 21300000, guid: db87819f17ba4ff5d0a850feca52ee0f, type: 3}
+  frames: []

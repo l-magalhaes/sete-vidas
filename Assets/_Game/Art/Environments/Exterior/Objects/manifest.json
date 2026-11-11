@@ -1,0 +1,56 @@
+{
+  "regiao": "ext",
+  "assets": [
+    {
+      "id": "env_ext_obj_fogueira_apagada",
+      "nome": "Fogueira apagada",
+      "regiao": "ext",
+      "categoria": "obj",
+      "funcao": "narrativo",
+      "material": "pedra, carvÃ£o",
+      "epoca": "natural",
+      "tamanho_px": [17, 6],
+      "sprites": ["env_ext_obj_fogueira_apagada.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["exterior"] },
+      "leitura": "AlguÃ©m acampou aqui antes do gato. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_ext_obj_mochila",
+      "nome": "Mochila esquecida",
+      "regiao": "ext",
+      "categoria": "obj",
+      "funcao": "narrativo",
+      "material": "couro, lÃ£",
+      "epoca": "natural",
+      "tamanho_px": [10, 10],
+      "sprites": ["env_ext_obj_mochila.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["exterior"] },
+      "leitura": "Ao lado da fogueira apagada. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_ext_obj_barraca_comercio",
+      "nome": "Posto de comÃ©rcio estrangeiro",
+      "regiao": "ext",
+      "categoria": "cul",
+      "funcao": "narrativo",
+      "material": "madeira, lona, barro, latÃ£o",
+      "epoca": "natural",
+      "tamanho_px": [42, 32],
+      "sprites": ["env_ext_obj_barraca_comercio.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["exterior"] },
+      "leitura": "RÃ©pteis e Aves negociavam fora dos muros: lona azul, potes de ervas, balanÃ§a, placa em vÃ¡rias escritas, pena de mensageiro. Abandonado. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    }
+  ]
+}

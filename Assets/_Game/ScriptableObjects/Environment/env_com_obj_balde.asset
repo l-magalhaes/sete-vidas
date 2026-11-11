@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_com_obj_balde
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Common/Noisy/manifest.json
+  entry:
+    id: env_com_obj_balde
+    nome: "Balde de servi\xC3\xA7o (barulhento)"
+    regiao: com
+    categoria: obj
+    funcao: interativo
+    material: "madeira, ferro, \xC3\xA1gua"
+    epoca: soluki
+    tamanho_px: 100000000c000000i
+    sprites:
+    - env_com_obj_balde_0.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: vivo
+      quadros:
+      - env_com_obj_balde_0.png
+      - env_com_obj_balde_1.png
+      - env_com_obj_balde_2.png
+      - env_com_obj_balde_3.png
+      - env_com_obj_balde_4.png
+      quadros_por_variacao: 0
+      fps: 12
+      amplitude_px: 1
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - alojamento
+      - servico
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "NoisyObject Bucket: cai uma vez correndo contra; volta ao lugar ao descansar no santu\xC3\xA1rio. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5)."
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: 4bc5b7d686ad3f589efae80f4c2e7848, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 4bc5b7d686ad3f589efae80f4c2e7848, type: 3}
+  - {fileID: 21300000, guid: bda7db301ff80c75e9df3adfa980a3d6, type: 3}
+  - {fileID: 21300000, guid: 75a78499befca77d189aa1ebbe8b2879, type: 3}
+  - {fileID: 21300000, guid: 618d5893de3ca528e5e3310c4cf23333, type: 3}
+  - {fileID: 21300000, guid: 17d855b1ee166990b9a27b3c26722d28, type: 3}

@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_com_obj_cacos
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Common/Noisy/manifest.json
+  entry:
+    id: env_com_obj_cacos
+    nome: Cacos de vidro (barulhento)
+    regiao: com
+    categoria: obj
+    funcao: interativo
+    material: vidro
+    epoca: praga
+    tamanho_px: 1000000004000000i
+    sprites:
+    - env_com_obj_cacos_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: vivo
+      quadros:
+      - env_com_obj_cacos_0.png
+      - env_com_obj_cacos_1.png
+      - env_com_obj_cacos_2.png
+      - env_com_obj_cacos_3.png
+      quadros_por_variacao: 0
+      fps: 12
+      amplitude_px: 1
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - salao
+      - armadilhas
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "NoisyObject Glass: barulho pisando, at\xC3\xA9 agachado; pule por cima. Sempre perto de um vidro quebrado. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5)."
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: 128a53b383f412cbca10f970347a6a9f, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 128a53b383f412cbca10f970347a6a9f, type: 3}
+  - {fileID: 21300000, guid: 3d042a2117082265a9a3b33f16cbbf0f, type: 3}
+  - {fileID: 21300000, guid: f5f42725996d25853a883f5d7fda9455, type: 3}
+  - {fileID: 21300000, guid: 58e6e320b46c105be15519a5c390a1c7, type: 3}

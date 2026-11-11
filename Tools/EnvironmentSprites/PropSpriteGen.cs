@@ -44,6 +44,12 @@ public static class PropSpriteGen
         PixelKit.WriteSprite(front, Path.Combine(common, "env_com_obj_santuario_frente.png"), "env_com_obj_santuario_frente", template, false);
         sanct.Add(front);
         Preview(sanct, Path.Combine(previewDir, "santuario.png"), 6, "#2a2438");
+        // versão compacta (sem a cesta de frutas: 4 tiles visíveis) para lugares apertados, como a câmara (entre a parede
+        // de fora e a chaminé). Mesmo quadro de 80 px: só a cesta some, então nada muda de posição
+        Func<PixelCanvas, PixelCanvas> compact = c => { for (int x = 0; x <= 16; x++) for (int y = 0; y < c.H; y++) c.Px[x, y] = '.'; return c; };
+        PixelKit.WriteSprite(compact(Sanctuary(false, 0)), Path.Combine(common, "env_com_obj_santuario_compacto_seco.png"), "env_com_obj_santuario_compacto_seco", template, false);
+        for (int i = 0; i < 4; i++)
+            PixelKit.WriteSprite(compact(Sanctuary(true, i)), Path.Combine(common, "env_com_obj_santuario_compacto_ativo_" + i + ".png"), "env_com_obj_santuario_compacto_ativo_" + i, template, false);
         PixelKit.WriteSprite(Crates(), Path.Combine(sol, "env_sol_obj_esconderijo_caixotes.png"), "env_sol_obj_esconderijo_caixotes", template, false);
         PixelKit.WriteSprite(HayBale(), Path.Combine(sol, "env_sol_obj_esconderijo_feno.png"), "env_sol_obj_esconderijo_feno", template, false);
     }

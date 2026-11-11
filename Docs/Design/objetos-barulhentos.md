@@ -1,5 +1,5 @@
 # Objetos barulhentos (cacos de vidro, folhas secas, sininhos, baldes)
-**Pilar:** exploração e furtividade | **Escopo:** MVP (cenário da Fortaleza) | **Status:** componente implementado; prefabs e arte na Etapa 5 do plano de cenário
+**Pilar:** exploração e furtividade | **Escopo:** MVP (cenário da Fortaleza) | **Status:** implementado (componente, arte com reação e colocação na Fortaleza: Etapa 5A)
 
 ## Objetivo de experiência
 O cenário também conta para a furtividade: o jogador olha o chão, vê cacos de vidro ou folhas secas e decide pular por cima, andar agachado ou dar a volta. O perigo é legível antes de ser pisado.
@@ -54,4 +54,9 @@ Presets em `NoisyObjectRules.Preset` (valores [PROPOSTA]). Para uma peça especi
 - **Dado** um balde já derrubado, **quando** passar correndo de novo, **então** nada acontece.
 
 ## Perguntas abertas
-- O balde derrubado volta ao lugar ao descansar no santuário? Sugestão: sim, junto com os inimigos.
+- ~~O balde derrubado volta ao lugar ao descansar no santuário?~~ **Decidido (10/11/2026): sim**, junto com os inimigos (`NoisyObject.ResetState` no `GameEvents.WorldReset`).
+
+## Implementado (Etapa 5A)
+- **Arte:** `Tools/EnvironmentSprites/ObjectSpriteGen.cs` → `Art/Environments/Common/Noisy/env_com_obj_{cacos|folhas_secas|palha|sininhos|balde}_{0..n}.png` (0 = repouso; o resto = reação).
+- **Na fase:** objetos `noisy` no `FortressLayout` (texto = tipo, `w` = largura em tiles dos tapetes); o `FortressSetup.Noisy` monta o trigger, o desenho (tapetes em modo Tiled) e o `NoisyObject.Setup`.
+- **Sininhos:** uma passagem de madeira com 3 sininhos a 17–21 px do chão; o trigger fica só nessa altura.

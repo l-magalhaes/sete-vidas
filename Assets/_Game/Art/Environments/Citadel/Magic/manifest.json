@@ -1,0 +1,73 @@
+{
+  "regiao": "cid",
+  "assets": [
+    {
+      "id": "env_mag_runa",
+      "nome": "Runa dourada da Ordem",
+      "regiao": "cid",
+      "categoria": "mag",
+      "funcao": "narrativo",
+      "material": "pedra, ouro",
+      "epoca": "fundacao",
+      "tamanho_px": [9, 11],
+      "sprites": ["env_mag_runa_0.png", "env_mag_runa_1.png", "env_mag_runa_2.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "distancia_minima_mesmo_id": 4, "zonas": ["camara", "torres"] },
+      "leitura": "Runas de proteÃ§Ã£o. Pulsam fora de tempo com as veias (Etapa 7: PulseLight). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_mag_selo_cera",
+      "nome": "Selo de cera",
+      "regiao": "cid",
+      "categoria": "mag",
+      "funcao": "narrativo",
+      "material": "papel, cera",
+      "epoca": "fundacao",
+      "tamanho_px": [18, 10],
+      "sprites": ["env_mag_selo_cera_0.png", "env_mag_selo_cera_1.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "livre", "distancia_minima_mesmo_id": 4, "zonas": ["camara"] },
+      "leitura": "Lacre carmesim num pergaminho: intacto (0) e rompido (1). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_mag_corrente",
+      "nome": "Corrente pendurada",
+      "regiao": "cid",
+      "categoria": "mag",
+      "funcao": "decorativo",
+      "material": "ferro",
+      "epoca": "fundacao",
+      "tamanho_px": [6, 48],
+      "sprites": ["env_mag_corrente.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "teto", "distancia_minima_mesmo_id": 4, "zonas": ["camara"] },
+      "leitura": "Correntes do selo, do teto da cÃ¢mara. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_mag_selo_porta",
+      "nome": "Selo das sete portas",
+      "regiao": "cid",
+      "categoria": "mag",
+      "funcao": "narrativo",
+      "material": "pedra, ouro",
+      "epoca": "praga",
+      "tamanho_px": [18, 20],
+      "sprites": ["env_mag_selo_porta_0.png", "env_mag_selo_porta_1.png", "env_mag_selo_porta_2.png", "env_mag_selo_porta_3.png", "env_mag_selo_porta_4.png", "env_mag_selo_porta_5.png", "env_mag_selo_porta_6.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "distancia_minima_mesmo_id": 4, "zonas": ["todas"] },
+      "leitura": "Uma variaÃ§Ã£o por porta (1.3 do plano): 1 intacto e limpo, 2 intacto, 3 com correntes, 4 fissura roxa, 5 veias roxas, 6 runas falhando, 7 rompido. Use Fixed com a variaÃ§Ã£o = porta - 1. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    }
+  ]
+}

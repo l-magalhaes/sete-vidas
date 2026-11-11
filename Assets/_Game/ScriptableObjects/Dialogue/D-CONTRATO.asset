@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-CONTRATO
   Required: 1
-  Revision: 1
+  Revision: 2
   IsDocument: 1
   Lines:
   - Speaker: {fileID: 0}

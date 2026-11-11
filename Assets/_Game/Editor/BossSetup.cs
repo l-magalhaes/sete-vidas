@@ -114,6 +114,8 @@ namespace SeteVidas.EditorTools
             public float MinX, MaxX, FloorY, CeilingHeight;
             public float EntryGateX, ExitGateX, BossX, TomeX, SanctuaryX;
             public string SanctuaryId, SanctuaryName;
+            /// <summary>Santuário sem a cesta de frutas (4 tiles): lugares apertados.</summary>
+            public bool CompactSanctuary;
         }
 
         /// <summary>Arena, Golden, grades, tomo e santuário do trecho J (chamado ao recriar a Playground).</summary>
@@ -195,6 +197,7 @@ namespace SeteVidas.EditorTools
                 sso.FindProperty("sanctuaryId").stringValue = a.SanctuaryId;
                 sso.FindProperty("displayName").stringValue = a.SanctuaryName;
                 sso.ApplyModifiedPropertiesWithoutUndo();
+                if (a.CompactSanctuary) ProgressionSetup.UseCompactArt(s);
             }
         }
 

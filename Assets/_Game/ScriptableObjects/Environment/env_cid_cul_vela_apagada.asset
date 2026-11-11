@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_cid_cul_vela_apagada
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/Culture/manifest.json
+  entry:
+    id: env_cid_cul_vela_apagada
+    nome: "Casti\xC3\xA7al com velas apagadas"
+    regiao: cid
+    categoria: cul
+    funcao: narrativo
+    material: "lat\xC3\xA3o, cera"
+    epoca: praga
+    tamanho_px: 0e00000016000000i
+    sprites:
+    - env_cid_cul_vela_apagada_0.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: vivo
+      quadros:
+      - env_cid_cul_vela_apagada_0.png
+      - env_cid_cul_vela_apagada_1.png
+      - env_cid_cul_vela_apagada_2.png
+      quadros_por_variacao: 0
+      fps: 3
+      amplitude_px: 1
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - salao
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Corrup\xC3\xA7\xC3\xA3o (6.3): velas apagadas sem motivo, fumacinha de 1 px. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5)."
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: 69926fb11e7b7995d695bb486efb7f91, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 69926fb11e7b7995d695bb486efb7f91, type: 3}
+  - {fileID: 21300000, guid: 796e70e824a5940a4359a8f45a6915aa, type: 3}
+  - {fileID: 21300000, guid: 414983651202e07ee176d1ea84845454, type: 3}

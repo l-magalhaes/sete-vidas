@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_nec_veia
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Necro/Plague/manifest.json
+  entry:
+    id: env_nec_veia
+    nome: Veias da praga
+    regiao: nec
+    categoria: mag
+    funcao: narrativo
+    material: praga
+    epoca: praga
+    tamanho_px: 1000000010000000i
+    sprites:
+    - env_nec_veia_0.png
+    - env_nec_veia_1.png
+    - env_nec_veia_2.png
+    sprites_prefixo: 
+    espelhar: 1
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: parede
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - armadilhas
+      - torres
+      - camara
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: Intensidade 1 (finas), 2 (galhos), 3 (grossas com pontos verdes). Sobe com a altura (6.3). Use Fixed com a intensidade - 1. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: 5db73a3ac734aa80d7d9e258226cbd05, type: 3}
+  - {fileID: 21300000, guid: 2eb32f616b1def63f5f4e68fddef2456, type: 3}
+  - {fileID: 21300000, guid: c3c2dc03f4c4ccf821f8e8ba8820b104, type: 3}
+  frames: []

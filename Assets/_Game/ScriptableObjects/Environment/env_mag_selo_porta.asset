@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_mag_selo_porta
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/Magic/manifest.json
+  entry:
+    id: env_mag_selo_porta
+    nome: Selo das sete portas
+    regiao: cid
+    categoria: mag
+    funcao: narrativo
+    material: pedra, ouro
+    epoca: praga
+    tamanho_px: 1200000014000000i
+    sprites:
+    - env_mag_selo_porta_0.png
+    - env_mag_selo_porta_1.png
+    - env_mag_selo_porta_2.png
+    - env_mag_selo_porta_3.png
+    - env_mag_selo_porta_4.png
+    - env_mag_selo_porta_5.png
+    - env_mag_selo_porta_6.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: parede
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - todas
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Uma varia\xC3\xA7\xC3\xA3o por porta (1.3 do plano): 1 intacto e limpo, 2 intacto, 3 com correntes, 4 fissura roxa, 5 veias roxas, 6 runas falhando, 7 rompido. Use Fixed com a varia\xC3\xA7\xC3\xA3o = porta - 1. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5)."
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: a943324bc1c086bca677c30e87d736e1, type: 3}
+  - {fileID: 21300000, guid: 36b86c56241423af7adec0c593a55e96, type: 3}
+  - {fileID: 21300000, guid: 806944483095a6289101e704935f9c3b, type: 3}
+  - {fileID: 21300000, guid: 85b04b6c2bb4078ccc65b14465b02b8a, type: 3}
+  - {fileID: 21300000, guid: 90235401d331942484b9259e2e0111f1, type: 3}
+  - {fileID: 21300000, guid: 73dd118a7478f37cd6c1c7dd3be78540, type: 3}
+  - {fileID: 21300000, guid: 131eb2cee9eb6a37a94374fc222907cb, type: 3}
+  frames: []

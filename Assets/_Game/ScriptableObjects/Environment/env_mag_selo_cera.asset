@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_mag_selo_cera
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/Magic/manifest.json
+  entry:
+    id: env_mag_selo_cera
+    nome: Selo de cera
+    regiao: cid
+    categoria: mag
+    funcao: narrativo
+    material: papel, cera
+    epoca: fundacao
+    tamanho_px: 120000000a000000i
+    sprites:
+    - env_mag_selo_cera_0.png
+    - env_mag_selo_cera_1.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_atras
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 4
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - camara
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: 'Lacre carmesim num pergaminho: intacto (0) e rompido (1). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).'
+    tags:
+    - etapa5
+  variants:
+  - {fileID: 21300000, guid: 8e4af1bdb0e0c160d2c91e49363c51b2, type: 3}
+  - {fileID: 21300000, guid: 987c738a50d8f02fe42a640a95cdb26b, type: 3}
+  frames: []

@@ -155,14 +155,37 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator NoisyObjects_HaveArt_AndTheBucketStandsUpAgainAfterRest()
+        {
+            yield return Load();
+            var noisy = Object.FindObjectsByType<NoisyObject>(FindObjectsInactive.Include);
+            // Etapa 5A: folhas secas (trilha), palha (pátio), sininhos e balde (galeria), cacos (salão e armadilhas), balde (fundos)
+            Assert.AreEqual(7, noisy.Length, "Objetos barulhentos da Fortaleza");
+            foreach (var n in noisy)
+            {
+                var sr = n.GetComponentInChildren<SpriteRenderer>();
+                Assert.IsNotNull(sr != null ? sr.sprite : null, n.name + " sem desenho (rode Tools/EnvironmentSprites/gerar.ps1)");
+                Assert.IsTrue(n.GetComponent<Collider2D>().isTrigger, n.name);
+            }
+            // o balde derrubado volta a ficar em pé quando o mundo reinicia (descanso no santuário)
+            NoisyObject bucket = null;
+            foreach (var n in noisy) if (n.Config.OneShot) { bucket = n; break; }
+            Assert.IsNotNull(bucket, "Balde (cai uma vez)");
+            var rest = bucket.GetComponentInChildren<SpriteRenderer>().sprite;
+            bucket.ResetState();
+            Assert.IsFalse(bucket.Spent);
+            Assert.AreEqual(rest, bucket.GetComponentInChildren<SpriteRenderer>().sprite);
+        }
+
+        [UnityTest]
         public IEnumerator Dressing_ComesFromTheSceneryLibrary()
         {
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 67 itens no FortressDressing (Etapas 1–4: enfeites, rochas, fósseis, estruturas, alcovas, vegetação), com 2 fileiras
-            // (4 escudos do salão, 5 ameias da torre): 74 objetos
-            Assert.AreEqual(74, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            // 159 itens no FortressDressing (Etapas 1–5), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
+            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 189 objetos
+            Assert.AreEqual(189, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
                 Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
             Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,

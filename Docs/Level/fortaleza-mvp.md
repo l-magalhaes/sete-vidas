@@ -103,7 +103,7 @@
   - sombra;
   - **fio de alarme** sem armadilha (chama as sentinelas);
   - **Sentinela do alojamento** (x 185–195);
-  - placa de pressão com **lanças** (x 198).
+  - placa de pressão com **lanças** no pé da torre do sino (placa x 203,5–205,5, lanças x 206; a moeda em cima é a isca). O meio da galeria é o alojamento (camas, mesas, cozinha).
 - **Atirador do alojamento** numa **prateleira** (topo 48, agarrar a borda), cobrindo a sombra B e o fio de alarme.
 - **Trecho C:** o **Guarda da torre do sino** (x 200–206) olha para a torre, ou seja, de costas para quem chega.
 - **Duas soluções:** por cima (passarela e sombras, sem luta) ou combate direto.
@@ -117,7 +117,7 @@
   - esquerda, 52–62;
   - direita, 60–71.
 - **Perigos:** uma **seteira** (y 57) atira no vão, e uma **serra** cruza a chaminé (y 64,5) indo de parede a parede. Moeda logo acima da serra.
-- **Saída:** por cima, no santuário **S3 "Torre do sino"** (x 214,5).
+- **Saída:** por cima, no santuário **S3 "Torre do sino"** (x 213,8).
 - **Risco de softlock:** nenhum. Cair só devolve à base da chaminé.
 
 ### Área 7 — Salão dos Votos
@@ -146,7 +146,7 @@
 ### Área 9 — Câmara do Selo (o topo)
 - **Propósito:** chefe e história.
 - **Tamanho:** andar 101, arena x 146..177, teto 110.
-- **S4 "Antes da câmara"** (x 137,5), placa D-PLACA-04, grades (entrada em 145,5 e tomo em 177,5).
+- **S4 "Antes da câmara"** (x 137, versão compacta sem a cesta: só cabem 4 tiles entre a parede de fora e a chaminé), placa D-PLACA-04, grades (entrada em 145,5 e tomo em 177,5).
 - **Koda, o Dourado** (x 166) e o **tomo** (x 181,5). Depois: a maldição, a marretada que segura a última vida, o Contratante, a moeda de 100 e o juramento, que dá o **Paladino**.
 - **Gate visível antes:** a **porta rachada da sala do tomo** (x 185) aparece antes do chefe ser vencido.
 - **Risco de softlock:** nenhum. A saída exige o Paladino, que é ganho na própria sala.

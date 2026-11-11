@@ -212,6 +212,18 @@ public static class ScenePreview
                     : Path.Combine(art, "Environments/Soluki/env_sol_obj_esconderijo_" + o.Text + ".png");
                 if (File.Exists(p)) AddCentered(draws, Img(p), o.X, o.Y + 0.5f, left, top, 7, false);
             }
+            else if (o.Kind == "noisy")
+            {
+                // objeto barulhento (FortressSetup.Noisy): o quadro de repouso; tapetes repetem a cada tile
+                string p = Path.Combine(art, "Environments/Common/Noisy/env_com_obj_" + o.Text + "_0.png");
+                if (File.Exists(p))
+                {
+                    var img = Img(p);
+                    int n = o.Text == "cacos" || o.Text == "folhas_secas" || o.Text == "palha" ? Math.Max(1, (int)Math.Round(o.W)) : 1;
+                    for (int i = 0; i < n; i++)
+                        AddCentered(draws, img, o.X - n / 2f + 0.5f + i, o.Y + img.Height / 32f, left, top, 2, false);
+                }
+            }
             else if (o.Kind == "sanctuary")
             {
                 string p = Path.Combine(art, "Environments/Common/env_com_obj_santuario_seco.png");

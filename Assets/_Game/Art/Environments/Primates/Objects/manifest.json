@@ -1,0 +1,56 @@
+{
+  "regiao": "pri",
+  "assets": [
+    {
+      "id": "env_pri_obj_cristal_apagado",
+      "nome": "Cristal Primata",
+      "regiao": "pri",
+      "categoria": "pri",
+      "funcao": "narrativo",
+      "material": "cristal, pedra negra",
+      "epoca": "primata",
+      "tamanho_px": [14, 18],
+      "sprites": ["env_pri_obj_cristal_apagado.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["exterior", "cofres"] },
+      "leitura": "Apagado. Aceso (env_pri_obj_cristal_aceso_0..2) quando o gato chega a 3 tiles (Etapa 7: ReactOnProximity). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_pri_obj_marco",
+      "nome": "Marco da estrada negra",
+      "regiao": "pri",
+      "categoria": "pri",
+      "funcao": "narrativo",
+      "material": "pedra negra",
+      "epoca": "primata",
+      "tamanho_px": [12, 21],
+      "sprites": ["env_pri_obj_marco.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["exterior"] },
+      "leitura": "Pedra lisa demais para ser natural, com sulcos que jÃ¡ brilharam. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_pri_obj_reliquia",
+      "nome": "RelÃ­quia Primata confiscada",
+      "regiao": "pri",
+      "categoria": "pri",
+      "funcao": "narrativo",
+      "material": "pedra negra, cristal",
+      "epoca": "primata",
+      "tamanho_px": [10, 8],
+      "sprites": ["env_pri_obj_reliquia_0.png", "env_pri_obj_reliquia_1.png", "env_pri_obj_reliquia_2.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["cofres"] },
+      "leitura": "Uma em cada cofre: disco com glifos, mÃ¡scara, tabuleta. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    }
+  ]
+}

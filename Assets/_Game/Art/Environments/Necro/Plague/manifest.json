@@ -1,0 +1,39 @@
+{
+  "regiao": "nec",
+  "assets": [
+    {
+      "id": "env_nec_veia",
+      "nome": "Veias da praga",
+      "regiao": "nec",
+      "categoria": "mag",
+      "funcao": "narrativo",
+      "material": "praga",
+      "epoca": "praga",
+      "tamanho_px": [16, 16],
+      "sprites": ["env_nec_veia_0.png", "env_nec_veia_1.png", "env_nec_veia_2.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "distancia_minima_mesmo_id": 4, "zonas": ["armadilhas", "torres", "camara"] },
+      "leitura": "Intensidade 1 (finas), 2 (galhos), 3 (grossas com pontos verdes). Sobe com a altura (6.3). Use Fixed com a intensidade - 1. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_nec_fissura_vitral",
+      "nome": "Fissura roxa no vitral",
+      "regiao": "nec",
+      "categoria": "mag",
+      "funcao": "narrativo",
+      "material": "praga",
+      "epoca": "praga",
+      "tamanho_px": [10, 26],
+      "sprites": ["env_nec_fissura_vitral.png"],
+      "espelhar": false,
+      "camada": "decor_frente",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "livre", "distancia_minima_mesmo_id": 4, "zonas": ["salao"] },
+      "leitura": "Por cima do vitral do salÃ£o: primeiro sinal da praga; os cacos ficam embaixo. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    }
+  ]
+}

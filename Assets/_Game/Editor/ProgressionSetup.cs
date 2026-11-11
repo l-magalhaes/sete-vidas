@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using SeteVidas.Core;
 using SeteVidas.Save;
@@ -76,6 +77,28 @@ namespace SeteVidas.EditorTools
             SceneManager.MoveGameObjectToScene(parent, scene);
             PlaceSanctuary(sanctuary, parent.transform, "playground_inicio", "Início da Playground", 3f);
             PlaceSanctuary(sanctuary, parent.transform, "playground_furtividade", "Antes da Sentinela", 119.5f);
+        }
+
+        /// <summary>
+        /// Troca o desenho de um santuário já colocado pela versão compacta (sem a cesta de frutas: fonte + caixinha de
+        /// areia, 4 tiles visíveis). Mesmo quadro de 80 px, então posições e a borda da caixinha não mudam.
+        /// </summary>
+        internal static void UseCompactArt(GameObject sanctuary)
+        {
+            const string art = "Assets/_Game/Art/Environments/Common/env_com_obj_santuario_compacto_";
+            var unlit = AssetDatabase.LoadAssetAtPath<Sprite>(art + "seco.png");
+            var frames = new List<Sprite>();
+            for (int i = 0; i < 4; i++) { var s = AssetDatabase.LoadAssetAtPath<Sprite>(art + "ativo_" + i + ".png"); if (s != null) frames.Add(s); }
+            if (unlit == null || frames.Count == 0) { Debug.LogWarning("[Sete Vidas] Falta o santuário compacto (rode Tools/EnvironmentSprites/gerar.ps1)"); return; }
+            var so = new SerializedObject(sanctuary.GetComponent<Sanctuary>());
+            so.FindProperty("unlitSprite").objectReferenceValue = unlit;
+            so.FindProperty("litSprite").objectReferenceValue = frames[0];
+            var list = so.FindProperty("litFrames");
+            list.arraySize = frames.Count;
+            for (int i = 0; i < frames.Count; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = frames[i];
+            var sr = so.FindProperty("spriteRenderer").objectReferenceValue as SpriteRenderer;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            if (sr != null) { sr.sprite = unlit; PrefabUtility.RecordPrefabInstancePropertyModifications(sr); }
         }
 
         internal static void PlaceSanctuary(GameObject prefab, Transform parent, string id, string displayName, float x)

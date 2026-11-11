@@ -61,3 +61,13 @@ O terreno não é colocado item por item: cada célula de chão do `FortressLayo
 ## Cores reservadas
 
 O validador avisa quando um enfeite (`decorativo`, `narrativo`, `luz`) usa uma cor reservada ou parecida (distância RGB < 28): vermelho das armadilhas, brilho da rachadura, hera escalável, verde-ácido e roxo da praga (o roxo é liberado nos fundos) e o verde do matinho. Gates, perigos e esconderijos podem usar as suas.
+
+## Grupos de objetos (Etapa 5)
+
+Objetos que contam juntos quem vive ou trabalha num lugar (mesa + bancos + dados, beliche + baú, barril + panela + vassoura…). Ficam em `FortressDressing.Groups` como dados: cada peça é `"id|dx|dy"` (tiles a partir do ponto do grupo). Coloque um grupo com `Group(d, área, "nome", x, y)`. Para outra fase, copie os grupos que servem e crie os da região. Regra: pelo menos 2 grupos por área, todos atrás do jogo (`decor_atras`) e nunca na frente de placa, pulo, armadilha ou patrulha.
+
+**Objetos barulhentos** não são enfeites: entram no mapa jogável (`noisy` no `FortressLayout`), ver `Docs/Design/objetos-barulhentos.md`.
+
+**Variações com significado** (use `Fixed` com a variação, nunca o sorteio): `env_mag_selo_porta` = porta − 1 (0 intacto e limpo … 6 rompido); `env_nec_veia` = intensidade − 1 (0 finas, 1 com galhos, 2 grossas); `env_sol_obj_porta_fechada` 0 trancada, 1 tábuas pregadas; `env_com_cul_marca_guilda` 0 olho (sombra boa), 1 seta (por aqui), 2 nove riscos (já passamos). Em grupos, a variação é o 4º campo: `"id|dx|dy|variação"`.
+
+**Cores da praga:** só assets com `epoca: "praga"` podem usar o roxo #5b2a6e e o verde-ácido #8fd14f (o validador libera essa época).

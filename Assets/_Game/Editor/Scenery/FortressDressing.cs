@@ -25,6 +25,8 @@ namespace SeteVidas.EditorTools
             public int Area;
             /// <summary>Variação fixa (-1 = sorteio pela posição). Use quando o tamanho importa para a leitura.</summary>
             public int Variant = -1;
+            /// <summary>Grupo de objetos a que a peça pertence (Etapa 5), ou null.</summary>
+            public string Group;
         }
 
         const string Statue = "env_cid_cul_statue_paladin";
@@ -34,6 +36,7 @@ namespace SeteVidas.EditorTools
         const string Torch = "env_com_obj_wall_torch";
         const string Rack = "env_sol_obj_weapon_rack";
         const string Target = "env_sol_obj_archery_target";
+        const string Door = "env_sol_obj_porta_fechada";
 
         const string Pebble = "env_ext_roc_pequena", Medium = "env_ext_roc_media", Boulder = "env_ext_roc_rochedo";
         // Fósseis (variações em ordem): 0 crânio 20 px, 1 costelas 22 px, 2 osso longo 14 px, 3 coluna 24 px.
@@ -49,7 +52,7 @@ namespace SeteVidas.EditorTools
 
             // ===== 1) Montanha (Etapa 2). A corrida até o salto (x 4..12) fica limpa: nada que pareça degrau.
             Add(d, 1, Boulder, "Rochedo atrás do início", -3.5f, Cliff);
-            Add(d, 1, Pebble, "Pedra pequena do morrinho", -5.6f, Cliff);
+            Group(d, 1, "montanha_estrada_negra", -5.6f, Cliff);   // a estrada Primata antiga termina no penhasco
             Fixed(d, 1, Fossil, Skull, "Fóssil na terra do início", 0.6f, Cliff - 1.6f);
             Fixed(d, 1, Fossil, Ribs, "Fóssil na parede de rocha", -12.5f, Cliff + 6f);   // 22 px: cabe em x -14..-11
             // Face do penhasco: o gato vê na queda de 60 tiles (x <= 12, dentro da rocha)
@@ -59,7 +62,7 @@ namespace SeteVidas.EditorTools
 
             // ===== 2) Trilha (Etapa 2). Pedras jogáveis (2 e 3) são tiles de rocha; estas são só cenário, atrás.
             Fixed(d, 2, Boulder, 0, "Rochedo na lagoa", 17.2f, -1f);      // sem musgo; no fundo da bacia, meio dentro d'água
-            Add(d, 2, Medium, "Pedra média do marco", 24.1f, 0f);         // na margem, depois da rampa (x 23..)
+            Add(d, 2, Medium, "Pedra média do marco", 25.1f, 0f);         // na margem, depois do marco (a placa saiu da beira da água)
             // Osso de 14 px, todo dentro da parede esquerda do fosso (célula x 36): a vala descobriu o fóssil.
             // Nunca maior: saindo da parede, pareceria uma plataforma em cima dos espinhos.
             Fixed(d, 2, Fossil, Bone, "Fóssil no fosso", 36.45f, -1.5f);
@@ -84,7 +87,7 @@ namespace SeteVidas.EditorTools
             Add(d, 2, Adult, "Adulta entre as pedras", 29.6f, 0f);
             Add(d, 2, Young, "Jovem antes do fosso", 35.1f, 0f);
             Add(d, 2, Shrub, "Arbusto do marco", 24.4f, 0f);
-            Add(d, 2, Shrub, "Arbusto depois do fosso", 42.7f, 0f);
+            // (o arbusto depois do fosso deu lugar ao posto de comércio da Etapa 5B)
             // 3) Pátio: zona de tiro limpa perto da muralha (o guarda patrulha na frente, os tocos ficam atrás)
             Add(d, 3, Stump, "Toco da zona de tiro 1", 97.2f, 0f);
             Fixed(d, 3, Stump, 1, "Toco da zona de tiro 2 (com broto)", 101f, 0f);
@@ -97,16 +100,15 @@ namespace SeteVidas.EditorTools
             Add(d, 10, Young, "Jovem da estrada", 241.2f, 0f);
             Fixed(d, 10, Ancient, 0, "Anciã da estrada", 248.4f, 0f);
             Add(d, 10, "env_ext_veg_tronco_caido", "Tronco caído da estrada", 243.8f, 0f);
-            Add(d, 10, Shrub, "Arbusto da estrada 1", 239.4f, 0f);
+            // (o arbusto da estrada 1 deu lugar ao posto de comércio dos estrangeiros)
             Add(d, 10, Shrub, "Arbusto da estrada 2", 246.2f, 0f);
 
             // ===== 3) Pátio de treino
             Add(d, 3, Statue, "Estátua do guardião", 44.5f, 0f);
-            Add(d, 3, Rack, "Suporte de armas", 67f, 0f);
-            Add(d, 3, Target, "Alvo de arco", 70f, 0f);
+            Group(d, 3, "patio_treino", 67f, 0f);                   // suporte de armas + balde + alvo
             // Nada flutua e toda sombra tem motivo (correções da revisão):
             // a tenda faz a sombra do fardo de feno (sombra x 82..88, até 5 de altura)
-            Add(d, 3, "env_sol_obj_tenda", "Tenda do pátio", 85f, 0f);
+            Add(d, 3, "env_sol_obj_tenda", "Tenda do pátio", 84.4f, 0f);   // 7 tiles: termina antes da torre de escalada (x 88)
             // a arquibancada se apoia no chão (postes nas pontas da passagem baixa) e tem um toldo sobre o atirador
             Add(d, 3, "env_sol_obj_poste_curto", "Poste da arquibancada (esquerda)", 50.2f, 0f);
             Add(d, 3, "env_sol_obj_poste_curto", "Poste da arquibancada (direita)", 55.8f, 0f);
@@ -135,7 +137,7 @@ namespace SeteVidas.EditorTools
             Add(d, 7, Window, "Vitral do salão 1", 186f, BellHall + 6f);
             Add(d, 7, Window, "Vitral do salão 2", 198f, BellHall + 6f);
             Add(d, 7, Banner, "Estandarte do salão", 192f, 81.9f);
-            Row(d, 7, Shield, "Escudos do salão", 178f, BellHall + 3.3f, 4, 8f);
+            Row(d, 7, "env_cid_cul_escudo_nome", "Escudos dos paladinos caídos (com nome)", 178f, BellHall + 3.3f, 4, 8f);
 
             // ===== 9) Câmara do Selo
             Add(d, 9, Statue, "Estátua da câmara 1", 149f, SealFloor);
@@ -147,7 +149,134 @@ namespace SeteVidas.EditorTools
             Add(d, 9, Window, "Vitral da câmara 2", 168f, SealFloor + 5.5f);
             Add(d, 9, Banner, "Estandarte do selo", 161.5f, 109.9f);
             Add(d, 9, Banner, "Estandarte do tomo", 181.5f, 106.9f);
+
+            // ===== Etapa 5A: quem vive e trabalha em cada área (grupos de objetos, seção 5 do plano).
+            // Nada na frente de placas, alavancas de jogo, pulos ou do caminho das armadilhas; tudo atrás (decor_atras).
+            // 1) Montanha: alguém acampou antes do gato
+            Group(d, 1, "exterior_acampamento", 0.3f, Cliff);   // ao lado do início, antes da corrida do salto (x 4..12)
+            // 3) Pátio: a estação de treino (suporte e alvo já existem) ganha o balde; o canto dos recrutas embaixo da tenda
+            Group(d, 3, "patio_mantimentos", 82.5f, 0f);
+            // 4) Escalada: munição no alto das muralhas (a defesa de verdade)
+            Group(d, 4, "defesa_muralha", 113.4f, 15f);
+            Group(d, 4, "defesa_braseiro", 133.9f, WallWalk);
+            // 5) Galeria (alojamento): beliche e baú, a partida de dados largada, a cozinha, a escala da guarda
+            // (pedido do usuário: é o alojamento, então mais camas e mesas; a armadilha foi para o pé da torre do sino)
+            Group(d, 5, "alojamento_dormitorio", 157.9f, WallWalk);     // dois beliches embaixo da passarela
+            Add(d, 5, "env_sol_obj_escala", "Escala da guarda", 163.3f, WallWalk + 1.9f);
+            Group(d, 5, "alojamento_cama", 167.6f, WallWalk);
+            Group(d, 5, "alojamento_cama", 185.4f, WallWalk);
+            Group(d, 5, "alojamento_mesa", 189.9f, WallWalk);
+            Group(d, 5, "alojamento_cozinha", 193.7f, WallWalk);
+            Group(d, 5, "alojamento_mesa", 198f, WallWalk);
+            // Portas fechadas (pedido do usuário): corredores que existem mas o gato não usa. No fundo das alcovas da
+            // galeria, no salão, na passagem dos fundos e na entrada da câmara. Variação fixa: 0 trancada, 1 tábuas em X
+            Fixed(d, 5, Door, 0, "Porta da alcova A", 146.6f, WallWalk);
+            Fixed(d, 5, Door, 1, "Porta da alcova B", 174.6f, WallWalk);
+            Fixed(d, 7, Door, 0, "Porta do salão (embaixo do escudo)", 178f, BellHall);
+            Fixed(d, 10, Door, 1, "Porta da passagem dos fundos", 194.4f, SealFloor);
+            // 8) Galeria das armadilhas: o cano de óleo corre no rodapé, atrás dos bicos dos jatos (no alto ou descendo
+            // pela parede ele parecia corrimão e grade); o mecanismo e o registro; elmo e escudo de quem falhou no fosso
+            Row(d, 8, "env_cid_obj_tubo_oleo", "Cano de óleo dos jatos", 161.5f, BellHall + 0.17f, 13, 1f);
+            Group(d, 8, "armadilhas_mecanismo", 159.6f, BellHall);
+            Group(d, 8, "armadilhas_fosso", 146.3f, BellHall - 2f);
+            // 10) Fundos: o arquivo e o depósito que ninguém visita
+            Group(d, 10, "servico_arquivo", 208.9f, SealFloor);
+            Group(d, 10, "servico_deposito", 212.6f, SealFloor);
+            // ===== Etapa 5B: cultura, estrangeiros, Primatas, magia, praga, as sete portas e a arquitetura
+            // 2) Trilha: o posto de comércio dos estrangeiros (fora dos muros) e um vestígio da estrada negra
+            Group(d, 2, "trilha_carga_largada", 42.3f, 0f);   // a carga que ficou para trás (a barraca foi para a estrada, fora dos muros)
+            Group(d, 2, "vestigio_primata", 36.4f, 0f);
+            // 3) Pátio: porta 1 (selo intacto e limpo) no alto da torre dos escudeiros; seteira atrás do lançador da torre
+            Fixed(d, 3, "env_mag_selo_porta", 0, "Selo da porta 1", 91f, 15.6f);
+            Add(d, 3, "env_cid_arq_seteira", "Seteira da torre de escalada", 93.85f, 10.2f);
+            // 4) Muralhas: seteira atrás do lançador
+            Add(d, 4, "env_cid_arq_seteira", "Seteira da muralha", 120.05f, 16.2f);
+            // 5) Galeria: grade levantada e porta 2 na entrada, marca da Guilda e a corda cortada (as pontas de viga no
+            // teto saíram: pareciam comportas)
+            Add(d, 5, "env_cid_arq_portao_levantado", "Grade levantada da entrada", 137.5f, 52f);
+            Fixed(d, 5, "env_mag_selo_porta", 1, "Selo da porta 2", 137.5f, 50.3f);
+            Fixed(d, 5, "env_com_cul_marca_guilda", 0, "Marca da Guilda (olho: sombra boa)", 142.9f, WallWalk + 1.1f);
+            Add(d, 5, "env_com_obj_corda_cortada", "Corda cortada da Guilda", 153f, 52f);
+            // 6) Torre do Sino: o sino no teto do salão sobre a chaminé, o pombal no pé da torre, porta 3 com correntes,
+            // seteira atrás do lançador
+            Group(d, 6, "torre_sino", 209.5f, 82f);
+            Group(d, 6, "torre_pombal", 202f, WallWalk);
+            Fixed(d, 6, "env_mag_selo_porta", 2, "Selo da porta 3", 207f, 50.4f);
+            Add(d, 6, "env_cid_arq_seteira", "Seteira da torre do sino", 211.85f, 57.2f);
+            // 7) Salão dos Votos: colunas (nunca atrás de plataforma), tapete, o altar do juramento com uma vela apagada
+            // (primeiro sinal da praga), a fissura roxa no vitral dos cacos e a porta 4 na saída para as armadilhas
+            Group(d, 7, "salao_colunas", 188f, BellHall);
+            Row(d, 7, "env_cid_cul_tapete", "Tapete do salão", 184.5f, BellHall, 12, 1f);
+            Group(d, 7, "salao_altar", 205f, BellHall);
+            Add(d, 7, "env_nec_fissura_vitral", "Fissura no vitral", 186f, BellHall + 6f);
+            Fixed(d, 7, "env_mag_selo_porta", 3, "Selo da porta 4", 176.6f, BellHall + 7.6f);
+            // 8) Armadilhas e Torre do Selo: veias finas, depois com galhos; porta 5; seteira atrás do lançador
+            Fixed(d, 8, "env_nec_veia", 0, "Veias finas da galeria 1", 150.5f, BellHall + 4f);
+            Fixed(d, 8, "env_nec_veia", 0, "Veias finas da galeria 2", 158.6f, BellHall + 5f);
+            Fixed(d, 8, "env_nec_veia", 1, "Veias da torre do selo 1", 140.8f, 86.5f);
+            Fixed(d, 8, "env_nec_veia", 1, "Veias da torre do selo 2", 141.3f, 95.5f);
+            Fixed(d, 8, "env_mag_selo_porta", 4, "Selo da porta 5", 143.6f, BellHall + 8f);
+            Add(d, 8, "env_cid_arq_seteira", "Seteira da torre do selo", 139.15f, 89.2f);
+            // 9) Câmara do Selo: correntes e selos, runas e veias grossas subindo para o tomo; portas 6 e 7
+            Group(d, 9, "camara_correntes", 152.5f, 110f);
+            Group(d, 9, "camara_runas", 146.9f, SealFloor);
+            Fixed(d, 9, "env_mag_selo_porta", 5, "Selo da porta 6", 143.4f, SealFloor + 3.3f);
+            Fixed(d, 9, "env_mag_selo_porta", 6, "Selo da porta 7 (rompido)", 184.6f, SealFloor + 3.3f);
+            Fixed(d, 9, "env_mag_selo_cera", 1, "Selo de cera rompido do tomo", 181.6f, SealFloor + 2.4f);
+            // 10) Estrada: o posto de comércio dos estrangeiros logo depois do portão dos fundos (fora dos muros, como na lore)
+            Group(d, 10, "posto_comercio", 240f, 0f);
+            // 10) Fundos: estandarte velho, marca da Guilda e corda, relíquias Primatas nos cofres
+            Add(d, 10, "env_cid_cul_estandarte_desbotado", "Estandarte velho dos fundos", 190.5f, 104.6f);
+            Fixed(d, 10, "env_com_cul_marca_guilda", 2, "Marca da Guilda (nove riscos)", 196.6f, SealFloor + 1.1f);
+            Add(d, 10, "env_com_obj_corda_cortada", "Corda cortada dos fundos", 198f, 106f);
+            Fixed(d, 10, "env_pri_obj_reliquia", 0, "Relíquia do cofre 72", 228.05f, BellHall);
+            Fixed(d, 10, "env_pri_obj_reliquia", 1, "Relíquia do cofre 43", 228.05f, WallWalk);
+            Fixed(d, 10, "env_pri_obj_reliquia", 2, "Relíquia do cofre 15", 228.05f, 15f);
             return d;
+        }
+
+        /// <summary>
+        /// Grupos (plano, Etapa 5): objetos que contam juntos quem vive ou trabalha ali. Cada peça é
+        /// "id|dx|dy" ou "id|dx|dy|variação" (tiles, a partir do ponto do grupo; dy soma ao y — para apoio "parede" é o centro).
+        /// </summary>
+        public static readonly Dictionary<string, string[]> Groups = new Dictionary<string, string[]>
+        {
+            { "exterior_acampamento", new[] { "env_ext_obj_fogueira_apagada|0|0", "env_ext_obj_mochila|1.05|0" } },
+            { "patio_mantimentos", new[] { "env_sol_obj_barril|0|0", "env_sol_obj_sacos|3.9|0" } },
+            { "defesa_muralha", new[] { "env_sol_obj_aljava|0|0", "env_sol_obj_virotes|0.85|0", "env_sol_obj_corda|1.85|0" } },
+            { "defesa_braseiro", new[] { "env_sol_obj_braseiro|0|0", "env_sol_obj_virotes|-1.05|0" } },
+            { "alojamento_cama", new[] { "env_sol_obj_beliche|0|0", "env_sol_obj_bau|1.55|0" } },
+            { "alojamento_dormitorio", new[] { "env_sol_obj_beliche|0|0", "env_sol_obj_beliche|2.1|0" } },
+            { "alojamento_mesa", new[] { "env_sol_obj_banco|-1.55|0", "env_sol_obj_mesa_dados|0|0", "env_sol_obj_banco|1.55|0" } },
+            { "alojamento_cozinha", new[] { "env_sol_obj_barril|0|0", "env_sol_obj_panela|0.95|0", "env_sol_obj_vassoura|1.75|0" } },
+            { "armadilhas_mecanismo", new[] { "env_cid_obj_engrenagem|0|2.6", "env_cid_obj_alavanca|0.95|1.1", "env_cid_obj_registro|-0.95|1.5" } },
+            { "armadilhas_fosso", new[] { "env_cid_obj_elmo_amassado|0|0", "env_cid_obj_escudo_amassado|2.6|0" } },
+            { "servico_arquivo", new[] { "env_sol_obj_prateleira|0|0", "env_sol_obj_caixote|1.3|0", "env_com_obj_teia|-0.45|5" } },
+            // Etapa 5B
+            { "montanha_estrada_negra", new[] { "env_pri_obj_marco|0|0", "env_ext_roc_pequena|0.75|0" } },
+            { "patio_treino", new[] { "env_sol_obj_weapon_rack|0|0", "env_sol_obj_balde_agua|1.45|0", "env_sol_obj_archery_target|3|0" } },
+            { "posto_comercio", new[] { "env_ext_obj_barraca_comercio|0|0", "env_cid_cul_penas|-1.05|0" } },
+            { "vestigio_primata", new[] { "env_pri_obj_marco|0|0", "env_pri_obj_cristal_apagado|-6|0" } },
+            { "torre_sino", new[] { "env_cid_cul_sino|0|0" } },
+            { "torre_pombal", new[] { "env_cid_cul_pombal|0|0", "env_cid_cul_penas|-1.2|0" } },
+            { "trilha_carga_largada", new[] { "env_sol_obj_caixote|-0.6|0", "env_sol_obj_sacos|0.6|0" } },
+            { "salao_colunas", new[] { "env_cid_arq_coluna|0|0", "env_cid_arq_coluna|8|0" } },
+            { "salao_altar", new[] { "env_cid_cul_placa_juramento|0|4", "env_cid_cul_emblema|0|6.6", "env_cid_cul_vela|-1.4|0", "env_cid_cul_vela_apagada|1.4|0" } },
+            { "camara_correntes", new[] { "env_mag_corrente|0|0", "env_mag_corrente|11|0", "env_mag_selo_cera|0|-3.3|0", "env_mag_selo_cera|11|-3.3|1" } },
+            { "camara_runas", new[] { "env_mag_runa|0|2.5", "env_nec_veia|10.1|1.5|2", "env_mag_runa|11.1|2.5", "env_nec_veia|19.1|3.5|2", "env_mag_runa|29.1|2.5" } },
+            { "servico_deposito", new[] { "env_sol_obj_barril|0|0", "env_sol_obj_sacos|1.05|0", "env_sol_obj_caixote|2.15|0" } },
+        };
+
+        static void Group(List<Item> d, int area, string group, float x, float y)
+        {
+            foreach (string piece in Groups[group])
+            {
+                var p = piece.Split('|');
+                float dx = float.Parse(p[1], System.Globalization.CultureInfo.InvariantCulture);
+                float dy = float.Parse(p[2], System.Globalization.CultureInfo.InvariantCulture);
+                int variant = p.Length > 3 ? int.Parse(p[3]) : -1;
+                d.Add(new Item { Area = area, AssetId = p[0], Name = group + ": " + p[0], X = x + dx, Y = y + dy, Group = group, Variant = variant });
+            }
         }
 
         static void Add(List<Item> d, int area, string id, string name, float x, float y)

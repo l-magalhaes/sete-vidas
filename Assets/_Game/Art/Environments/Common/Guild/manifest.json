@@ -1,0 +1,39 @@
+{
+  "regiao": "com",
+  "assets": [
+    {
+      "id": "env_com_cul_marca_guilda",
+      "nome": "Marca de giz da Guilda das Nove Sombras",
+      "regiao": "com",
+      "categoria": "cul",
+      "funcao": "narrativo",
+      "material": "giz",
+      "epoca": "natural",
+      "tamanho_px": [12, 10],
+      "sprites": ["env_com_cul_marca_guilda_0.png", "env_com_cul_marca_guilda_1.png", "env_com_cul_marca_guilda_2.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "distancia_minima_mesmo_id": 4, "zonas": ["galeria", "salao", "fundos"] },
+      "leitura": "Dica de furtividade de outros ladrÃµes: olho (sombra boa), seta com 9 pontos (por aqui), nove riscos (jÃ¡ passamos). Perto de sombras e passagens, 1 tile acima do chÃ£o. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_com_obj_corda_cortada",
+      "nome": "Corda cortada com gancho",
+      "regiao": "com",
+      "categoria": "cul",
+      "funcao": "narrativo",
+      "material": "corda, ferro enferrujado",
+      "epoca": "natural",
+      "tamanho_px": [10, 26],
+      "sprites": ["env_com_obj_corda_cortada.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "teto", "distancia_minima_mesmo_id": 4, "zonas": ["galeria", "fundos"] },
+      "leitura": "AlguÃ©m jÃ¡ tentou: gancho preso no teto e a corda cortada. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    }
+  ]
+}
