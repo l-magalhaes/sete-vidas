@@ -198,6 +198,28 @@
       "tags": ["agua", "vivo"]
     },
     {
+      "id": "env_sol_arq_poca",
+      "nome": "Poça da gárgula",
+      "regiao": "sol",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [14, 4],
+      "sprites": ["Architecture/env_sol_arq_poca_0.png"],
+      "camada": "terreno_detalhe",
+      "sorting": 2,
+      "animacao": {
+        "nome": "ondinha",
+        "quadros": ["Architecture/env_sol_arq_poca_0.png", "Architecture/env_sol_arq_poca_1.png", "Architecture/env_sol_arq_poca_2.png", "Architecture/env_sol_arq_poca_3.png", "Architecture/env_sol_arq_poca_4.png", "Architecture/env_sol_arq_poca_5.png", "Architecture/env_sol_arq_poca_6.png", "Architecture/env_sol_arq_poca_7.png"],
+        "fps": 8,
+        "amplitude_px": 5
+      },
+      "posicionamento": { "apoio": "chao", "zonas": ["chão embaixo de cada gárgula/calha"] },
+      "leitura": "Posta pelo TerrainPainter no chão embaixo do fio d'água de cada gárgula, menos onde já há um balde ou uma tina: a água que pinga se junta ali. Rasa e meio transparente: nunca parece buraco nem plataforma.",
+      "tags": ["agua", "vivo"]
+    },
+    {
       "id": "env_cid_arq_ameias_fundo",
       "nome": "Ameias no alto da parede do fundo",
       "categoria": "arq",

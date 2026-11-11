@@ -115,9 +115,10 @@ namespace SeteVidas.EditorTools
             // Terreno natural (Etapa 2 do plano de cenário): solo e rocha no lugar do tile provisório, com tufos e seixos
             var terrainDetails = new GameObject("Detalhes do terreno");
             SceneManager.MoveGameObjectToScene(terrainDetails, scene);
+            TerrainPainter.CollectFortressBuckets(); // gárgula em cima de balde não ganha poça
             int painted = TerrainPainter.Paint(maps[FortressLayout.Map.Ground], maps[FortressLayout.Map.Climbable], maps[FortressLayout.Map.Background],
                 FortressLayout.Slopes(), terrainDetails.transform);
-            Debug.Log($"[Sete Vidas] Terreno e arquitetura: {painted} tiles, {terrainDetails.transform.childCount} detalhes (tufos, seixos, fendas, gárgulas).");
+            Debug.Log($"[Sete Vidas] Terreno e arquitetura: {painted} tiles, {terrainDetails.transform.childCount} detalhes (tufos, seixos, fendas, gárgulas, {TerrainPainter.Puddles} poças, {TerrainPainter.Tubs} tinas).");
             BuildWindows(scene, maps[FortressLayout.Map.Background]);
 
             var root = new GameObject("Fortaleza");

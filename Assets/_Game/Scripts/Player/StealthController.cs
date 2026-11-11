@@ -14,7 +14,7 @@ namespace SeteVidas.Player
     {
         [SerializeField] StealthSettings settings;
         [Tooltip("Mostra a visibilidade no canto da tela (depuração)")]
-        [SerializeField] bool showDebugHud = true;
+        [SerializeField] bool showDebugHud; // só depuração: a silhueta na sombra responde "estou escondido?" (melhoria 1)
 
         PlayerController _player;
         CombatController _combat;
@@ -52,6 +52,8 @@ namespace SeteVidas.Player
         void Awake()
         {
             _player = GetComponent<PlayerController>();
+            // silhueta na sombra (melhoria 1): fica junto da furtividade, sem precisar recriar o prefab
+            if (GetComponent<ShadowSilhouette>() == null) gameObject.AddComponent<ShadowSilhouette>();
             _combat = GetComponent<CombatController>();
             _health = GetComponent<PlayerHealth>();
             if (settings == null)

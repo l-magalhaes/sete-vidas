@@ -12,9 +12,9 @@ O cenário também conta para a furtividade: o jogador olha o chão, vê cacos d
 
 | Tipo | Faz barulho quando | Silencioso quando | Raio / volume | Como evitar |
 |---|---|---|---|---|
-| **Cacos de vidro** | pisa andando, **até agachado** | parado em cima, ou no ar | 5 tiles / 0,5 | pular por cima (faixas de 1–3 tiles) |
+| **Cacos de vidro** | pisa andando, **até agachado** | parado em cima, ou no ar | 10 tiles / 0,7 (era 5 / 0,5) | pular por cima (faixas de 1–3 tiles) |
 | **Folhas secas, palha** | correndo (≥ 60% da velocidade) | andando devagar ou agachado | 3 / 0,2 | andar agachado |
-| **Sininhos pendurados** | encosta de pé ou pulando através | agachado (passa por baixo) | 6 / 0,6 | agachar |
+| **Sininhos pendurados** | encosta de pé ou pulando através | agachado (passa por baixo) | 11 / 0,75 (era 6 / 0,6; os de alarme da galeria, 16) | agachar |
 | **Balde, panela** | correndo contra (cai **uma vez**) | andando devagar ou agachado | 4 / 0,4 | andar devagar; depois de caído não faz mais barulho |
 
 3. Entre dois barulhos há um tempo mínimo (cacos 0,5 s, folhas 0,4 s, sininhos 1,5 s), para o ruído não virar metralhadora.
@@ -47,7 +47,7 @@ Presets em `NoisyObjectRules.Preset` (valores [PROPOSTA]). Para uma peça especi
 - Testes: `Tests/EditMode/NoisyObjectRulesTests.cs`.
 
 ## Critérios de aceite
-- **Dado** o gato andando agachado sobre cacos de vidro, **então** a Sentinela a até 5 tiles ouve.
+- **Dado** o gato andando agachado sobre cacos de vidro, **então** a Sentinela a até 10 tiles ouve.
 - **Dado** o gato pulando por cima dos cacos, **então** nada acontece.
 - **Dado** o gato andando agachado sobre folhas secas, **então** nada acontece; **correndo**, faz barulho.
 - **Dado** o gato agachado sob os sininhos, **então** nada acontece; **de pé**, tocam.

@@ -59,6 +59,8 @@ public static class ArchitectureSpriteGen
         Write(Gutter().Mirror(), "env_sol_arq_calha_r");
         var drip = Drip();
         for (int i = 0; i < drip.Count; i++) Write(drip[i], TerrainAutotile.DripFrameName(i));
+        var puddle = Puddle();
+        for (int i = 0; i < puddle.Count; i++) Write(puddle[i], TerrainAutotile.PuddleFrameName(i));
 
         // alcovas: o recuo na parede que explica cada sombra jogável de interior (largura × altura da sombra, em tiles)
         Palette(TerrainAutotile.Soluki, Back);
@@ -555,6 +557,36 @@ public static class ArchitectureSpriteGen
                 cv.Force(1, 45, 'w'); cv.Force(5, 45, 'w'); cv.Force(0, 44, 's'); cv.Force(6, 44, 's');
                 cv.Force(2, 47, 'W'); cv.Force(3, 47, 'W'); cv.Force(4, 47, 'W');
             }
+            frames.Add(cv);
+        }
+        return frames;
+    }
+
+    /// <summary>
+    /// Poça embaixo da gárgula (pedido do usuário: a água que pinga se junta no chão) 14×4, 8 quadros a 8 fps: a água
+    /// parada (0–4) e uma ondinha que nasce no meio e se abre para as pontas (5–7), como se a gota tivesse caído.
+    /// Mesmas cores da gota, mais um azul escuro de fundo meio transparente (o chão aparece por baixo).
+    /// </summary>
+    static List<PixelCanvas> Puddle()
+    {
+        PixelKit.Pal.Clear();
+        PixelKit.P('W', "#c8f4ff"); PixelKit.P('w', "#7fd0f0");
+        PixelKit.Pal['b'] = Color.FromArgb(200, 0x3d, 0x6f, 0x8f);   // fundo da poça
+        PixelKit.Pal['d'] = Color.FromArgb(150, 0x2c, 0x4a, 0x66);   // borda que some no chão
+        string[] rest =
+        {
+            "...wwwwwwww...",
+            ".dwbbbbbbbbwd.",
+            "dbbbbbbbbbbbbd",
+            ".ddbbbbbbbbdd.",
+        };
+        var frames = new List<PixelCanvas>();
+        int[][] rings = { null, null, null, null, null, new[] { 6, 7 }, new[] { 4, 9 }, new[] { 2, 11 } };
+        foreach (var ring in rings)
+        {
+            var cv = new PixelCanvas(14, 4);
+            cv.Stamp(rest, 0, 0);
+            if (ring != null) foreach (int x in ring) { cv.Force(x, 0, 'W'); cv.Force(x, 1, 'W'); }
             frames.Add(cv);
         }
         return frames;

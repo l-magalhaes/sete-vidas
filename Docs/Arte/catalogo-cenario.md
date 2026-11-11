@@ -2,7 +2,7 @@
 
 > Gerado por `Tools/EnvironmentSprites/gerar_catalogo.ps1` a partir dos `manifest.json`. **Não edite à mão**: mude o manifesto e rode o script de novo. Como usar a biblioteca: `guia-de-assets.md`.
 
-**141 assets** em 22 manifestos.
+**142 assets** em 22 manifestos.
 
 ## Backgrounds/Interior
 
@@ -72,6 +72,7 @@
 | ![](../../Assets/_Game/Art/Environments/Citadel/Architecture/env_cid_arq_alcova_10x5.png) | `env_cid_arq_alcova_10x5` | Alcova em arco (sombra de 10 × 5) | narrativo | parede_fundo (-9) | 1 | **apoio chao.** Recuo na parede do fundo com pilares e arco: a luz das tochas não entra, por isso a sombra jogável (mesma largura e altura) fica aqui. Toda sombra de interior precisa de uma. |
 | ![](../../Assets/_Game/Art/Environments/Citadel/Architecture/env_cid_arq_alcova_8x5.png) | `env_cid_arq_alcova_8x5` | Alcova em arco (sombra de 8 × 5) | narrativo | parede_fundo (-9) | 1 | **apoio chao.**  |
 | ![](../../Assets/_Game/Art/Environments/Citadel/Architecture/env_sol_arq_gota_0.png) | `env_sol_arq_gota` | Gota da gárgula | decorativo | terreno_detalhe (2) | 1 · anim 14q | **apoio livre.** Colocada sozinha embaixo de cada gárgula/calha (TerrainPainter), cada uma com atraso próprio: forma, cai 3 tiles ao longo da vinha, espirra e pausa. |
+| ![](../../Assets/_Game/Art/Environments/Citadel/Architecture/env_sol_arq_poca_0.png) | `env_sol_arq_poca` | Poça da gárgula | decorativo | terreno_detalhe (2) | 1 · anim 8q | **apoio chao.** Posta pelo TerrainPainter no chão embaixo do fio d'água de cada gárgula, menos onde já há um balde ou uma tina: a água que pinga se junta ali. Rasa e meio transparente: nunca parece buraco nem plataforma. |
 | ![](../../Assets/_Game/Art/Environments/Citadel/Architecture/env_cid_arq_ameias_fundo.png) | `env_cid_arq_ameias_fundo` | Ameias no alto da parede do fundo | decorativo | parede_fundo (-9) | 1 | **apoio chao.** No fundo (escuro, sem colisão): fecha o alto da torre. Nunca no plano do jogo (pareceria degrau). |
 | ![](../../Assets/_Game/Art/Environments/Citadel/Architecture/env_cid_parede_mancha.png) | `env_cid_parede_evento` | Acontecimentos da parede do fundo | narrativo | parede_fundo (-9) | 15 | **apoio livre.** Remendo de outra pedra e mancha de água: ~1 a cada 10 tiles, 1 tile acima do chão, colocados pelo TerrainPainter (regra 4.5 contra repetição). Sem janela tapada nem nicho: pareciam janelinhas competindo com as janelas da Etapa 6B. |
 | ![](../../Assets/_Game/Art/Environments/Citadel/env_cid_cul_estatua_paladino.png) | `env_cid_cul_statue_paladin` | Estátua de cão paladino | decorativo | decor_atras | 1 | **apoio chao.** Atrás dos personagens. Não pode parecer inimigo: sem olho claro, cor de pedra. |

@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_sol_arq_poca
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Citadel/manifest.json
+  entry:
+    id: env_sol_arq_poca
+    nome: "Po\xE7a da g\xE1rgula"
+    regiao: sol
+    categoria: ani
+    funcao: decorativo
+    material: "\xE1gua"
+    epoca: natural
+    tamanho_px: 0e00000004000000i
+    sprites:
+    - Architecture/env_sol_arq_poca_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: terreno_detalhe
+    sorting: 2
+    colisor: nenhum
+    animacao:
+      nome: ondinha
+      quadros:
+      - Architecture/env_sol_arq_poca_0.png
+      - Architecture/env_sol_arq_poca_1.png
+      - Architecture/env_sol_arq_poca_2.png
+      - Architecture/env_sol_arq_poca_3.png
+      - Architecture/env_sol_arq_poca_4.png
+      - Architecture/env_sol_arq_poca_5.png
+      - Architecture/env_sol_arq_poca_6.png
+      - Architecture/env_sol_arq_poca_7.png
+      quadros_por_variacao: 0
+      fps: 8
+      amplitude_px: 5
+    paleta: []
+    posicionamento:
+      apoio: chao
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - "ch\xE3o embaixo de cada g\xE1rgula/calha"
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Posta pelo TerrainPainter no ch\xE3o embaixo do fio d'\xE1gua de cada g\xE1rgula, menos onde j\xE1 h\xE1 um balde ou uma tina: a \xE1gua que pinga se junta ali. Rasa e meio transparente: nunca parece buraco nem plataforma."
+    tags:
+    - agua
+    - vivo
+  variants:
+  - {fileID: 21300000, guid: fa8c7c40a2d8a6cd3e4d90656ba6d0d6, type: 3}
+  frames:
+  - {fileID: 21300000, guid: fa8c7c40a2d8a6cd3e4d90656ba6d0d6, type: 3}
+  - {fileID: 21300000, guid: 112904459753b1660e33bdefb39bb343, type: 3}
+  - {fileID: 21300000, guid: feb0ba8823bf045b2cd0ec688b07a03b, type: 3}
+  - {fileID: 21300000, guid: bd33f261d19e8e46e1af776f3ca6ad46, type: 3}
+  - {fileID: 21300000, guid: f298f7a73a79bf1e3bc2129546f8cbbf, type: 3}
+  - {fileID: 21300000, guid: 3ad57577bd0a8d4b5eed70db05200b28, type: 3}
+  - {fileID: 21300000, guid: 51d0b3137d3ecfda54a0f8a06f3e7345, type: 3}
+  - {fileID: 21300000, guid: e74ec24224db10ebbaf101d7b01714b0, type: 3}

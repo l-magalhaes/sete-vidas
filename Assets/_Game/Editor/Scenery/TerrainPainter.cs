@@ -28,9 +28,31 @@ namespace SeteVidas.EditorTools
         /// Pinta o terreno e a arquitetura (chão, parede do fundo e paredes escaláveis por época) e cria os detalhes
         /// (tufos, seixos, fendas e a gárgula em cima de cada vinha). Devolve quantos tiles trocou.
         /// </summary>
+        /// <summary>Baldes e tinas no chão: a gárgula em cima deles não ganha poça (a água cai dentro). Mundo, em tiles.</summary>
+        public static readonly List<Vector2> PuddleBlockers = new List<Vector2>();
+        /// <summary>Poças postas no último Paint.</summary>
+        public static int Puddles { get; private set; }
+        /// <summary>Tinas de água postas no último Paint (gárgulas de fora).</summary>
+        public static int Tubs { get; private set; }
+        /// <summary>Gárgula com o chão abaixo desta altura é de fora (pátio e muralhas): ganha tina em vez de poça.</summary>
+        public const float TubMaxFloor = 30f;
+        const string TubSpritePath = "Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_balde_agua.png";
+
+        /// <summary>Monta a lista de baldes e tinas da Fortaleza (FortressLayout e FortressDressing).</summary>
+        public static void CollectFortressBuckets()
+        {
+            PuddleBlockers.Clear();
+            foreach (var o in FortressLayout.Objects())
+                if (o.Kind == "noisy" && o.Text == "balde") PuddleBlockers.Add(new Vector2(o.X, o.Y));
+            foreach (var i in FortressDressing.Items())
+                if (i.AssetId != null && i.AssetId.Contains("balde")) PuddleBlockers.Add(new Vector2(i.X, i.Y));
+        }
+
         public static int Paint(Tilemap ground, Tilemap climbable, Tilemap background, IEnumerable<FortressLayout.SlopeRect> slopes, Transform detailsParent)
         {
             s_tiles.Clear();
+            Puddles = 0;
+            Tubs = 0;
             var slopeSolid = new HashSet<Vector2Int>();
             foreach (var s in slopes)
                 foreach (var p in TerrainAutotile.SlopePieces(FortressTerrain.MaterialAt(s.X0, s.Y0), s.X0, s.Y0, s.W, s.H, s.RisesRight))
@@ -72,6 +94,73 @@ namespace SeteVidas.EditorTools
             {
                 if (!detailSprites.TryGetValue(name, out var s)) detailSprites[name] = s = LoadSprite(name);
                 return s;
+            }
+
+            Sprite[] puddleFrames = null; // quadros da poça (a da gárgula e a da água que a tina derrama)
+            // tina de água embaixo das gárgulas de fora (pedido do usuário): o gato passa por ela e ela tomba; duas no mesmo fio ficam lado a lado
+            Sprite tubSprite = null;
+            var tubs = new List<float>();
+            bool Tub(float x, float surface)
+            {
+                if (tubSprite == null) tubSprite = AssetDatabase.LoadAssetAtPath<Sprite>(TubSpritePath);
+                if (tubSprite == null) { Debug.LogError($"[Sete Vidas] Falta {TubSpritePath}. Rode Tools/EnvironmentSprites/gerar.ps1"); return false; }
+                float w = tubSprite.bounds.size.x, h = tubSprite.bounds.size.y;
+                foreach (float other in tubs)
+                    if (Mathf.Abs(other - x) < w + 0.1f) x = other + (x >= other ? 1f : -1f) * (w + 0.1f);
+                tubs.Add(x);
+                var go = new GameObject("Tina de água");
+                go.transform.SetParent(detailsParent, false);
+                go.layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Interactable); // só o gato a toca (gatilho)
+                go.transform.position = new Vector3(Mathf.Round(x * 16f) / 16f, surface + h * 0.5f, 0f);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = tubSprite;
+                sr.sortingOrder = 2;
+                var body = go.AddComponent<Rigidbody2D>();
+                body.bodyType = RigidbodyType2D.Kinematic; // não é empurrada nem é chão: só tomba quando o gato passa
+                body.freezeRotation = true;
+                body.interpolation = RigidbodyInterpolation2D.Interpolate;
+                var box = go.AddComponent<BoxCollider2D>();
+                box.isTrigger = true;
+                box.size = new Vector2(w - 0.04f, h - 0.02f);
+                go.AddComponent<SeteVidas.World.WaterTub>().Configure(sr, puddleFrames);
+                Tubs++;
+                return true;
+            }
+
+            // poça no chão embaixo do fio d'água da gárgula (pedido do usuário), menos onde já há um balde ou uma tina
+            void Puddle(TerrainAutotile.Detail drip, int topY, float offset)
+            {
+                if (detailsParent == null) return;
+                int col = Mathf.FloorToInt(drip.X);
+                int floor = int.MinValue;
+                for (int yy = topY - 1; yy > topY - 80; yy--)
+                    if (Solid(col, yy)) { floor = yy; break; }
+                if (floor == int.MinValue) return;
+                float surface = floor + 1;
+                foreach (var b in PuddleBlockers)
+                    if (Mathf.Abs(b.x - drip.X) < 0.9f && Mathf.Abs(b.y - surface) < 0.6f) return;
+                if (puddleFrames == null)
+                {
+                    puddleFrames = new Sprite[TerrainAutotile.PuddleFrames];
+                    for (int i = 0; i < puddleFrames.Length; i++) puddleFrames[i] = LoadSprite(TerrainAutotile.PuddleFrameName(i));
+                }
+                if (puddleFrames[0] == null) return;
+                const float px = 1f / 16f;
+
+                // gárgula de fora (pátio e muralhas, chão abaixo de TubMaxFloor): a Ordem guarda a água da chuva numa tina;
+                // dentro do castelo, a água pinga no chão e faz a poça
+                if (surface < TubMaxFloor && Tub(drip.X, surface)) return;
+
+                var go = new GameObject("env_sol_arq_poca");
+                go.transform.SetParent(detailsParent, false);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = puddleFrames[0];
+                sr.sortingOrder = 2; // por cima do chão e da vinha, atrás do gato
+                // assentada no chão: a linha de baixo entra 1 px no tile, no grid de pixel
+                float cx = Mathf.Round(drip.X * 16f) / 16f;
+                go.transform.position = new Vector3(cx, surface + puddleFrames[0].bounds.extents.y - px, 0f);
+                go.AddComponent<SeteVidas.World.SpriteLoop>().Configure(puddleFrames, 1f / TerrainAutotile.PuddleFps, offset);
+                Puddles++;
             }
 
             // gota animada da gárgula: quadros env_sol_arq_gota_0..13 num SpriteLoop com atraso próprio
@@ -126,7 +215,9 @@ namespace SeteVidas.EditorTools
                     if (airLeft || airRight)
                     {
                         Detail(TerrainAutotile.Gargoyle(x, y, airLeft, mat));
-                        Drip(TerrainAutotile.GargoyleDrip(x, y, airLeft, mat), TerrainAutotile.DripOffset(x, y));
+                        var drip = TerrainAutotile.GargoyleDrip(x, y, airLeft, mat);
+                        Drip(drip, TerrainAutotile.DripOffset(x, y));
+                        Puddle(drip, y, TerrainAutotile.DripOffset(x, y));
                     }
                 }
 

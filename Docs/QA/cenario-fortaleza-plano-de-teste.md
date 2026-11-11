@@ -18,6 +18,8 @@ Severidade (QA): **S1** bloqueante · **S2** mecânica central quebrada ou leitu
 | CEN-08 | Trilha e pátio | Correr e depois andar agachado nas folhas e na palha | Correndo: barulho; agachado: nada | ☐ |
 | CEN-09 | Galeria e fundos | Correr contra o balde; descansar no santuário | Cai uma vez; volta em pé após o descanso | ☐ |
 | CEN-10 | Pátio, galeria (x 162,3, 183,45, 208,6; passarela x 158 e 164,6) | Agachar atrás do feno e de cada caixote | O gato some; de pé, a cabeça aparece | ☐ |
+| CEN-10b | Pátio, muralhas, torre de escalada | Passar agachado pela tina embaixo da gárgula; depois passar andando; depois cair em cima | O gato passa por ela (não empurra nem sobe). Agachado: fica em pé. Andando, correndo ou caindo: tomba de lado, derrama numa poça e faz barulho (a sentinela perto investiga). Descansar no santuário: volta ao lugar | ☐ |
+| CEN-10c | Câmara, galeria, Torre do Sino | Olhar o chão embaixo de cada gárgula | Uma poça rasa com ondinha; nenhuma parece buraco nem plataforma | ☐ |
 
 ## 2. Primeiro plano e fundo
 

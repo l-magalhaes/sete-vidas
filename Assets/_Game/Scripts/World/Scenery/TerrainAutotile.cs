@@ -273,6 +273,10 @@ namespace SeteVidas.World.Scenery
             };
         }
 
+        public const int PuddleFrames = 8;
+        public const float PuddleFps = 8f;
+        public static string PuddleFrameName(int frame) { return "env_sol_arq_poca_" + frame; }
+
         public const int DripFrames = 14;
         public const float DripFps = 12f;
         public static string DripFrameName(int frame) { return "env_sol_arq_gota_" + frame; }

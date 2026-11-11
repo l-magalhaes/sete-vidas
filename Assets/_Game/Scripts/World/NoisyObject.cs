@@ -124,14 +124,16 @@ namespace SeteVidas.World
             switch (kind)
             {
                 // Vidro: até agachado e devagar. Só parado em cima não faz barulho. A saída é pular por cima.
+                // Alcance 10 (era 5, pedido do usuário): os guardas da sala inteira ouvem.
                 case NoisyObjectKind.Glass:
-                    return new Config { Radius = 5f, Loudness = 0.5f, QuietWhenCrouched = false, NeedsGround = true, MinSpeedFraction = 0.05f, Cooldown = 0.5f };
+                    return new Config { Radius = 10f, Loudness = 0.7f, QuietWhenCrouched = false, NeedsGround = true, MinSpeedFraction = 0.05f, Cooldown = 0.5f };
                 // Folhas secas e palha: só correndo. Andar agachado passa em silêncio.
                 case NoisyObjectKind.DryLeaves:
                     return new Config { Radius = 3f, Loudness = 0.2f, QuietWhenCrouched = true, NeedsGround = true, MinSpeedFraction = 0.6f, Cooldown = 0.4f };
                 // Sininhos pendurados na altura da cabeça: de pé tocam, agachado passa por baixo. Também no ar.
+                // Alcance 11 (era 6, pedido do usuário); os de alarme da galeria continuam em 16.
                 case NoisyObjectKind.Chimes:
-                    return new Config { Radius = 6f, Loudness = 0.6f, QuietWhenCrouched = true, NeedsGround = false, MinSpeedFraction = 0f, Cooldown = 1.5f };
+                    return new Config { Radius = 11f, Loudness = 0.75f, QuietWhenCrouched = true, NeedsGround = false, MinSpeedFraction = 0f, Cooldown = 1.5f };
                 // Balde ou panela: correndo contra, derruba uma vez.
                 case NoisyObjectKind.Bucket:
                     return new Config { Radius = 4f, Loudness = 0.4f, QuietWhenCrouched = true, NeedsGround = true, MinSpeedFraction = 0.6f, Cooldown = 0f, OneShot = true };

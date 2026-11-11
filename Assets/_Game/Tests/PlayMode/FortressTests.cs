@@ -145,6 +145,12 @@ namespace SeteVidas.Tests
             var details = GameObject.Find("Detalhes do terreno");
             Assert.IsNotNull(details);
             Assert.Greater(details.transform.childCount, 30, "Tufos, seixos e fendas espalhados pelo exterior");
+            int puddles = 0;
+            foreach (Transform t in details.transform) if (t.name == "env_sol_arq_poca") puddles++;
+            int tubs = 0;
+            foreach (Transform t in details.transform) if (t.GetComponent<SeteVidas.World.WaterTub>() != null) tubs++;
+            Assert.Greater(puddles, 0, "Poças no chão embaixo das gárgulas (a água que pinga se junta)");
+            Assert.GreaterOrEqual(tubs, 5, "Tinas de água com física embaixo das gárgulas de fora (pátio e muralhas)");
             foreach (var sr in details.GetComponentsInChildren<SpriteRenderer>())
             {
                 Assert.IsNotNull(sr.sprite, sr.name);

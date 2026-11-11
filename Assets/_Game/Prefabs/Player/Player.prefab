@@ -445,7 +445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Player.StealthController
   settings: {fileID: 11400000, guid: d90c727a3bc969a43b9ce17d9de24ac9, type: 2}
-  showDebugHud: 1
+  showDebugHud: 0
 --- !u!114 &6425360654606903979
 MonoBehaviour:
   m_ObjectHideFlags: 0
