@@ -96,6 +96,7 @@ public static class ArchitectureSpriteGen
         Set('k', "#1c1a24", Normal);
         Set('v', "#36524a", dark);
         Set('g', "#4f5a2e", Normal); Set('G', "#8a9a4e", Normal); // hera seca: nunca escurece (é o sinal do gate)
+        Set('Y', "#b8c46c", Normal); Set('q', "#232a14", Normal); // brilho da folha e contorno da hera (só na parede escalável)
         Set('m', "#33241f", dark); Set('n', "#4e3830", dark); Set('o', "#6a4c3e", dark); Set('s', "#574c62", dark);
     }
 
@@ -267,15 +268,48 @@ public static class ArchitectureSpriteGen
         // ranhuras: onde as patas apoiam (sombra + brilho)
         for (int x = 4; x <= 8; x++) { cv.Force(x, 4, 'j'); cv.Force(x, 5, 'H'); }
         for (int x = 8; x <= 12; x++) { cv.Force(x, 11, 'j'); cv.Force(x, 12, 'H'); }
-        // hera seca: ramos que ondulam de cima a baixo, com folhas alternadas
-        for (int y = 0; y < 16; y++)
+        // hera (pedido do usuário: visível de longe e com cara de planta): dois ramos que ondulam de cima a baixo,
+        // com folhas de hera de 6 px (folha G, brilho Y, talo g) alternando os lados, e um contorno escuro (q) em
+        // volta de tudo, que separa a planta da pedra. As folhas mudam de altura com a variação (v) para não repetir.
+        int phase = (v % 2) * 2;
+        for (int s = 0; s < 2; s++)
         {
-            int wobble = (y / 3) % 2;
-            int l = 2 + wobble, r = 13 - wobble;
-            cv.Force(l, y, 'g'); cv.Force(r, y, 'g');
-            if (y % 4 == 1) cv.Force(l + 1, y, 'G');
-            if (y % 4 == 3) cv.Force(r - 1, y, 'G');
+            for (int y = 0; y < 16; y++)
+            {
+                int wobble = (y / 4) % 2;
+                int x = s == 0 ? 3 + wobble : 12 - wobble;
+                cv.Force(x, y, 'g');
+            }
+            for (int k = 0; k < 4; k++)
+            {
+                int y0 = 1 + ((k * 4 + phase + s * 2) % 16);
+                if (y0 > 14) continue;
+                int stem = s == 0 ? 3 + (y0 / 4) % 2 : 12 - (y0 / 4) % 2;
+                int d = (k + s) % 2 == 0 ? 1 : -1;               // lado da folha
+                if (stem + d * 3 < 0 || stem + d * 3 > 15) d = -d;
+                cv.Force(stem + d, y0, 'g');                      // talo
+                cv.Force(stem + d * 2, y0, 'G'); cv.Force(stem + d * 3, y0, 'G');
+                cv.Force(stem + d * 2, y0 - 1, 'Y'); cv.Force(stem + d * 3, y0 - 1, 'G');
+                cv.Force(stem + d * 2, y0 + 1, 'G');
+            }
         }
+        // contorno escuro: a pedra encostada na planta escurece
+        var plant = cv.Clone();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+            {
+                char c = plant.Get(x, y);
+                if (c == 'g' || c == 'G' || c == 'Y') continue;
+                bool touches = false;
+                for (int oy = -1; oy <= 1 && !touches; oy++)
+                    for (int ox = -1; ox <= 1; ox++)
+                    {
+                        if (Math.Abs(ox) + Math.Abs(oy) != 1) continue;
+                        char n = plant.Get(x + ox, y + oy);
+                        if (n == 'G' || n == 'Y' || (n == 'g' && ox != 0)) { touches = true; break; }
+                    }
+                if (touches) cv.Force(x, y, 'q');
+            }
         return cv;
     }
 

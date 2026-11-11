@@ -973,6 +973,62 @@ MonoBehaviour:
       body: {x: 1, y: 0}
       hasTail: 1
       hasTrim: 1
+  - name: dagger_down
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 623fef4708117f7dc3c3962949eb6b3b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: d3c4b2ae86db0d4d1473c55db521ff34, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: a2237670d9118b51a560e102176eb27b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 8.5}
+      chest: {x: 0.5, y: 11.5}
+      trim: {x: -3.5, y: 12}
+      body: {x: 0, y: 2}
+      hasTail: 1
+      hasTrim: 1
+  - name: hammer_down
+    frameTime: 0.1
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: a4efe25563bee5ee5c13968824efb915, type: 3}
+      overlay: {fileID: 21300000, guid: b91bea5511b9bcddaeb5764c99674e90, type: 3}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 82e37bc0dc0058902f74c444a12d1446, type: 3}
+      overlay: {fileID: 21300000, guid: a583dea743d268ae488f9a8b06f3030f, type: 3}
+      tail: {x: -5.5, y: 7.5}
+      chest: {x: 0.5, y: 10.5}
+      trim: {x: -3.5, y: 11}
+      body: {x: 0, y: 1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: ae5d7a6c06493a7cf74b58c1fd3761ac, type: 3}
+      overlay: {fileID: 21300000, guid: 243552c83075de9c42cd480d01833309, type: 3}
+      tail: {x: -5.5, y: 3.5}
+      chest: {x: 0.5, y: 6.5}
+      trim: {x: -3.5, y: 6}
+      body: {x: 0, y: -3}
+      hasTail: 1
+      hasTrim: 1
   - name: hammer_charge
     frameTime: 0.12
     loop: 1

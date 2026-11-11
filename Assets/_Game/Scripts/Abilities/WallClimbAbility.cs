@@ -38,10 +38,31 @@ namespace SeteVidas.Abilities
             }
         }
 
-        void FixedUpdate() => _reattachTimer -= Time.fixedDeltaTime;
+        void FixedUpdate()
+        {
+            _reattachTimer -= Time.fixedDeltaTime;
+            _wallCoyote -= Time.fixedDeltaTime;
+        }
+
+        float _wallCoyote;      // acabou de soltar a parede: o Espaço ainda pula dela
+        int _coyoteWall;
+        float _awayTimer;       // segurando a direção oposta (solta depois de ReleaseHoldTime)
+        float _hopVy;           // pulo para cima agarrado (W + Espaço ou direção da parede + Espaço)
+
+        /// <summary>No meio do pulo para cima agarrado na parede.</summary>
+        public bool IsHopping => _hopVy > 0f;
 
         public override bool TryBegin(bool grounded)
         {
+            // soltou a parede há um instante e apertou Espaço: ainda vale o pulo da parede (para o lado oposto)
+            if (!grounded && _wallCoyote > 0f && Player.Timers.HasBufferedJump)
+            {
+                Player.Timers.Consume();
+                WallDirection = _coyoteWall;
+                _wallCoyote = 0f;
+                WallJump();
+                return false;
+            }
             if (_reattachTimer > 0f || Player.IsCrouching) return false;
 
             float moveX = Player.Input.MoveX, moveY = Player.Input.MoveY;
@@ -71,25 +92,45 @@ namespace SeteVidas.Abilities
         {
             var body = Player.Body;
 
-            // Pular da parede
+            // Espaço: o lado apontado decide (pedido do usuário). Para longe ou sem direção: pula para longe.
+            // Para a parede ou para cima: pulo para cima que agarra de novo.
             if (Player.Timers.HasBufferedJump)
             {
                 Player.Timers.Consume();
-                WallJump();
-                return false;
+                var choice = WallJumpRules.Choose(Player.Input.MoveX, Player.Input.MoveY, WallDirection, InputThreshold);
+                if (choice == WallJumpRules.Kind.Away)
+                {
+                    WallJump();
+                    return false;
+                }
+                _hopVy = Player.Settings.LaunchVelocityFor(settings.WallHopHeight, dt);
+                _awayTimer = 0f;
             }
 
-            // Segurar a direção oposta solta
-            if (Player.Input.MoveX * WallDirection < -InputThreshold)
+            // Segurar a direção oposta solta, mas só depois de um instante: apertar A/D e Espaço quase juntos pula
+            if (Player.Input.MoveX * WallDirection < -InputThreshold && _hopVy <= 0f)
             {
-                Release();
-                return false;
+                _awayTimer += dt;
+                if (_awayTimer >= settings.ReleaseHoldTime)
+                {
+                    Release();
+                    _wallCoyote = settings.WallJumpCoyote;
+                    _coyoteWall = WallDirection;
+                    return false;
+                }
             }
+            else _awayTimer = 0f;
 
             float moveY = Player.Input.MoveY;
             float vy = moveY > InputThreshold ? settings.ClimbUpSpeed
                      : moveY < -InputThreshold ? -settings.ClimbDownSpeed
                      : 0f;
+            if (_hopVy > 0f)
+            {
+                // pulo agarrado: sobe com a gravidade do pulo e volta a segurar quando para de subir
+                vy = _hopVy;
+                _hopVy -= Player.Settings.Gravity * dt;
+            }
 
             // Chegou ao chão descendo
             Player.Ground.Refresh(Player.Settings.ColliderWidth);
@@ -107,11 +148,13 @@ namespace SeteVidas.Abilities
                         Player.Settings.StandingHeight, out Vector2 corner))
                 {
                     ClimbVelocity = 0f;
+                    _hopVy = 0f;
                     _reattachTimer = settings.ReattachCooldown;
                     Player.ClimbOnto(corner, WallDirection);
                     return false;
                 }
                 vy = 0f; // sem espaço em cima: para no topo
+                _hopVy = 0f;
             }
 
             // A parede acabou (desceu além da base no ar, ou ela sumiu)
@@ -130,6 +173,7 @@ namespace SeteVidas.Abilities
 
         void WallJump()
         {
+            _hopVy = 0f;
             int away = -WallDirection;
             float vy = Player.Settings.LaunchVelocityFor(settings.WallJumpHeight, Time.fixedDeltaTime);
             Player.Face(away);
@@ -141,6 +185,8 @@ namespace SeteVidas.Abilities
 
         void Release()
         {
+            _hopVy = 0f;
+            _awayTimer = 0f;
             _reattachTimer = settings.ReattachCooldown;
             ClimbVelocity = 0f;
         }
@@ -175,6 +221,27 @@ namespace SeteVidas.Abilities
             float handY = feetY + Player.Settings.LedgeHandHeight - 0.1f;
             var origin = new Vector2(Player.Body.position.x, handY);
             return Physics2D.Raycast(origin, new Vector2(WallDirection, 0f), HalfWidth + Probe, climbableLayers).collider != null;
+        }
+    }
+}
+
+namespace SeteVidas.Abilities
+{
+    /// <summary>Regras puras do Espaço na parede (EditMode).</summary>
+    public static class WallJumpRules
+    {
+        public enum Kind { Away, Hop }
+
+        /// <summary>
+        /// Para longe da parede (ou sem direção): pulo para longe. Para a parede ou para cima (W):
+        /// pulo para cima que agarra de novo.
+        /// </summary>
+        public static Kind Choose(float moveX, float moveY, int wallDirection, float threshold)
+        {
+            float toward = moveX * wallDirection;
+            if (toward < -threshold) return Kind.Away;
+            if (toward > threshold || moveY > threshold) return Kind.Hop;
+            return Kind.Away;
         }
     }
 }

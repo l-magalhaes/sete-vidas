@@ -31,13 +31,23 @@ namespace SeteVidas.World.Traps
         /// <summary>Área perigosa no mundo agora (para o "chão seguro" evitar).</summary>
         protected abstract Rect DangerArea();
 
+        /// <summary>A estocada para baixo quica aqui (espinhos e serras, melhoria 5). Área da parte que machuca agora.</summary>
+        protected virtual System.Func<Rect> PogoArea => null;
+        System.Func<Rect> _pogo;
+
         protected virtual void OnEnable()
         {
             _area = DangerArea;
             TrapRules.RegisterDanger(_area);
+            _pogo = PogoArea;
+            if (_pogo != null) PogoSurfaces.Register(_pogo);
         }
 
-        protected virtual void OnDisable() => TrapRules.UnregisterDanger(_area);
+        protected virtual void OnDisable()
+        {
+            TrapRules.UnregisterDanger(_area);
+            if (_pogo != null) PogoSurfaces.Unregister(_pogo);
+        }
 
         /// <summary>Acerta o gato se ele estiver dentro da caixa. Retorna true se acertou.</summary>
         protected bool HitPlayerIn(Vector2 center, Vector2 size)
@@ -45,7 +55,7 @@ namespace SeteVidas.World.Traps
             var col = Physics2D.OverlapBox(center, size, 0f, PlayerMask);
             if (col == null) return false;
             var health = col.GetComponentInParent<PlayerHealth>();
-            if (health == null) return false;
+            if (health == null || health.InPogoGrace) return false; // acabou de quicar nela com a estocada
             float dir = col.transform.position.x >= center.x ? 1f : -1f;
             var info = new DamageInfo(damage, new Vector2(dir, 0f), DamageType.Normal, AttackAngle.Front, gameObject);
             if (returnToSafeGround) health.TakeHazardDamage(info);

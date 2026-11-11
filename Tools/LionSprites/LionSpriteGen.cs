@@ -614,6 +614,27 @@ public static partial class LionSpriteGen
             With(lunge, p => { p.Px = 9; p.Py = 17; p.HeadDx = 1; p.HeadDy = 1; p.FrontFoot = new Point(14, 20); p.FrontHand = new Point(16, 13); p.HammerGrip = new Point(16, 13); p.HammerAngle = -55; }),
             With(stance, p => { p.Px = 8; p.FrontHand = new Point(15, 12); p.HammerGrip = new Point(15, 12); p.HammerAngle = 35; }));
         foreach (string nm in new[] { "hammer1_windup", "hammer1_active", "hammer1_recovery" }) AddAirVariant(nm);
+        // ataque para baixo no ar (melhoria 5): estocada da adaga (prepara, crava embaixo dos pés, quica) e
+        // queda pesada da marreta (ergue, despenca com a cabeça para baixo, crava no chão agachado)
+        var tuck = With(std, p => { p.Py = 15; p.BackGround = false; p.FrontGround = false; p.BackFoot = new Point(7, 19); p.FrontFoot = new Point(10, 19); });
+        Add("dagger_down", 0.1f, false,
+            With(tuck, p => { p.FrontHand = new Point(15, 6); p.FrontItem = new Item("dagger", 75); }),
+            With(tuck, p => { p.HeadV = "down"; p.FrontHand = new Point(11, 19); p.FrontItem = new Item("dagger", -90); p.BackHand = new Point(9, 17); }),
+            With(tuck, p => { p.Py = 14; p.BackFoot = new Point(6, 20); p.FrontFoot = new Point(11, 19); p.FrontHand = new Point(13, 16); p.FrontItem = new Item("dagger", -60); }));
+        Add("hammer_down", 0.1f, false,
+            With(tuck, p => { p.ArmsBehindHead = true; p.FrontHand = new Point(11, 0); p.BackHand = new Point(10, 1); p.HammerGrip = new Point(11, 0); p.HammerAngle = 95; }),
+            With(tuck, p =>
+            {
+                p.HeadV = "down"; p.BackFoot = new Point(7, 17); p.FrontFoot = new Point(10, 17);
+                p.FrontHand = new Point(12, 15); p.BackHand = new Point(11, 15); p.BackArmInFront = true;
+                p.HammerGrip = new Point(12, 15); p.HammerAngle = -90;
+            }),
+            With(stance, p =>
+            {
+                p.Py = 19; p.HeadDy = 1; p.BackFoot = new Point(5, 20); p.FrontFoot = new Point(12, 20);
+                p.FrontHand = new Point(13, 13); p.BackHand = new Point(12, 13); p.BackArmInFront = true;
+                p.HammerGrip = new Point(13, 13); p.HammerAngle = -88;
+            }));
         // carregando o terremoto (melhoria 4): agachado, pernas abertas, marreta erguida atrás da cabeça; respira
         // (o corpo desce 1 px) e a cabeça da marreta treme. O brilho dourado é do jogo (cor da camada + faíscas).
         var charge = With(stance, p =>

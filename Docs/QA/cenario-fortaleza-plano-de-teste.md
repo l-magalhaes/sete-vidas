@@ -9,7 +9,7 @@ Severidade (QA): **S1** bloqueante · **S2** mecânica central quebrada ou leitu
 | ID | Onde | Passos | Resultado esperado | Status |
 |---|---|---|---|---|
 | CEN-01 | Estábulo, porta do tomo, cofres, portão | Olhar cada parede rachada antes de ter o Paladino | Rede de rachaduras escuras, sem brilho dourado; nenhuma outra parede da fase tem rachadura | ☐ |
-| CEN-02 | Muralhas, torres, poço | Olhar cada vinha | Hera de ramo e folha (#4f5a2e/#8a9a4e) só nas paredes escaláveis; nenhuma planta de enfeite tem esses verdes | ☐ |
+| CEN-02 | Muralhas, torres, poço | Olhar cada vinha | Hera com folhas, brilho e contorno escuro (#4f5a2e/#8a9a4e/#b8c46c/#232a14) só nas paredes escaláveis, visível de longe; nenhuma planta de enfeite tem esses verdes | ☐ |
 | CEN-03 | Galeria, salão, fundos | Olhar as portas de madeira fechadas | Tranca de ferro ou tábuas em X; nenhum jogador tenta abrir mais de uma vez | ☐ |
 | CEN-04 | Pátio, muralha, torres, poço | Olhar cada lançador | Bloco de pedra dentro da parede, boca de bronze virada para o lado do tiro, faixa vermelha; nenhum solto da parede (no editor e no jogo) | ☐ |
 | CEN-05 | Armadilhas, torres, poço | Olhar cada serra | Trilho de ferro atrás, do começo ao fim do caminho, com um suporte em cada ponta | ☐ |

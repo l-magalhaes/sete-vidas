@@ -37,6 +37,9 @@ namespace SeteVidas.Combat
             }
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() { s_material = null; s_loaded = false; } // Play sem recarregar o domínio
+
         public bool IsFlashing => Time.time < _flashUntil;
 
         /// <summary>O HitFlash do sprite (cria se faltar).</summary>
@@ -273,11 +276,40 @@ namespace SeteVidas.Combat
         static Vector3 s_offset;
         static Camera s_shaken;
 
-        public static bool IsShaking => Application.isPlaying && Time.unscaledTime < s_until;
+        /// <summary>
+        /// Zera o tremor a cada Play: o projeto entra no Play sem recarregar o domínio, e o relógio (unscaledTime)
+        /// volta a zero; sem isto, um tremor da sessão anterior durava minutos (bug relatado: a tela toda tremendo).
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            s_until = s_px = s_duration = 0f;
+            s_offset = Vector3.zero;
+            s_shaken = null;
+            if (s_hooked)
+            {
+                RenderPipelineManager.beginCameraRendering -= Begin;
+                RenderPipelineManager.endCameraRendering -= End;
+                s_hooked = false;
+            }
+        }
+
+        /// <summary>Nunca treme mais que o último pedido (protege de qualquer relógio fora do lugar).</summary>
+        public static bool IsShaking
+        {
+            get
+            {
+                if (!Application.isPlaying) return false;
+                float left = s_until - Time.unscaledTime;
+                if (left > s_duration + 0.05f) { s_until = 0f; return false; }
+                return left > 0f;
+            }
+        }
 
         public static void Shake(float px, float seconds)
         {
             if (px <= 0f || seconds <= 0f || !Application.isPlaying) return;
+            if (s_until - Time.unscaledTime > s_duration + 0.05f) s_until = 0f; // relógio de outra sessão
             if (!s_hooked)
             {
                 s_hooked = true;
@@ -286,6 +318,7 @@ namespace SeteVidas.Combat
             }
             if (!IsShaking || px >= s_px) { s_px = px; s_duration = seconds; }
             s_until = Mathf.Max(s_until, Time.unscaledTime + seconds);
+            s_duration = Mathf.Max(s_duration, s_until - Time.unscaledTime); // dois tremores juntos: vale o mais longo
         }
 
         static void Begin(ScriptableRenderContext context, Camera cam)

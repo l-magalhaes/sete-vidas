@@ -54,6 +54,7 @@ O validador (`Tools/EnvironmentSprites/gerar.ps1`) avisa quando um enfeite (`dec
 | Armadilha | `#c83a3a` | Armadilhas (dano): espinhos, penas da flecha, faixa do lançador |
 | Hera escalável (ramo) | `#4f5a2e` | Parede escalável |
 | Hera escalável (folha) | `#8a9a4e` | Parede escalável |
+| Hera escalável (brilho e contorno) | `#b8c46c`, `#232a14` | Parede escalável (não entram no validador; use só na hera) |
 | Praga (roxo) | `#5b2a6e` | A praga e o Tomo (liberado nos fundos e em assets da época `praga`) |
 | Praga (verde-ácido) | `#8fd14f` | A praga e o Tomo (liberado em assets da época `praga`) |
 | Matinho (esconderijo) | `#456633` | A moita jogável 32×16 |

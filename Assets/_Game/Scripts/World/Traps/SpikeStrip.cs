@@ -29,6 +29,8 @@ namespace SeteVidas.World.Traps
             }
         }
 
+        protected override System.Func<Rect> PogoArea => DangerArea;
+
         protected override Rect DangerArea() =>
             new Rect((Vector2)transform.position - new Vector2(width * 0.5f, 0f), new Vector2(width, height));
 

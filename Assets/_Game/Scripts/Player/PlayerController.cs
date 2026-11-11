@@ -62,6 +62,9 @@ namespace SeteVidas.Player
 
         /// <summary>Multiplicador externo da velocidade de andar (ex.: marreta lenta durante o golpe). 1 = normal.</summary>
         public float SpeedMultiplier { get; set; } = 1f;
+        /// <summary>Multiplicador externo da gravidade (queda pesada da marreta: 2). 1 = normal.</summary>
+        public float GravityMultiplier { get; set; } = 1f;
+
         /// <summary>Altura atual do colisor (em pé ou agachado), em tiles.</summary>
         public float CurrentHeight => settings == null ? 0f : IsCrouching ? settings.CrouchHeight : settings.StandingHeight;
 
@@ -209,7 +212,7 @@ namespace SeteVidas.Player
                 if (grounded && !jumped && v.y > 0f) v.y = 0f;
 
                 // Gravidade própria, mais forte na queda
-                float gravity = settings.Gravity * (v.y < 0f ? settings.FallGravityMultiplier : 1f);
+                float gravity = settings.Gravity * (v.y < 0f ? settings.FallGravityMultiplier : 1f) * GravityMultiplier;
                 v.y = Mathf.Max(v.y - gravity * dt, -settings.MaxFallSpeed);
             }
 
@@ -348,8 +351,23 @@ namespace SeteVidas.Player
             _wasGrounded = false;
         }
 
+        /// <summary>Quique da estocada para baixo: sobe <paramref name="height"/> tiles, mantendo o x (melhoria 5).</summary>
+        public void Bounce(float height)
+        {
+            var v = _body.linearVelocity;
+            v.y = settings.LaunchVelocityFor(height, Time.fixedDeltaTime);
+            _body.linearVelocity = v;
+            _isJumping = false;
+            _slopeLockTimer = settings.SlopeJumpGrace;
+            _wasGrounded = false;
+            _timers.Consume();
+        }
+
         /// <summary>Durante este tempo, a entrada horizontal não muda a velocidade nem a direção.</summary>
         public void LockHorizontalControl(float seconds) => _moveLockTimer = Mathf.Max(_moveLockTimer, seconds);
+
+        /// <summary>Devolve o controle horizontal na hora (fim da queda pesada da marreta).</summary>
+        public void ReleaseHorizontalLock() => _moveLockTimer = 0f;
 
         /// <summary>Sobe para cima da quina <paramref name="corner"/> (mesma animação da borda).</summary>
         public void ClimbOnto(Vector2 corner, int dir)

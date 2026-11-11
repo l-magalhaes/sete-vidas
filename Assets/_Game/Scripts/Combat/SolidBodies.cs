@@ -24,6 +24,9 @@ namespace SeteVidas.Combat
 
         public static IReadOnlyList<ISolidBody> All => s_all;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => s_all.Clear(); // Play sem recarregar o domínio
+
         public static void Register(ISolidBody body) { if (body != null && !s_all.Contains(body)) s_all.Add(body); }
         public static void Unregister(ISolidBody body) => s_all.Remove(body);
 

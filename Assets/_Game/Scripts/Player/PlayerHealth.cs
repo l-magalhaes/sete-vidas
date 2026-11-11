@@ -65,6 +65,13 @@ namespace SeteVidas.Player
         /// <summary>Sem dano e sem piscar (cenas em que o gato fica de pé parado, ex.: a tela escurecendo no santuário).</summary>
         public bool Shielded { get; set; }
 
+        float _pogoGraceUntil = -1f;
+
+        /// <summary>Acabou de quicar num espinho ou numa serra com a estocada para baixo: a armadilha não machuca (melhoria 5).</summary>
+        public bool InPogoGrace => Time.time < _pogoGraceUntil;
+
+        public void GrantPogoGrace(float seconds) => _pogoGraceUntil = Mathf.Max(_pogoGraceUntil, Time.time + seconds);
+
         // ------------------------------------------------------------- dano
 
         public void TakeDamage(in DamageInfo info)

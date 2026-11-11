@@ -57,3 +57,14 @@ O pulo da parede usa a mesma gravidade do pulo normal (`PlayerMovementSettings`)
 - [PROPOSTA] Escalada sem estamina. Se as salas ficarem fáceis demais, considerar um limite de tempo no Vertical Slice.
 - [PROPOSTA] No chão, agarrar só com W (andar contra a parede não agarra), para não grudar sem querer.
 - [PROPOSTA] Pular da parede sempre para longe dela (não existe "pulo para cima" escalando).
+
+## Espaço na parede pelo lado apontado (pedido do usuário, 11/11/2026)
+
+| Segurando | Espaço faz |
+|---|---|
+| Nada | Pula para longe da parede (como antes) |
+| A direção oposta à parede | Pula para longe, para o lado apontado |
+| A direção da parede ou W | Pulo para cima de `WallHopHeight` (2,5 tiles) e agarra de novo; no topo, sobe na borda como na escalada |
+
+- **Correção:** antes, segurar a direção oposta soltava a parede no passo seguinte, então apertar A/D um instante antes do Espaço deixava o gato cair sem pular. Agora ele só solta depois de `ReleaseHoldTime` (0,12 s) segurando, e até `WallJumpCoyote` (0,12 s) depois de soltar o Espaço ainda vale como pulo da parede.
+- Regra pura: `WallJumpRules.Choose`. Testes: `WallJumpRulesTests` (EditMode).

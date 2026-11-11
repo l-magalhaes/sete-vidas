@@ -29,11 +29,38 @@ namespace SeteVidas.Combat
 
         [Header("Golpe final do combo: estocada com avanço (melhoria 4)")]
         [Tooltip("Distância do avanço no último golpe do combo, no chão (tiles). 0 = sem avanço")]
-        [Min(0f)] public float FinisherLunge = 1.5f;
+        [Min(0f)] public float FinisherLunge = 2.25f;
         [Tooltip("Duração do avanço (s)")]
-        [Min(0.02f)] public float FinisherLungeTime = 0.12f;
+        [Min(0.02f)] public float FinisherLungeTime = 0.15f;
         [Tooltip("Multiplica o dano do golpe final")]
         [Min(1f)] public float FinisherDamageMultiplier = 1.5f;
+
+        [Header("Ataque para baixo no ar: S + ataque (melhoria 5)")]
+        [Tooltip("No ar, com baixo segurado, o ataque vira o golpe para baixo")]
+        public bool DownAttack = true;
+        [Min(0f)] public float DownWindup = 0.05f;
+        [Tooltip("Adaga: tempo com a ponta para baixo procurando onde quicar (s)")]
+        [Min(0.02f)] public float DownActive = 0.3f;
+        [Min(0f)] public float DownRecovery = 0.1f;
+        [Tooltip("Caixa da estocada embaixo do gato (tiles): o tamanho do rastro em meia-lua (24×14 px)")]
+        public Vector2 DownHitbox = new Vector2(1.5f, 0.875f);
+        [Tooltip("Distância do centro da caixa abaixo dos pés (tiles)")]
+        public float DownHitboxBelow = 0.35f;
+        [Tooltip("Adaga: altura do quique, em fração da altura do pulo")]
+        [Range(0f, 3f)] public float PogoHeightFraction = 1.8f; // 3× o quique inicial (pedido do usuário)
+        [Tooltip("Adaga: tempo em que a armadilha atingida por cima não machuca, depois do quique (s)")]
+        [Min(0f)] public float PogoGrace = 0.25f;
+        [Tooltip("Marreta (dano pesado): multiplica a gravidade na queda pesada")]
+        [Min(1f)] public float DropGravityMultiplier = 2f;
+        [Tooltip("Marreta: dano em quem está embaixo")]
+        [Min(0)] public int DropHitDamage = 4;
+        [Tooltip("Marreta: mini terremoto ao tocar o chão (alcance para cada lado, tiles)")]
+        [Min(0f)] public float DropImpactRange = 1.5f;
+        [Min(0)] public int DropImpactDamage = 3;
+        [Min(0f)] public float DropRecovery = 0.3f;
+
+        /// <summary>A queda pesada é da arma de dano pesado (marreta); as outras quicam.</summary>
+        public bool HeavyDrop => Type == DamageType.Heavy;
 
         [Header("Golpe carregado: terremoto (melhoria 4)")]
         [Tooltip("Segurar o ataque carrega o golpe (marreta)")]

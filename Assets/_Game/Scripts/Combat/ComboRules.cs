@@ -58,3 +58,45 @@ namespace SeteVidas.Combat
         }
     }
 }
+
+namespace SeteVidas.Combat
+{
+    /// <summary>
+    /// Superfícies em que a estocada para baixo quica (melhoria 5): espinhos e serras, além dos alvos que tomam dano.
+    /// Cada uma registra a área que machuca agora; acertá-la por cima com a estocada não machuca o gato.
+    /// </summary>
+    public static class PogoSurfaces
+    {
+        static readonly System.Collections.Generic.List<System.Func<Rect>> s_all = new System.Collections.Generic.List<System.Func<Rect>>();
+
+        public static void Register(System.Func<Rect> area) { if (area != null && !s_all.Contains(area)) s_all.Add(area); }
+        public static void Unregister(System.Func<Rect> area) => s_all.Remove(area);
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => s_all.Clear(); // Play sem recarregar o domínio
+
+        /// <summary>A caixa da estocada encosta em alguma superfície de quique.</summary>
+        public static bool Touches(Rect stab)
+        {
+            for (int i = s_all.Count - 1; i >= 0; i--)
+                if (s_all[i] != null && s_all[i]().Overlaps(stab)) return true;
+            return false;
+        }
+    }
+
+    /// <summary>Regras puras do ataque para baixo (EditMode).</summary>
+    public static class DownAttackRules
+    {
+        /// <summary>No ar com "baixo" segurado: o ataque vira o golpe para baixo. No chão, continua o golpe agachado.</summary>
+        public static bool WantsDownAttack(bool grounded, float moveY, bool crouchHeld) =>
+            !grounded && (crouchHeld || moveY < -0.5f);
+
+        /// <summary>Quica em quem toma dano e nas superfícies de quique (espinhos, serras); a marreta não quica.</summary>
+        public static bool Bounces(bool isDagger, bool hitTarget, bool hitPogoSurface) =>
+            isDagger && (hitTarget || hitPogoSurface);
+
+        /// <summary>Caixa da estocada embaixo dos pés.</summary>
+        public static Rect StabBox(Vector2 feet, Vector2 size, float below) =>
+            new Rect(feet.x - size.x * 0.5f, feet.y - below - size.y * 0.5f, size.x, size.y);
+    }
+}

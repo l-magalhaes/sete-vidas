@@ -37,7 +37,7 @@ namespace SeteVidas.Combat
         float _slamCharge;
         float _glintTimer;
 
-        public bool IsAttacking => _sequence.IsAttacking || _charging || _slam != Slam.None;
+        public bool IsAttacking => _sequence.IsAttacking || _charging || _slam != Slam.None || _down != Down.None;
         public bool IsHitActive => _sequence.IsHitActive;
         public int ComboStep => _sequence.Step;
         /// <summary>Lado do golpe atual, travado no início do golpe.</summary>
@@ -109,12 +109,20 @@ namespace SeteVidas.Combat
         }
 
         /// <summary>Tomar dano cancela a carga (o golpe já solto continua).</summary>
-        void OnDamaged(DamageInfo _) => _charging = false;
+        void OnDamaged(DamageInfo _)
+        {
+            _charging = false;
+            bool heavy = IsHeavyDrop;
+            EndDown(); // cancela o ataque para baixo
+            // o recuo do dano já travou o controle; o fim da queda pesada soltou a trava: devolve a do recuo
+            if (heavy && _player != null) _player.LockHorizontalControl(_player.Settings.KnockbackControlLock);
+        }
 
         bool CanAttack => !_player.IsHanging && !_player.IsClimbingLedge && _player.ActiveAbility == null;
 
         void CancelAll()
         {
+            EndDown();
             _sequence.Cancel();
             _charging = false;
             _slam = Slam.None;
@@ -134,6 +142,14 @@ namespace SeteVidas.Combat
 
             bool grounded = _player.IsGrounded;
             if (_slam != Slam.None) { StepSlam(dt); return; }
+            if (_down != Down.None) { StepDown(dt, grounded); return; }
+            // no ar com baixo segurado: estocada para baixo (adaga) ou queda pesada (marreta)
+            if (input != null && input.AttackPressedThisFrame && !_sequence.IsAttacking && weapon.DownAttack &&
+                DownAttackRules.WantsDownAttack(grounded, input.MoveY, input.CrouchHeld))
+            {
+                StartDown();
+                return;
+            }
             if (_charging) { StepCharge(dt, grounded); return; }
 
             var timings = _sequence.IsAttacking ? CurrentTimings() : (grounded ? weapon.Timings : weapon.AirTimings);
@@ -244,10 +260,16 @@ namespace SeteVidas.Combat
         /// <summary>A onda corre pelo chão para os dois lados: dano, derruba, faz muito barulho. Não quebra parede rachada.</summary>
         public void Shockwave(float charge01)
         {
-            Vector2 feet = _player.Body.position;
             float range = ChargeRules.Range(charge01, weapon.ShockwaveRange);
-            int damage = ChargeRules.Damage(charge01, weapon.ShockwaveDamage);
+            Quake(range, ChargeRules.Damage(charge01, weapon.ShockwaveDamage), weapon.KnockdownTime,
+                weapon.ShockwaveNoiseRadius, weapon.ShockwaveShake.x, weapon.ShockwaveShake.y, 0.25f);
+            ShockwaveReleased?.Invoke(charge01);
+        }
 
+        /// <summary>Tremor no chão em volta do gato: só pega quem está de pé no mesmo chão; não quebra parede rachada.</summary>
+        void Quake(float range, int damage, float knockdown, float noiseRadius, float shakePx, float shakeTime, float waveTime)
+        {
+            Vector2 feet = _player.Body.position;
             _overlaps.Clear();
             Physics2D.OverlapBox(feet + new Vector2(0f, weapon.ShockwaveHeight * 0.5f), new Vector2(range * 2f, weapon.ShockwaveHeight),
                 0f, _filter, _overlaps);
@@ -262,15 +284,166 @@ namespace SeteVidas.Combat
                 int side = b.center.x >= feet.x ? 1 : -1;
                 var info = new DamageInfo(damage, new Vector2(side, 0f), DamageType.Heavy, AttackAngle.Front, gameObject);
                 target.TakeDamage(info);
-                if (target is IKnockdown down) down.Knockdown(weapon.KnockdownTime);
+                if (knockdown > 0f && target is IKnockdown down) down.Knockdown(knockdown);
                 Hit?.Invoke(target, info);
             }
 
-            NoiseSystem.Emit(feet, weapon.ShockwaveNoiseRadius, 1f, gameObject, "terremoto");
-            CameraShake.Shake(weapon.ShockwaveShake.x, weapon.ShockwaveShake.y);
-            HitSparks.Wave(feet, range, 0.25f);
+            NoiseSystem.Emit(feet, noiseRadius, 1f, gameObject, "terremoto");
+            CameraShake.Shake(shakePx, shakeTime);
+            HitSparks.Wave(feet, range, waveTime);
             Hitstop.Trigger(0.08f);
-            ShockwaveReleased?.Invoke(charge01);
+        }
+
+        // ------------------------------------------------ ataque para baixo (melhoria 5)
+
+        enum Down { None, Windup, Active, Recovery }
+        Down _down;
+        float _downTimer;
+        bool _downHeavy;
+
+        /// <summary>No ataque para baixo no ar (estocada da adaga ou queda pesada da marreta).</summary>
+        public bool IsDownAttacking => _down != Down.None;
+        /// <summary>Queda pesada da marreta (e não a estocada da adaga).</summary>
+        public bool IsHeavyDrop => _down != Down.None && _downHeavy;
+        /// <summary>Progresso para a animação de 3 quadros: preparar (0), golpe ou queda (1), impacto ou quique (2).</summary>
+        public float DownProgress => _down switch
+        {
+            Down.Windup => 0.1f,
+            Down.Active => 0.5f,
+            Down.Recovery => 0.9f,
+            _ => 0f,
+        };
+        /// <summary>O rastro do golpe para baixo está no ar: na estocada e na queda (e um instante no impacto da marreta).</summary>
+        public bool IsDownHitActive => _down == Down.Active || (_downHeavy && _down == Down.Recovery && _downTimer > weapon.DropRecovery - 0.1f);
+
+        /// <summary>Caixa do golpe para baixo no mundo (é também onde o rastro é desenhado).</summary>
+        public Rect DownHitbox => DownAttackRules.StabBox(_player.Body.position, weapon.DownHitbox, weapon.DownHitboxBelow);
+
+        /// <summary>A estocada quicou (testes e efeitos).</summary>
+        public event System.Action Bounced;
+
+        /// <summary>Começa o ataque para baixo sem o controle (testes e cenas). Só no ar e com a arma que o tem.</summary>
+        public bool TryDownAttack()
+        {
+            if (!enabled || weapon == null || !weapon.DownAttack || _player.IsGrounded || IsAttacking || !CanAttack) return false;
+            StartDown();
+            return true;
+        }
+
+        void StartDown()
+        {
+            _down = Down.Windup;
+            _downTimer = weapon.DownWindup;
+            _downHeavy = weapon.HeavyDrop;
+            AttackDirection = _player.FacingDirection;
+            _hitThisSwing.Clear();
+            if (_downHeavy)
+            {
+                // a marreta segura o gato no ar um instante e depois despenca reto, sem controle
+                _player.Body.linearVelocity = new Vector2(0f, Mathf.Max(0f, _player.Body.linearVelocity.y * 0.3f));
+                _player.LockHorizontalControl(10f);
+            }
+        }
+
+        void EndDown()
+        {
+            if (_down == Down.None) return;
+            _down = Down.None;
+            if (_player == null) return;
+            _player.GravityMultiplier = 1f;
+            if (_downHeavy) _player.ReleaseHorizontalLock();
+        }
+
+        void StepDown(float dt, bool grounded)
+        {
+            _downTimer -= dt;
+            switch (_down)
+            {
+                case Down.Windup:
+                    if (_downHeavy) _player.Body.linearVelocity = new Vector2(0f, _player.Body.linearVelocity.y);
+                    if (_downTimer > 0f) return;
+                    _down = Down.Active;
+                    _downTimer = _downHeavy ? 3f : weapon.DownActive; // a queda pesada vai até tocar algo (3 s no máximo)
+                    if (_downHeavy) _player.GravityMultiplier = weapon.DropGravityMultiplier;
+                    SwingStarted?.Invoke();
+                    break;
+
+                case Down.Active:
+                    if (_downHeavy)
+                    {
+                        _player.Body.linearVelocity = new Vector2(0f, _player.Body.linearVelocity.y);
+                        if (DownHits(weapon.DropHitDamage, DamageType.Heavy) > 0)
+                        {
+                            // caiu em cima de alguém: pancada forte e um pulinho para fora
+                            _player.Bounce(0.8f);
+                            EnterDownRecovery(weapon.DropRecovery);
+                            return;
+                        }
+                        if (grounded) { HeavyLanding(); return; }
+                    }
+                    else
+                    {
+                        if (grounded) { EndDown(); return; } // tocou o chão sem acertar nada
+                        int hits = DownHits(-1, weapon.Type);
+                        bool pogo = PogoSurfaces.Touches(DownAttackRules.StabBox(_player.Body.position, weapon.DownHitbox, weapon.DownHitboxBelow));
+                        if (DownAttackRules.Bounces(true, hits > 0, pogo))
+                        {
+                            if (pogo && _health != null) _health.GrantPogoGrace(weapon.PogoGrace);
+                            _player.Bounce(_player.Settings.JumpHeight * weapon.PogoHeightFraction);
+                            Bounced?.Invoke();
+                            if (pogo) HitSparks.Spawn(_player.Body.position + Vector2.down * 0.2f, 3, AttackDirection, false, _player.Body.position);
+                            EndDown(); // pode emendar outra estocada logo em seguida
+                            return;
+                        }
+                    }
+                    if (_downTimer <= 0f) EnterDownRecovery(weapon.DownRecovery);
+                    break;
+
+                case Down.Recovery:
+                    if (_downTimer <= 0f) EndDown();
+                    break;
+            }
+        }
+
+        void EnterDownRecovery(float seconds)
+        {
+            _player.GravityMultiplier = 1f;
+            _down = Down.Recovery;
+            _downTimer = seconds;
+        }
+
+        /// <summary>Acerta quem está na caixa embaixo dos pés. Dano negativo = o dano normal da arma.</summary>
+        int DownHits(int damage, DamageType type)
+        {
+            var box = DownAttackRules.StabBox(_player.Body.position, weapon.DownHitbox, weapon.DownHitboxBelow);
+            _overlaps.Clear();
+            Physics2D.OverlapBox(box.center, box.size, 0f, _filter, _overlaps);
+            int count = 0;
+            foreach (var col in _overlaps)
+            {
+                if (col.attachedRigidbody != null && col.attachedRigidbody.gameObject == gameObject) continue;
+                var target = col.GetComponentInParent<IDamageable>();
+                if (target == null || !_hitThisSwing.Add(target)) continue;
+                var resolved = weapon.ResolveHit(_player.Body.position, (Component)target, gameObject);
+                var info = new DamageInfo(damage >= 0 ? damage : resolved.Amount, Vector2.down, type, resolved.Angle, gameObject);
+                target.TakeDamage(info);
+                Hit?.Invoke(target, info);
+                count++;
+            }
+            if (count > 0) Hitstop.Trigger(weapon.HitstopFront);
+            return count;
+        }
+
+        /// <summary>A marreta tocou o chão: mini terremoto, quebra a plataforma frágil embaixo, poeira.</summary>
+        void HeavyLanding()
+        {
+            Vector2 feet = _player.Body.position;
+            var under = Physics2D.OverlapBox(feet + Vector2.down * 0.1f, new Vector2(_player.Settings.ColliderWidth, 0.2f), 0f,
+                LayerMask.GetMask(GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable));
+            var platform = under != null ? under.GetComponentInParent<SeteVidas.World.Traps.CrumblingPlatform>() : null;
+            if (platform != null && !platform.IsFallen) platform.Fall();
+            Quake(weapon.DropImpactRange, weapon.DropImpactDamage, 0f, weapon.ShockwaveNoiseRadius * 0.6f, 2f, 0.15f, 0.12f);
+            EnterDownRecovery(weapon.DropRecovery);
         }
 
         // ------------------------------------------------------------ golpes

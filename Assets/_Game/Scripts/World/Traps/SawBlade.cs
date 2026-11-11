@@ -31,6 +31,10 @@ namespace SeteVidas.World.Traps
             return new Rect(fromX - radius, y - radius, toX - fromX + 2f * radius, 2f * radius);
         }
 
+        // a lâmina de agora (não o trilho todo): é onde a estocada quica
+        protected override System.Func<Rect> PogoArea => () =>
+            new Rect((Vector2)transform.position - Vector2.one * radius * 0.8f, Vector2.one * radius * 1.6f);
+
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;

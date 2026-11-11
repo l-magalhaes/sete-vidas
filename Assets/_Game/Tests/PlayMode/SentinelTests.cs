@@ -207,6 +207,40 @@ namespace SeteVidas.Tests
             }
         }
 
+        /// <summary>Melhoria 5: a estocada para baixo caindo sobre a Sentinela machuca e o gato quica para cima.</summary>
+        [UnityTest]
+        public IEnumerator DownStab_OnSentinel_DamagesAndBounces()
+        {
+            yield return Load();
+            var combat = _player.GetComponent<CombatController>();
+            Assert.IsNotNull(combat);
+            _daggers = ScriptableObject.CreateInstance<MeleeAttackSettings>();
+            var original = combat.Weapon;
+            combat.Equip(_daggers);
+            try
+            {
+                bool bounced = false;
+                combat.Bounced += () => bounced = true;
+                // logo acima da cabeça dela (corpo de 1,6), caindo
+                var above = new Vector2(_sentinel.transform.position.x, _sentinel.transform.position.y + 2.2f);
+                _player.Teleport(above);
+                yield return new WaitForFixedUpdate();
+                int before = _sentinel.Health;
+                Assert.IsTrue(combat.TryDownAttack(), "No ar, a estocada para baixo começa");
+                float maxUp = 0f;
+                for (float t = 0f; t < 1f && !bounced; t += Time.fixedDeltaTime) yield return new WaitForFixedUpdate();
+                for (int i = 0; i < 3; i++) { yield return new WaitForFixedUpdate(); maxUp = Mathf.Max(maxUp, _player.Velocity.y); }
+                Assert.IsTrue(bounced, "Deveria quicar na Sentinela");
+                Assert.Less(_sentinel.Health, before, "A estocada machuca");
+                Assert.Greater(maxUp, 0f, "Depois do quique o gato sobe");
+            }
+            finally
+            {
+                combat.Equip(original);
+                Time.timeScale = 1f;
+            }
+        }
+
         [UnityTest]
         public IEnumerator FrontHit_DoesNotKill_AndStartsCombat()
         {

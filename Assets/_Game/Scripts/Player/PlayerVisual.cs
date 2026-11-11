@@ -592,6 +592,12 @@ namespace SeteVidas.Player
         {
             var weapon = combat.Weapon;
             if (weapon == null) return null;
+            // ataque para baixo no ar (3 quadros: preparar, golpe ou queda, impacto ou quique)
+            if (combat.IsDownAttacking)
+            {
+                var down = animationSet.Get((combat.IsHeavyDrop ? "hammer" : "dagger") + "_down");
+                if (down != null) { _phaseKey = "down"; return Normalized(down, combat.DownProgress); }
+            }
             // marreta carregando (loop) e terremoto (pela linha do tempo do golpe)
             if (combat.IsCharging)
             {
@@ -885,10 +891,61 @@ namespace SeteVidas.Player
             classOverlay.color = spriteRenderer.color;
         }
 
+        static Sprite s_downSlash, s_downSmash;
+
+        /// <summary>
+        /// Rastro do golpe para baixo, 24×14 px (1,5 × 0,875 tile, a caixa de <c>MeleeAttackSettings.DownHitbox</c>),
+        /// pivot no centro: uma meia-lua aberta para cima, embaixo dos pés. Adaga: as cores do rastro das adagas;
+        /// marreta: o brilho dourado com poeira do rastro da marreta.
+        /// </summary>
+        static Sprite DownSlashSprite(bool heavy)
+        {
+            var cached = heavy ? s_downSmash : s_downSlash;
+            if (cached != null) return cached;
+            const int w = 24, h = 14;
+            var px = new Color32[w * h];
+            Color32 edge = heavy ? new Color32(0xff, 0xd3, 0x4d, 0xff) : new Color32(0xf4, 0xf7, 0xfb, 0xff);
+            Color32 inner = heavy ? new Color32(0xe8, 0xd9, 0xa8, 0xff) : new Color32(0xa9, 0xbc, 0xd6, 0xff);
+            // elipse com centro acima do sprite: a borda de baixo desenha a curva, mais grossa no meio (onde a lâmina passa)
+            const float cx = 11.5f, cy = 15f, rx = 13f, ry = 15f;
+            for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+            {
+                float dx = (x - cx) / rx, dy = (y - cy) / ry;
+                float d = Mathf.Sqrt(dx * dx + dy * dy);
+                float middle = 1f - Mathf.Abs(x - cx) / (cx + 1f);      // 1 no meio, 0 nas pontas
+                float thick = 0.08f + 0.14f * middle;
+                if (d > 1f || d < 1f - thick) continue;
+                bool outer = d > 1f - 0.07f;
+                if (heavy && !outer && (x + y) % 3 != 0) continue;       // marreta: poeira pontilhada por dentro
+                px[y * w + x] = outer ? edge : inner;
+            }
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            tex.SetPixels32(px);
+            tex.Apply(false);
+            var sprite = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 16f);
+            sprite.name = heavy ? "fx_hammer_down_smash" : "fx_dagger_down_slash";
+            if (heavy) s_downSmash = sprite; else s_downSlash = sprite;
+            return sprite;
+        }
+
         void UpdateSlash()
         {
             if (slashRenderer == null) return;
             var def = classes != null ? classes.Current : null;
+            // golpe para baixo (melhoria 5): meia-lua embaixo dos pés, do tamanho exato da caixa que acerta e quica
+            if (combat != null && combat.IsDownAttacking)
+            {
+                slashRenderer.enabled = combat.IsDownHitActive;
+                if (!combat.IsDownHitActive) return;
+                var box = combat.DownHitbox;
+                slashRenderer.sprite = DownSlashSprite(combat.IsHeavyDrop);
+                slashRenderer.flipX = combat.AttackDirection < 0;
+                slashRenderer.transform.position = new Vector3(
+                    Mathf.Round(box.center.x * 16f) / 16f, Mathf.Round(box.center.y * 16f) / 16f, 0f);
+                return;
+            }
+
             var sprites = def != null && def.SlashSprites != null && def.SlashSprites.Length > 0 ? def.SlashSprites : slash;
             bool show = combat != null && combat.IsHitActive && sprites != null && sprites.Length > 0;
             slashRenderer.enabled = show;
