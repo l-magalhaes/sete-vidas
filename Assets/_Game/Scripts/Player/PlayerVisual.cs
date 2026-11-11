@@ -592,6 +592,17 @@ namespace SeteVidas.Player
         {
             var weapon = combat.Weapon;
             if (weapon == null) return null;
+            // marreta carregando (loop) e terremoto (pela linha do tempo do golpe)
+            if (combat.IsCharging)
+            {
+                var charge = animationSet.Get("hammer_charge");
+                if (charge != null) { _phaseKey = "charge"; return Base(charge, dt); }
+            }
+            if (combat.IsSlamming)
+            {
+                var slam = animationSet.Get("hammer_slam");
+                if (slam != null) { _phaseKey = "slam"; return Normalized(slam, combat.SlamProgress); }
+            }
             string phase = combat.IsWindingUp ? "windup" : combat.IsHitActive ? "active" : "recovery";
             int step = combat.ComboStep + 1;
             string key = step + phase;
@@ -678,6 +689,8 @@ namespace SeteVidas.Player
             return r;
         }
 
+        static readonly Color ChargeGlow = new Color(1f, 0.85f, 0.45f, 1f);
+
         void UpdateOverlay(SpriteFrame frame, bool attacking, bool allowed, Color color)
         {
             if (classOverlay == null) return;
@@ -704,7 +717,9 @@ namespace SeteVidas.Player
             classOverlay.sprite = s;
             classOverlay.enabled = s != null;
             classOverlay.flipX = _facing < 0;
-            classOverlay.color = color;
+            classOverlay.color = combat != null && combat.IsCharging
+                ? Color.Lerp(color, ChargeGlow, 0.35f + 0.35f * Mathf.Sin(Time.time * Mathf.Lerp(10f, 22f, combat.Charge01)))
+                : color; // a marreta brilha em dourado enquanto carrega
             classOverlay.sortingOrder = carry ? order - 1 : order + 2;
             classOverlay.transform.localPosition = carry
                 ? new Vector3(frame.body.x * _facing, frame.body.y, 0f) * Px

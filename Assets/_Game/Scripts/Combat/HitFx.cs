@@ -155,6 +155,59 @@ namespace SeteVidas.Combat
             }
         }
 
+        static readonly Color GlintColor = new Color32(0xf2, 0xc9, 0x6b, 0xff);   // dourado do Paladino, mais claro
+
+        static HitSparks Instance()
+        {
+            if (s_instance == null)
+            {
+                var go = new GameObject("[Faíscas]");
+                s_instance = go.AddComponent<HitSparks>();
+            }
+            return s_instance;
+        }
+
+        /// <summary>Uma faísca dourada que sobe devagar (marreta carregando).</summary>
+        public static void Glint(Vector2 at)
+        {
+            if (!Application.isPlaying) return;
+            Instance().Emit(at, new Vector2(Random.Range(-0.6f, 0.6f), Random.Range(2.5f, 4f)), 0.3f, GlintColor);
+        }
+
+        struct WaveFx { public Vector2 Origin; public float Range, Duration, Age, NextPuff; }
+        readonly List<WaveFx> _waves = new List<WaveFx>();
+
+        /// <summary>Terremoto: poeira correndo pelo chão para os dois lados até <paramref name="range"/> tiles.</summary>
+        public static void Wave(Vector2 feet, float range, float duration)
+        {
+            if (!Application.isPlaying || range <= 0f) return;
+            var inst = Instance();
+            inst._waves.Add(new WaveFx { Origin = feet, Range = range, Duration = Mathf.Max(0.05f, duration) });
+            Spawn(feet + Vector2.up * 0.1f, 0, 1, true, feet);
+        }
+
+        void StepWaves(float dt)
+        {
+            for (int i = _waves.Count - 1; i >= 0; i--)
+            {
+                var w = _waves[i];
+                w.Age += dt;
+                w.NextPuff -= dt;
+                if (w.NextPuff <= 0f)
+                {
+                    w.NextPuff = 0.035f;
+                    float d = w.Range * Mathf.Clamp01(w.Age / w.Duration);
+                    for (int s = -1; s <= 1; s += 2)
+                    {
+                        var at = w.Origin + new Vector2(s * d, 0.06f);
+                        Emit(at, new Vector2(s * Random.Range(0.5f, 1.5f), Random.Range(1.5f, 3f)), Random.Range(0.2f, 0.3f), DustColor);
+                    }
+                }
+                if (w.Age >= w.Duration) _waves.RemoveAt(i);
+                else _waves[i] = w;
+            }
+        }
+
         void Emit(Vector2 at, Vector2 velocity, float life, Color color)
         {
             if (s_pixel == null)
@@ -190,6 +243,7 @@ namespace SeteVidas.Combat
         void Update()
         {
             float dt = Time.deltaTime;
+            StepWaves(dt);
             for (int i = 0; i < _renderers.Count; i++)
             {
                 var r = _renderers[i];

@@ -77,8 +77,10 @@ namespace SeteVidas.Tests
                 Assert.AreEqual(2, s.BaseDamage);
                 Assert.AreEqual(DamageType.Normal, s.Type, "Adagas não podem quebrar parede rachada");
                 Assert.IsTrue(s.BackstabBonus);
-                float combo = s.ComboSteps * (s.Windup + s.Active) + s.Recovery + s.FinalRecovery;
-                Assert.Less(combo, 0.7f, $"Ladino deve ser rápido: combo completo = {combo:0.00} s");
+                float combo = s.ComboSteps * (s.Windup + s.Active) + (s.ComboSteps - 1) * s.Recovery + s.FinalRecovery;
+                Assert.AreEqual(3, s.ComboSteps, "Combo de 3 golpes no chão (melhoria 4)");
+                Assert.Less(combo, 1f, $"Ladino deve ser rápido: combo completo = {combo:0.00} s");
+                Assert.Greater(s.FinisherLunge, 0f, "O 3º golpe avança");
                 Assert.Less(s.HitstopFront, s.HitstopBack);
                 Assert.Less(s.HitstopBack, s.HitstopStealth, "O furtivo precisa travar mais a tela");
             }

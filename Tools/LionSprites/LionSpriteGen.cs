@@ -560,6 +560,37 @@ public static partial class LionSpriteGen
                 p.BackHand = new Point(15, 13); p.BackArmInFront = true; p.BackItem = new Item("dagger", 135);
             }),
             With(stance, p => { p.FrontHand = new Point(14, 14); p.FrontItem = new Item("dagger", -45); }));
+        // golpe 3 (melhoria 4): estocada com as duas adagas e avanço. Recolhe as duas atrás do corpo, se joga para
+        // a frente com as pernas abertas e as lâminas retas, e volta à guarda. Só no chão (no ar o combo tem 2 golpes).
+        var deep = With(stance, p => { p.Px = 9; p.HeadDx = 1; p.TorsoV = "run"; p.BackFoot = new Point(5, 20); p.FrontFoot = new Point(15, 20); });
+        Add("dagger3_windup", 0.04f, false,
+            With(stance, p =>
+            {
+                p.Px = 6; p.Py = 17; p.HeadDx = -1; p.BackFoot = new Point(5, 20); p.FrontFoot = new Point(11, 20);
+                p.FrontHand = new Point(10, 14); p.FrontItem = new Item("dagger", 180);
+                p.BackHand = new Point(8, 13); p.BackItem = new Item("dagger", 170);
+            }));
+        Add("dagger3_active", 0.04f, false,
+            With(deep, p =>
+            {
+                p.FrontHand = new Point(18, 13); p.FrontItem = new Item("dagger", 0);
+                p.BackHand = new Point(17, 15); p.BackArmInFront = true; p.BackItem = new Item("dagger", 5);
+            }),
+            With(deep, p =>
+            {
+                p.Px = 10; p.FrontFoot = new Point(16, 20);
+                p.FrontHand = new Point(19, 13); p.FrontItem = new Item("dagger", 0);
+                p.BackHand = new Point(18, 15); p.BackArmInFront = true; p.BackItem = new Item("dagger", 0);
+            }));
+        Add("dagger3_recovery", 0.1f, false,
+            With(deep, p =>
+            {
+                p.Px = 10; p.Py = 17; p.FrontFoot = new Point(16, 20);
+                p.FrontHand = new Point(17, 15); p.FrontItem = new Item("dagger", -35);
+                p.BackHand = new Point(16, 16); p.BackArmInFront = true; p.BackItem = new Item("dagger", -50);
+            }),
+            With(lunge, p => { p.FrontHand = new Point(15, 14); p.FrontItem = new Item("dagger", -45); }),
+            With(stance, p => { p.FrontHand = new Point(14, 14); p.FrontItem = new Item("dagger", -45); }));
         // no ar: mesmos braços, pernas encolhidas
         foreach (string nm in new[] { "dagger1_windup", "dagger1_active", "dagger1_recovery", "dagger2_windup", "dagger2_active", "dagger2_recovery" })
             AddAirVariant(nm);
@@ -583,6 +614,36 @@ public static partial class LionSpriteGen
             With(lunge, p => { p.Px = 9; p.Py = 17; p.HeadDx = 1; p.HeadDy = 1; p.FrontFoot = new Point(14, 20); p.FrontHand = new Point(16, 13); p.HammerGrip = new Point(16, 13); p.HammerAngle = -55; }),
             With(stance, p => { p.Px = 8; p.FrontHand = new Point(15, 12); p.HammerGrip = new Point(15, 12); p.HammerAngle = 35; }));
         foreach (string nm in new[] { "hammer1_windup", "hammer1_active", "hammer1_recovery" }) AddAirVariant(nm);
+        // carregando o terremoto (melhoria 4): agachado, pernas abertas, marreta erguida atrás da cabeça; respira
+        // (o corpo desce 1 px) e a cabeça da marreta treme. O brilho dourado é do jogo (cor da camada + faíscas).
+        var charge = With(stance, p =>
+        {
+            p.Px = 6; p.Py = 18; p.HeadDx = -1; p.TorsoV = "up"; p.ArmsBehindHead = true;
+            p.BackFoot = new Point(4, 20); p.FrontFoot = new Point(12, 20);
+            p.FrontHand = new Point(9, 2); p.BackHand = new Point(8, 3); p.HammerGrip = new Point(9, 2); p.HammerAngle = 140;
+        });
+        Add("hammer_charge", 0.12f, true,
+            charge,
+            With(charge, p => { p.Py = 19; p.FrontHand = new Point(9, 3); p.BackHand = new Point(8, 4); p.HammerGrip = new Point(9, 3); p.HammerAngle = 146; }));
+        // terremoto: sobe na ponta dos pés, desce a marreta com tudo e crava a cabeça no chão à frente, agachado
+        var impact = With(stance, p =>
+        {
+            p.Px = 9; p.Py = 19; p.HeadDx = 1; p.HeadDy = 1; p.TorsoV = "run";
+            p.BackFoot = new Point(4, 20); p.FrontFoot = new Point(14, 20);
+            p.FrontHand = new Point(15, 13); p.BackHand = new Point(14, 13); p.BackArmInFront = true;
+            p.HammerGrip = new Point(15, 13); p.HammerAngle = -62;
+        });
+        Add("hammer_slam", 0.08f, false,
+            With(stance, p =>
+            {
+                p.Px = 7; p.Py = 15; p.TorsoV = "up"; p.ArmsBehindHead = true;
+                p.FrontHand = new Point(10, 0); p.BackHand = new Point(9, 1); p.HammerGrip = new Point(10, 0); p.HammerAngle = 100;
+            }),
+            With(lunge, p => { p.Py = 17; p.FrontHand = new Point(17, 8); p.HammerGrip = new Point(17, 8); p.HammerAngle = 20; }),
+            impact,
+            impact,
+            With(impact, p => { p.Py = 18; p.HeadDy = 0; }),
+            With(stance, p => { p.Px = 8; p.FrontHand = new Point(15, 12); p.HammerGrip = new Point(15, 12); p.HammerAngle = -30; }));
 
         // ---------------- dano, morte, renascimento
         Add("hurt", 0.08f, false,

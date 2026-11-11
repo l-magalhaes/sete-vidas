@@ -104,6 +104,8 @@ namespace SeteVidas.Player
         public bool CrouchHeld => !GameplayLocked && _crouch != null && _crouch.IsPressed();
         public bool CrouchPressedThisFrame => !GameplayLocked && _crouch != null && _crouch.WasPressedThisFrame();
         public bool AttackPressedThisFrame => !GameplayLocked && _attack != null && _attack.WasPressedThisFrame();
+        /// <summary>Ataque segurado (golpe carregado da marreta).</summary>
+        public bool AttackHeld => !GameplayLocked && _attack != null && _attack.IsPressed();
         public bool InteractPressedThisFrame => !GameplayLocked && _interact != null && _interact.WasPressedThisFrame();
         public bool NextClassPressedThisFrame => !GameplayLocked && _nextClass != null && _nextClass.WasPressedThisFrame();
         public bool PrevClassPressedThisFrame => !GameplayLocked && _prevClass != null && _prevClass.WasPressedThisFrame();

@@ -24,6 +24,7 @@ MonoBehaviour:
   Active: 0.12
   Recovery: 0.2
   FinalRecovery: 0.45
+  Chargeable: 1
   MoveMultiplierWhileAttacking: 0.3
   NoiseMultiplier: 2
   HitboxSize: {x: 1.4, y: 1.3}

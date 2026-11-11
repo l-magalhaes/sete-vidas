@@ -19,11 +19,11 @@ MonoBehaviour:
     Front: 1
     Back: 1.5
     StealthBack: 2.5
-  ComboSteps: 2
+  ComboSteps: 3
   Windup: 0.04
   Active: 0.08
   Recovery: 0.12
-  FinalRecovery: 0.22
+  FinalRecovery: 0.3
   HitboxSize: {x: 1.1, y: 0.9}
   HitboxForward: 0.5
   HitstopFront: 0.05

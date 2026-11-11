@@ -173,6 +173,40 @@ namespace SeteVidas.Tests
             Assert.Greater(_sentinel.transform.position.y, -1f, "Caiu para fora do mapa");
         }
 
+        /// <summary>Melhoria 4: o terremoto (carga máxima, 5 tiles) acerta a Sentinela a 4 tiles e a derruba; a 6, não.</summary>
+        [UnityTest]
+        public IEnumerator Shockwave_HitsAtFourTiles_NotAtSix()
+        {
+            yield return Load();
+            var combat = _player.GetComponent<CombatController>();
+            Assert.IsNotNull(combat);
+            _daggers = ScriptableObject.CreateInstance<MeleeAttackSettings>(); // vira a "marreta" do teste
+            _daggers.Chargeable = true;
+            _daggers.ComboSteps = 1;
+            _daggers.Type = DamageType.Heavy;
+            var original = combat.Weapon;
+            combat.Equip(_daggers);
+            try
+            {
+                PlacePlayer(6f, inFront: false);
+                yield return new WaitForFixedUpdate();
+                int before = _sentinel.Health;
+                combat.Shockwave(1f);
+                Assert.AreEqual(before, _sentinel.Health, "A 6 tiles, a onda (5) não chega");
+
+                PlacePlayer(4f, inFront: false);
+                yield return new WaitForFixedUpdate();
+                combat.Shockwave(1f);
+                Assert.Less(_sentinel.Health, before, "A 4 tiles, a onda acerta");
+                Assert.IsTrue(_sentinel.IsDead || _sentinel.IsStunned, "Derrubada");
+            }
+            finally
+            {
+                combat.Equip(original);
+                Time.timeScale = 1f;
+            }
+        }
+
         [UnityTest]
         public IEnumerator FrontHit_DoesNotKill_AndStartsCombat()
         {

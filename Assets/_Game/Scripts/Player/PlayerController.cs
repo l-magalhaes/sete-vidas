@@ -155,8 +155,12 @@ namespace SeteVidas.Player
                 return;
             }
 
+            // Avanço do golpe final (melhoria 4): anda sozinho para a frente, para em parede, borda ou inimigo
+            bool lunging = _lungeLeft > 0f;
+            if (lunging) { v.x = LungeVelocity(grounded, dt); _lungeEnded = _lungeLeft <= 0f; }
+            else if (_lungeEnded) { v.x = 0f; _lungeEnded = false; } // acabou o avanço: para ali, sem deslizar
             // Andar (logo depois de um pulo da parede, a entrada não freia o impulso)
-            if (_moveLockTimer <= 0f)
+            else if (_moveLockTimer <= 0f)
             {
                 float target = MoveInput() * settings.MoveSpeed * SpeedMultiplier * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
                 float rate = Mathf.Abs(target) > 0.01f ? settings.Acceleration : settings.Deceleration;
@@ -210,6 +214,7 @@ namespace SeteVidas.Player
             }
 
             v.x = BlockAgainstBodies(v.x, dt);
+            if (lunging && Mathf.Abs(v.x) < 0.01f) { _lungeLeft = 0f; _lungeEnded = true; } // encostou num inimigo: o avanço acaba
             _body.linearVelocity = v;
             _timers.Tick(dt);
             _wasGrounded = grounded && !jumped;
@@ -227,6 +232,47 @@ namespace SeteVidas.Player
             if (input.IsAnalog && x * FacingDirection < 0f) return 0f;
             return x;
         }
+
+        // ------------------------------------------------ avanço do golpe final
+
+        float _lungeLeft, _lungeSpeed;
+        bool _lungeEnded;
+        int _lungeDir;
+
+        /// <summary>Avançando no golpe final do combo.</summary>
+        public bool IsLunging => _lungeLeft > 0f;
+
+        /// <summary>Avança <paramref name="distance"/> tiles para <paramref name="dir"/> em <paramref name="seconds"/> (estocada).</summary>
+        public void StartLunge(int dir, float distance, float seconds)
+        {
+            if (distance <= 0f || dir == 0) return;
+            _lungeDir = dir > 0 ? 1 : -1;
+            _lungeLeft = distance;
+            _lungeSpeed = distance / Mathf.Max(0.02f, seconds);
+        }
+
+        public void StopLunge() => _lungeLeft = 0f;
+
+        float LungeVelocity(bool grounded, float dt)
+        {
+            if (!grounded || dt <= 0f) { _lungeLeft = 0f; return 0f; }
+            if (_blockMask < 0) SideIsFree(0f, 0f, 0.1f, 0.1f); // inicializa a máscara
+            Vector2 feet = _body.position;
+            float w = settings.ColliderWidth, h = CurrentHeight;
+            float want = Mathf.Min(_lungeLeft, _lungeSpeed * dt);
+            // vão até a parede (a máscara inclui perigos: o avanço não entra em espinhos)
+            var hit = Physics2D.BoxCast(feet + new Vector2(0f, h * 0.5f + 0.05f), new Vector2(w - 0.05f, h - 0.15f), 0f,
+                new Vector2(_lungeDir, 0f), want + 0.05f, _blockMask);
+            float wallGap = hit.collider != null ? Mathf.Max(0f, hit.distance - 0.02f) : float.MaxValue;
+            // chão à frente: nunca joga o gato de uma borda
+            float probeX = feet.x + _lungeDir * (w * 0.5f + want);
+            bool groundAhead = Physics2D.Raycast(new Vector2(probeX, feet.y + 0.1f), Vector2.down, 0.45f, _groundMaskForLunge).collider != null;
+            float step = ComboRules.LungeStep(_lungeLeft, _lungeSpeed, dt, wallGap, groundAhead);
+            _lungeLeft = step <= 0f ? 0f : _lungeLeft - step;
+            return _lungeDir * step / dt;
+        }
+
+        int _groundMaskForLunge => LayerMask.GetMask(GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
 
         // ------------------------------------------------ esbarrar nos inimigos
 
@@ -329,6 +375,7 @@ namespace SeteVidas.Player
                 IsHanging = false;
                 _regrabTimer = settings.LedgeRegrabCooldown;
             }
+            _lungeLeft = 0f;
             InterruptAbility();
             _isJumping = false;
             _timers.Consume();
@@ -346,6 +393,7 @@ namespace SeteVidas.Player
                 IsClimbingLedge = false;
                 _body.bodyType = RigidbodyType2D.Dynamic;
             }
+            _lungeLeft = 0f;
             IsHanging = false;
             InterruptAbility();
             if (IsCrouching && _ground.HasRoomFor(settings.ColliderWidth, settings.StandingHeight))

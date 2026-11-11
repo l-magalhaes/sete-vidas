@@ -28,6 +28,8 @@ namespace SeteVidas.Combat
         public int SwingId { get; private set; }
         public bool IsAttacking => Current != Phase.Idle;
         public bool IsHitActive => Current == Phase.Active;
+        /// <summary>Tempo que falta na fase atual (s).</summary>
+        public float PhaseTimeLeft => _timer;
 
         /// <summary>Apertou ataque. Retorna true se iniciou ou enfileirou um golpe.</summary>
         public bool Press(in AttackTimings t)

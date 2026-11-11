@@ -13,7 +13,7 @@ namespace SeteVidas.Enemies
     /// <see cref="AlertBrain"/>; aqui ficam o corpo, o movimento e o visual.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(EnemyPerception))]
-    public class EnemyAI : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody
+    public class EnemyAI : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody, IKnockdown
     {
         enum AttackPhase { None, Windup, Active, Recovery }
 
@@ -584,6 +584,14 @@ namespace SeteVidas.Enemies
         }
 
         float _stunTimer, _stunDecel;
+
+        /// <summary>Derrubado pelo terremoto da marreta: fica na pose de dor, sem andar nem atacar (melhoria 4).</summary>
+        public void Knockdown(float seconds)
+        {
+            if (IsDead || seconds <= 0f) return;
+            _attackPhase = AttackPhase.None;
+            _stunTimer = Mathf.Max(_stunTimer, seconds);
+        }
 
         /// <summary>Na pose de dor: não anda nem ataca (melhoria 3).</summary>
         public bool IsStunned => _stunTimer > 0f && !IsDead;

@@ -64,6 +64,7 @@ namespace SeteVidas.EditorTools
                 hammer.Active = 0.12f;
                 hammer.Recovery = 0.2f;
                 hammer.FinalRecovery = 0.45f;
+                hammer.Chargeable = true;        // segurar: terremoto (melhoria 4)
                 hammer.MoveMultiplierWhileAttacking = 0.3f;
                 hammer.NoiseMultiplier = 2f;
                 hammer.HitboxSize = new Vector2(1.4f, 1.3f);
