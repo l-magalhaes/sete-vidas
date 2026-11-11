@@ -199,6 +199,46 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator LivingWorld_CrystalLights_RatFlees_AndParticlesStayInBudget()
+        {
+            yield return Load();
+            Assert.IsNotNull(GameObject.Find("Fortaleza/Mundo vivo"), "Mundo vivo (Etapa 7)");
+            var player = PlayerHealth.Active.GetComponent<PlayerController>();
+
+            // o cristal Primata da trilha acende com o gato perto e apaga quando ele se afasta
+            ReactOnProximityProbe(out var crystal, "vestigio_primata: env_pri_obj_cristal_apagado");
+            var rest = crystal.GetComponentInChildren<SpriteRenderer>().sprite;
+            player.Teleport(new Vector2(31.6f, 0.05f));
+            yield return new WaitForSeconds(0.3f);
+            Assert.AreNotEqual(rest, crystal.GetComponentInChildren<SpriteRenderer>().sprite, "aceso perto do gato");
+            player.Teleport(new Vector2(42f, 0.05f));
+            yield return new WaitForSeconds(0.2f);
+            Assert.AreEqual(rest, crystal.GetComponentInChildren<SpriteRenderer>().sprite, "apagado de novo");
+
+            // o rato dos fundos foge para o buraco e some
+            var rat = GameObject.Find("Fortaleza/Mundo vivo/Rato dos fundos").GetComponent<SeteVidas.World.Scenery.ReactOnProximity>();
+            player.Teleport(new Vector2(211.5f, FortressLayoutFloor(101f)));
+            yield return new WaitForSeconds(1f);
+            Assert.IsTrue(rat.IsAway, "fugiu");
+
+            // as partículas nunca passam do orçamento (6.1)
+            player.Teleport(new Vector2(160f, 101.05f));
+            yield return new WaitForSeconds(3f);
+            Assert.LessOrEqual(SeteVidas.World.Scenery.AmbientEmitter.AliveInScene, SeteVidas.World.Scenery.AmbientEmitter.GlobalCap);
+            Assert.Greater(SeteVidas.World.Scenery.AmbientEmitter.AliveInScene, 0, "a câmara tem poeira roxa suspensa");
+        }
+
+        static float FortressLayoutFloor(float y) => y + 0.05f;
+
+        static void ReactOnProximityProbe(out SeteVidas.World.Scenery.ReactOnProximity react, string name)
+        {
+            var go = GameObject.Find("Fortaleza/Enfeites/" + name);
+            Assert.IsNotNull(go, name);
+            react = go.GetComponent<SeteVidas.World.Scenery.ReactOnProximity>();
+            Assert.IsNotNull(react, name + ": reage ao gato");
+        }
+
+        [UnityTest]
         public IEnumerator EverySaw_RunsOnAVisibleRail()
         {
             yield return Load();
@@ -244,9 +284,9 @@ namespace SeteVidas.Tests
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 159 itens no FortressDressing (Etapas 1–6), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
-            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 189 objetos
-            Assert.AreEqual(189, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            // 162 itens no FortressDressing (Etapas 1–7), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
+            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 192 objetos
+            Assert.AreEqual(192, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
                 Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
             Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,

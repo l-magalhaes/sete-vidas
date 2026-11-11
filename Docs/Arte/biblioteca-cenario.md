@@ -78,3 +78,11 @@ Objetos que contam juntos quem vive ou trabalha num lugar (mesa + bancos + dados
 - **Âncora:** o centro da camada aparece na tela deslocado (âncora − câmera) × paralaxe. Escolha uma câmera de referência e calcule a âncora para o horizonte e os marcos ficarem no lugar certo.
 - **Janelas:** `FortressBackgrounds.Windows()`; a arte é a moldura + a máscara (`_mascara.png`). Não desenhe a paisagem na janela: ela vem do fundo ativo.
 - **Primeiro plano (fg):** só silhuetas escuras encostadas no teto ou nos cantos de cima; nunca na altura do gato.
+
+## Mundo vivo (Etapa 7)
+
+Montado pelo `Editor/Scenery/FortressLife.cs` (copie para outra fase e troque os dados):
+- `Wind(...)`: zonas de vento (`WindZone2D`). Folhas e fumaças seguem `WindZone2D.At(posição)`.
+- `Emitter(...)`: `AmbientEmitter` com tipo (poeira, folhas, vaga-lumes, poeira da praga), área, taxa e máximo. Poeira só em feixes de luz; nas salas de armadilha, só a poeira roxa rara. O teto global é 40.
+- `Creature(...)`: bicho que foge (`ReactOnProximity` Flee). Só visual.
+- Reações por id da biblioteca: cristal → Swap (acende perto), vela → Lean (inclina), runas, veias e selos corrompidos → `PulseLight`.

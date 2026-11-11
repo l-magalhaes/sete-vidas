@@ -126,6 +126,7 @@ namespace SeteVidas.EditorTools
             var dressing = new GameObject("Enfeites");
             dressing.transform.SetParent(root.transform, false);
             DressingBuilder.Build(dressing.transform, FortressDressing.Items());
+            FortressLife.Build(root.transform, dressing.transform);   // Etapa 7: vento, partículas, bichos, pulsos
             BuildScenery(scene);
 
             SeteVidasSetup.BuildTileColliders(scene);

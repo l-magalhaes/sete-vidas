@@ -11,7 +11,7 @@ $root = (Resolve-Path (Join-Path $here '..\..')).Path
 $refs = Join-Path $root '..\SeteVidasDocs\Referencias'
 $meta = Join-Path $root 'Tools\LionSprites\sprite_meta_template.txt'
 Add-Type -ReferencedAssemblies System.Drawing -Path @((Join-Path $here 'EnvPalette.cs'), (Join-Path $root 'Tools\CharacterSprites\PixelKit.cs'), (Join-Path $here 'PropSpriteGen.cs'),
-    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.Culture.cs'), (Join-Path $here 'BackgroundSpriteGen.cs'))
+    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.Culture.cs'), (Join-Path $here 'ObjectSpriteGen.Life.cs'), (Join-Path $here 'BackgroundSpriteGen.cs'))
 
 # 1) paleta
 [EnvPalette]::Export($root, $refs)

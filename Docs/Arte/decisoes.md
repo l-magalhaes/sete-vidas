@@ -82,6 +82,8 @@ Status: **[PROPOSTA]** aguarda aprovação · **[APROVADA]** em uso.
 | 11/11/2026 | **Sem janelinhas na parede** (pedido do usuário): os acontecimentos de parede "janela tapada" e "nicho" saíram (pareciam janelas pequenas competindo com as janelas da 6B, que mostram o céu). Ficam o remendo de outra pedra e a mancha de água | [PROPOSTA] | Interiores |
 | 11/11/2026 | **Trilho das serras e menos ruído perto das armadilhas** (pedido do usuário): toda serra corre num trilho de ferro escuro (fenda no meio, rebites, um suporte aparafusado em cada ponta), parado no mundo e atrás da lâmina (ordem 1), do começo ao fim do caminho; a marca de giz da Guilda ao lado da placa da galeria saiu (parecia ícone de interface); o mecanismo (engrenagem, registro, alavanca) ao lado dos jatos de fogo saiu | [PROPOSTA] | Armadilhas, galeria |
 | 11/11/2026 | **Sem vigas de primeiro plano** (pedido do usuário): a viga em silhueta no alto da galeria e dos fundos saiu; o primeiro plano dos interiores fica só com as correntes | [PROPOSTA] | Interiores |
+| 11/11/2026 | **Mundo vivo (Etapa 7)**: vento para a direita (mais forte no alto, nenhum dentro do castelo); folhas 2×2 (#3e5a48/#a0582e), vaga-lumes #e6f2c8, poeira #a8a0c0/#d0c8e0 (alfa 30–60%), poeira da praga #8a5aa0; pássaro e rato escuros e pequenos (9×7, 10×5); no máximo 40 partículas na cena; pulsos de 2,2 s (veias) e 2,6 s (runas) defasados meia volta. Tudo só visual | [PROPOSTA] | Todas as áreas |
+| 11/11/2026 | **Bicho só some fora da tela** (pedido do usuário): o pássaro (e o rato da cozinha) continua fugindo até sair da tela e só então desaparece; a direção da fuga é decidida no susto (não dá meia-volta no ar). O rato dos fundos some no buraco | [PROPOSTA] | Exterior, galeria |
 
 ## Já configurado na Fase 0
 

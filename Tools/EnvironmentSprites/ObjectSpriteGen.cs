@@ -11,7 +11,7 @@ using System.IO;
 public static partial class ObjectSpriteGen
 {
     static string s_template, s_sol, s_com, s_cid, s_ext;
-    static readonly List<KeyValuePair<string, PixelCanvas>> s_sheet = new List<KeyValuePair<string, PixelCanvas>>();
+    static readonly List<KeyValuePair<string, Bitmap>> s_sheet = new List<KeyValuePair<string, Bitmap>>();   // imagem pronta: a paleta muda a cada asset
 
     public static void Run(string projectRoot, string metaTemplatePath, string previewDir)
     {
@@ -71,6 +71,9 @@ public static partial class ObjectSpriteGen
         s_sheet.Clear();
         Run5B(env);
         Sheet(Path.Combine(previewDir, "objetos_etapa5b.png"), 5);
+        s_sheet.Clear();
+        Run7(env);
+        Sheet(Path.Combine(previewDir, "objetos_etapa7.png"), 6);
     }
 
     // ------------------------------------------------------------------ base
@@ -125,7 +128,7 @@ public static partial class ObjectSpriteGen
     static void Write(string dir, string name, PixelCanvas cv)
     {
         PixelKit.WriteSprite(cv, Path.Combine(dir, name + ".png"), name, s_template, false);
-        s_sheet.Add(new KeyValuePair<string, PixelCanvas>(name, cv));
+        s_sheet.Add(new KeyValuePair<string, Bitmap>(name, PixelKit.ToBitmap(cv)));
     }
 
     static void Sheet(string path, int S)
@@ -140,10 +143,9 @@ public static partial class ObjectSpriteGen
             g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
             for (int i = 0; i < s_sheet.Count; i++)
             {
-                var cv = s_sheet[i].Value;
+                var one = s_sheet[i].Value;
                 int cx = (i % cols) * cell, cy = (i / cols) * cell;
-                using (var one = PixelKit.ToBitmap(cv))
-                    g.DrawImage(one, new Rectangle((cx + (cell - cv.W) / 2) * S, (cy + cell - 2 - cv.H) * S, cv.W * S, cv.H * S));
+                g.DrawImage(one, new Rectangle((cx + (cell - one.Width) / 2) * S, (cy + cell - 2 - one.Height) * S, one.Width * S, one.Height * S));
                 using (var pen = new Pen(Color.FromArgb(90, 120, 110, 140)))
                     g.DrawLine(pen, cx * S, (cy + cell - 2) * S, (cx + cell) * S, (cy + cell - 2) * S);
             }

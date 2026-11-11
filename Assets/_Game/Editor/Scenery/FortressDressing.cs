@@ -232,6 +232,10 @@ namespace SeteVidas.EditorTools
             Fixed(d, 10, "env_pri_obj_reliquia", 0, "Relíquia do cofre 72", 228.05f, BellHall);
             Fixed(d, 10, "env_pri_obj_reliquia", 1, "Relíquia do cofre 43", 228.05f, WallWalk);
             Fixed(d, 10, "env_pri_obj_reliquia", 2, "Relíquia do cofre 15", 228.05f, 15f);
+            // ===== Etapa 7: mundo vivo (o resto vem do FortressLife: vento, partículas, bichos, pulsos)
+            Fixed(d, 8, "env_nec_obj_inseto_morto", 0, "Insetos mortos da galeria 1", 159f, BellHall);
+            Fixed(d, 8, "env_nec_obj_inseto_morto", 1, "Insetos mortos da galeria 2", 177.2f, BellHall);
+            Add(d, 10, "env_com_obj_buraco_rato", "Buraco do rato dos fundos", 215.6f, SealFloor);
             // ===== Etapa 6B: primeiro plano em silhueta, só encostado no teto (nunca na altura do gato nem sobre rota)
             Add(d, 5, "fg_corrente", "Corrente na frente (galeria)", 193.5f, 52f);
             Add(d, 7, "fg_corrente", "Corrente na frente (salão 1)", 179.5f, 82f);

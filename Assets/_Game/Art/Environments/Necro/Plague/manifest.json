@@ -34,6 +34,23 @@
       "posicionamento": { "apoio": "livre", "distancia_minima_mesmo_id": 4, "zonas": ["salao"] },
       "leitura": "Por cima do vitral do salÃ£o: primeiro sinal da praga; os cacos ficam embaixo. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
       "tags": ["etapa5"]
+    },
+    {
+      "id": "env_nec_obj_inseto_morto",
+      "nome": "Insetos mortos",
+      "regiao": "nec",
+      "categoria": "mag",
+      "funcao": "narrativo",
+      "material": "praga",
+      "epoca": "praga",
+      "tamanho_px": [7, 4],
+      "sprites": ["env_nec_obj_inseto_morto_0.png", "env_nec_obj_inseto_morto_1.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["armadilhas"] },
+      "leitura": "CorrupÃ§Ã£o crescente (6.3): na galeria das armadilhas a praga jÃ¡ chegou. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
     }
   ]
 }

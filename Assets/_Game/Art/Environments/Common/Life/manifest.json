@@ -1,0 +1,56 @@
+{
+  "regiao": "com",
+  "assets": [
+    {
+      "id": "env_com_obj_buraco_rato",
+      "nome": "Buraco de rato",
+      "regiao": "com",
+      "categoria": "obj",
+      "funcao": "decorativo",
+      "material": "pedra",
+      "epoca": "abandono",
+      "tamanho_px": [9, 5],
+      "sprites": ["env_com_obj_buraco_rato.png"],
+      "espelhar": false,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["servico"] },
+      "leitura": "Para onde o rato foge (Etapa 7). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_ext_ani_passaro",
+      "nome": "PÃ¡ssaro (foge do gato)",
+      "regiao": "ext",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "penas",
+      "epoca": "natural",
+      "tamanho_px": [11, 7],
+      "sprites": ["env_ext_ani_passaro_0.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["exterior"] },
+      "leitura": "Pousado; a 4 tiles do gato levanta voo (env_ext_ani_passaro_voo_0..1) e some. SÃ³ visual: nÃ£o faz barulho para a IA (decidido). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    },
+    {
+      "id": "env_com_ani_rato",
+      "nome": "Rato (foge do gato)",
+      "regiao": "com",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "pelo",
+      "epoca": "abandono",
+      "tamanho_px": [11, 5],
+      "sprites": ["env_com_ani_rato_0.png"],
+      "espelhar": true,
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["servico", "alojamento"] },
+      "leitura": "A 3 tiles do gato corre (env_com_ani_rato_corre_0..1) e some no buraco. SÃ³ visual. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "tags": ["etapa5"]
+    }
+  ]
+}
