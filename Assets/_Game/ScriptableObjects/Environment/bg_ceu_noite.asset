@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_ceu_noite
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/manifest.json
+  entry:
+    id: bg_ceu_noite
+    nome: "C\xC3\xA9u da noite"
+    regiao: ext
+    categoria: plx
+    funcao: decorativo
+    material: silhueta
+    epoca: natural
+    tamanho_px: e00100000e010000i
+    sprites:
+    - Sky/bg_ceu_noite.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: ceu
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0
+      - 0
+      ancora:
+      - 0
+      - 0
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu:
+      - noite
+      lado_da_luz: esquerda
+      valor_max: 0.4
+      conjuntos:
+      - H
+    leitura: "Depois da maldi\xC3\xA7\xC3\xA3o: lua crescente \xC3\_ esquerda, estrelas e um v\xC3\xA9u roxo fraco (a praga solta). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A \xC3\xA2ncora de cada conjunto vem do FortressBackgrounds."
+    tags:
+    - fundo
+    - etapa6
+  variants:
+  - {fileID: 21300000, guid: 2b504dd6932629fcd60fce89a9f65b5c, type: 3}
+  frames: []

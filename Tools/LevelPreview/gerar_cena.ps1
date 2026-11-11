@@ -13,7 +13,7 @@ $scale = if ($args.Count -gt 3) { [int]$args[3] } else { 2 }
 $ed = Join-Path $root 'Assets\_Game\Editor'
 $rt = Join-Path $root 'Assets\_Game\Scripts\World\Scenery'
 Add-Type -ReferencedAssemblies System.Drawing, System.Web.Extensions -Path @(
-    (Join-Path $ed 'FortressLayout.cs'), (Join-Path $ed 'Scenery\FortressDressing.cs'), (Join-Path $ed 'Scenery\FortressTerrain.cs'),
+    (Join-Path $ed 'FortressLayout.cs'), (Join-Path $ed 'Scenery\FortressDressing.cs'), (Join-Path $ed 'Scenery\FortressTerrain.cs'), (Join-Path $ed 'Scenery\FortressBackgrounds.cs'),
     (Join-Path $rt 'TerrainAutotile.cs'), (Join-Path $rt 'DressingRules.cs'), (Join-Path $rt 'SceneryLayers.cs'),
     (Join-Path $here 'ScenePreview.cs'))
 $out = Join-Path $root "..\SeteVidasDocs\Referencias\cena_$name.png"

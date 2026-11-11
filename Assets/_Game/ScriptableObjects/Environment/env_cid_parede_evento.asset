@@ -55,14 +55,12 @@ MonoBehaviour:
       lado_da_luz: 
       valor_max: 0
       conjuntos: []
-    leitura: "Janela tapada, nicho, remendo, mancha de \xE1gua, rachadura escura: ~1 a cada 10 tiles, 1 tile acima do ch\xE3o, colocados pelo TerrainPainter (regra 4.5 contra repeti\xE7\xE3o)."
+    leitura: "Remendo de outra pedra e mancha de \xE1gua: ~1 a cada 10 tiles, 1 tile acima do ch\xE3o, colocados pelo TerrainPainter (regra 4.5 contra repeti\xE7\xE3o). Sem janela tapada nem nicho: pareciam janelinhas competindo com as janelas da Etapa 6B."
     tags:
     - parede
     - historia
   variants:
-  - {fileID: 21300000, guid: 006916341c0211d1be4d6e7f267d2e37, type: 3}
   - {fileID: 21300000, guid: 4d5a32350f5c2155fc5a4d9cb69b374e, type: 3}
-  - {fileID: 21300000, guid: b1e5457218d0dfdf177bd982158846c1, type: 3}
   - {fileID: 21300000, guid: 49651f6e31ee02141cc930dd02cc4996, type: 3}
   - {fileID: 21300000, guid: 16d7608f6c8a8c4e77ecca237b8a037d, type: 3}
   - {fileID: 21300000, guid: 58622de1ee2cf5084f72d956a8fc9cb1, type: 3}

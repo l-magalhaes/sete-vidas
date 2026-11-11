@@ -118,6 +118,7 @@ namespace SeteVidas.EditorTools
             int painted = TerrainPainter.Paint(maps[FortressLayout.Map.Ground], maps[FortressLayout.Map.Climbable], maps[FortressLayout.Map.Background],
                 FortressLayout.Slopes(), terrainDetails.transform);
             Debug.Log($"[Sete Vidas] Terreno e arquitetura: {painted} tiles, {terrainDetails.transform.childCount} detalhes (tufos, seixos, fendas, gárgulas).");
+            BuildWindows(scene, maps[FortressLayout.Map.Background]);
 
             var root = new GameObject("Fortaleza");
             SceneManager.MoveGameObjectToScene(root, scene);
@@ -285,6 +286,7 @@ namespace SeteVidas.EditorTools
                     var s = TrapsSetup.Instance<SawBlade>(t, "SawBlade", o.Name, at);
                     s.Configure(o.A, o.B);
                     TrapsSetup.Rec(s);
+                    TrapsSetup.SawRail(t, o.Name + " (trilho)", o.A, o.B, o.Y);   // o mecanismo que leva o disco
                     made = s;
                     break;
                 }
@@ -445,13 +447,59 @@ namespace SeteVidas.EditorTools
         /// Dentro do castelo o fundo de pedra cobre tudo; do lado de fora, o pôr do sol aparece.
         /// Os conjuntos de fundo por área e altura (A–H) entram na Etapa 6 do plano de cenário.
         /// </summary>
+        /// <summary>
+        /// Janelas dos interiores (Etapa 6B, plano 7.5): a moldura de pedra por cima da parede do fundo e um SpriteMask no
+        /// formato da abertura. A parede do fundo só aparece FORA das máscaras, então pelo recorte se vê o conjunto de fundo
+        /// ativo (o céu e a paisagem daquela altura, com a paralaxe certa).
+        /// </summary>
+        static void BuildWindows(Scene scene, Tilemap background)
+        {
+            var wall = background.GetComponent<TilemapRenderer>();
+            if (wall != null) wall.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+            var root = new GameObject("Janelas");
+            SceneManager.MoveGameObjectToScene(root, scene);
+            const string dir = "Assets/_Game/Art/Environments/Backgrounds/Interior/";
+            foreach (var w in FortressBackgrounds.Windows())
+            {
+                string name = "bg_int_" + w.Kind;
+                var frame = AssetDatabase.LoadAssetAtPath<Sprite>(dir + name + ".png");
+                var mask = AssetDatabase.LoadAssetAtPath<Sprite>(dir + name + "_mascara.png");
+                if (frame == null || mask == null) { Debug.LogWarning($"[Sete Vidas] Falta a arte da janela {name} (rode Tools/EnvironmentSprites/gerar.ps1)"); continue; }
+                var go = new GameObject(w.Name);
+                go.transform.SetParent(root.transform, false);
+                go.transform.position = new Vector3(w.X, w.Y, 0f);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = frame;
+                sr.sortingOrder = -9;                                   // por cima da parede (-10), atrás dos enfeites
+                var cut = new GameObject("Recorte");
+                cut.transform.SetParent(go.transform, false);
+                cut.AddComponent<SpriteMask>().sprite = mask;
+            }
+        }
+
         static void BuildScenery(Scene scene)
         {
+            // Etapa 6: um conjunto de fundo por trecho (A–H, FortressBackgrounds) e o BackgroundSets troca entre eles
             var root = new GameObject("Céu e montanhas");
             SceneManager.MoveGameObjectToScene(root, scene);
-            DressingBuilder.Background(root.transform, "bg_ceu_por_do_sol", "Céu do pôr do sol");
-            DressingBuilder.Background(root.transform, "bg_ext_cordilheira_cidadela", "Montanhas ao longe");
-            DressingBuilder.Background(root.transform, "bg_ext_morros_pinheiros", "Morros com pinheiros");
+            var entries = new List<BackgroundSets.SetEntry>();
+            foreach (var set in FortressBackgrounds.Sets())
+            {
+                var setRoot = new GameObject($"Conjunto {set.Key}: {set.Name}");
+                setRoot.transform.SetParent(root.transform, false);
+                foreach (var l in set.Layers)
+                {
+                    Vector2? factor = l.FactorX > 0f || l.FactorY > 0f ? new Vector2(l.FactorX, l.FactorY) : (Vector2?)null;
+                    var layerGo = DressingBuilder.Background(setRoot.transform, l.Id, l.Id, new Vector2(l.AnchorX, l.AnchorY), factor, l.Order);
+                    if (l.BlendToY > l.BlendFromY) layerGo.AddComponent<SkyHeightBlend>().Configure(l.BlendFromY, l.BlendToY);   // céu que muda com a altura
+                }
+                setRoot.SetActive(set.Key == FortressBackgrounds.Start);
+                entries.Add(new BackgroundSets.SetEntry { key = set.Key, root = setRoot });
+            }
+            var zones = new List<BackgroundSets.ZoneEntry>();
+            foreach (var z in FortressBackgrounds.Zones())
+                zones.Add(new BackgroundSets.ZoneEntry { set = z.Set, rect = Rect.MinMaxRect(z.X0, z.Y0, z.X1, z.Y1) });
+            root.AddComponent<BackgroundSets>().Configure(entries.ToArray(), zones.ToArray(), FortressBackgrounds.Start, 0.6f);
         }
 
         /// <summary>Quadros e tempo por quadro de um asset animado da biblioteca.</summary>

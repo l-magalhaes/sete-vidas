@@ -213,8 +213,11 @@ namespace SeteVidas.World.Scenery
             return ClimbTileName(material, Mask(solid, x, y) & (Left | Right), Variant(material, "miolo", x, y));
         }
 
-        /// <summary>Sem rachadura: rachadura (grande, escura, de cima a baixo) é a linguagem da parede quebrável.</summary>
-        public static readonly string[] WallEvents = { "janela_tapada", "nicho", "remendo", "mancha" };
+        /// <summary>
+        /// Sem rachadura: rachadura (grande, escura, de cima a baixo) é a linguagem da parede quebrável. Sem janela tapada
+        /// nem nicho (pareciam janelas pequenas competindo com as janelas de verdade da Etapa 6B, que mostram o céu).
+        /// </summary>
+        public static readonly string[] WallEvents = { "remendo", "mancha" };
         public static string WallEventName(string evento) { return "env_cid_parede_" + evento; }
 
         /// <summary>Parede quebrável 16×64 na pedra da época: estado "intacta", "danificada" ou "entulho".</summary>

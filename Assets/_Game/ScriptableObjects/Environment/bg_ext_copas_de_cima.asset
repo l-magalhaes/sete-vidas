@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_ext_copas_de_cima
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/manifest.json
+  entry:
+    id: bg_ext_copas_de_cima
+    nome: Copas vistas de cima
+    regiao: ext
+    categoria: plx
+    funcao: decorativo
+    material: silhueta
+    epoca: natural
+    tamanho_px: c00300008c000000i
+    sprites:
+    - Ext/bg_ext_copas_de_cima.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: bg_medio
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0.2
+      - 0.3
+      ancora:
+      - 0
+      - 0
+      repete: 1
+      preencher_abaixo: '#2a2440'
+      altitude_tiles: []
+      estado_do_ceu:
+      - borda_do_sol
+      - meio_sol
+      - ultimo_raio
+      lado_da_luz: direita
+      valor_max: 0.28
+      conjuntos:
+      - C
+      - F
+      - G
+    leitura: "Mar de copas com n\xC3\xA9voa na borda de cima. Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A \xC3\xA2ncora de cada conjunto vem do FortressBackgrounds."
+    tags:
+    - fundo
+    - etapa6
+  variants:
+  - {fileID: 21300000, guid: 828c4619e64ec744ed9d2ad96e9226bc, type: 3}
+  frames: []

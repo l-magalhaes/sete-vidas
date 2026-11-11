@@ -71,8 +71,52 @@ namespace SeteVidas.Tests
             Assert.IsNotNull(GameObject.Find("Fortaleza/Cachoeira"), "Cachoeira no penhasco do início");
             Assert.IsNotNull(GameObject.Find("Fortaleza/Lagoa"), "Lagoa onde o gato cai");
             Assert.IsNotNull(GameObject.Find("Céu e montanhas"), "Céu do pôr do sol e montanhas");
-            Assert.IsNotNull(GameObject.Find("Céu e montanhas/Morros com pinheiros").GetComponent<SeteVidas.World.ParallaxLayer>(),
-                "Fundo montado pela biblioteca de cenário, com paralaxe");
+            var far = GameObject.Find("Céu e montanhas/Conjunto A: Alto da montanha/bg_ext_cordilheira_a");
+            Assert.IsNotNull(far, "Conjunto A (alto da montanha) montado pela biblioteca de cenário");
+            Assert.IsNotNull(far.GetComponent<SeteVidas.World.ParallaxLayer>(), "com paralaxe");
+            Assert.AreEqual("A", Object.FindAnyObjectByType<SeteVidas.World.Scenery.BackgroundSets>().CurrentSet);
+        }
+
+        [UnityTest]
+        public IEnumerator Windows_CutTheBackWall_ToShowTheSkyOfThatHeight()
+        {
+            yield return Load();
+            var root = GameObject.Find("Janelas");
+            Assert.IsNotNull(root, "Janelas dos interiores (Etapa 6B)");
+            Assert.AreEqual(12, root.transform.childCount, "galeria, salão, armadilhas, câmara e fundos");
+            foreach (Transform w in root.transform)
+            {
+                Assert.IsNotNull(w.GetComponent<SpriteRenderer>().sprite, w.name + ": moldura");
+                Assert.IsNotNull(w.GetComponentInChildren<SpriteMask>().sprite, w.name + ": recorte");
+            }
+            var wall = GameObject.Find("Grid/Background").GetComponent<UnityEngine.Tilemaps.TilemapRenderer>();
+            Assert.AreEqual(SpriteMaskInteraction.VisibleOutsideMask, wall.maskInteraction,
+                "a parede do fundo some dentro das janelas e o fundo daquela altura aparece");
+        }
+
+        [UnityTest]
+        public IEnumerator Background_ChangesWithTheArea_WithCrossfade()
+        {
+            yield return Load();
+            var sets = Object.FindAnyObjectByType<SeteVidas.World.Scenery.BackgroundSets>();
+            Assert.IsNotNull(sets, "BackgroundSets (Etapa 6)");
+            Assert.AreEqual("A", sets.CurrentSet, "começa no alto da montanha");
+            var player = PlayerHealth.Active.GetComponent<PlayerController>();
+            player.Teleport(new Vector2(60f, 0.05f));                 // pátio: vale ao pé do castelo
+            yield return null;
+            Assert.AreEqual("V", sets.CurrentSet, "vale, muralhas e galeria: um exterior só");
+            Assert.IsTrue(sets.IsFading, "troca suave, não um corte");
+            yield return new WaitForSeconds(0.8f);
+            Assert.IsFalse(sets.IsFading);
+            Assert.IsFalse(GameObject.Find("Céu e montanhas").transform.Find("Conjunto A: Alto da montanha").gameObject.activeSelf,
+                "o conjunto que saiu é desligado");
+            player.Teleport(new Vector2(132f, 43.05f));               // alto da muralha 3: mesmo conjunto, só o céu e o horizonte mudam
+            yield return null;
+            Assert.AreEqual("V", sets.CurrentSet, "subir a muralha não troca o ambiente");
+            Assert.IsFalse(sets.IsFading);
+            player.Teleport(new Vector2(240f, 0.05f));                // a estrada depois do portão dos fundos: noite
+            yield return null;
+            Assert.AreEqual("H", sets.CurrentSet);
         }
 
         [UnityTest]
@@ -155,6 +199,23 @@ namespace SeteVidas.Tests
         }
 
         [UnityTest]
+        public IEnumerator EverySaw_RunsOnAVisibleRail()
+        {
+            yield return Load();
+            var saws = Object.FindObjectsByType<SeteVidas.World.Traps.SawBlade>(FindObjectsInactive.Include);
+            Assert.Greater(saws.Length, 0);
+            foreach (var saw in saws)
+            {
+                var rail = GameObject.Find("Fortaleza/" + saw.name + " (trilho)");
+                Assert.IsNotNull(rail, saw.name + ": trilho atrás do disco, no sentido em que ele anda");
+                var sr = rail.GetComponent<SpriteRenderer>();
+                Assert.AreEqual(SpriteDrawMode.Tiled, sr.drawMode);
+                Assert.Less(sr.sortingOrder, saw.GetComponentInChildren<SpriteRenderer>().sortingOrder, "o trilho fica atrás da lâmina");
+                Assert.AreEqual(2, rail.transform.childCount, "um suporte em cada ponta");
+            }
+        }
+
+        [UnityTest]
         public IEnumerator NoisyObjects_HaveArt_AndTheBucketStandsUpAgainAfterRest()
         {
             yield return Load();
@@ -183,7 +244,7 @@ namespace SeteVidas.Tests
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 159 itens no FortressDressing (Etapas 1–5), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
+            // 159 itens no FortressDressing (Etapas 1–6), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
             // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 189 objetos
             Assert.AreEqual(189, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())

@@ -226,7 +226,7 @@
       "sorting": -9,
       "colisor": "nenhum",
       "posicionamento": { "apoio": "livre", "zonas": ["interiores"] },
-      "leitura": "Janela tapada, nicho, remendo, mancha de água, rachadura escura: ~1 a cada 10 tiles, 1 tile acima do chão, colocados pelo TerrainPainter (regra 4.5 contra repetição).",
+      "leitura": "Remendo de outra pedra e mancha de água: ~1 a cada 10 tiles, 1 tile acima do chão, colocados pelo TerrainPainter (regra 4.5 contra repetição). Sem janela tapada nem nicho: pareciam janelinhas competindo com as janelas da Etapa 6B.",
       "tags": ["parede", "historia"]
     },
     {

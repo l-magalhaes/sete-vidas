@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Web.Script.Serialization;
 using SeteVidas.EditorTools;
 using SeteVidas.World.Scenery;
@@ -23,7 +24,7 @@ public static class ScenePreview
         public float[] Parallax, Anchor; public bool Repeat; public string FillBelow = "";
     }
 
-    class Draw { public int Order; public Bitmap Image; public float X, Y; public bool Flip; public float Alpha = 1f; } // X,Y = canto sup. esq. em px de tela
+    class Draw { public int Order; public Bitmap Image; public float X, Y; public bool Flip; public float Alpha = 1f; public bool Window; } // X,Y = canto sup. esq. em px de tela
 
     static Dictionary<string, Entry> s_lib;
     static readonly Dictionary<string, Bitmap> s_cache = new Dictionary<string, Bitmap>();
@@ -37,24 +38,35 @@ public static class ScenePreview
         float left = camX - W / 2f / PPU, top = camY + H / 2f / PPU;
         var draws = new List<Draw>();
 
-        // fundo (categoria plx), na ordem de desenho do manifesto
-        foreach (var id in new[] { "bg_ceu_por_do_sol", "bg_ext_cordilheira_cidadela", "bg_ext_morros_pinheiros" })
+        // fundo: o conjunto daquele ponto (FortressBackgrounds, Etapa 6), com a âncora, a paralaxe e a ordem do conjunto
+        string setKey = FortressBackgrounds.Pick(FortressBackgrounds.Zones(), null, camX, camY) ?? FortressBackgrounds.Start;
+        FortressBackgrounds.Set bgSet = null;
+        foreach (var s in FortressBackgrounds.Sets()) if (s.Key == setKey) bgSet = s;
+        foreach (var layer in bgSet.Layers)
         {
             Entry e;
-            if (!s_lib.TryGetValue(id, out e)) continue;
+            if (!s_lib.TryGetValue(layer.Id, out e)) continue;
             var img = Img(Path.Combine(e.Dir, e.Sprites[0]));
-            float fx = e.Parallax[0], fy = e.Parallax[1];
-            float px = e.Anchor[0] + (camX - e.Anchor[0]) * (1f - fx), py = e.Anchor[1] + (camY - e.Anchor[1]) * (1f - fy);
+            float fx = layer.FactorX > 0 || layer.FactorY > 0 ? layer.FactorX : e.Parallax[0], fy = layer.FactorX > 0 || layer.FactorY > 0 ? layer.FactorY : e.Parallax[1];
+            float ax = layer.AnchorX, ay = layer.AnchorY;
+            int order = layer.Order != 0 ? layer.Order : Order(e);
+            float px = ax + (camX - ax) * (1f - fx), py = ay + (camY - ay) * (1f - fy);
             float wTiles = img.Width / (float)PPU;
             for (int i = -3; i <= 3; i++)
             {
                 if (!e.Repeat && i != 0) continue;
-                AddCentered(draws, img, px + i * wTiles, py, left, top, Order(e), false);
+                AddCentered(draws, img, px + i * wTiles, py, left, top, order, false);
+                if (layer.BlendToY > layer.BlendFromY)
+                {
+                    // céu que aparece com a altura (SkyHeightBlend): mesma curva suave
+                    float t = Math.Max(0f, Math.Min(1f, (camY - layer.BlendFromY) / (layer.BlendToY - layer.BlendFromY)));
+                    draws[draws.Count - 1].Alpha = t * t * (3f - 2f * t);
+                }
                 if (e.FillBelow != "")
                 {
                     // mesmo preenchimento do DressingBuilder: a cor da base continua para baixo (1 px de sobreposição)
                     var fill = Solid(img.Width, H + 32, e.FillBelow);
-                    draws.Add(new Draw { Order = Order(e), Image = fill, X = (px + i * wTiles - left) * PPU - img.Width / 2f, Y = (top - py) * PPU + img.Height / 2f - 1 });
+                    draws.Add(new Draw { Order = order, Image = fill, X = (px + i * wTiles - left) * PPU - img.Width / 2f, Y = (top - py) * PPU + img.Height / 2f - 1 });
                 }
             }
         }
@@ -238,7 +250,43 @@ public static class ScenePreview
         for (int y = (int)Math.Ceiling(top); y > y0; y--) if (solid((int)Math.Floor(catX), y - 1)) { catY = y; break; }
         draws.Add(new Draw { Order = 5, Image = cat, X = (catX - left) * PPU - cat.Width / 2f, Y = (top - catY) * PPU - cat.Height + 8 });
 
-        draws.Sort((a, b) => a.Order.CompareTo(b.Order));
+        // janelas dos interiores (Etapa 6B): o fundo sozinho, recortado pela máscara da abertura, por cima da parede (-10)
+        // e embaixo da moldura (-9) — o mesmo que o SpriteMask faz no jogo
+        var bgDraws = new List<Draw>();
+        foreach (var d in draws) if (d.Order <= -60) bgDraws.Add(d);
+        bgDraws.Sort((a, b) => a.Order.CompareTo(b.Order));
+        using (var bgOnly = new Bitmap(W, H))
+        {
+            using (var g = Graphics.FromImage(bgOnly))
+            {
+                g.Clear(ColorTranslator.FromHtml("#1f1533"));
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                foreach (var d in bgDraws) Blit(g, d);
+            }
+            string interior = Path.Combine(art, "Environments/Backgrounds/Interior");
+            foreach (var win in FortressBackgrounds.Windows())
+            {
+                string frameP = Path.Combine(interior, "bg_int_" + win.Kind + ".png"), maskP = Path.Combine(interior, "bg_int_" + win.Kind + "_mascara.png");
+                if (!File.Exists(frameP) || !File.Exists(maskP)) continue;
+                var frame = Img(frameP); var mask = Img(maskP);
+                int fx = (int)Math.Round((win.X - left) * PPU - frame.Width / 2f), fy = (int)Math.Round((top - win.Y) * PPU - frame.Height / 2f);
+                if (fx > W || fy > H || fx + frame.Width < 0 || fy + frame.Height < 0) continue;
+                var cut = new Bitmap(mask.Width, mask.Height);
+                for (int x = 0; x < mask.Width; x++)
+                    for (int y = 0; y < mask.Height; y++)
+                    {
+                        int sx = fx + x, sy = fy + y;
+                        if (mask.GetPixel(x, y).A < 128 || sx < 0 || sy < 0 || sx >= W || sy >= H) continue;
+                        cut.SetPixel(x, y, bgOnly.GetPixel(sx, sy));
+                    }
+                draws.Add(new Draw { Order = -10, Image = cut, X = fx, Y = fy, Window = true });
+                draws.Add(new Draw { Order = -9, Image = frame, X = fx, Y = fy });
+            }
+        }
+
+        // ordem estável; na mesma ordem, o recorte da janela fica por cima da parede
+        draws = draws.Select((d, i) => new { d, i }).OrderBy(p => p.d.Order).ThenBy(p => p.d.Window ? 1 : 0).ThenBy(p => p.i).Select(p => p.d).ToList();
         using (var bmp = new Bitmap(W, H))
         {
             using (var g = Graphics.FromImage(bmp))

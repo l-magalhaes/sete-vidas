@@ -1,0 +1,68 @@
+{
+  "regiao": "cid",
+  "assets": [
+    {
+      "id": "bg_int_seteira",
+      "nome": "Seteira (vista de dentro)",
+      "categoria": "arq",
+      "funcao": "decorativo",
+      "material": "pedra",
+      "epoca": "fundacao",
+      "tamanho_px": [10, 25],
+      "sprites": ["bg_int_seteira.png"],
+      "camada": "parede_fundo",
+      "sorting": -9,
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "zonas": ["galeria", "armadilhas", "fundos"] },
+      "leitura": "Moldura; a abertura é recortada na parede do fundo por bg_int_seteira_mascara (SpriteMask) e mostra o céu daquela altura. Colocadas pelo FortressBackgrounds.Windows (Etapa 6B).",
+      "tags": ["janela", "etapa6"]
+    },
+    {
+      "id": "bg_int_janela",
+      "nome": "Janela (vista de dentro)",
+      "categoria": "arq",
+      "funcao": "decorativo",
+      "material": "pedra, ferro",
+      "epoca": "fundacao",
+      "tamanho_px": [30, 43],
+      "sprites": ["bg_int_janela.png"],
+      "camada": "parede_fundo",
+      "sorting": -9,
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "zonas": ["galeria", "salao"] },
+      "leitura": "Moldura com travessa; a máscara bg_int_janela_mascara recorta a parede e mostra o céu e a cordilheira daquela altura.",
+      "tags": ["janela", "etapa6"]
+    },
+    {
+      "id": "bg_int_janela_grande",
+      "nome": "Janela grande (vista de dentro)",
+      "categoria": "arq",
+      "funcao": "decorativo",
+      "material": "pedra, ferro",
+      "epoca": "fundacao",
+      "tamanho_px": [46, 61],
+      "sprites": ["bg_int_janela_grande.png"],
+      "camada": "parede_fundo",
+      "sorting": -9,
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "parede", "zonas": ["camara"] },
+      "leitura": "A câmara: janelas amplas com mainel, o último raio de sol e a montanha do início lá atrás.",
+      "tags": ["janela", "etapa6"]
+    },
+    {
+      "id": "fg_corrente",
+      "nome": "Corrente de primeiro plano",
+      "categoria": "arq",
+      "funcao": "decorativo",
+      "material": "ferro",
+      "epoca": "fundacao",
+      "tamanho_px": [10, 64],
+      "sprites": ["fg_corrente.png"],
+      "camada": "fg",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "teto", "zonas": ["galeria", "salao", "camara"] },
+      "leitura": "Silhueta quase preta pendendo do teto, na frente de tudo (3.5): só onde não cobre gato, inimigo, armadilha ou rota (nunca sobre passarela, plataforma, sacada ou arena).",
+      "tags": ["primeiro_plano", "etapa6"]
+    }
+  ]
+}

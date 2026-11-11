@@ -71,3 +71,10 @@ Objetos que contam juntos quem vive ou trabalha num lugar (mesa + bancos + dados
 **Variações com significado** (use `Fixed` com a variação, nunca o sorteio): `env_mag_selo_porta` = porta − 1 (0 intacto e limpo … 6 rompido); `env_nec_veia` = intensidade − 1 (0 finas, 1 com galhos, 2 grossas); `env_sol_obj_porta_fechada` 0 trancada, 1 tábuas pregadas; `env_com_cul_marca_guilda` 0 olho (sombra boa), 1 seta (por aqui), 2 nove riscos (já passamos). Em grupos, a variação é o 4º campo: `"id|dx|dy|variação"`.
 
 **Cores da praga:** só assets com `epoca: "praga"` podem usar o roxo #5b2a6e e o verde-ácido #8fd14f (o validador libera essa época).
+
+## Fundos por trecho (Etapa 6)
+
+- **Conjuntos e zonas:** `Editor/Scenery/FortressBackgrounds.cs`. Cada conjunto é a vista real de um trecho (céu, longe, médio, perto). Num exterior contínuo, use UM conjunto e deixe a altura mudar a vista (céu com `Lb(id, deY, ateY)` → `SkyHeightBlend`, paralaxe vertical). Troque de conjunto só onde o exterior não está à vista ou a mudança é grande (queda, chaminé, porta).
+- **Âncora:** o centro da camada aparece na tela deslocado (âncora − câmera) × paralaxe. Escolha uma câmera de referência e calcule a âncora para o horizonte e os marcos ficarem no lugar certo.
+- **Janelas:** `FortressBackgrounds.Windows()`; a arte é a moldura + a máscara (`_mascara.png`). Não desenhe a paisagem na janela: ela vem do fundo ativo.
+- **Primeiro plano (fg):** só silhuetas escuras encostadas no teto ou nos cantos de cima; nunca na altura do gato.

@@ -72,6 +72,7 @@ namespace SeteVidas.EditorTools
             var saw = Instance<SawBlade>(t, "SawBlade", "Serra", new Vector2(-49f, 0.55f));
             saw.Configure(-58f, -49f);
             Rec(saw);
+            SawRail(t, "Serra (trilho)", -58f, -49f, 0.55f);
 
             // F) Plataformas que desmoronam sobre um poço de espinhos
             //    (começa em x -62,5: entre a serra e o poço sobra chão seguro para voltar depois de um espinho)
@@ -432,6 +433,57 @@ namespace SeteVidas.EditorTools
                 if (d <= 6f) set(x, y, d < 2f ? Ink : d < 5f ? Steel : SteelDark);
                 else if (tooth) set(x, y, Steel);
             }
+        });
+
+        /// <summary>
+        /// Trilho da serra (pedido do usuário): o mecanismo que leva o disco de um lado para o outro. Fica parado no
+        /// mundo, atrás da lâmina (ordem 1), do começo ao fim do caminho, com um suporte aparafusado em cada ponta.
+        /// Ferro escuro e fosco: o disco claro continua sendo o que chama a atenção.
+        /// </summary>
+        public static GameObject SawRail(Transform parent, string name, float fromX, float toX, float y)
+        {
+            float a = Mathf.Min(fromX, toX), b = Mathf.Max(fromX, toX);
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3((a + b) * 0.5f, y, 0f);
+            var rail = go.AddComponent<SpriteRenderer>();
+            rail.sprite = SawRailSprite();
+            rail.drawMode = SpriteDrawMode.Tiled;
+            rail.size = new Vector2(b - a + 1.1f, 6f / 16f);
+            rail.sortingOrder = 1;
+            foreach (float x in new[] { a - 0.6f, b + 0.6f })
+            {
+                var end = new GameObject("Suporte");
+                end.transform.SetParent(go.transform, false);
+                end.transform.position = new Vector3(x, y, 0f);
+                var sr = end.AddComponent<SpriteRenderer>();
+                sr.sprite = SawRailEndSprite();
+                sr.sortingOrder = 1;
+            }
+            return go;
+        }
+
+        static readonly Color32 RailIron = new Color32(0x4a, 0x4f, 0x5c, 0xff);
+        static readonly Color32 RailLight = new Color32(0x6a, 0x70, 0x80, 0xff);
+
+        /// <summary>Trilho 16×6 (repete): duas barras de ferro com a fenda escura no meio, onde corre o eixo do disco.</summary>
+        static Sprite SawRailSprite() => Draw("trap_saw_trilho", 16, 6, set =>
+        {
+            for (int x = 0; x < 16; x++)
+            {
+                set(x, 0, Ink); set(x, 1, RailIron); set(x, 2, Ink); set(x, 3, Ink); set(x, 4, RailLight); set(x, 5, Ink);
+                if (x % 8 == 3) { set(x, 1, RailLight); set(x, 4, Steel); }      // rebites
+            }
+        });
+
+        /// <summary>Suporte 8×12 de uma ponta do trilho: chapa de ferro aparafusada na parede.</summary>
+        static Sprite SawRailEndSprite() => Draw("trap_saw_trilho_ponta", 8, 12, set =>
+        {
+            for (int y = 0; y < 12; y++)
+                for (int x = 0; x < 8; x++)
+                    set(x, y, x == 0 || x == 7 || y == 0 || y == 11 ? Ink : x >= 5 ? RailLight : RailIron);
+            set(2, 2, Steel); set(5, 2, Steel); set(2, 9, Steel); set(5, 9, Steel);
+            for (int x = 1; x < 7; x++) { set(x, 5, Ink); set(x, 6, Ink); }    // a fenda continua no suporte
         });
 
         static Sprite CrumbleSprite(bool cracked) => Draw(cracked ? "trap_crumble_cracked" : "trap_crumble", 32, 8, set =>

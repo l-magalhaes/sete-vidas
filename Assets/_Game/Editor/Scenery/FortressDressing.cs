@@ -175,9 +175,9 @@ namespace SeteVidas.EditorTools
             Fixed(d, 7, Door, 0, "Porta do salão (embaixo do escudo)", 178f, BellHall);
             Fixed(d, 10, Door, 1, "Porta da passagem dos fundos", 194.4f, SealFloor);
             // 8) Galeria das armadilhas: o cano de óleo corre no rodapé, atrás dos bicos dos jatos (no alto ou descendo
-            // pela parede ele parecia corrimão e grade); o mecanismo e o registro; elmo e escudo de quem falhou no fosso
+            // pela parede ele parecia corrimão e grade); elmo e escudo de quem falhou no fosso (o mecanismo, o registro e a
+            // alavanca saíram a pedido do usuário: poluíam o lado da armadilha)
             Row(d, 8, "env_cid_obj_tubo_oleo", "Cano de óleo dos jatos", 161.5f, BellHall + 0.17f, 13, 1f);
-            Group(d, 8, "armadilhas_mecanismo", 159.6f, BellHall);
             Group(d, 8, "armadilhas_fosso", 146.3f, BellHall - 2f);
             // 10) Fundos: o arquivo e o depósito que ninguém visita
             Group(d, 10, "servico_arquivo", 208.9f, SealFloor);
@@ -191,11 +191,11 @@ namespace SeteVidas.EditorTools
             Add(d, 3, "env_cid_arq_seteira", "Seteira da torre de escalada", 93.85f, 10.2f);
             // 4) Muralhas: seteira atrás do lançador
             Add(d, 4, "env_cid_arq_seteira", "Seteira da muralha", 120.05f, 16.2f);
-            // 5) Galeria: grade levantada e porta 2 na entrada, marca da Guilda e a corda cortada (as pontas de viga no
+            // 5) Galeria: grade levantada e porta 2 na entrada e a corda cortada (a marca de giz ao lado da placa saiu:
+            // parecia um ícone de interface; as pontas de viga no
             // teto saíram: pareciam comportas)
             Add(d, 5, "env_cid_arq_portao_levantado", "Grade levantada da entrada", 137.5f, 52f);
             Fixed(d, 5, "env_mag_selo_porta", 1, "Selo da porta 2", 137.5f, 50.3f);
-            Fixed(d, 5, "env_com_cul_marca_guilda", 0, "Marca da Guilda (olho: sombra boa)", 142.9f, WallWalk + 1.1f);
             Add(d, 5, "env_com_obj_corda_cortada", "Corda cortada da Guilda", 153f, 52f);
             // 6) Torre do Sino: o sino no teto do salão sobre a chaminé, o pombal no pé da torre, porta 3 com correntes,
             // seteira atrás do lançador
@@ -232,6 +232,11 @@ namespace SeteVidas.EditorTools
             Fixed(d, 10, "env_pri_obj_reliquia", 0, "Relíquia do cofre 72", 228.05f, BellHall);
             Fixed(d, 10, "env_pri_obj_reliquia", 1, "Relíquia do cofre 43", 228.05f, WallWalk);
             Fixed(d, 10, "env_pri_obj_reliquia", 2, "Relíquia do cofre 15", 228.05f, 15f);
+            // ===== Etapa 6B: primeiro plano em silhueta, só encostado no teto (nunca na altura do gato nem sobre rota)
+            Add(d, 5, "fg_corrente", "Corrente na frente (galeria)", 193.5f, 52f);
+            Add(d, 7, "fg_corrente", "Corrente na frente (salão 1)", 179.5f, 82f);
+            Add(d, 7, "fg_corrente", "Corrente na frente (salão 2)", 207.3f, 82f);   // fora da frente do emblema (205)
+            Add(d, 9, "fg_corrente", "Corrente na frente (entrada da câmara)", 141.2f, 110f);
             return d;
         }
 

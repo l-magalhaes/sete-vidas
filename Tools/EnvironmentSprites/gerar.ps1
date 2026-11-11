@@ -11,7 +11,7 @@ $root = (Resolve-Path (Join-Path $here '..\..')).Path
 $refs = Join-Path $root '..\SeteVidasDocs\Referencias'
 $meta = Join-Path $root 'Tools\LionSprites\sprite_meta_template.txt'
 Add-Type -ReferencedAssemblies System.Drawing -Path @((Join-Path $here 'EnvPalette.cs'), (Join-Path $root 'Tools\CharacterSprites\PixelKit.cs'), (Join-Path $here 'PropSpriteGen.cs'),
-    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.Culture.cs'))
+    (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.Culture.cs'), (Join-Path $here 'BackgroundSpriteGen.cs'))
 
 # 1) paleta
 [EnvPalette]::Export($root, $refs)
@@ -29,6 +29,8 @@ Write-Host "arquitetura: fundacao, soluki, reforma, abandono, madeira, terra bat
 [VegetationSpriteGen]::Run($root, $meta, $refs)
 Write-Host "vegetacao: arvores por idade, morta, tocos, arbustos, galhos, flores, raizes (Exterior/Vegetation), vasos secos (Necro)"
 [ObjectSpriteGen]::Run($root, $meta, $refs)
+[BackgroundSpriteGen]::Run($root, $meta, $refs)
+Write-Host "fundos (Etapa 6A): ceus, cordilheira, floresta, copas, montanha do inicio, Cidadela de perto, Miaraveu (Backgrounds)"
 Write-Host "objetos (Etapa 5A): treino, defesa, alojamento, servico (Soluki/Objects), armadilhas (Citadel/Traps), exterior (Exterior/Objects), barulhentos (Common/Noisy)"
 
 # 2) pastas da biblioteca (plano, 3.1 e 7.9). Unity cria os .meta das pastas ao abrir.

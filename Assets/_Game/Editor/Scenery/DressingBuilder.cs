@@ -86,7 +86,12 @@ namespace SeteVidas.EditorTools
         /// Camada de fundo (categoria plx) com paralaxe do manifesto. Se "repete", põe 3 cópias lado a lado
         /// e o <see cref="ParallaxLayer"/> as recicla.
         /// </summary>
-        public static GameObject Background(Transform parent, string id, string name)
+        public static GameObject Background(Transform parent, string id, string name) => Background(parent, id, name, null, null, 0);
+
+        /// <summary>
+        /// Igual, com a âncora, a paralaxe e a ordem de um conjunto de fundo (FortressBackgrounds); null/0 = a do manifesto.
+        /// </summary>
+        public static GameObject Background(Transform parent, string id, string name, Vector2? anchor, Vector2? factor, int order)
         {
             var def = EnvLibrary.Get(id);
             var go = new GameObject(name);
@@ -104,10 +109,10 @@ namespace SeteVidas.EditorTools
                 child.transform.localPosition = new Vector3(i * width, 0f, 0f);
                 var sr = child.AddComponent<SpriteRenderer>();
                 sr.sprite = sprite;
-                sr.sortingOrder = def.SortingOrder;
-                if (fill) FillBelow(child.transform, sprite, fillColor, def.SortingOrder);
+                sr.sortingOrder = order != 0 ? order : def.SortingOrder;
+                if (fill) FillBelow(child.transform, sprite, fillColor, sr.sortingOrder);
             }
-            go.AddComponent<ParallaxLayer>().Configure(def.Parallax, def.Anchor, wrap ? width : 0f);
+            go.AddComponent<ParallaxLayer>().Configure(factor ?? def.Parallax, anchor ?? def.Anchor, wrap ? width : 0f);
             return go;
         }
 
