@@ -137,7 +137,7 @@ namespace SeteVidas.EditorTools
             Add(d, 7, Window, "Vitral do salão 1", 186f, BellHall + 6f);
             Add(d, 7, Window, "Vitral do salão 2", 198f, BellHall + 6f);
             Add(d, 7, Banner, "Estandarte do salão", 192f, 81.9f);
-            Row(d, 7, "env_cid_cul_escudo_nome", "Escudos dos paladinos caídos (com nome)", 178f, BellHall + 3.3f, 4, 8f);
+            Row(d, 7, "env_cid_cul_escudo_nome", "Escudos dos paladinos caídos (com nome)", 178.4f, BellHall + 3.3f, 4, 8f);
 
             // ===== 9) Câmara do Selo
             Add(d, 9, Statue, "Estátua da câmara 1", 149f, SealFloor);
@@ -172,7 +172,7 @@ namespace SeteVidas.EditorTools
             // galeria, no salão, na passagem dos fundos e na entrada da câmara. Variação fixa: 0 trancada, 1 tábuas em X
             Fixed(d, 5, Door, 0, "Porta da alcova A", 146.6f, WallWalk);
             Fixed(d, 5, Door, 1, "Porta da alcova B", 174.6f, WallWalk);
-            Fixed(d, 7, Door, 0, "Porta do salão (embaixo do escudo)", 178f, BellHall);
+            Fixed(d, 7, Door, 0, "Porta do salão (embaixo do escudo)", 179.2f, BellHall);   // fora do arco da saída
             Fixed(d, 10, Door, 1, "Porta da passagem dos fundos", 194.4f, SealFloor);
             // 8) Galeria das armadilhas: o cano de óleo corre no rodapé, atrás dos bicos dos jatos (no alto ou descendo
             // pela parede ele parecia corrimão e grade); elmo e escudo de quem falhou no fosso (o mecanismo, o registro e a
@@ -186,11 +186,10 @@ namespace SeteVidas.EditorTools
             // 2) Trilha: o posto de comércio dos estrangeiros (fora dos muros) e um vestígio da estrada negra
             Group(d, 2, "trilha_carga_largada", 42.3f, 0f);   // a carga que ficou para trás (a barraca foi para a estrada, fora dos muros)
             Group(d, 2, "vestigio_primata", 36.4f, 0f);
-            // 3) Pátio: porta 1 (selo intacto e limpo) no alto da torre dos escudeiros; seteira atrás do lançador da torre
+            // 3) Pátio: porta 1 (selo intacto e limpo) no alto da torre dos escudeiros (o próprio lançador de flechas já é
+            // um bloco de pedra embutido com a boca de bronze: as seteiras de enfeite atrás deles saíram)
             Fixed(d, 3, "env_mag_selo_porta", 0, "Selo da porta 1", 91f, 15.6f);
-            Add(d, 3, "env_cid_arq_seteira", "Seteira da torre de escalada", 93.85f, 10.2f);
             // 4) Muralhas: seteira atrás do lançador
-            Add(d, 4, "env_cid_arq_seteira", "Seteira da muralha", 120.05f, 16.2f);
             // 5) Galeria: grade levantada e porta 2 na entrada e a corda cortada (a marca de giz ao lado da placa saiu:
             // parecia um ícone de interface; as pontas de viga no
             // teto saíram: pareciam comportas)
@@ -202,21 +201,19 @@ namespace SeteVidas.EditorTools
             Group(d, 6, "torre_sino", 209.5f, 82f);
             Group(d, 6, "torre_pombal", 202f, WallWalk);
             Fixed(d, 6, "env_mag_selo_porta", 2, "Selo da porta 3", 207f, 50.4f);
-            Add(d, 6, "env_cid_arq_seteira", "Seteira da torre do sino", 211.85f, 57.2f);
             // 7) Salão dos Votos: colunas (nunca atrás de plataforma), tapete, o altar do juramento com uma vela apagada
             // (primeiro sinal da praga), a fissura roxa no vitral dos cacos e a porta 4 na saída para as armadilhas
             Group(d, 7, "salao_colunas", 188f, BellHall);
             Row(d, 7, "env_cid_cul_tapete", "Tapete do salão", 184.5f, BellHall, 12, 1f);
             Group(d, 7, "salao_altar", 205f, BellHall);
             Add(d, 7, "env_nec_fissura_vitral", "Fissura no vitral", 186f, BellHall + 6f);
-            Fixed(d, 7, "env_mag_selo_porta", 3, "Selo da porta 4", 176.6f, BellHall + 7.6f);
+            Fixed(d, 7, "env_mag_selo_porta", 3, "Selo da porta 4", 176.6f, BellHall + 7.6f);   // (o arco de passagem saiu a pedido do usuário)
             // 8) Armadilhas e Torre do Selo: veias finas, depois com galhos; porta 5; seteira atrás do lançador
             Fixed(d, 8, "env_nec_veia", 0, "Veias finas da galeria 1", 150.5f, BellHall + 4f);
             Fixed(d, 8, "env_nec_veia", 0, "Veias finas da galeria 2", 158.6f, BellHall + 5f);
             Fixed(d, 8, "env_nec_veia", 1, "Veias da torre do selo 1", 140.8f, 86.5f);
             Fixed(d, 8, "env_nec_veia", 1, "Veias da torre do selo 2", 141.3f, 95.5f);
             Fixed(d, 8, "env_mag_selo_porta", 4, "Selo da porta 5", 143.6f, BellHall + 8f);
-            Add(d, 8, "env_cid_arq_seteira", "Seteira da torre do selo", 139.15f, 89.2f);
             // 9) Câmara do Selo: correntes e selos, runas e veias grossas subindo para o tomo; portas 6 e 7
             Group(d, 9, "camara_correntes", 152.5f, 110f);
             Group(d, 9, "camara_runas", 146.9f, SealFloor);
@@ -236,6 +233,7 @@ namespace SeteVidas.EditorTools
             Fixed(d, 8, "env_nec_obj_inseto_morto", 0, "Insetos mortos da galeria 1", 159f, BellHall);
             Fixed(d, 8, "env_nec_obj_inseto_morto", 1, "Insetos mortos da galeria 2", 177.2f, BellHall);
             Add(d, 10, "env_com_obj_buraco_rato", "Buraco do rato dos fundos", 215.6f, SealFloor);
+            Add(d, 5, "env_com_obj_buraco_rato", "Buraco do rato da cozinha", 200.5f, WallWalk);   // o rato da cozinha some aqui
             // ===== Etapa 6B: primeiro plano em silhueta, só encostado no teto (nunca na altura do gato nem sobre rota)
             Add(d, 5, "fg_corrente", "Corrente na frente (galeria)", 193.5f, 52f);
             Add(d, 7, "fg_corrente", "Corrente na frente (salão 1)", 179.5f, 82f);

@@ -28,6 +28,9 @@ namespace SeteVidas.World.Scenery
         [SerializeField, Min(0.1f)] float fleeTime = 1.2f;
         [Tooltip("Flee: continua fugindo até sair da tela e só então some (pássaro; rato sem buraco)")]
         [SerializeField] bool untilOffscreen;
+        [Tooltip("Flee: corre até este X (o buraco na parede) e some ao chegar; desligado = foge do gato")]
+        [SerializeField] bool hasHideout;
+        [SerializeField] float hideoutX;
 
         Sprite _rest;
         Vector3 _home;
@@ -50,6 +53,12 @@ namespace SeteVidas.World.Scenery
             mode = newMode; radius = newRadius; spriteRenderer = renderer; frames = newFrames; frameTime = newFrameTime;
             fleeVelocity = newFleeVelocity; fleeTime = newFleeTime; untilOffscreen = leaveScreen;
         }
+
+        /// <summary>Flee até um esconderijo: corre para o X do buraco (qualquer que seja o lado do gato) e some nele.</summary>
+        public void SetHideout(float x) { hasHideout = true; hideoutX = x; untilOffscreen = false; }
+
+        /// <summary>Chegou ao esconderijo (menos de 0,15 tile do X do buraco).</summary>
+        public static bool ReachedHideout(float x, float hideout) => Mathf.Abs(x - hideout) < 0.15f;
 
         /// <summary>O ponto está fora da tela da câmera (30×17 tiles), com uma margem.</summary>
         public static bool Offscreen(Vector2 p, Vector2 camera, float margin) => Mathf.Abs(p.x - camera.x) > 15f + margin || Mathf.Abs(p.y - camera.y) > 8.5f + margin;
@@ -91,7 +100,7 @@ namespace SeteVidas.World.Scenery
                         if (!Near(cat, _home, radius * 3f) && offscreen) { _away = false; transform.position = _home; spriteRenderer.enabled = true; spriteRenderer.sprite = _rest; }
                         break;
                     }
-                    if (_t < 0f && near) { _t = 0f; _fleeDir = cat.x > _home.x ? -1f : 1f; }   // foge para o lado contrário do gato (decidido no susto)
+                    if (_t < 0f && near) { _t = 0f; _fleeDir = hasHideout ? Mathf.Sign(hideoutX - _home.x) : (cat.x > _home.x ? -1f : 1f); }   // foge para o lado contrário do gato (decidido no susto)
                     if (_t >= 0f)
                     {
                         _t += dt;
@@ -101,7 +110,7 @@ namespace SeteVidas.World.Scenery
                         transform.position += new Vector3(fleeVelocity.x * dir, fleeVelocity.y, 0f) * dt;
                         // some só quando sai da tela (pássaro) ou quando chega ao esconderijo (rato no buraco); 8 s no máximo
                         var cam2 = Camera.main;
-                        bool gone = untilOffscreen
+                        bool gone = hasHideout ? ReachedHideout(transform.position.x, hideoutX) || _t > 8f : untilOffscreen
                             ? cam2 == null || Offscreen(transform.position, cam2.transform.position, 1f) || _t > 8f
                             : _t >= fleeTime;
                         if (gone) { _t = -1f; _away = true; spriteRenderer.enabled = false; }

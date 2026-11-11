@@ -54,6 +54,13 @@ namespace SeteVidas.Tests
         }
 
         [Test]
+        public void Rat_DisappearsOnlyAtTheHole()
+        {
+            Assert.IsFalse(ReactOnProximity.ReachedHideout(214.5f, 215.6f), "ainda correndo");
+            Assert.IsTrue(ReactOnProximity.ReachedHideout(215.55f, 215.6f), "chegou ao buraco");
+        }
+
+        [Test]
         public void Reaction_StartsInsideTheRadius()
         {
             Assert.IsTrue(ReactOnProximity.Near(Vector2.zero, new Vector2(2.9f, 0f), 3f));

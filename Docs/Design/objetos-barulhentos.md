@@ -60,3 +60,4 @@ Presets em `NoisyObjectRules.Preset` (valores [PROPOSTA]). Para uma peça especi
 - **Arte:** `Tools/EnvironmentSprites/ObjectSpriteGen.cs` → `Art/Environments/Common/Noisy/env_com_obj_{cacos|folhas_secas|palha|sininhos|balde}_{0..n}.png` (0 = repouso; o resto = reação).
 - **Na fase:** objetos `noisy` no `FortressLayout` (texto = tipo, `w` = largura em tiles dos tapetes); o `FortressSetup.Noisy` monta o trigger, o desenho (tapetes em modo Tiled) e o `NoisyObject.Setup`.
 - **Sininhos:** uma passagem de madeira com 3 sininhos a 17–21 px do chão; o trigger fica só nessa altura.
+- **Alarme da galeria (11/11/2026):** o fio de alarme esticado virou sininhos (`noisy` com `a: 16` → `NoisyObject.SetRadius(16)`): mesmo alcance do fio, mas com a regra dos sininhos (agachado passa por baixo). Os fios esticados continuam só nas armadilhas de flecha.

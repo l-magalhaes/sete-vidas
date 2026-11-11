@@ -102,6 +102,7 @@
       "colisor": "nenhum",
       "posicionamento": { "apoio": "chao", "distancia_minima_mesmo_id": 4, "zonas": ["galeria", "fundos"] },
       "leitura": "Escura e sem contorno, sempre no fundo: no plano do jogo pareceria degrau. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5).",
+      "sorting": -9,
       "tags": ["etapa5"]
     }
   ]

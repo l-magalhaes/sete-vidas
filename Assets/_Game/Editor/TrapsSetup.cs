@@ -44,7 +44,8 @@ namespace SeteVidas.EditorTools
             Sign(t, -11f, 2.4f, "espinhos: pule");
 
             // B) Fio de alarme na altura do peito + flechas + passagem baixa: agachar resolve tudo
-            var launcherB = Instance<ArrowLauncher>(t, "ArrowLauncher", "Lançador (fio)", new Vector2(-20.6f, 1.2f));
+            // bloco de 16 px: a pedra dentro da parede, só a boca de bronze para fora (mesma regra da Fortaleza)
+            var launcherB = Instance<ArrowLauncher>(t, "ArrowLauncher", "Lançador (fio)", new Vector2(-20.325f, 1.2f));
             launcherB.Configure(+1, 0f);
             Rec(launcherB);
             var wire = Instance<TrapTrigger>(t, "Tripwire", "Fio de alarme", new Vector2(-17f, 0f));
@@ -142,7 +143,7 @@ namespace SeteVidas.EditorTools
             var face = Child(launcher, "Visual", Vector3.zero).AddComponent<SpriteRenderer>();
             face.sprite = LauncherSprite();
             face.sortingOrder = 2;
-            var glint = Child(launcher, "Aviso", new Vector3(0.25f, 0f, 0f)).AddComponent<SpriteRenderer>();
+            var glint = Child(launcher, "Aviso", new Vector3(0.6f, 0f, 0f)).AddComponent<SpriteRenderer>();   // na boca do lançador
             glint.sprite = GlintSprite();
             glint.sortingOrder = 3;
             glint.enabled = false;
@@ -343,17 +344,53 @@ namespace SeteVidas.EditorTools
             for (int x = 0; x < 16; x++) set(x, 0, Ink);
         });
 
-        static Sprite ArrowSprite() => Draw("trap_arrow", 10, 3, set =>
+        static readonly Color32 Wood = new Color32(0x8a, 0x6a, 0x4a, 0xff);
+        static readonly Color32 WoodDark = new Color32(0x5a, 0x40, 0x2c, 0xff);
+        static readonly Color32 Bronze = new Color32(0x9a, 0x74, 0x3a, 0xff);
+        static readonly Color32 BronzeDark = new Color32(0x5e, 0x46, 0x22, 0xff);
+        static readonly Color32 StoneLight = new Color32(0x6e, 0x68, 0x84, 0xff);
+
+        /// <summary>
+        /// Flecha 12×5 (para a direita): haste de madeira com veio, ponta de ferro em losango com brilho e penas
+        /// vermelhas (o vermelho das armadilhas: é ela que machuca).
+        /// </summary>
+        static Sprite ArrowSprite() => Draw("trap_flecha", 12, 5, set =>
         {
-            for (int x = 0; x < 8; x++) set(x, 1, new Color32(0x8a, 0x6a, 0x4a, 0xff));
-            set(8, 1, Steel); set(9, 1, Steel); set(8, 0, Steel); set(8, 2, Steel); // ponta (para a direita)
-            set(0, 0, Danger); set(0, 2, Danger); set(1, 0, Danger); set(1, 2, Danger); // penas
+            for (int x = 2; x < 9; x++) { set(x, 2, Wood); if (x % 3 == 0) set(x, 2, WoodDark); }
+            set(9, 1, SteelDark); set(9, 2, Steel); set(9, 3, SteelDark); set(10, 2, Steel); set(10, 3, SteelDark); set(11, 2, Steel); // ponta
+            set(10, 1, SteelDark);
+            set(0, 0, Danger); set(1, 1, Danger); set(0, 4, Danger); set(1, 3, Danger); set(2, 1, Danger); set(2, 3, Danger); // penas
+            set(0, 2, WoodDark); set(1, 2, WoodDark);
         });
 
-        static Sprite LauncherSprite() => Draw("trap_launcher", 8, 8, set =>
+        /// <summary>
+        /// Lançador 16×16 embutido na parede (para a direita; o lançador vira conforme o lado do tiro): bloco de pedra da
+        /// muralha com juntas, e na frente a boca de bronze arredondada com a fenda escura e a ponta da flecha esperando.
+        /// Uma faixa vermelha fina em volta da boca avisa que é armadilha (6.4: o vermelho é só de perigo).
+        /// </summary>
+        static Sprite LauncherSprite() => Draw("trap_lancador", 16, 16, set =>
         {
-            for (int y = 0; y < 8; y++) for (int x = 0; x < 8; x++) set(x, y, x == 0 || y == 0 || x == 7 || y == 7 ? StoneEdge : Stone);
-            for (int y = 3; y <= 4; y++) for (int x = 4; x <= 7; x++) set(x, y, Ink); // boca
+            // bloco de pedra (lado da parede), com juntas
+            for (int y = 1; y < 15; y++)
+                for (int x = 0; x < 10; x++)
+                {
+                    bool edge = x == 0 || y == 1 || y == 14;
+                    Color32 c = edge ? Ink : (y == 13 ? StoneLight : (y == 7 || (x == 4 && y > 7) || (x == 7 && y < 7)) ? StoneEdge : Stone);
+                    set(x, y, c);
+                }
+            // boca de bronze arredondada (frente)
+            for (int y = 3; y < 13; y++)
+                for (int x = 9; x < 16; x++)
+                {
+                    float dy = y - 7.5f, dx = x - 10f;
+                    if (dx > 0 && dx * dx / 36f + dy * dy / 25f > 1f) continue;
+                    bool rim = dx > 0 && dx * dx / 36f + dy * dy / 25f > 0.55f;
+                    set(x, y, rim ? (y > 8 ? Bronze : BronzeDark) : Bronze);
+                }
+            for (int y = 3; y < 13; y++) set(9, y, Danger);                              // faixa de aviso
+            for (int y = 6; y <= 9; y++) for (int x = 11; x < 16; x++) set(x, y, Ink);   // fenda
+            set(13, 7, Steel); set(14, 7, Steel); set(13, 8, SteelDark); set(12, 8, SteelDark);   // ponta da flecha esperando
+            set(11, 11, StoneLight); set(11, 4, BronzeDark);                             // rebites
         });
 
         static Sprite GlintSprite() => Draw("trap_launcher_glint", 4, 4, set =>

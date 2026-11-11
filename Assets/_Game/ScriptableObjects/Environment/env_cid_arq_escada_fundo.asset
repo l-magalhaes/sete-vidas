@@ -27,7 +27,7 @@ MonoBehaviour:
     sprites_prefixo: 
     espelhar: 0
     camada: parede_fundo
-    sorting: 0
+    sorting: -9
     colisor: nenhum
     animacao:
       nome: 

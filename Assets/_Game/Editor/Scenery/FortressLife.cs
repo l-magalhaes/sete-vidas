@@ -63,8 +63,11 @@ namespace SeteVidas.EditorTools
             Creature(life, "Pássaro do marco", new Vector2(24.9f, 0f), birdRest, birdFly, 4f, new Vector2(3.5f, 3f), 1.4f, 0.1f);
             var ratRest = Sprite(Life + "env_com_ani_rato_0.png");
             var ratRun = Sprites(Life + "env_com_ani_rato_corre_0.png", Life + "env_com_ani_rato_corre_1.png");
-            Creature(life, "Rato dos fundos", new Vector2(213.6f, SealFloor), ratRest, ratRun, 3f, new Vector2(3.2f, 0f), 0.6f, 0.08f, false);   // some no buraco
-            Creature(life, "Rato da cozinha", new Vector2(196.2f, WallWalk), ratRest, ratRun, 3f, new Vector2(3.2f, 0f), 0.5f, 0.08f);
+            // os ratos correm até o buraquinho na parede (qualquer que seja o lado do gato) e somem nele
+            var ratBack = Creature(life, "Rato dos fundos", new Vector2(213.6f, SealFloor), ratRest, ratRun, 3f, new Vector2(3.2f, 0f), 0.6f, 0.08f, false);
+            if (ratBack != null) ratBack.SetHideout(215.6f);
+            var ratKitchen = Creature(life, "Rato da cozinha", new Vector2(196.9f, WallWalk), ratRest, ratRun, 3f, new Vector2(3.2f, 0f), 1.2f, 0.08f, false);
+            if (ratKitchen != null) ratKitchen.SetHideout(200.5f);
 
             // ---- enfeites que reagem e pulsam (pelo id da biblioteca de cada enfeite)
             var ids = new Dictionary<string, string>();
@@ -109,9 +112,9 @@ namespace SeteVidas.EditorTools
             go.AddComponent<AmbientEmitter>().Configure(kind, area, rate, max, sprites, kind == AmbientEmitter.Kind.Leaves ? 9 : 8);
         }
 
-        static void Creature(Transform parent, string name, Vector2 at, Sprite rest, Sprite[] flee, float radius, Vector2 velocity, float fleeTime, float frameTime, bool untilOffscreen = true)
+        static ReactOnProximity Creature(Transform parent, string name, Vector2 at, Sprite rest, Sprite[] flee, float radius, Vector2 velocity, float fleeTime, float frameTime, bool untilOffscreen = true)
         {
-            if (rest == null || flee.Length == 0) { Debug.LogWarning($"[Sete Vidas] {name}: falta a arte (rode Tools/EnvironmentSprites/gerar.ps1)"); return; }
+            if (rest == null || flee.Length == 0) { Debug.LogWarning($"[Sete Vidas] {name}: falta a arte (rode Tools/EnvironmentSprites/gerar.ps1)"); return null; }
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
             go.transform.position = new Vector3(at.x, at.y, 0f);
@@ -121,7 +124,9 @@ namespace SeteVidas.EditorTools
             var sr = visual.AddComponent<SpriteRenderer>();
             sr.sprite = rest;
             sr.sortingOrder = 3;                                                           // atrás do gato (5)
-            go.AddComponent<ReactOnProximity>().Configure(ReactOnProximity.Mode.Flee, radius, sr, flee, frameTime, velocity, fleeTime, untilOffscreen);
+            var react = go.AddComponent<ReactOnProximity>();
+            react.Configure(ReactOnProximity.Mode.Flee, radius, sr, flee, frameTime, velocity, fleeTime, untilOffscreen);
+            return react;
         }
 
         static Sprite Sprite(string path) => AssetDatabase.LoadAssetAtPath<Sprite>(path);

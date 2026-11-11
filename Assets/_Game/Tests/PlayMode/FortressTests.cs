@@ -260,8 +260,9 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var noisy = Object.FindObjectsByType<NoisyObject>(FindObjectsInactive.Include);
-            // Etapa 5A: folhas secas (trilha), palha (pátio), sininhos e balde (galeria), cacos (salão e armadilhas), balde (fundos)
-            Assert.AreEqual(7, noisy.Length, "Objetos barulhentos da Fortaleza");
+            // Etapa 5A: folhas secas (trilha), palha (pátio), sininhos e balde (galeria), cacos (salão e armadilhas), balde (fundos);
+            // e os sininhos de alarme da galeria (no lugar do fio de alarme)
+            Assert.AreEqual(8, noisy.Length, "Objetos barulhentos da Fortaleza");
             foreach (var n in noisy)
             {
                 var sr = n.GetComponentInChildren<SpriteRenderer>();
@@ -284,9 +285,9 @@ namespace SeteVidas.Tests
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 162 itens no FortressDressing (Etapas 1–7), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
-            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 192 objetos
-            Assert.AreEqual(192, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            // 159 itens no FortressDressing (Etapas 1–8), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
+            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 189 objetos
+            Assert.AreEqual(189, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
                 Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
             Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,

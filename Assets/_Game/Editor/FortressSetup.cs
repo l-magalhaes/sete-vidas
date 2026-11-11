@@ -266,8 +266,14 @@ namespace SeteVidas.EditorTools
                 case "launcher":
                 {
                     var l = TrapsSetup.Instance<ArrowLauncher>(t, "ArrowLauncher", o.Name, at);
-                    l.Configure(o.Facing, o.A);
+                    l.Configure(o.Facing, o.A, o.B);   // B = atraso do primeiro tiro (sincronia com a serra)
                     TrapsSetup.Rec(l);
+                    foreach (var sr in l.GetComponentsInChildren<SpriteRenderer>(true))
+                    {
+                        // o desenho já virado para o lado do tiro, também na cena (no editor)
+                        PrefabUtility.RecordPrefabInstancePropertyModifications(sr);
+                        PrefabUtility.RecordPrefabInstancePropertyModifications(sr.transform);
+                    }
                     made = l;
                     break;
                 }
@@ -314,6 +320,7 @@ namespace SeteVidas.EditorTools
                     break;
                 case "noisy":
                     made = Noisy(t, o.Name, o.X, o.Y, o.Text, Mathf.Max(1, Mathf.RoundToInt(o.W)));
+                    if (made != null && o.A > 0f) ((NoisyObject)made).SetRadius(o.A);   // alarme: alcance maior que o do preset
                     break;
                 default:
                     Debug.LogWarning($"[Sete Vidas] Objeto de layout desconhecido: {o.Kind} ({o.Name})");

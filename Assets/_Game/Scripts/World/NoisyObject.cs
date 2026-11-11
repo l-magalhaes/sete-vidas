@@ -61,6 +61,14 @@ namespace SeteVidas.World
             if (renderer != null) _rest = renderer.sprite;
         }
 
+        /// <summary>Alcance diferente do preset (ex.: os sininhos de alarme da galeria chamam as sentinelas a 16 tiles).</summary>
+        public void SetRadius(float radius)
+        {
+            custom = NoisyObjectRules.Preset(kind);
+            custom.Radius = radius;
+            usePreset = false;
+        }
+
         void OnTriggerStay2D(Collider2D other)
         {
             var player = other.GetComponentInParent<PlayerController>();

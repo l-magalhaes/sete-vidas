@@ -158,7 +158,12 @@
   - **parede rachada** do cofre do guardião, com 2 moedas de 5 e o **Diário do Guardião** (D-PLACA-06).
 - **Poço dos fundos** (x 218..222, de 101 até 0):
   - **3 patamares** (72, 43 e 15). Os buracos alternam de lado, para cada queda parar no patamar seguinte;
-  - **seteiras** atiram entre os patamares durante a queda.
+  - **descida com armadilhas** (11/11/2026, pedido do usuário): entre os patamares, **saliências em zigue-zague** (direita x 220..222, esquerda x 218..219) deixam cada queda curta. Cada buraco tem uma saliência embaixo, então ninguém cai às cegas. Desce-se andando para fora da beira, e de cada saliência se vê o perigo seguinte:
+    - 101 → 72: serra logo embaixo do buraco (cronometrar a queda), flechas da direita (y 90,6) e da esquerda (y 83,6);
+    - 72 → 43: flechas da esquerda (y 61,2), depois a serra (y 53,5) e, logo abaixo, duas seteiras (uma de cada lado, y 47,5) no **mesmo período da serra** (2,2 s) e defasadas: descendo quando a serra vai para a direita, passa-se pela serra e pela linha das flechas logo depois da rajada;
+    - 43 → 15: serra (y 33,5) e flechas da esquerda (y 29,2);
+    - 15 → 0: uma saliência embaixo do buraco e o chão livre até o portão (a seteira e os espinhos do fundo saíram a pedido do usuário).
+  - Os patamares 72, 43 e 15 (cofres) ficam livres: a parede rachada de cada cofre continua acessível pela direita.
 - **Cofres:** em cada patamar, uma **parede rachada** à direita leva a um cofre com 2 moedas de 5 e uma placa:
   - 72: o Mural da Marcha Dourada (D-PLACA-07);
   - 43: a Pedra dos votos (D-PLACA-08: "Servir os vivos" raspado para "o reino"; **[PROPOSTA]**, ligada ao segredo do Koda);

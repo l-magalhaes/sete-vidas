@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 10;
+        public const int Version = 11;
 
         public enum Map { Ground, Climbable, Background }
 
@@ -161,6 +161,18 @@ namespace SeteVidas.EditorTools
             G(t, 218, WallWalk - 1, 219, WallWalk - 1, "patamar 43");
             G(t, 221, WallWalk - 1, 222, WallWalk - 1, "patamar 43 (buraco em 220)");
             G(t, 219, 14, 222, 14, "patamar 15 (buraco em 218)");
+            // Descida com armadilhas (pedido do usuário): saliências de 2 tiles em zigue-zague entre os patamares, para cada
+            // queda ser curta e o perigo seguinte aparecer na tela antes de pular. Cada buraco tem uma saliência embaixo (ninguém
+            // cai às cegas); desce-se andando para fora da beira. Os patamares (cofres) ficam livres.
+            G(t, 220, 94, 222, 94, "saliência do poço A1 (direita, embaixo do buraco)");
+            G(t, 218, 87, 219, 87, "saliência do poço A2 (esquerda)");
+            G(t, 220, 80, 222, 80, "saliência do poço A3 (direita)");
+            G(t, 218, 65, 219, 65, "saliência do poço B1 (esquerda, embaixo do buraco)");
+            G(t, 220, 57, 222, 57, "saliência do poço B2 (direita)");
+            G(t, 220, 37, 222, 37, "saliência do poço C1 (direita, embaixo do buraco)");
+            G(t, 218, 30, 219, 30, "saliência do poço C2 (esquerda)");
+            G(t, 220, 23, 222, 23, "saliência do poço C3 (direita)");
+            G(t, 218, 9, 219, 9, "saliência do poço D1 (esquerda, embaixo do buraco)");
             C(t, 223, BellHall, 230, BellHall + 3, "cofre do patamar 72");
             C(t, 223, WallWalk, 230, WallWalk + 3, "cofre do patamar 43");
             C(t, 223, 15, 230, 18, "cofre do patamar 15");
@@ -223,7 +235,9 @@ namespace SeteVidas.EditorTools
 
             // ===== 3) Pátio de treino dos guardas
             Add(o, "tripwire", "Fio do pátio", 46.5f, 0f, w: 1.6f, link: "Lançador do pátio");
-            Add(o, "launcher", "Lançador do pátio", 49.6f, 1.2f, facing: -1, a: 0f);
+            // Lançadores (bloco de 16 px): o bloco de pedra dentro da parede, só a boca de bronze para fora. Centro em
+            // x = face da parede + 0,06 (parede à direita, atira para a esquerda) ou − 0,125 (parede à esquerda)
+            Add(o, "launcher", "Lançador do pátio", 50.06f, 1.2f, facing: -1, a: 0f);
             Add(o, "sign", "Placa da arquibancada", 46.5f, 3f, text: "S: agachar (passe por baixo)");
             Add(o, "coin", "Moeda (sob a arquibancada)", 53f, 0.5f, id: "fort_passagem", value: 1);
             Add(o, "archer", "Atirador da arquibancada", 50.6f, 7f, facing: -1);
@@ -236,7 +250,7 @@ namespace SeteVidas.EditorTools
             Add(o, "bush", "Fardo de feno", 84.4f, 0f, text: "feno");        // esconderijo: o desenho é um fardo de feno de verdade
             Add(o, "noisy", "Palha do pátio", 80.4f, 0f, w: 1f, text: "palha");     // entre o instrutor e a tenda: passe devagar
             Add(o, "sign", "Placa da torre de escalada", 91f, 3.6f, text: "↑ pule de parede em parede");
-            Add(o, "launcher", "Seteira da torre de escalada", 93.4f, 10.2f, facing: -1, a: 1.8f);
+            Add(o, "launcher", "Seteira da torre de escalada", 93.06f, 10.2f, facing: -1, a: 1.8f);
             Add(o, "coin", "Moeda (torre de escalada)", 93.5f, 19.6f, id: "fort_torre", value: 1);
             Add(o, "sentinel", "Guarda da torre de vigia", 99f, 0f, facing: 1, a: 95f, b: 103f);
             Add(o, "plate", "Placa de pressão do portão", 104f, 0f, w: 2f, link: "Lanças do portão");
@@ -252,7 +266,7 @@ namespace SeteVidas.EditorTools
             Add(o, "sign", "Placa das vinhas", 109.5f, 7.5f, text: "W: escalar as vinhas");
             Add(o, "coin", "Moeda (vinha 1)", 111.4f, 10f, id: "fort_hera", value: 1);
             Add(o, "coin", "Moeda (muralha 1)", 116f, 15.6f, id: "fort_muralha1", value: 1);
-            Add(o, "launcher", "Seteira da muralha", 119.6f, 16.2f, facing: -1, a: 2.2f);
+            Add(o, "launcher", "Seteira da muralha", 120.06f, 16.2f, facing: -1, a: 2.2f);
             Add(o, "sign", "Placa da seteira", 115.5f, 18.3f, text: "flechas: agache");
             Add(o, "sentinel", "Vigia da muralha", 123f, 29f, facing: 1, a: 121f, b: 126f);
             Add(o, "coin", "Moeda (muralha 3)", 132f, WallWalk + 0.6f, id: "fort_muralha3", value: 1);
@@ -267,7 +281,9 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda (passarela)", 160f, 48.6f, id: "fort_passarela", value: 1);
             Add(o, "noisy", "Sininhos do alojamento", 170.5f, WallWalk, text: "sininhos"); // alarme improvisado: agache para passar
             Add(o, "shadow", "Sombra da galeria B", 176f, WallWalk + 2.5f, w: 8f, h: 5f);
-            Add(o, "tripwire", "Fio de alarme da galeria", 179f, WallWalk, w: 1.6f, a: 16f);
+            // alarme da galeria (pedido do usuário: sininhos no lugar do fio esticado; os fios ficam só nas armadilhas de
+            // flecha). Mesmo alcance do fio antigo: 16 tiles chamam as sentinelas. Agachado passa por baixo
+            Add(o, "noisy", "Sininhos de alarme da galeria", 179f, WallWalk, a: 16f, text: "sininhos");
             Add(o, "archer", "Atirador do alojamento", 183f, 48f, facing: -1);
             Add(o, "sentinel", "Sentinela do alojamento", 190f, WallWalk, facing: -1, a: 185f, b: 195f);
             Add(o, "sentinel", "Guarda da torre do sino", 201.5f, WallWalk, facing: 1, a: 200f, b: 203f);
@@ -279,7 +295,7 @@ namespace SeteVidas.EditorTools
 
             // ===== 6) Torre do Sino
             Add(o, "sign", "Placa da torre", 206f, WallWalk + 4.5f, text: "↑ pule de parede em parede");
-            Add(o, "launcher", "Seteira da torre do sino", 211.4f, 57.2f, facing: -1, a: 2.5f);
+            Add(o, "launcher", "Seteira da torre do sino", 211.06f, 57.2f, facing: -1, a: 2.5f);
             Add(o, "saw", "Serra da torre do sino", 209.5f, 64.5f, a: 208.6f, b: 210.4f);
             Add(o, "coin", "Moeda (torre do sino)", 209f, 68f, id: "fort_sino", value: 1);
 
@@ -305,7 +321,7 @@ namespace SeteVidas.EditorTools
 
             // ===== 8) Torre do Selo
             Add(o, "sign", "Placa da torre do selo", 142f, BellHall + 4f, text: "↑ a Torre do Selo");
-            Add(o, "launcher", "Seteira da torre do selo", 139.6f, 89.2f, facing: 1, a: 2f);
+            Add(o, "launcher", "Seteira da torre do selo", 139.875f, 89.2f, facing: 1, a: 2f);
             Add(o, "saw", "Serra da torre do selo", 141.5f, 90.5f, a: 140.6f, b: 142.4f);
             Add(o, "coin", "Moeda (torre do selo)", 141f, 97f, id: "fort_selo", value: 1);
 
@@ -322,8 +338,19 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda do guardião 2", 204.5f, SealFloor + 0.6f, id: "fort_guardiao_2", value: 5);
             Add(o, "lore", "Diário do guardião", 206.5f, SealFloor, id: "D-PLACA-06");
             Add(o, "sign", "Placa do poço", 216f, SealFloor + 3f, text: "↓ desça pelos patamares");
-            Add(o, "launcher", "Seteira do poço 1", 217.6f, 58.2f, facing: 1, a: 2.2f);
-            Add(o, "launcher", "Seteira do poço 2", 217.6f, 29.2f, facing: 1, a: 2f);
+            // Descida com armadilhas: de cada saliência se vê o perigo seguinte; espere a serra passar ou a flecha sair e desça
+            Add(o, "saw", "Serra do poço A", 220f, 97.5f, a: 218.6f, b: 221.4f);               // embaixo do buraco: cronometrar a queda
+            Add(o, "launcher", "Seteira do poço A1", 223.06f, 90.6f, facing: -1, a: 2f);
+            Add(o, "launcher", "Seteira do poço A2", 217.875f, 83.6f, facing: 1, a: 2f);
+            Add(o, "launcher", "Seteira do poço 1", 217.875f, 61.2f, facing: 1, a: 2.2f);       // entre as saliências B1 e B2
+            Add(o, "saw", "Serra do poço B", 220f, 53.5f, a: 218.6f, b: 221.4f);
+            // Duas seteiras abaixo da serra B, no mesmo período dela (2,2 s: ida, pausa, volta, pausa), com o primeiro tiro
+            // defasado: quem desce da saliência B2 quando a serra vai para a direita passa pela serra e chega à linha das
+            // flechas logo depois da rajada (pedido do usuário: "o timing certo para descer entre as serras e as seteiras")
+            Add(o, "launcher", "Seteira do poço B (esquerda)", 217.875f, 47.5f, facing: 1, a: 2.2f, b: 0.9f);
+            Add(o, "launcher", "Seteira do poço B (direita)", 223.06f, 47.5f, facing: -1, a: 2.2f, b: 0.9f);
+            Add(o, "saw", "Serra do poço C", 220f, 33.5f, a: 218.6f, b: 221.4f);
+            Add(o, "launcher", "Seteira do poço 2", 217.875f, 29.2f, facing: 1, a: 2f);
             Vault(o, BellHall, "fortaleza_cofre_72", "fort_cofre72", "D-PLACA-07", "Mural da Marcha Dourada");
             Vault(o, WallWalk, "fortaleza_cofre_43", "fort_cofre43", "D-PLACA-08", "Pedra dos votos");
             Vault(o, 15, "fortaleza_cofre_15", "fort_cofre15", "D-PLACA-09", "Lista dos guardiões");

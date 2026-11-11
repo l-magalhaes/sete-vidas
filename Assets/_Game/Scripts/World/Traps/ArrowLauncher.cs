@@ -19,15 +19,40 @@ namespace SeteVidas.World.Traps
         [Tooltip("Aviso antes da rajada (s)")]
         [SerializeField, Min(0f)] float warnTime = 0.3f;
         [SerializeField] SpriteRenderer warning;
+        [Tooltip("Atraso do primeiro tiro automático (s): sincroniza com uma serra de mesmo período (o poço)")]
+        [SerializeField, Min(0f)] float autoOffset;
 
         int _toFire;
         float _timer;
         float _autoTimer;
 
-        public void Configure(int dir, float auto)
+        public void Configure(int dir, float auto) => Configure(dir, auto, 0f);
+
+        /// <summary>Direção, intervalo automático e quanto do intervalo já "passou" no começo (defasa o primeiro tiro).</summary>
+        public void Configure(int dir, float auto, float offset)
         {
             direction = dir >= 0 ? 1 : -1;
             autoInterval = auto;
+            autoOffset = offset;
+            ApplyFacing();   // já no editor: no jogo e na cena o desenho fica virado para o lado do tiro
+        }
+
+        void Awake() { _autoTimer = autoOffset; }
+
+        /// <summary>
+        /// O desenho (boca para a direita) vira para o lado do tiro: a boca fica sempre do lado de onde saem as flechas e o
+        /// bloco de pedra do lado da parede.
+        /// </summary>
+        void Start() => ApplyFacing();
+
+        public void ApplyFacing()
+        {
+            foreach (var sr in GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                sr.flipX = direction < 0;
+                var p = sr.transform.localPosition;
+                if (sr.transform != transform) sr.transform.localPosition = new Vector3(Mathf.Abs(p.x) * direction, p.y, p.z);
+            }
         }
 
         protected override Rect DangerArea() => new Rect(transform.position, Vector2.zero); // as flechas é que machucam
@@ -45,7 +70,7 @@ namespace SeteVidas.World.Traps
             if (autoInterval > 0f)
             {
                 _autoTimer += dt;
-                if (_autoTimer >= autoInterval) { _autoTimer = 0f; Fire(); }
+                if (_autoTimer >= autoInterval) { _autoTimer -= autoInterval; Fire(); }   // sem acumular atraso: fica no compasso da serra
             }
             if (_toFire <= 0) return;
 
