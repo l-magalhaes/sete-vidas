@@ -139,3 +139,20 @@ O prefab, o asset de valores e a câmera são criados por **Tools > Sete Vidas >
 - [APROVADA] `JumpHeight = 4` tiles. Se o pulo ficar alto demais para um gato de 1,4 tile, testar 3,5.
 - [APROVADA] Controle aéreo igual ao do chão. Se ficar "escorregadio", adicionar um multiplicador de aceleração no ar.
 - O dash (Shift) fica sem efeito até ser desbloqueado. Continua aberta a pergunta do GDD sobre antecipar o dash para antes do Caçador.
+
+## Direção no analógico (correção, 11/11/2026)
+
+**Problema relatado:** no controle, às vezes o gato olhava para o lado errado.
+
+**Causas encontradas na varredura:**
+1. **Retorno da mola:** ao soltar o analógico, ele passa do centro para o outro lado por 1–3 quadros. A direção era trocada com qualquer x acima da zona morta (0,2), então o gato virava e ficava virado.
+2. **Diagonal de agachar ou escalar:** empurrar para baixo ou para cima com um pouco de x virava o gato.
+3. **Virar e atacar juntos:** o golpe usava a direção já aceita, e no analógico a virada pode chegar um instante depois.
+
+**Correção (`FacingFilter`, `PlayerInputReader.FacingIntent`):**
+- Teclado e D-pad: sem mudança (vira na hora).
+- Analógico: só vira quando o x domina o y. Com empurrão firme (≥ 0,5), vira depois de 0,04 s segurando; com empurrão leve, depois de 0,15 s. O retorno da mola dura menos que isso.
+- No analógico, o gato não anda de costas: um x contra o lado em que ele olha só move depois que a virada vale.
+- No aperto do ataque, um empurrão firme vira o gato na hora (`FirmDirection`), e o golpe sai para o lado novo.
+
+Testes: `FacingFilterTests` (EditMode).

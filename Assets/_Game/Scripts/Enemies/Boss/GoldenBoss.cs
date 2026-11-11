@@ -370,6 +370,7 @@ namespace SeteVidas.Enemies.Boss
             Health = Mathf.Max(0, Health - info.Amount);
             _blinkUntil = Time.time + 0.15f;
             DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
+            HitReact(info);
 
             if (Health <= 0)
             {
@@ -390,6 +391,31 @@ namespace SeteVidas.Enemies.Boss
                     DamagePopup.Spawn(transform.position + Vector3.up * 3f, "interrompido!", new Color32(0xff, 0xd3, 0x4d, 0xff));
                 }
             }
+        }
+
+        /// <summary>
+        /// Reação ao golpe (melhoria 3): clarão de 1 quadro, faíscas e um recuo de metade, só com os pés no chão
+        /// e fora de um golpe. O chefe nunca é interrompido (só a cura, pela regra dela).
+        /// </summary>
+        void HitReact(in DamageInfo info)
+        {
+            var table = settings.Reactions ?? HitReactionTable.Boss();
+            var reaction = table.For(HitReactionRules.WeightOf(info.Type, info.Angle));
+            int side = HitReactionRules.KnockbackSide(info.Direction, FacingDirection);
+            var flash = HitFlash.For(spriteRenderer);
+            if (flash != null) flash.Flash(reaction.Flash);
+            Vector2 feet = _body.position;
+            HitSparks.Spawn(new Vector2(feet.x - side * settings.BodySize.x * 0.4f, feet.y + settings.BodySize.y * 0.6f),
+                reaction.Sparks, side, reaction.Dust, feet);
+            CameraShake.Shake(reaction.ShakePx, reaction.ShakeTime);
+
+            bool planted = Current == State.Idle || Current == State.Walk || Current == State.SwingRecover ||
+                           Current == State.LeapRecover || Current == State.Stagger;
+            if (!planted) return;
+            float push = reaction.Knockback * table.KnockbackScale * 0.06f; // ~0,1 a 0,2 tile
+            float half = settings.BodySize.x * 0.5f;
+            float x = Mathf.Clamp(feet.x + side * push, arenaMinX + half, arenaMaxX - half);
+            _body.position = new Vector2(x, feet.y);
         }
 
         // ---------------------------------------------------------- ajudas

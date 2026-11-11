@@ -16,11 +16,13 @@ namespace SeteVidas.Enemies
         public float SuspiciousTime;        // tempo olhando antes de ir investigar
         public float LoseSightTime;         // em combate, sem estímulo por este tempo → investiga
         public float SearchTime;            // procurando na última posição conhecida
+        public float HuntSearchTime;        // caçada (perdeu o gato no combate): procura por mais tempo
 
         public static AlertTuning Default => new AlertTuning
         {
             SuspiciousThreshold = 0.25f, InvestigateThreshold = 0.5f, CalmThreshold = 0.1f,
-            DrainDelay = 1f, DrainRate = 0.15f, SuspiciousTime = 1.2f, LoseSightTime = 2f, SearchTime = 3f
+            DrainDelay = 1f, DrainRate = 0.15f, SuspiciousTime = 1.2f, LoseSightTime = 2f, SearchTime = 3f,
+            HuntSearchTime = 8f
         };
     }
 
@@ -44,6 +46,16 @@ namespace SeteVidas.Enemies
         /// <summary>Viu o alvo neste passo (zerado a cada Tick).</summary>
         public bool SeesTarget { get; private set; }
         public float SecondsSinceStimulus => _sinceStimulus;
+        /// <summary>
+        /// Caçando: viu o gato no combate e o perdeu de vista. Procura por mais tempo, sem esquecer (a suspeita
+        /// não esvazia), mais rápido e andando de um lado para o outro. Termina ao achar o gato ou ao desistir.
+        /// </summary>
+        public bool IsHunting { get; private set; }
+        /// <summary>Para que lado o gato estava indo da última vez que foi visto (−1, 0 ou 1).</summary>
+        public int LastKnownHeading { get; private set; }
+
+        bool _hasSighting;
+        Vector2 _lastSighting;
 
         /// <summary>Viu o alvo neste passo. Chame antes de <see cref="Tick"/>.</summary>
         public void See(Vector2 position, float fillPerSecond, float dt)
@@ -51,6 +63,13 @@ namespace SeteVidas.Enemies
             if (State == AlertState.Dead) return;
             Suspicion = Mathf.Min(1f, Suspicion + Mathf.Max(0f, fillPerSecond) * dt);
             SeesTarget = true;
+            if (_hasSighting)
+            {
+                float dx = position.x - _lastSighting.x;
+                if (Mathf.Abs(dx) > 0.005f) LastKnownHeading = dx > 0f ? 1 : -1;
+            }
+            _hasSighting = true;
+            _lastSighting = position;
             Stimulus(position);
         }
 
@@ -99,6 +118,8 @@ namespace SeteVidas.Enemies
             HasLastKnownPosition = false;
             _sinceStimulus = float.MaxValue;
             SeesTarget = false;
+            LastKnownHeading = 0;
+            _hasSighting = false;
             Enter(AlertState.Patrolling);
         }
 
@@ -114,7 +135,7 @@ namespace SeteVidas.Enemies
             TimeInState += dt;
             if (_sinceStimulus < float.MaxValue) _sinceStimulus += dt;
 
-            if (State != AlertState.Combat && _sinceStimulus > t.DrainDelay)
+            if (State != AlertState.Combat && !IsHunting && _sinceStimulus > t.DrainDelay)
                 Suspicion = Mathf.Max(0f, Suspicion - t.DrainRate * dt);
 
             switch (State)
@@ -136,7 +157,7 @@ namespace SeteVidas.Enemies
                     else if (IsSearching)
                     {
                         _searchTimer += dt;
-                        if (_searchTimer >= t.SearchTime)
+                        if (_searchTimer >= (IsHunting ? Mathf.Max(t.SearchTime, t.HuntSearchTime) : t.SearchTime))
                         {
                             Suspicion = 0f;
                             Enter(AlertState.Patrolling);
@@ -149,10 +170,12 @@ namespace SeteVidas.Enemies
                     {
                         Suspicion = Mathf.Max(t.InvestigateThreshold, t.SuspiciousThreshold);
                         Enter(AlertState.Investigating);
+                        IsHunting = true;
                     }
                     break;
             }
 
+            if (!SeesTarget) _hasSighting = false; // o rumo só vale entre avistamentos seguidos
             SeesTarget = false;
         }
 
@@ -171,6 +194,7 @@ namespace SeteVidas.Enemies
         void Enter(AlertState state)
         {
             State = state;
+            IsHunting = false;
             TimeInState = 0f;
             IsSearching = false;
             _searchTimer = 0f;

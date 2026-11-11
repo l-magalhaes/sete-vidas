@@ -72,6 +72,12 @@ namespace SeteVidas.Combat
             _blinkUntil = Time.time + blinkTime;
 
             DamagePopup.Spawn(transform.position + Vector3.up * 1.9f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
+            // mesmo clarão e faíscas dos inimigos (melhoria 3); o balanço do boneco já é o recuo dele
+            var reaction = new HitReactionTable().For(HitReactionRules.WeightOf(info.Type, info.Angle));
+            var flash = HitFlash.For(spriteRenderer);
+            if (flash != null) flash.Flash(reaction.Flash);
+            HitSparks.Spawn((Vector2)transform.position + new Vector2(-_recoilDir * 0.3f, 1f), reaction.Sparks, (int)_recoilDir, reaction.Dust, transform.position);
+            CameraShake.Shake(reaction.ShakePx, reaction.ShakeTime);
 
             if (IsDefeated)
             {

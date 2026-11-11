@@ -87,8 +87,24 @@ Lutando de frente, o jogador precisa de 3 golpes (um combo e meio) e a Sentinela
 - Dado o gato fugindo, então a Sentinela perde o rastro, vai até a última posição conhecida, procura e volta à patrulha.
 - Na Playground (trecho H) há pelo menos duas formas de passar: por cima (passarela) ou pelas costas (sombra), além de lutar.
 
+## Caçada (11/11/2026, pedido do usuário) [PROPOSTA]
+
+Quando a Sentinela **perde o gato de vista no combate** (ele pulou por cima, sumiu numa sombra), ela não volta logo à patrulha:
+
+1. Ela lembra **o rumo** em que o gato ia (`AlertBrain.LastKnownHeading`). Sem vê-lo por `HuntTurnDelay` (0,25 s), vira e corre para além do último ponto visto, nesse rumo (`HuntLead`, 3 tiles). Pular por cima dela não a deixa olhando para o lado errado.
+2. Depois de `LoseSightTime` (2 s) sem achar, entra na **caçada** (Investigando com `IsHunting`; ícone "?" laranja; rótulo "Caçando"):
+   - corre a `HuntSpeed` (4 tiles/s, contra 3 da investigação comum);
+   - lá, olha para a frente e para trás (`HuntLookInterval`, 0,8 s) e anda até `HuntSweep` (3 tiles) para cada lado do ponto, parando em cada ponta para olhar de novo;
+   - **não esquece:** a suspeita não esvazia enquanto caça, então achar o gato de novo leva pouco tempo;
+   - procura por `HuntSearchTime` (8 s, contra 3 da busca comum) e só então volta à patrulha.
+3. Ver o gato de novo encerra a caçada (volta ao combate). Uma pista nova (barulho) leva a caçada até ela.
+4. O atirador (fica no posto) não anda: caçando, só vira para os dois lados duas vezes mais rápido.
+5. Investigar um barulho continua sendo a busca comum (só caça quem já viu o gato).
+
+Testes: `HuntRulesTests` (EditMode).
+
 ## Perguntas abertas
 - [PROPOSTA] Sem dano por contato: encostar na Sentinela não machuca; só o golpe dela.
-- [PROPOSTA] Gato e inimigos não colidem fisicamente (o gato atravessa); necessário para chegar às costas.
+- ~~Gato e inimigos não colidem fisicamente~~ **Mudou (11/11/2026, melhoria 6):** o gato esbarra nos inimigos vivos (para ao encostar, pula por cima); esbarrão de frente = combate, pelas costas = suspeita. Agachado num esconderijo, ninguém esbarra.
 - [PROPOSTA] Paredes não abafam ruído no MVP.
 - [PROPOSTA] Nenhuma indicação de "você está escondido" além do escurecimento da sombra e do número de visibilidade (depuração). Avaliar um ícone de olho no Vertical Slice.

@@ -49,6 +49,45 @@ namespace SeteVidas.Player
             }
         }
 
+        readonly FacingFilter _facing = new FacingFilter();
+        int _facingFrame = -1, _facingIntent;
+
+        /// <summary>O direcional agora é um analógico (não teclado nem D-pad).</summary>
+        public bool IsAnalog => _move?.activeControl is UnityEngine.InputSystem.Controls.StickControl;
+
+        /// <summary>
+        /// Para que lado o jogador quer olhar neste quadro (−1, 1 ou 0 = sem pedido). Filtrado no analógico contra o
+        /// retorno da mola e a diagonal de agachar/escalar (<see cref="FacingFilter"/>). Use isto para virar o gato;
+        /// use <see cref="MoveX"/> para a velocidade.
+        /// </summary>
+        public int FacingIntent
+        {
+            get
+            {
+                if (_facingFrame == Time.frameCount) return _facingIntent;
+                _facingFrame = Time.frameCount;
+                Vector2 v = _move == null || GameplayLocked ? Vector2.zero : _move.ReadValue<Vector2>();
+                _facingIntent = _facing.Step(v, IsAnalog, Time.unscaledDeltaTime);
+                return _facingIntent;
+            }
+        }
+
+        /// <summary>
+        /// Lado pedido agora sem esperar o filtro: teclado na hora; analógico só com empurrão firme e horizontal.
+        /// Usado no aperto do ataque, para o golpe sair para onde o jogador acabou de virar.
+        /// </summary>
+        public int FirmDirection
+        {
+            get
+            {
+                if (_move == null || GameplayLocked) return 0;
+                Vector2 v = _move.ReadValue<Vector2>();
+                float ax = Mathf.Abs(v.x);
+                if (!IsAnalog) return v.x > 0.01f ? 1 : v.x < -0.01f ? -1 : 0;
+                return ax >= FacingFilter.StrongX && ax >= Mathf.Abs(v.y) ? (v.x > 0f ? 1 : -1) : 0;
+            }
+        }
+
         /// <summary>Direção vertical (W/S, setas, analógico): sobe e desce na escalada.</summary>
         public float MoveY
         {

@@ -151,6 +151,28 @@ namespace SeteVidas.Tests
             Assert.IsFalse(_sentinel.IsSolid);
         }
 
+        /// <summary>Melhoria 3: o golpe de frente empurra a Sentinela para trás e a põe na pose de dor.</summary>
+        [UnityTest]
+        public IEnumerator Hit_PushesSentinelBack_AndStuns()
+        {
+            yield return Load();
+            _daggers = ScriptableObject.CreateInstance<MeleeAttackSettings>();
+            _daggers.BaseDamage = 1; // não mata
+            PlacePlayer(1f, inFront: true);
+            yield return new WaitForFixedUpdate();
+            float before = _sentinel.transform.position.x;
+            int away = before > _player.Body.position.x ? 1 : -1;
+
+            _sentinel.TakeDamage(_daggers.ResolveHit(_player.Body.position, _sentinel, _player.gameObject));
+            Assert.IsTrue(_sentinel.IsStunned, "Sem pose de dor");
+            for (float t = 0f; t < 0.5f && _sentinel.IsStunned; t += Time.fixedDeltaTime) yield return new WaitForFixedUpdate(); // mede no fim da dor, antes de voltar a andar
+
+            float moved = (_sentinel.transform.position.x - before) * away;
+            Assert.Greater(moved, 0.15f, "A Sentinela deveria recuar para longe do gato");
+            Assert.Less(moved, 2f, "Recuo grande demais");
+            Assert.Greater(_sentinel.transform.position.y, -1f, "Caiu para fora do mapa");
+        }
+
         [UnityTest]
         public IEnumerator FrontHit_DoesNotKill_AndStartsCombat()
         {

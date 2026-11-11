@@ -1,3 +1,4 @@
+using SeteVidas.Combat;
 using UnityEngine;
 
 namespace SeteVidas.Enemies.Boss
@@ -16,6 +17,8 @@ namespace SeteVidas.Enemies.Boss
         [Tooltip("Andando, re-escolhe o golpe depois deste tempo (s)")]
         [Min(0.2f)] public float WalkTime = 0.9f;
         public Vector2 BodySize = new Vector2(1.4f, 2f);
+        [Tooltip("Reação ao dano (melhoria 3): clarão, faíscas e recuo de metade; o chefe nunca é interrompido")]
+        public HitReactionTable Reactions = HitReactionTable.Boss();
 
         [Header("Golpe de marreta (perto)")]
         [Min(0f)] public float SwingRange = 1.8f;

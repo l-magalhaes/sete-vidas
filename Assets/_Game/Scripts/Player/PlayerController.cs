@@ -93,12 +93,14 @@ namespace SeteVidas.Player
             if (IsHanging && input.CrouchPressedThisFrame)
                 _dropRequested = true;
 
+            // filtrado no analógico (retorno da mola, diagonal de agachar): ver FacingFilter. Lido todo quadro,
+            // mesmo com a direção travada, para o filtro contar o tempo certo
+            int wanted = input.FacingIntent;
+
             // A direção fica travada na borda, durante habilidades e logo depois de um pulo da parede
             if (IsHanging || IsClimbingLedge || _moveLockTimer > 0f) return;
             if (ActiveAbility != null && ActiveAbility.LocksFacing) return;
-            float moveX = input.MoveX;
-            if (moveX > 0.01f) FacingDirection = 1;
-            else if (moveX < -0.01f) FacingDirection = -1;
+            if (wanted != 0) FacingDirection = wanted;
         }
 
         void FixedUpdate()
@@ -156,7 +158,7 @@ namespace SeteVidas.Player
             // Andar (logo depois de um pulo da parede, a entrada não freia o impulso)
             if (_moveLockTimer <= 0f)
             {
-                float target = input.MoveX * settings.MoveSpeed * SpeedMultiplier * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
+                float target = MoveInput() * settings.MoveSpeed * SpeedMultiplier * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
                 float rate = Mathf.Abs(target) > 0.01f ? settings.Acceleration : settings.Deceleration;
                 v.x = Mathf.MoveTowards(v.x, target, rate * dt);
             }
@@ -213,6 +215,17 @@ namespace SeteVidas.Player
             _wasGrounded = grounded && !jumped;
 
             if (!grounded && v.y <= 0f) TryGrabLedge();
+        }
+
+        /// <summary>
+        /// Entrada horizontal para andar. No analógico, um x contra o lado em que o gato olha só move depois que a
+        /// virada valer (FacingFilter): o retorno da mola não empurra o gato para trás e ele nunca anda de costas.
+        /// </summary>
+        float MoveInput()
+        {
+            float x = input.MoveX;
+            if (input.IsAnalog && x * FacingDirection < 0f) return 0f;
+            return x;
         }
 
         // ------------------------------------------------ esbarrar nos inimigos

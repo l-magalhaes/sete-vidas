@@ -121,7 +121,8 @@ namespace SeteVidas.Tests
 
             b.ArrivedAtLastKnownPosition();
             Assert.IsTrue(b.IsSearching);
-            Run(b, T.SearchTime + 0.1f);
+            Assert.IsTrue(b.IsHunting, "Perdeu o gato no combate: caça (procura por mais tempo)");
+            Run(b, T.HuntSearchTime + 0.1f);
             Assert.AreEqual(AlertState.Patrolling, b.State, "Não achou: volta à patrulha");
             Assert.AreEqual(0f, b.Suspicion);
         }

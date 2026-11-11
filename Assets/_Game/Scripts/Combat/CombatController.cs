@@ -73,6 +73,8 @@ namespace SeteVidas.Combat
             if (input != null && input.AttackPressedThisFrame)
             {
                 bool wasIdle = !_sequence.IsAttacking;
+                // virou o analógico e atacou no mesmo instante: o golpe sai para o lado novo
+                if (wasIdle && input.FirmDirection != 0 && _player.ActiveAbility == null) _player.Face(input.FirmDirection);
                 if (_sequence.Press(timings) && wasIdle)
                     AttackDirection = _player.FacingDirection;
             }

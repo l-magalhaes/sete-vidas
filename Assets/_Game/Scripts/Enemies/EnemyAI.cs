@@ -161,6 +161,15 @@ namespace SeteVidas.Enemies
             _brain.Tick(dt, settings.Alert);
             if (_brain.State != before && before == AlertState.Combat) _attackPhase = AttackPhase.None;
 
+            if (_stunTimer > 0f)
+            {
+                // pose de dor: o recuo vai parando, sem andar nem atacar
+                _stunTimer -= dt;
+                float slowed = Mathf.MoveTowards(_body.linearVelocity.x, 0f, _stunDecel * dt);
+                _body.linearVelocity = new Vector2(slowed, _body.linearVelocity.y);
+                return;
+            }
+
             float vx = _brain.State switch
             {
                 AlertState.Patrolling => Patrol(dt),
@@ -202,6 +211,7 @@ namespace SeteVidas.Enemies
 
         float Investigate(float dt)
         {
+            if (_brain.IsHunting && !settings.HoldPosition) return Hunt(dt);
             if (!_brain.IsSearching && settings.HoldPosition)
             {
                 // atirador no alto: não desce; olha para onde ouviu/viu e começa a procurar dali
@@ -221,14 +231,70 @@ namespace SeteVidas.Enemies
                 return v;
             }
 
-            // Procurando: olha para um lado e para o outro
+            // Procurando: olha para um lado e para o outro (caçando, o atirador vira duas vezes mais rápido)
+            float lookInterval = _brain.IsHunting ? Mathf.Min(settings.SearchLookInterval, settings.HuntLookInterval * 0.5f) : settings.SearchLookInterval;
             _searchLookTimer -= dt;
             if (_searchLookTimer <= 0f)
             {
                 _facing = -_facing;
-                _searchLookTimer = settings.SearchLookInterval;
+                _searchLookTimer = lookInterval;
             }
             return 0f;
+        }
+
+        float _huntCenter;
+        int _huntDir = 1;
+        bool _huntLooking, _huntTurned;
+
+        /// <summary>
+        /// Caçada: corre até além do último ponto visto, no rumo em que o gato ia; lá, olha para os dois lados e
+        /// anda de um lado para o outro do ponto (<c>HuntSweep</c>), parando em cada ponta para olhar de novo.
+        /// </summary>
+        float Hunt(float dt)
+        {
+            if (!_brain.IsSearching)
+            {
+                float goal = _brain.LastKnownPosition.x + _brain.LastKnownHeading * settings.HuntLead;
+                float v = MoveTo(goal, settings.HuntSpeed, dt, out bool arrived);
+                if (arrived)
+                {
+                    _brain.ArrivedAtLastKnownPosition();
+                    _huntCenter = _body.position.x;
+                    _huntDir = _facing;
+                    _huntLooking = true;
+                    _huntTurned = false;
+                    _searchLookTimer = settings.HuntLookInterval;
+                }
+                return v;
+            }
+
+            if (_huntLooking)
+            {
+                // parado: olha para a frente, depois vira para trás
+                _searchLookTimer -= dt;
+                if (!_huntTurned && _searchLookTimer <= settings.HuntLookInterval * 0.5f) { _facing = -_facing; _huntTurned = true; }
+                if (_searchLookTimer <= 0f) { _huntLooking = false; _huntDir = _facing; }
+                return 0f;
+            }
+
+            float speed = MoveTo(_huntCenter + _huntDir * settings.HuntSweep, settings.HuntSpeed, dt, out bool end);
+            if (end)
+            {
+                _huntLooking = true;
+                _huntTurned = false;
+                _searchLookTimer = settings.HuntLookInterval;
+            }
+            return speed;
+        }
+
+        /// <summary>
+        /// Sem ver o gato no combate: depois de um instante, mira além do último ponto, no rumo em que ele ia
+        /// (pulou por cima: a sentinela vira para o lado certo em vez de ficar olhando o ar).
+        /// </summary>
+        Vector2 LostTarget(Vector2 lastKnown)
+        {
+            if (_brain.LastKnownHeading == 0 || _brain.SecondsSinceStimulus < settings.HuntTurnDelay) return lastKnown;
+            return new Vector2(lastKnown.x + _brain.LastKnownHeading * settings.HuntLead, lastKnown.y);
         }
 
         float Fight(float dt)
@@ -240,7 +306,7 @@ namespace SeteVidas.Enemies
                 return 0f;
             }
 
-            Vector2 target = _brain.LastKnownPosition;
+            Vector2 target = LostTarget(_brain.LastKnownPosition);
             var player = StealthController.Active;
             if (_perception.SeesPlayer && player != null) target = player.Player.Body.position;
 
@@ -283,7 +349,7 @@ namespace SeteVidas.Enemies
                 return 0f;
             }
 
-            Vector2 target = _brain.LastKnownPosition;
+            Vector2 target = LostTarget(_brain.LastKnownPosition);
             var player = StealthController.Active;
             if (_perception.SeesPlayer && player != null) target = player.ChestPosition;
             LookAt(target.x);
@@ -489,11 +555,51 @@ namespace SeteVidas.Enemies
             _hurtAt = Time.time;
             DamagePopup.Spawn(transform.position + Vector3.up * 2.1f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
 
+            // reação do corpo (melhoria 3): interrompe o ataque conforme o peso, recua, pisca branco, faíscas
+            var weight = HitReactionRules.WeightOf(info.Type, info.Angle);
+            var table = settings.Reactions ?? new HitReactionTable();
+            var reaction = table.For(weight);
+            bool inWindup = _attackPhase == AttackPhase.Windup;
+            float windupTotal = settings.Ranged ? settings.AimTime : settings.AttackWindup;
+            float progress = inWindup && windupTotal > 0f ? 1f - Mathf.Clamp01(_attackTimer / windupTotal) : 1f;
+            if (_attackPhase != AttackPhase.None &&
+                HitReactionRules.Interrupts(weight, inWindup, progress, false, table.LightInterruptBefore))
+                _attackPhase = AttackPhase.None;
+
             Vector2 attacker = info.Source != null ? (Vector2)info.Source.transform.position : _body.position - info.Direction;
             _brain.OnDamaged(attacker);
             if (_attackPhase == AttackPhase.None) LookAt(attacker.x);
 
-            if (_health <= 0) Die();
+            int side = HitReactionRules.KnockbackSide(info.Direction, _facing);
+            PlayHitFx(reaction, side);
+
+            if (_health <= 0) { Die(); return; }
+
+            // atacando ainda (golpe leve tarde demais na preparação): aguenta firme, sem recuo
+            if (_attackPhase != AttackPhase.None) return;
+            float knock = reaction.Knockback * table.KnockbackScale;
+            _stunTimer = reaction.Stun;
+            _stunDecel = reaction.Stun > 0f ? knock / reaction.Stun : 0f;
+            _body.linearVelocity = new Vector2(side * knock, reaction.Lift > 0f ? reaction.Lift : _body.linearVelocity.y);
+        }
+
+        float _stunTimer, _stunDecel;
+
+        /// <summary>Na pose de dor: não anda nem ataca (melhoria 3).</summary>
+        public bool IsStunned => _stunTimer > 0f && !IsDead;
+
+        void PlayHitFx(in HitReaction reaction, int side)
+        {
+            var flash = HitFlash.For(spriteRenderer);
+            if (flash != null)
+            {
+                flash.Flash(reaction.Flash);
+                flash.Squash(reaction.SquashPx, Mathf.Max(0.1f, reaction.Flash * 2f));
+            }
+            Vector2 feet = _body.position;
+            var contact = new Vector2(feet.x - side * settings.BodySize.x * 0.4f, feet.y + settings.BodySize.y * 0.6f);
+            HitSparks.Spawn(contact, reaction.Sparks, side, reaction.Dust, feet);
+            CameraShake.Shake(reaction.ShakePx, reaction.ShakeTime);
         }
 
         void Die()
@@ -528,6 +634,7 @@ namespace SeteVidas.Enemies
 
         void Respawn()
         {
+            _stunTimer = 0f;
             _health = settings.MaxHealth;
             _brain.Reset();
             _body.bodyType = RigidbodyType2D.Dynamic;
@@ -626,8 +733,8 @@ namespace SeteVidas.Enemies
                 }
                 normalized = duration > 0f ? 1f - Mathf.Clamp01(_attackTimer / duration) : 1f;
             }
-            else if (Time.time - _hurtAt < 0.2f) key = "hurt";
-            else if (Mathf.Abs(_body.linearVelocity.x) > 0.1f) key = _brain.State == AlertState.Combat ? "run" : "walk";
+            else if (IsStunned || Time.time - _hurtAt < 0.2f) key = "hurt";
+            else if (Mathf.Abs(_body.linearVelocity.x) > 0.1f) key = _brain.State == AlertState.Combat || _brain.IsHunting ? "run" : "walk";
             else if (_brain.State == AlertState.Suspicious || _brain.State == AlertState.Investigating || _brain.State == AlertState.Combat) key = "alert";
             else key = "idle";
 
@@ -649,7 +756,7 @@ namespace SeteVidas.Enemies
                     case AlertState.Suspicious:
                     case AlertState.Investigating:
                         alertIcon.text = "?";
-                        alertIcon.color = new Color32(0xff, 0xd8, 0x4d, 0xff);
+                        alertIcon.color = _brain.IsHunting ? new Color32(0xff, 0x8a, 0x3b, 0xff) : new Color32(0xff, 0xd8, 0x4d, 0xff); // laranja: caçando
                         break;
                     case AlertState.Combat:
                         alertIcon.text = "!";
@@ -665,7 +772,7 @@ namespace SeteVidas.Enemies
             {
                 debugLabel.gameObject.SetActive(showDebugLabel && !IsDead);
                 if (showDebugLabel)
-                    debugLabel.text = $"{StateName(_brain.State)} {_brain.Suspicion:0.00}\n{_health}/{settings.MaxHealth}";
+                    debugLabel.text = $"{(_brain.IsHunting ? "Caçando" : StateName(_brain.State))} {_brain.Suspicion:0.00}\n{_health}/{settings.MaxHealth}";
             }
         }
 

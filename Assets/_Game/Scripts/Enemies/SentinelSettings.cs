@@ -1,3 +1,4 @@
+using SeteVidas.Combat;
 using UnityEngine;
 
 namespace SeteVidas.Enemies
@@ -42,6 +43,20 @@ namespace SeteVidas.Enemies
         [Min(0f)] public float LoseSightTime = 2f;
         [Min(0f)] public float SearchTime = 3f;
 
+        [Header("Caçada (perdeu o gato no combate)")]
+        [Tooltip("Tempo procurando antes de desistir (s). A suspeita não esvazia enquanto caça")]
+        [Min(0f)] public float HuntSearchTime = 8f;
+        [Tooltip("Velocidade caçando (tiles/s): mais rápida que a da investigação")]
+        [Min(0f)] public float HuntSpeed = 4f;
+        [Tooltip("Quantos tiles além do último ponto visto, no rumo em que o gato ia")]
+        [Min(0f)] public float HuntLead = 3f;
+        [Tooltip("Procurando: anda até esta distância para cada lado do ponto (tiles)")]
+        [Min(0f)] public float HuntSweep = 3f;
+        [Tooltip("Procurando: tempo parado em cada ponta olhando (vira para os dois lados nesse tempo, s)")]
+        [Min(0.1f)] public float HuntLookInterval = 0.8f;
+        [Tooltip("Em combate, sem ver o gato por este tempo, vira para o rumo em que ele ia (pulou por cima, s)")]
+        [Min(0f)] public float HuntTurnDelay = 0.25f;
+
         [Header("Ataque")]
         [Tooltip("Distância horizontal para começar o ataque (tiles)")]
         [Min(0f)] public float AttackRange = 1.3f;
@@ -83,6 +98,10 @@ namespace SeteVidas.Enemies
         [Tooltip("Chance de soltar meio coração ao morrer (0,15 = 15%)")]
         [Range(0f, 1f)] public float HeartDropChance = 0.15f;
 
+        [Header("Reação ao dano (melhoria 3)")]
+        [Tooltip("Recuo, clarão, pose de dor, achatar, faíscas e tremor por peso do golpe (leve, forte, pesado)")]
+        public HitReactionTable Reactions = new HitReactionTable();
+
         [Header("Corpo (tiles)")]
         public Vector2 BodySize = new Vector2(0.75f, 1.6f);
         [Tooltip("Corpo sólido para o gato: ele para ao encostar em vez de atravessar (melhoria 6)")]
@@ -94,7 +113,8 @@ namespace SeteVidas.Enemies
         {
             SuspiciousThreshold = SuspiciousThreshold, InvestigateThreshold = InvestigateThreshold,
             CalmThreshold = CalmThreshold, DrainDelay = DrainDelay, DrainRate = DrainRate,
-            SuspiciousTime = SuspiciousTime, LoseSightTime = LoseSightTime, SearchTime = SearchTime
+            SuspiciousTime = SuspiciousTime, LoseSightTime = LoseSightTime, SearchTime = SearchTime,
+            HuntSearchTime = HuntSearchTime
         };
     }
 }
