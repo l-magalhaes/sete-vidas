@@ -229,6 +229,7 @@ namespace SeteVidas.EditorTools
             Fixed(d, 10, "env_pri_obj_reliquia", 0, "Relíquia do cofre 72", 228.05f, BellHall);
             Fixed(d, 10, "env_pri_obj_reliquia", 1, "Relíquia do cofre 43", 228.05f, WallWalk);
             Fixed(d, 10, "env_pri_obj_reliquia", 2, "Relíquia do cofre 15", 228.05f, 15f);
+            // (os caixotes espalhados pela galeria são esconderijos de verdade: objetos "bush" no FortressLayout)
             // ===== Etapa 7: mundo vivo (o resto vem do FortressLife: vento, partículas, bichos, pulsos)
             Fixed(d, 8, "env_nec_obj_inseto_morto", 0, "Insetos mortos da galeria 1", 159f, BellHall);
             Fixed(d, 8, "env_nec_obj_inseto_morto", 1, "Insetos mortos da galeria 2", 177.2f, BellHall);
@@ -266,6 +267,8 @@ namespace SeteVidas.EditorTools
             { "vestigio_primata", new[] { "env_pri_obj_marco|0|0", "env_pri_obj_cristal_apagado|-6|0" } },
             { "torre_sino", new[] { "env_cid_cul_sino|0|0" } },
             { "torre_pombal", new[] { "env_cid_cul_pombal|0|0", "env_cid_cul_penas|-1.2|0" } },
+            { "caixotes_pilha", new[] { "env_sol_obj_caixote|0|0", "env_sol_obj_caixote|0.85|0", "env_sol_obj_caixote|0.42|0.69" } },
+            { "caixotes_dupla", new[] { "env_sol_obj_caixote|0|0", "env_sol_obj_caixote|0.85|0" } },
             { "trilha_carga_largada", new[] { "env_sol_obj_caixote|-0.6|0", "env_sol_obj_sacos|0.6|0" } },
             { "salao_colunas", new[] { "env_cid_arq_coluna|0|0", "env_cid_arq_coluna|8|0" } },
             { "salao_altar", new[] { "env_cid_cul_placa_juramento|0|4", "env_cid_cul_emblema|0|6.6", "env_cid_cul_vela|-1.4|0", "env_cid_cul_vela_apagada|1.4|0" } },

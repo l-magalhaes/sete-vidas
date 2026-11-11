@@ -22,13 +22,13 @@
  y 110 ┌───────────── topo das torres ──────────────────────────────┐
  y 101 │ S4 ┊ [9 CÂMARA DO SELO: Koda] ┃📕┃▓[10a PASSAGEM]▓ cofre  ↓┃▓ cofre 72
        │ ▲  └ chaminé do selo (3 de largura, serra)                ┃
- y  72 │ ▲ [8 ←ARMADILHAS: fosso frágil, serra, fogo][7 ←SALÃO DOS VOTOS: 3 guardas] S3 ┃▓ cofre 43
+ y  72 │ ▲ [8 ←ARMADILHAS: fosso frágil, serra, fogo][7 ←SALÃO DOS VOTOS: 3 guardas]    ┃▓ cofre 43
        │                        chaminé do sino (3 de largura, serra, seteira) ▲      ┃
  y  43 │ S2 [5 GALERIA DA MURALHA → passarela, sombras, alarme, lanças, 3 guardas] ▲  ┃▓ cofre 15
   ┌────┘ ▲ vinha 3 (muralha 3, topo 43)                                         [poço]┃
  y 29  ▲ vinha 2 (vigia de costas)                                                    ┃
  y 15  ▲ vinha 1 (seteira na passarela)                                                ┃
- y  0 [1 MONTANHA]↓ salto de fé [2 TRILHA] [3 PÁTIO DE TREINO] S1 ▓estábulo   ...  ▓portão → estrada → FIM
+ y  0 [1 MONTANHA]↓ salto de fé [2 TRILHA] [3 PÁTIO DE TREINO]    ▓estábulo   ...  ▓portão → estrada → FIM
  y 60  penhasco + cachoeira
 ```
 
@@ -75,7 +75,7 @@
   - sobe **pulando de parede em parede** (vão de 3) enquanto uma **seteira** atira no vão;
   - moeda no topo da coluna direita (19);
   - de lá cai **atrás do Guarda da torre de vigia** (x 95–103): ataque pelas costas.
-- **Portão do pátio:** placa de pressão com **lanças** e o santuário **S1 "Pátio de treino"** (x 108).
+- **Portão do pátio:** placa de pressão com **lanças** (o santuário do pátio saiu: a Fortaleza tem só 2 santuários).
 - **Gate visível antes:** a porta rachada do **estábulo** (x 112) mostra a linguagem "rachaduras douradas... precisa de força". Atrás dela: 2 moedas de 5 e D-PLACA-05. **[PROPOSTA]** A volta a este pátio fica para depois do MVP (por enquanto a saída é pelos fundos).
 - **Risco de softlock:**
   - nenhum: a torre de escalada tem saída pela porta de baixo;
@@ -94,9 +94,9 @@
 ### Área 5 — Galeria da muralha (alojamento dos templários)
 - **Propósito:** furtividade.
 - **Tamanho:** x 136..210, andar 43, teto 52.
-- **S2 "Portão da muralha"** (x 139) e a placa D-PLACA-02 (alojamento).
+- **S2 "Portão da muralha"** (x 139), o santuário da **metade do caminho**, com a placa de Sethra (D-PLACA-11), e a placa D-PLACA-02 (alojamento).
 - **Trecho A:**
-  - sombra com caixotes;
+  - sombra; esconderijos de caixotes junto das camas, embaixo do atirador, no pé da torre do sino e dois em cima da passarela;
   - **Sentinela da galeria** (x 155–164);
   - **passarela** por cima (topo 48, sobe-se pela hera em x 153), com uma moeda.
 - **Trecho B:**
@@ -117,7 +117,7 @@
   - esquerda, 52–62;
   - direita, 60–71.
 - **Perigos:** uma **seteira** (y 57) atira no vão, e uma **serra** cruza a chaminé (y 64,5) indo de parede a parede. Moeda logo acima da serra.
-- **Saída:** por cima, no santuário **S3 "Torre do sino"** (x 213,8).
+- **Saída:** por cima, no salão (o santuário da Torre do Sino saiu).
 - **Risco de softlock:** nenhum. Cair só devolve à base da chaminé.
 
 ### Área 7 — Salão dos Votos
@@ -146,7 +146,7 @@
 ### Área 9 — Câmara do Selo (o topo)
 - **Propósito:** chefe e história.
 - **Tamanho:** andar 101, arena x 146..177, teto 110.
-- **S4 "Antes da câmara"** (x 137, versão compacta sem a cesta: só cabem 4 tiles entre a parede de fora e a chaminé), placa D-PLACA-04, grades (entrada em 145,5 e tomo em 177,5).
+- **S4 "Antes da câmara"** (x 137, versão compacta sem a cesta: só cabem 4 tiles entre a parede de fora e a chaminé), o santuário **antes do chefe**, com a placa de Sethra (D-PLACA-12, x 143,5) e a placa D-PLACA-04 (x 144,6), grades (entrada em 145,5 e tomo em 177,5).
 - **Koda, o Dourado** (x 166) e o **tomo** (x 181,5). Depois: a maldição, a marretada que segura a última vida, o Contratante, a moeda de 100 e o juramento, que dá o **Paladino**.
 - **Gate visível antes:** a **porta rachada da sala do tomo** (x 185) aparece antes do chefe ser vencido.
 - **Risco de softlock:** nenhum. A saída exige o Paladino, que é ganho na própria sala.
@@ -213,7 +213,7 @@ Simulei a progressão em ordem, só com o Ladino no começo:
 
 1. **Montanha → trilha → pátio:** tudo alcançável andando, pulando e agachando. A queda da montanha é a única porta de mão única, e nada depois exige voltar ao alto.
 2. **Pátio → muralhas:** as vinhas começam a no máximo 1 tile do chão de cada etapa. Ninguém fica preso numa etapa: cair leva para a de baixo.
-3. **Galeria da muralha → Torre do Sino:** a chaminé tem 3 de largura (pulo de parede ✔) e vinhas que se sobrepõem 2 tiles (dá para trocar de parede). O topo sai num chão de 6 tiles com santuário. O buraco da chaminé no chão do salão (3 de largura) é pulável ✔.
+3. **Galeria da muralha → Torre do Sino:** a chaminé tem 3 de largura (pulo de parede ✔) e vinhas que se sobrepõem 2 tiles (dá para trocar de parede). O topo sai num chão de 6 tiles (sem santuário desde 11/11/2026). O buraco da chaminé no chão do salão (3 de largura) é pulável ✔.
 4. **Salão → galeria das armadilhas → Torre do Selo:**
    - plataformas a 3 do chão ✔;
    - o fosso de 6 exige as plataformas frágeis, e cair nos espinhos devolve ao chão seguro ✔;
@@ -224,8 +224,8 @@ Simulei a progressão em ordem, só com o Ladino no começo:
    - os cofres saem pela própria porta ✔;
    - o portão do fundo leva à saída ✔.
 7. **Santuários:**
-   - S1 pátio, S2 portão da muralha, S3 torre do sino, S4 antes da câmara;
-   - nenhum trecho obrigatório passa de ~3 minutos sem santuário;
+   - **só 2 santuários** (decisão de 11/11/2026): S2 portão da muralha (metade) e S4 antes da câmara (chefe). Morrer antes da muralha volta ao início da fase; morrer no salão, nas armadilhas ou na Torre do Selo volta à muralha;
+   - [conferir jogando] o trecho muralha → câmara (salão, armadilhas, Torre do Selo) ficou mais longo sem o S3;
    - há santuário antes do chefe ✔;
    - na descida não há santuário: se morrer, volta ao S4 ✔. É curta e sem armadilhas obrigatórias além das seteiras.
 

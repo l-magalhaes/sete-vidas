@@ -85,6 +85,10 @@ namespace SeteVidas.Enemies
 
         [Header("Corpo (tiles)")]
         public Vector2 BodySize = new Vector2(0.75f, 1.6f);
+        [Tooltip("Corpo sólido para o gato: ele para ao encostar em vez de atravessar (melhoria 6)")]
+        public bool SolidBody = true;
+        [Tooltip("Tempo mínimo entre dois esbarrões que contam para a IA (s)")]
+        [Min(0f)] public float BumpCooldown = 0.5f;
 
         public AlertTuning Alert => new AlertTuning
         {

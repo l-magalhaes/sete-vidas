@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 11;
+        public const int Version = 12;
 
         public enum Map { Ground, Climbable, Background }
 
@@ -255,7 +255,6 @@ namespace SeteVidas.EditorTools
             Add(o, "sentinel", "Guarda da torre de vigia", 99f, 0f, facing: 1, a: 95f, b: 103f);
             Add(o, "plate", "Placa de pressão do portão", 104f, 0f, w: 2f, link: "Lanças do portão");
             Add(o, "spears", "Lanças do portão", 105f, 0f);
-            Add(o, "sanctuary", "Pátio de treino", 108f, 0f, id: "fortaleza_patio", text: "Pátio de treino");
             Add(o, "wall", "Porta rachada do estábulo", 112.5f, 0f, id: "fortaleza_estabulo");
             Add(o, "sign", "Placa das rachaduras", 110.5f, 5.2f, text: "rachaduras douradas... precisa de força");
             Add(o, "coin", "Moeda do estábulo 1", 115f, 0.6f, id: "fort_estabulo_1", value: 5);
@@ -272,11 +271,20 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda (muralha 3)", 132f, WallWalk + 0.6f, id: "fort_muralha3", value: 1);
 
             // ===== 5) Galeria da muralha (alojamento dos templários)
+            // Só 2 santuários (melhorias, item 0): na metade (aqui) e antes do chefe (BossSetup, câmara). Os do pátio e da
+            // Torre do Sino saíram. Ao lado de cada um, uma placa sobre Sethra, a deusa dos altares felinos
             Add(o, "sanctuary", "Portão da muralha", 139f, WallWalk, id: "fortaleza_muralha", text: "Portão da muralha");
-            Add(o, "lore", "Placa do alojamento", 144f, WallWalk, id: "D-PLACA-02");
+            Add(o, "lore", "Altar de Sethra (muralha)", 142.85f, WallWalk, id: "D-PLACA-11");
+            Add(o, "lore", "Placa do alojamento", 164.4f, WallWalk, id: "D-PLACA-02");   // junto dos dormitórios
             Add(o, "shadow", "Sombra da galeria A", 148f, WallWalk + 2.5f, w: 10f, h: 5f);
-            Add(o, "bush", "Caixotes", 150f, WallWalk, text: "caixotes"); // esconderijo dentro do castelo: caixotes, não moita
-            Add(o, "sign", "Placa da sombra", 146f, WallWalk + 3.4f, text: "sombra e caixotes: agache para sumir");
+            Add(o, "bush", "Caixotes", 162.3f, WallWalk, text: "caixotes"); // esconderijo junto das camas: caixotes, não moita
+            Add(o, "sign", "Placa dos caixotes", 162.3f, WallWalk + 2.6f, text: "atrás dos caixotes: agache");
+            // mais esconderijos de caixotes espalhados pelo andar e em cima da passarela (pedido do usuário)
+            Add(o, "bush", "Caixotes embaixo do atirador", 183.45f, WallWalk, text: "caixotes");
+            Add(o, "bush", "Caixotes do pé da torre", 208.6f, WallWalk, text: "caixotes");
+            Add(o, "bush", "Caixotes da passarela 1", 158f, 48f, text: "caixotes");
+            Add(o, "bush", "Caixotes da passarela 2", 164.6f, 48f, text: "caixotes");
+            Add(o, "sign", "Placa da sombra", 146f, WallWalk + 3.4f, text: "na sombra, ninguém te vê");   // de pé já some (exposição 0,3)
             Add(o, "sentinel", "Sentinela da galeria", 159f, WallWalk, facing: -1, a: 155f, b: 164f);
             Add(o, "coin", "Moeda (passarela)", 160f, 48.6f, id: "fort_passarela", value: 1);
             Add(o, "noisy", "Sininhos do alojamento", 170.5f, WallWalk, text: "sininhos"); // alarme improvisado: agache para passar
@@ -291,7 +299,7 @@ namespace SeteVidas.EditorTools
             Add(o, "plate", "Placa de pressão da galeria", 204.5f, WallWalk, w: 2f, link: "Lanças da galeria");
             Add(o, "spears", "Lanças da galeria", 206f, WallWalk);
             Add(o, "coin", "Moeda (pé da torre)", 205.5f, WallWalk + 0.6f, id: "fort_sino_base", value: 1);
-            Add(o, "noisy", "Balde do alojamento", 183.7f, WallWalk, text: "balde");
+            Add(o, "noisy", "Balde do alojamento", 192f, WallWalk, text: "balde");   // entre a mesa e a cozinha (o lugar dele virou esconderijo)
 
             // ===== 6) Torre do Sino
             Add(o, "sign", "Placa da torre", 206f, WallWalk + 4.5f, text: "↑ pule de parede em parede");
@@ -300,7 +308,6 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda (torre do sino)", 209f, 68f, id: "fort_sino", value: 1);
 
             // ===== 7) Salão dos Votos e Galeria das Armadilhas (andar 72, para a esquerda)
-            Add(o, "sanctuary", "Torre do sino", 213.8f, BellHall, id: "fortaleza_sino", text: "Torre do sino"); // a caixinha termina antes da parede (217)
             Add(o, "lore", "Placa do juramento", 205f, BellHall, id: "D-PLACA-03");
             Add(o, "sign", "Placa do salão", 208.5f, BellHall + 3.2f, text: "← clique: adagas · por trás dói mais");
             Add(o, "sentinel", "Sentinela do salão A", 200f, BellHall, facing: -1, a: 196f, b: 204f);
@@ -326,7 +333,8 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda (torre do selo)", 141f, 97f, id: "fort_selo", value: 1);
 
             // ===== 9) Câmara do Selo (o chefe e o tomo vêm do BossSetup.PlaceArena)
-            Add(o, "lore", "Placa da câmara", 143.5f, SealFloor, id: "D-PLACA-04");
+            Add(o, "lore", "Placa da câmara", 144.6f, SealFloor, id: "D-PLACA-04");
+            Add(o, "lore", "Altar de Sethra (câmara)", 143.5f, SealFloor, id: "D-PLACA-12");   // logo depois da chaminé (o chão volta em x 143)
 
             // ===== 10) Depois do Paladino: porta rachada do tomo, passagem, poço e cofres, estrada
             Add(o, "wall", "Porta rachada da sala do tomo", 185.5f, SealFloor, id: "fortaleza_tomo_fundos");

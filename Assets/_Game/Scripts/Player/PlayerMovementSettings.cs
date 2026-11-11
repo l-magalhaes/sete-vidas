@@ -80,6 +80,10 @@ namespace SeteVidas.Player
         [Tooltip("Altura agachado (tiles). Precisa ser menor que 1 para passar em passagens de 1 tile")]
         [Min(0.1f)] public float CrouchHeight = 0.875f;
 
+        [Header("Esbarrar nos inimigos (melhoria 6)")]
+        [Tooltip("Velocidade com que o gato sai de lado quando ficou por dentro de um inimigo (caiu em cima dele, tiles/s)")]
+        [Min(0f)] public float BodyPushOutSpeed = 6f;
+
         /// <summary>Gravidade da subida (tiles/s²), calculada a partir da altura e do tempo até o topo.</summary>
         public float Gravity => JumpMath.Gravity(JumpHeight, TimeToApex);
 

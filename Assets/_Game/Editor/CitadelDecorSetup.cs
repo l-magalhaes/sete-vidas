@@ -135,6 +135,15 @@ namespace SeteVidas.EditorTools
                 ["D-PLACA-10"] = DialogueSetup.Conversation("D-PLACA-10", false, 1,
                     (null, "", "Marco da estrada: Cidadela do Sol Eterno, adiante. Miaravéu, três dias para trás."),
                     (cat, "", "Três dias de volta. Com o livro, dois.")),
+                // Santuários de Sethra (melhorias da Fortaleza, item 0): os altares felinos são mais antigos que a Cidadela
+                ["D-PLACA-11"] = DialogueSetup.Conversation("D-PLACA-11", false, 1,
+                    (null, "", "Altar mais velho que estas muralhas. Na pedra: \"Sethra guarda as sete luzes.\""),
+                    (null, "", "Um bilhete na cesta: \"Frutas frescas toda lua. Não contem ao capitão. — B.\""),
+                    (cat, "ironico", "Um cão rezando para uma gata. Agora eu já vi de tudo.")),
+                ["D-PLACA-12"] = DialogueSetup.Conversation("D-PLACA-12", false, 1,
+                    (null, "", "A torre foi erguida sobre este altar. A pedra é de antes da Ordem, de antes dos cães."),
+                    (null, "", "Na borda: \"Quem dorme aos pés de Sethra acorda com a centelha acesa.\""),
+                    (cat, "", "...Então é por isso que eu continuo voltando.")),
             };
             AssetDatabase.SaveAssets();
             return lore;

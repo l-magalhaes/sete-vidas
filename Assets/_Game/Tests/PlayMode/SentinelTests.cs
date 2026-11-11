@@ -101,6 +101,56 @@ namespace SeteVidas.Tests
             Assert.Less(SeteVidas.World.HidingSpot.ConcealmentAt(new Vector2(138f, 0.5f)), 1f, "Dentro do matinho esconde");
         }
 
+        float Overlap()
+        {
+            float w = _player.Settings.ColliderWidth;
+            var cat = new Rect(_player.Body.position.x - w * 0.5f, _player.Body.position.y, w, _player.CurrentHeight);
+            return BodyBlockRules.HorizontalOverlap(cat, _sentinel.Bounds);
+        }
+
+        /// <summary>Melhoria 6: empurrado contra a Sentinela (recuo, corrida), o gato para nela e não atravessa.</summary>
+        [UnityTest]
+        public IEnumerator CatCannotPassThroughSentinel()
+        {
+            yield return Load();
+            PlacePlayer(2f, inFront: false);
+            yield return new WaitForFixedUpdate();
+            int toward = _sentinel.transform.position.x > _player.Body.position.x ? 1 : -1;
+            _player.ApplyKnockback(new Vector2(toward * 12f, 0f), 0.6f);
+            float worst = -9f;
+            for (float t = 0f; t < 0.6f; t += Time.fixedDeltaTime)
+            {
+                yield return new WaitForFixedUpdate();
+                worst = Mathf.Max(worst, Overlap());
+            }
+            Assert.LessOrEqual(worst, 0.06f, "O gato entrou no corpo da Sentinela");
+            Assert.AreEqual(toward, _sentinel.transform.position.x > _player.Body.position.x ? 1 : -1, "O gato passou para o outro lado");
+        }
+
+        /// <summary>Melhoria 6: o gato que ficou por dentro (caiu em cima) sai para o lado.</summary>
+        [UnityTest]
+        public IEnumerator CatInsideSentinel_IsPushedOut()
+        {
+            yield return Load();
+            PlacePlayer(0.2f, inFront: false);
+            for (float t = 0f; t < 0.5f; t += Time.fixedDeltaTime) yield return new WaitForFixedUpdate();
+            Assert.LessOrEqual(Overlap(), 0.06f, "Continuou dentro da Sentinela");
+        }
+
+        /// <summary>Morta, a Sentinela não bloqueia mais.</summary>
+        [UnityTest]
+        public IEnumerator DeadSentinel_IsNotSolid()
+        {
+            yield return Load();
+            _daggers = ScriptableObject.CreateInstance<MeleeAttackSettings>();
+            PlacePlayer(1f, inFront: false);
+            yield return new WaitForFixedUpdate();
+            Assert.IsTrue(_sentinel.IsSolid);
+            _sentinel.TakeDamage(_daggers.ResolveHit(_player.Body.position, _sentinel, _player.gameObject));
+            Assert.IsTrue(_sentinel.IsDead);
+            Assert.IsFalse(_sentinel.IsSolid);
+        }
+
         [UnityTest]
         public IEnumerator FrontHit_DoesNotKill_AndStartsCombat()
         {

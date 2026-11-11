@@ -13,7 +13,7 @@ namespace SeteVidas.Enemies
     /// <see cref="AlertBrain"/>; aqui ficam o corpo, o movimento e o visual.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(EnemyPerception))]
-    public class EnemyAI : MonoBehaviour, IDamageable, IFacingTarget
+    public class EnemyAI : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody
     {
         enum AttackPhase { None, Windup, Active, Recovery }
 
@@ -105,8 +105,41 @@ namespace SeteVidas.Enemies
             _perception.Init(settings, _brain);
         }
 
-        void OnEnable() => GameEvents.WorldReset += OnWorldReset;
-        void OnDisable() => GameEvents.WorldReset -= OnWorldReset;
+        void OnEnable() { GameEvents.WorldReset += OnWorldReset; SolidBodies.Register(this); }
+        void OnDisable() { GameEvents.WorldReset -= OnWorldReset; SolidBodies.Unregister(this); }
+
+        // ------------------------------------------------ corpo sólido (melhoria 6)
+
+        float _lastBumpAt = -99f;
+
+        public Rect Bounds => SolidBodies.RectOf(_box);
+        public bool IsSolid => settings != null && settings.SolidBody && !IsDead && _box != null && _box.enabled;
+
+        /// <summary>O gato empurrou o corpo: de frente, vê na hora; pelas costas, vira para olhar.</summary>
+        public void OnBumped(Vector2 playerPosition)
+        {
+            if (IsDead || settings == null) return;
+            if (Time.time - _lastBumpAt < settings.BumpCooldown) return;
+            _lastBumpAt = Time.time;
+            bool front = BodyBlockRules.IsFrontBump(_body.position.x, _facing, playerPosition.x);
+            _brain.OnBumped(playerPosition, front, settings.Alert);
+        }
+
+        /// <summary>O gato está encostado logo à frente, na mesma altura: o inimigo espera em vez de empurrar.</summary>
+        bool PlayerBlocks(int dir)
+        {
+            if (!IsSolid) return false;
+            var stealth = StealthController.Active;
+            if (stealth == null || stealth.InCover || !stealth.IsTargetable || stealth.Player == null) return false;
+            var p = stealth.Player;
+            Vector2 feet = p.Body.position;
+            float w = p.Settings.ColliderWidth;
+            var player = new Rect(feet.x - w * 0.5f, feet.y, w, p.CurrentHeight);
+            Rect me = Bounds;
+            if (!BodyBlockRules.OverlapsVertically(player, me)) return false;
+            float gap = dir > 0 ? player.xMin - me.xMax : me.xMin - player.xMax;
+            return gap > -me.width && gap < 0.12f;
+        }
 
         /// <summary>Descanso no santuário ou volta depois de morrer: reaparece no início, vida cheia, patrulhando.</summary>
         void OnWorldReset()
@@ -421,6 +454,14 @@ namespace SeteVidas.Enemies
             if (Mathf.Abs(dx) <= 0.1f) { arrived = true; return 0f; }
             int dir = dx > 0f ? 1 : -1;
             _facing = dir;
+            if (PlayerBlocks(dir))
+            {
+                // o gato está no caminho: espera (não empurra) e, se ele estava à vista, isso é um esbarrão de frente
+                arrived = false;
+                var stealth = StealthController.Active;
+                if (stealth != null) OnBumped(stealth.Player.Body.position);
+                return 0f;
+            }
             if (!CanWalk(dir)) { arrived = true; return 0f; } // bloqueado: considera que chegou
             arrived = false;
             return dir * Mathf.Min(speed, Mathf.Abs(dx) / dt);

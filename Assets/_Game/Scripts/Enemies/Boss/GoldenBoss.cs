@@ -15,7 +15,7 @@ namespace SeteVidas.Enemies.Boss
     /// mais raios. Derrotado, ajoelha; depois da maldição do tomo, levanta como companheiro.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
-    public class GoldenBoss : MonoBehaviour, IDamageable, IFacingTarget
+    public class GoldenBoss : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody
     {
         public enum State
         {
@@ -105,8 +105,13 @@ namespace SeteVidas.Enemies.Boss
             _shield = BuildShield();
         }
 
-        void OnEnable() => Active = this;
-        void OnDisable() { if (Active == this) Active = null; }
+        void OnEnable() { Active = this; SolidBodies.Register(this); }
+        void OnDisable() { if (Active == this) Active = null; SolidBodies.Unregister(this); }
+
+        // corpo sólido na luta (melhoria 6): encostar nele só para o gato, sem dano; o Koda não reage ao esbarrão
+        public Rect Bounds => SolidBodies.RectOf(_box);
+        public bool IsSolid => IsFighting && _box != null && _box.enabled;
+        public void OnBumped(Vector2 playerPosition) { }
 
         // ------------------------------------------------------------ API
 

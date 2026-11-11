@@ -71,6 +71,25 @@ namespace SeteVidas.Enemies
             Enter(AlertState.Combat);
         }
 
+        /// <summary>
+        /// O gato esbarrou no corpo. De frente: vê na hora (combate). Pelas costas: sente o empurrão e vira
+        /// para olhar (suspeito); se já estava procurando, a pista nova leva até o gato. Em combate, só atualiza a posição.
+        /// </summary>
+        public void OnBumped(Vector2 playerPosition, bool fromFront, in AlertTuning t)
+        {
+            if (State == AlertState.Dead) return;
+            if (fromFront || State == AlertState.Combat)
+            {
+                Suspicion = 1f;
+                Stimulus(playerPosition);
+                if (State != AlertState.Combat) Enter(AlertState.Combat);
+                return;
+            }
+            Suspicion = Mathf.Max(Suspicion, Mathf.Min(0.99f, t.InvestigateThreshold + 0.15f)); // o bastante para ir investigar
+            Stimulus(playerPosition);
+            if (State == AlertState.Patrolling || State == AlertState.Suspicious) Enter(AlertState.Suspicious);
+        }
+
         public void Kill() => Enter(AlertState.Dead);
 
         /// <summary>Volta ao início (respawn).</summary>

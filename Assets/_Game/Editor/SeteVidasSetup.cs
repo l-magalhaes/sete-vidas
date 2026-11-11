@@ -130,7 +130,8 @@ namespace SeteVidas.EditorTools
             // Inimigos atravessam uns aos outros (patrulhas não se travam).
             Physics2D.IgnoreLayerCollision(enemy, enemy, true);
 
-            // O gato atravessa inimigos (para chegar às costas deles); só os golpes machucam.
+            // A física ignora gato × inimigo (ninguém empurra ninguém). O esbarrão (melhoria 6) é feito pelo
+            // PlayerController com a lista SolidBodies: o gato para ao encostar num inimigo vivo.
             Physics2D.IgnoreLayerCollision(player, enemy, true);
 
             // Interativos (santuários, gatilhos, NPCs) só detectam o jogador.

@@ -50,10 +50,12 @@ namespace SeteVidas.Tests
         public IEnumerator HasEveryArea()
         {
             yield return Load();
-            Assert.IsNotNull(Sanctuary.Find("fortaleza_patio"), "Santuário do pátio de treino");
-            Assert.IsNotNull(Sanctuary.Find("fortaleza_muralha"), "Santuário do portão da muralha");
-            Assert.IsNotNull(Sanctuary.Find("fortaleza_sino"), "Santuário da torre do sino");
-            Assert.IsNotNull(Sanctuary.Find("fortaleza_camara"), "Santuário antes da câmara");
+            // só 2 santuários (melhorias, item 0): na metade do caminho e antes do chefe
+            Assert.AreEqual(2, Object.FindObjectsByType<Sanctuary>(FindObjectsSortMode.None).Length, "Dois santuários na Fortaleza");
+            Assert.IsNotNull(Sanctuary.Find("fortaleza_muralha"), "Santuário do portão da muralha (metade)");
+            Assert.IsNotNull(Sanctuary.Find("fortaleza_camara"), "Santuário antes da câmara (chefe)");
+            Assert.IsNull(Sanctuary.Find("fortaleza_patio"), "O do pátio saiu");
+            Assert.IsNull(Sanctuary.Find("fortaleza_sino"), "O da Torre do Sino saiu");
             Assert.GreaterOrEqual(GameObject.Find("Fortaleza").GetComponentsInChildren<EnemyAI>().Length, 10, "Dez templários no caminho");
             var boss = Object.FindAnyObjectByType<GoldenBoss>();
             Assert.IsNotNull(boss, "Koda na câmara");
@@ -285,7 +287,7 @@ namespace SeteVidas.Tests
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 159 itens no FortressDressing (Etapas 1–8), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
+            // 164 itens no FortressDressing (Etapas 1–8 e as melhorias), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
             // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 189 objetos
             Assert.AreEqual(189, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())

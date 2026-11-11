@@ -1,4 +1,6 @@
 using SeteVidas.Abilities;
+using SeteVidas.Combat;
+using SeteVidas.Core;
 using UnityEngine;
 
 namespace SeteVidas.Player
@@ -205,11 +207,69 @@ namespace SeteVidas.Player
                 v.y = Mathf.Max(v.y - gravity * dt, -settings.MaxFallSpeed);
             }
 
+            v.x = BlockAgainstBodies(v.x, dt);
             _body.linearVelocity = v;
             _timers.Tick(dt);
             _wasGrounded = grounded && !jumped;
 
             if (!grounded && v.y <= 0f) TryGrabLedge();
+        }
+
+        // ------------------------------------------------ esbarrar nos inimigos
+
+        int _blockMask = -1;
+
+        /// <summary>
+        /// Corpos dos inimigos vivos (melhoria 6): andando contra um, o gato para ao encostar; se ficou por dentro
+        /// (caiu em cima, o inimigo chegou nele), sai para o lado livre. Pular por cima continua valendo, e agachado
+        /// atrás de um esconderijo o gato fica "atrás" do inimigo e ninguém esbarra em ninguém.
+        /// </summary>
+        float BlockAgainstBodies(float vx, float dt)
+        {
+            var bodies = SolidBodies.All;
+            if (bodies.Count == 0) return vx;
+            var stealth = StealthController.Active;
+            if (stealth != null && stealth.Player == this && stealth.InCover) return vx;
+
+            Vector2 feet = _body.position;
+            float w = settings.ColliderWidth, h = CurrentHeight;
+            var me = new Rect(feet.x - w * 0.5f, feet.y, w, h);
+            float push = 0f;
+            for (int i = bodies.Count - 1; i >= 0; i--)
+            {
+                var body = bodies[i];
+                if (body == null || !body.IsSolid) continue;
+                Rect b = body.Bounds;
+                if (b.width <= 0f || !BodyBlockRules.OverlapsVertically(me, b)) continue;
+
+                if (BodyBlockRules.HorizontalOverlap(me, b) > BodyBlockRules.InsideOverlap)
+                {
+                    int dir = BodyBlockRules.PushOutDirection(me.center.x, b.center.x,
+                        SideIsFree(b.xMin - w * 0.5f - 0.02f, feet.y, w, h),
+                        SideIsFree(b.xMax + w * 0.5f + 0.02f, feet.y, w, h));
+                    if (dir != 0) push = dir * settings.BodyPushOutSpeed;
+                    continue;
+                }
+
+                float before = vx;
+                vx = BodyBlockRules.ClampVelocity(me, b, vx, dt);
+                // empurrando contra o corpo (encostado e querendo ir para ele): a IA sente o esbarrão
+                bool towards = (b.center.x - me.center.x) * input.MoveX > 0f;
+                float gap = b.center.x > me.center.x ? b.xMin - me.xMax : me.xMin - b.xMax;
+                if (towards && gap <= BodyBlockRules.ContactGap && (before != vx || Mathf.Abs(before) < 0.01f))
+                    body.OnBumped(feet);
+            }
+            if (push != 0f && (vx == 0f || Mathf.Sign(vx) != Mathf.Sign(push) || Mathf.Abs(vx) < Mathf.Abs(push))) vx = push;
+            return vx;
+        }
+
+        /// <summary>O gato cabe ali sem entrar em parede nem em perigo.</summary>
+        bool SideIsFree(float centerX, float feetY, float w, float h)
+        {
+            if (_blockMask < 0)
+                _blockMask = LayerMask.GetMask(GameConstants.Layers.Ground, GameConstants.Layers.Climbable,
+                    GameConstants.Layers.Breakable, GameConstants.Layers.Hazard);
+            return Physics2D.OverlapBox(new Vector2(centerX, feetY + h * 0.5f + 0.05f), new Vector2(w - 0.1f, h - 0.15f), 0f, _blockMask) == null;
         }
 
         // ------------------------------------------------- API das habilidades

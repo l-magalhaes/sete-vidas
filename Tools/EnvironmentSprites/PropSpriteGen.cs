@@ -257,6 +257,8 @@ public static class PropSpriteGen
         cv.Force(37, 10, 'L'); cv.Force(37, 11, 'L'); cv.Force(36, 12, 'L'); cv.Force(38, 9, 'L');             // cauda
         char eye = active ? 'O' : 'o';
         cv.Force(31, 4, eye); cv.Force(33, 4, eye);
+        // as sete luzes de Sethra no alto do pilar (a deusa que guarda as sete vidas): acesas com o santuário ativo
+        for (int k = 0; k < 7; k++) cv.Force(29 + k, 14, active ? 'O' : 'o');
         // bica de peixe na frente do pilar
         cv.Force(31, 16, 'H'); cv.Force(32, 16, 'H'); cv.Force(33, 16, 'L'); cv.Force(30, 15, 'L'); cv.Force(30, 17, 'L');
         cv.Force(32, 17, 'k');                                                                                 // boca da bica

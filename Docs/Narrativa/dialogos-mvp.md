@@ -42,6 +42,8 @@ GATO: Caí de pé, pelo menos. Como sempre.
 - **D-PLACA-08 (cofre do patamar 43):** "Pedra antiga dos votos: 'Guardar o selo. Servir os vivos. Nunca abandonar um ferido.'" / "Alguém raspou 'os vivos' e gravou 'o reino' por cima." / GATO (irônico): "Engraçado. Os cães também têm letra miúda." **[PROPOSTA, ligada ao segredo do Koda]**
 - **D-PLACA-09 (cofre do patamar 15):** "Guardiões do Selo: Golden, o Dourado. Depois dele, cinco séculos de Dourados." / "O último nome da lista ainda tem a tinta fresca: Koda."
 - **D-PLACA-10 (marco da trilha):** "Marco da estrada: Cidadela do Sol Eterno, adiante. Miaravéu, três dias para trás." / GATO: "Três dias de volta. Com o livro, dois."
+- **D-PLACA-11 (santuário do portão da muralha):** "Altar mais velho que estas muralhas. Na pedra: 'Sethra guarda as sete luzes.'" / "Um bilhete na cesta: 'Frutas frescas toda lua. Não contem ao capitão. — B.'" / GATO (irônico): "Um cão rezando para uma gata. Agora eu já vi de tudo." **[PROPOSTA]**
+- **D-PLACA-12 (santuário antes da câmara):** "A torre foi erguida sobre este altar. A pedra é de antes da Ordem, de antes dos cães." / "Na borda: 'Quem dorme aos pés de Sethra acorda com a centelha acesa.'" / GATO: "...Então é por isso que eu continuo voltando." **[PROPOSTA]**
 
 ## D-GOLDEN-00 — Entrada da câmara (obrigatório)
 KODA: Alto, ladrão. Esse tomo dorme selado há cinco séculos. E vai continuar dormindo.
