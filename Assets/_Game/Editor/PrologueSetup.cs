@@ -39,6 +39,7 @@ namespace SeteVidas.EditorTools
 
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
             var cam = camGo.AddComponent<Camera>();
+            cam.eventMask = 0;   // o jogo não usa OnMouseDown: sem isso o Unity reclama "Screen position out of view frustum"
             cam.orthographic = true;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color32(0x0e, 0x0c, 0x18, 0xff);
@@ -92,6 +93,8 @@ namespace SeteVidas.EditorTools
             var so = new SerializedObject(controller);
             so.FindProperty("contract").objectReferenceValue = contract;
             so.FindProperty("nextScene").stringValue = Path.GetFileNameWithoutExtension(GameConstants.FortressScenePath);
+            // trilha de fundo da leitura (Docs/Audio/decisoes.md): Infiltrating the Golden Hall, bem baixinha
+            so.FindProperty("music").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Game/Audio/Music/mus_fortaleza_furtivo.wav");
             so.FindProperty("title").objectReferenceValue = title;
             so.FindProperty("body").objectReferenceValue = body;
             so.FindProperty("hint").objectReferenceValue = hint;

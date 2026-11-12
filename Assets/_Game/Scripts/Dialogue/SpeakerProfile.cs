@@ -28,6 +28,8 @@ namespace SeteVidas.Dialogue
         public Color NameColor = new Color32(0xf2, 0xe6, 0xc8, 0xff);
         [Tooltip("Altura do bipe das letras (1 = normal; maior = mais agudo)")]
         [Range(0.3f, 2.5f)] public float VoicePitch = 1f;
+        [Tooltip("Banco de murmúrios (vozes sem palavras): lion, koda, capivara. Vazio = descobre pelo nome")]
+        public string VoiceId = "";
 
         /// <summary>Retrato da expressão pedida; sem ela (ou vazia), o padrão.</summary>
         public Sprite PortraitFor(string expression)

@@ -83,8 +83,18 @@ namespace SeteVidas.World
             _lastEmit = Time.time;
             if (cfg.OneShot) _spent = true;
             NoiseSystem.Emit(transform.position, cfg.Radius, cfg.Loudness, gameObject, NoisyObjectRules.Label(kind));
+            SeteVidas.Audio.Sfx.Play(SoundOf(kind), transform.position);
             _reactTime = 0f;
         }
+
+        /// <summary>O som de cada tipo (Docs/Audio/plano-sfx.md §7.1): o alcance segue o raio da regra.</summary>
+        static string SoundOf(NoisyObjectKind k) => k switch
+        {
+            NoisyObjectKind.Glass => "cacos",
+            NoisyObjectKind.Chimes => "sininhos",
+            NoisyObjectKind.Bucket => "balde",
+            _ => "folhas",
+        };
 
         void Update()
         {

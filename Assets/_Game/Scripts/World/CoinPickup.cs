@@ -90,6 +90,7 @@ namespace SeteVidas.World
             if (_collected) return;
             _collected = true;
             CoinPurse.Add(value);
+            SeteVidas.Audio.Sfx.Play(value >= 100 ? "moeda100" : value >= 5 ? "moeda5" : "moeda");
             if (IsPersistent) SaveManager.Data.SetFlag(CoinPurse.FlagFor(pickupId));
             SaveManager.Save();
             DamagePopup.Spawn(transform.position + Vector3.up * 0.6f, value == 1 ? "+1 moeda" : $"+{value} moedas", new Color32(0xff, 0xd3, 0x4d, 0xff));

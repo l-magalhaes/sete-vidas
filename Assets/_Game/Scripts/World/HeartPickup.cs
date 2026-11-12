@@ -35,6 +35,7 @@ namespace SeteVidas.World
             if (groundLayers == 0)
                 groundLayers = LayerMask.GetMask(GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
             _vy = popVelocity;
+            SeteVidas.Audio.Sfx.Play("coracao_cai", transform.position);
         }
 
         void OnEnable() => GameEvents.WorldReset += Vanish;
@@ -84,7 +85,11 @@ namespace SeteVidas.World
         void TryCollect(Collider2D other)
         {
             var health = other.GetComponentInParent<PlayerHealth>();
-            if (health != null && health.Heal(healHits)) Destroy(gameObject);
+            if (health != null && health.Heal(healHits))
+            {
+                SeteVidas.Audio.Sfx.Play("coracao_pega");
+                Destroy(gameObject);
+            }
         }
 
         /// <summary>Para testes: posiciona já no chão.</summary>

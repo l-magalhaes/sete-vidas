@@ -63,6 +63,8 @@ namespace SeteVidas.World
         void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); }
         void OnDisable() => s_all.Remove(this);
 
+        public static IReadOnlyList<Sanctuary> All => s_all;
+
         public static Sanctuary Find(string id)
         {
             foreach (var s in s_all)
@@ -124,6 +126,7 @@ namespace SeteVidas.World
         IEnumerator RestRoutine(PlayerHealth health)
         {
             _resting = true;
+            SeteVidas.Audio.Sfx.Play("santuario_descansa");
             var input = health.GetComponent<PlayerInputReader>();
             var player = health.GetComponent<PlayerController>();
             if (input != null) input.SetLock(this, true);

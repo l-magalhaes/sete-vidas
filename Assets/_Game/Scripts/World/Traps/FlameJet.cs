@@ -35,7 +35,10 @@ namespace SeteVidas.World.Traps
 
         void FixedUpdate()
         {
+            var before = Phase;
             Phase = TrapRules.PhaseAt(Time.time, offset, offTime, warnTime, onTime);
+            if (Phase != before && Phase == TrapPhase.Warning) SeteVidas.Audio.Sfx.Play("chama_fagulha", transform.position);
+            if (Phase != before && Phase == TrapPhase.On) SeteVidas.Audio.Sfx.Play("chama", transform.position);
             if (Phase == TrapPhase.On)
             {
                 var r = DangerArea();

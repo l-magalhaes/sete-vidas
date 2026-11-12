@@ -45,6 +45,7 @@ namespace SeteVidas.World.Traps
             }
             if (Physics2D.Raycast(from, _velocity.normalized, step.magnitude, _wallMask).collider != null || _age >= lifetime)
             {
+                if (_age < lifetime) SeteVidas.Audio.Sfx.Play("flecha_crava", transform.position);
                 Destroy(gameObject);
                 return;
             }

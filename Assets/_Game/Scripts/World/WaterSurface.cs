@@ -45,6 +45,11 @@ namespace SeteVidas.World
         public int AliveCount => _alive.Count;
         /// <summary>Último respingo: 2 = grande, 1 = pequeno, 0 = nenhum ou só ondinha (testes).</summary>
         public int LastSplash { get; private set; }
+        /// <summary>Quando foi o último respingo (o som da aterrissagem não toca junto com o da água).</summary>
+        public static float LastSplashAt { get; private set; } = -99f;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => LastSplashAt = -99f; // Play sem recarregar o domínio
 
         public void Configure(float surface, Sprite[] big, Sprite[] small, Sprite[] ripple, Sprite[] rings)
         {
@@ -60,12 +65,16 @@ namespace SeteVidas.World
             return 0;
         }
 
+        /// <summary>Regra pura (EditMode): 0 a 1 pela altura da queda (tiles). Pulo normal ~0,08; o salto de fé (40+) = 1; sem altura (-1) = 1.</summary>
+        public static float SplashLoudness(float fallHeight) => fallHeight < 0f ? 1f : Mathf.InverseLerp(1f, 40f, fallHeight);
+
         void OnTriggerEnter2D(Collider2D other)
         {
             var player = other.GetComponentInParent<PlayerController>();
             if (player == null) return;
             _inside = player;
-            Splash(player.Body.position.x, player.Velocity.y);
+            var audio = player.GetComponent<SeteVidas.Audio.PlayerAudio>();
+            Splash(player.Body.position.x, player.Velocity.y, audio != null ? audio.FallHeight : -1f);
         }
 
         void OnTriggerExit2D(Collider2D other)
@@ -77,9 +86,17 @@ namespace SeteVidas.World
         }
 
         /// <summary>O respingo de uma entrada na água em <paramref name="x"/> com esta velocidade vertical.</summary>
-        public void Splash(float x, float velocityY)
+        public void Splash(float x, float velocityY, float fallHeight = -1f)
         {
             LastSplash = SplashFor(velocityY, bigSplashSpeed, smallSplashSpeed);
+            if (LastSplash > 0)
+            {
+                LastSplashAt = Time.time;
+                // o mesmo respingo, com o volume da altura: o salto de fé cheio, um pulo da beira bem baixinho
+                float k = SplashLoudness(fallHeight);
+                if (fallHeight >= 0f && fallHeight < 1.5f) SeteVidas.Audio.Sfx.Play("gato_splash", null, 0.6f);
+                else SeteVidas.Audio.Sfx.Play("gato_splash_grande", null, Mathf.Lerp(0.12f, 1f, k), Mathf.Lerp(1.1f, 1f, k));
+            }
             if (LastSplash == 2)
             {
                 Play(bigSplash, splashFps, x, 0f);

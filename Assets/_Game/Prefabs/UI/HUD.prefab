@@ -1044,6 +1044,7 @@ MonoBehaviour:
   charsPerSecond: 45
   blipEvery: 2
   blipVolume: 0.12
+  useVoices: 1
   textPadding: 10
   portraitGap: 8
 --- !u!1 &5391381416611815933

@@ -28,8 +28,8 @@ namespace SeteVidas.World
             SetImmediate(startsClosed);
         }
 
-        public void Close() => Set(true);
-        public void Open() => Set(false);
+        public void Close() { if (!IsClosed) SeteVidas.Audio.Sfx.Play("grade_fecha", transform.position); Set(true); }
+        public void Open() { if (IsClosed) SeteVidas.Audio.Sfx.Play("grade_abre", transform.position); Set(false); }
 
         void Set(bool closed)
         {

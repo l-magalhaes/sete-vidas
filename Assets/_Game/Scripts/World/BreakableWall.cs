@@ -59,18 +59,21 @@ namespace SeteVidas.World
             if (info.Type != requiredType)
             {
                 DamagePopup.Spawn(transform.position + Vector3.up * (_solid.size.y + 0.3f), "tink", new Color32(0xb8, 0xbf, 0xcc, 0xff));
+                SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position);
                 return; // adagas não arranham a parede
             }
 
             Health = Mathf.Max(0, Health - info.Amount);
             DamagePopup.Spawn(transform.position + Vector3.up * (_solid.size.y + 0.3f), info.Amount.ToString(), new Color32(0xff, 0xd3, 0x4d, 0xff));
             if (spriteRenderer != null && crackedSprite != null && Health <= maxHealth / 2) spriteRenderer.sprite = crackedSprite;
+            if (Health > 0) SeteVidas.Audio.Sfx.Play("parede_racha", transform.position);
             if (Health <= 0) Break();
         }
 
         void Break()
         {
             SetBroken();
+            SeteVidas.Audio.Sfx.Play("parede_quebra", transform.position);
             NoiseSystem.Emit((Vector2)transform.position + Vector2.up, breakNoiseRadius, breakNoiseLoudness, gameObject, "parede");
             var data = SaveManager.Data;
             data.SetFlag(Flag);

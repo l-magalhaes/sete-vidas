@@ -76,10 +76,14 @@ namespace SeteVidas.UI
             if (optionsLabel != null) optionsLabel.text = "Dicas: " + (TutorialScroll.HintsDisabled ? "desligadas" : "ligadas");
         }
 
+        GameObject _lastSelected;
+
         void LateUpdate()
         {
             // Seta ao lado do botão selecionado (teclado/controle) ou sob o mouse
             var selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+            if (selected != _lastSelected && selected != null && _lastSelected != null) SeteVidas.Audio.Sfx.Play("ui_cursor");
+            if (selected != null) _lastSelected = selected;
             if (cursor == null) return;
             cursor.gameObject.SetActive(selected != null);
             if (selected == null) return;
@@ -101,6 +105,7 @@ namespace SeteVidas.UI
         {
             if (SaveManager.HasSaveFile && confirmPanel != null)
             {
+                SeteVidas.Audio.Sfx.Play("ui_aviso");
                 confirmPanel.SetActive(true);
                 Select(confirmNo); // o padrão é o seguro: não apagar
                 return;
@@ -121,7 +126,8 @@ namespace SeteVidas.UI
         public void Continue()
         {
             SaveManager.Slot = SaveManager.MainSlot;
-            if (!SaveManager.HasSaveFile) return;
+            if (!SaveManager.HasSaveFile) { SeteVidas.Audio.Sfx.Play("ui_negado"); return; }
+            SeteVidas.Audio.Sfx.Play("ui_confirma");
             var data = SaveManager.Data;
             string scene = !string.IsNullOrEmpty(data.scene) && Application.CanStreamedLevelBeLoaded(data.scene) ? data.scene : newGameSceneName;
             SceneManager.LoadScene(scene);
@@ -130,6 +136,7 @@ namespace SeteVidas.UI
         /// <summary>Abre a Playground com o save de testes (o progresso do jogo não muda).</summary>
         public void OpenTestArea()
         {
+            SeteVidas.Audio.Sfx.Play("ui_confirma");
             SaveManager.Slot = SaveManager.TestSlot;
             SceneManager.LoadScene(testScene);
         }
@@ -138,11 +145,13 @@ namespace SeteVidas.UI
         public void ToggleHints()
         {
             TutorialScroll.HintsDisabled = !TutorialScroll.HintsDisabled;
+            SeteVidas.Audio.Sfx.Play("ui_confirma");
             Refresh();
         }
 
         void CloseConfirm()
         {
+            SeteVidas.Audio.Sfx.Play("ui_volta");
             if (confirmPanel != null) confirmPanel.SetActive(false);
             Select(newGameButton);
         }

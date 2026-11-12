@@ -898,6 +898,7 @@ MonoBehaviour:
   contract: {fileID: 11400000, guid: 8a285cc37d1f4b649a0e76e8c7045f81, type: 2}
   nextScene: Fortress_MVP
   charsPerSecond: 55
+  music: {fileID: 8300000, guid: 9e0f02be5ec72e842a5fb3ddd3fc462c, type: 3}
   title: {fileID: 1670199311}
   body: {fileID: 2021033283}
   hint: {fileID: 1334085734}

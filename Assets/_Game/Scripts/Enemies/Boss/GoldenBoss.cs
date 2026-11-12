@@ -91,6 +91,8 @@ namespace SeteVidas.Enemies.Boss
 
         /// <summary>Vida chegou a zero.</summary>
         public event Action Defeated;
+        /// <summary>Mudou de estado (anterior, novo). Usado pelos sons.</summary>
+        public event Action<State, State> StateChanged;
 
         void Awake()
         {
@@ -103,6 +105,7 @@ namespace SeteVidas.Enemies.Boss
             if (healAura != null) healAura.enabled = false;
             _box.enabled = false; // só sólido para golpes durante a luta
             _shield = BuildShield();
+            if (GetComponent<SeteVidas.Audio.BossAudio>() == null) gameObject.AddComponent<SeteVidas.Audio.BossAudio>(); // sons (só observa)
         }
 
         void OnEnable() { Active = this; SolidBodies.Register(this); }
@@ -157,6 +160,7 @@ namespace SeteVidas.Enemies.Boss
             _poseOverride = swingWindup; _poseClip = "seal_windup"; _poseTime = 0f;
             yield return new WaitForSeconds(windup);
             _poseOverride = swing; _poseClip = "seal_strike"; _poseTime = 0f;
+            SeteVidas.Audio.Sfx.Play("selo_golpe");
             if (healAura != null) healAura.enabled = true;   // brilho dourado do golpe
             yield return new WaitForSeconds(hold);
             if (healAura != null) healAura.enabled = false;
@@ -343,12 +347,14 @@ namespace SeteVidas.Enemies.Boss
 
         void Enter(State state, float time)
         {
+            var previous = Current;
             Current = state;
             _timer = time;
             _stateTime = 0f;
             _stateDuration = time;
             if (_box != null) _box.enabled = state != State.Dormant && state != State.Defeated && state != State.Companion;
             if (healAura != null) healAura.enabled = state == State.Heal;
+            if (previous != state) StateChanged?.Invoke(previous, state);
         }
 
         // ------------------------------------------------------------ dano
@@ -360,6 +366,7 @@ namespace SeteVidas.Enemies.Boss
             {
                 // o golpe bate na bolha e não passa: nem pelas costas, nem de cima, nem de baixo
                 _shieldFlashUntil = Time.time + 0.18f;
+                SeteVidas.Audio.Sfx.Play("escudo_dong", transform.position + Vector3.up * 1.5f);
                 if (Time.time >= _nextShieldPopup)
                 {
                     _nextShieldPopup = Time.time + 0.4f;

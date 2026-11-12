@@ -69,6 +69,7 @@ namespace SeteVidas.UI
             if (_t >= _nextSnuff && sparks.Length > 0)
             {
                 _snuffed = Random.Range(0, sparks.Length);
+                SeteVidas.Audio.Sfx.Play("ui_centelha", null, 0.5f); // a maldição: um sino suave em Ré (afina com o tema)
                 _snuffStart = _t;
                 _nextSnuff = _t + Random.Range(snuffInterval.x, snuffInterval.y);
             }

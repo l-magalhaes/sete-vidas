@@ -15,7 +15,7 @@ namespace SeteVidas.Enemies
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(EnemyPerception))]
     public class EnemyAI : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody, IKnockdown
     {
-        enum AttackPhase { None, Windup, Active, Recovery }
+        public enum AttackPhase { None, Windup, Active, Recovery }
 
         [SerializeField] SentinelSettings settings;
         [Tooltip("Pontos da patrulha: posições X no mundo (tiles). Vazio = fica de guarda no lugar")]
@@ -78,6 +78,8 @@ namespace SeteVidas.Enemies
         public bool IsDead => _brain.State == AlertState.Dead;
         public bool IsAttacking => _attackPhase != AttackPhase.None;
         public bool IsWindingUp => _attackPhase == AttackPhase.Windup;
+        /// <summary>Fase do golpe (ou do tiro: mirando, disparando, recarregando). Usada pelos sons.</summary>
+        public AttackPhase CurrentAttackPhase => _attackPhase;
         public SentinelSettings Settings => settings;
         public int FacingDirection => _facing;
         public bool InCombat => _brain.State == AlertState.Combat;
@@ -87,6 +89,7 @@ namespace SeteVidas.Enemies
             _body = GetComponent<Rigidbody2D>();
             _box = GetComponent<BoxCollider2D>();
             _perception = GetComponent<EnemyPerception>();
+            if (GetComponent<SeteVidas.Audio.EnemyAudio>() == null) gameObject.AddComponent<SeteVidas.Audio.EnemyAudio>(); // sons (só observa)
             if (settings == null)
             {
                 Debug.LogError("[Sete Vidas] EnemyAI sem SentinelSettings.", this);
@@ -334,6 +337,8 @@ namespace SeteVidas.Enemies
 
         /// <summary>Atirador: mirando, disparando ou recarregando.</summary>
         public bool IsAiming => settings != null && settings.Ranged && _attackPhase == AttackPhase.Windup;
+        /// <summary>Atirador: a mira travou (últimos instantes antes do disparo).</summary>
+        public bool AimLocked => IsAiming && _attackTimer <= settings.AimLockTime;
         /// <summary>Direção atual da mira (atirador).</summary>
         public Vector2 AimDirection => _aimDir;
 

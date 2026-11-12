@@ -63,6 +63,7 @@ namespace SeteVidas.World
         PlayerHealth _playerInRange;
         Vector3 _bookRest;
         bool _running;
+        SeteVidas.Audio.SfxLoop _hum, _pages;
 
         public bool IsTaken => SaveManager.Data.HasFlag(TakenFlag);
         public bool IsRunning => _running;
@@ -71,6 +72,8 @@ namespace SeteVidas.World
         {
             if (book != null) _bookRest = book.transform.localPosition;
             if (IsTaken) AfterCurseState();
+            // o zumbido da praga perto do pedestal (o único som do mundo com o timbre da praga)
+            else _hum = SeteVidas.Audio.Sfx.Loop("tomo_zumbido_loop", book != null ? book.transform : transform);
         }
 
         void OnTriggerEnter2D(Collider2D other)
@@ -116,6 +119,9 @@ namespace SeteVidas.World
             if (visual != null && visual.PlayAction("grab_tome", hold: true)) yield return new WaitForSeconds(0.6f);
             if (book != null) book.enabled = false;
             if (visual != null) visual.PlayAction("curse_kneel", hold: true);
+            if (_hum != null) _hum.Stop(0.2f);
+            SeteVidas.Audio.Sfx.Play("tomo_pega");
+            _pages = SeteVidas.Audio.Sfx.Loop("tomo_paginas_loop", transform);
             var data = SaveManager.Data;
             data.SetFlag(TakenFlag);
             var fader = ScreenFader.Active;
@@ -137,10 +143,12 @@ namespace SeteVidas.World
 
             // Seis vidas são arrancadas, uma a uma: um coração voa até o tomo e o HUD quebra um coração
             float interval = Mathf.Max(heartBreakInterval, 0.5f);
+            int torn = 0; // cada coração toca a nota seguinte do motivo das sete vidas
             for (int h = player.HeartsRecovered - 1; h >= heartsLeft; h--)
             {
                 yield return new WaitForSeconds(interval);
                 drain.TearHeart();
+                SeteVidas.Audio.Sfx.PlayVariant("coracao_arrancado", torn++);
                 player.SetHeartsRecovered(h, save: false);
             }
             player.ApplyCurse(heartsLeft); // grava: corações e flag do tomo
@@ -154,6 +162,9 @@ namespace SeteVidas.World
             if (fader != null) StartCoroutine(fader.Flash(sealColor, 0.85f, 0.06f, 0.7f));
             // a luz dourada repele o tomo: ele fecha e cai no chão, ao lado do gato; o gato fica imóvel
             StartCoroutine(drain.Repel(new Vector3(feet.x + facing * 1.6f, feet.y, feet.z)));
+            SeteVidas.Audio.Sfx.Play("tomo_fecha");
+            if (_pages != null) _pages.Stop(0.3f);
+            _pages = null;
             if (_tinting != null) StopCoroutine(_tinting);
             StartCoroutine(Untint(visual));
             if (visual != null) visual.StopAction();
@@ -200,6 +211,7 @@ namespace SeteVidas.World
             bool animated = anim != null && anim.HasAnimations;
 
             // Teleporte de chegada: surge na névoa roxa
+            SeteVidas.Audio.Sfx.Play("capivara_surge");
             if (fader != null) StartCoroutine(fader.Flash(teleportColor, 0.8f, 0.08f, 0.5f));
             contractor.gameObject.SetActive(true);
             if (animated)
@@ -238,10 +250,12 @@ namespace SeteVidas.World
                 if (pickup != null) pickup.SetCollectable(false);   // o gato caído não pega a moeda no meio da cena
                 coin.gameObject.SetActive(true);
                 yield return Toss(coin, hand, feet + new Vector3(0.9f, CoinRestHeight, 0f), 0.45f);
+                SeteVidas.Audio.Sfx.Play("moeda_pesada");
             }
             yield return Talk(runner, villainLeaveDialogue, input);
 
             // Teleporte de saída, levando o tomo
+            SeteVidas.Audio.Sfx.Play("capivara_some");
             if (fader != null) StartCoroutine(fader.Flash(teleportColor, 0.8f, 0.08f, 0.5f));
             if (animated)
             {

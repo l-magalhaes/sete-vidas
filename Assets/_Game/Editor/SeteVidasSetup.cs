@@ -281,6 +281,7 @@ namespace SeteVidas.EditorTools
         {
             cam.orthographic = true;
             cam.orthographicSize = GameConstants.ReferenceHeight / 2f / GameConstants.PixelsPerUnit;
+            cam.eventMask = 0;   // o jogo não usa OnMouseDown: sem isso o Unity reclama "Screen position out of view frustum"
             cam.backgroundColor = new Color32(0x14, 0x12, 0x1e, 0xff);
             cam.transform.position = new Vector3(position.x, position.y, -10f);
 

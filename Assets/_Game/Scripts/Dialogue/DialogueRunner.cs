@@ -29,6 +29,8 @@ namespace SeteVidas.Dialogue
         [Tooltip("Um bipe a cada N letras")]
         [SerializeField, Min(1)] int blipEvery = 2;
         [SerializeField, Range(0f, 1f)] float blipVolume = 0.12f;
+        [Tooltip("Murmúrio do personagem no começo de cada fala (Resources/Audio/SFX/Voz). Sem banco de voz, usa o bipe")]
+        [SerializeField] bool useVoices = true;
 
         [Header("Layout (unidades da tela 480×270)")]
         [SerializeField] float textPadding = 10f;
@@ -45,6 +47,7 @@ namespace SeteVidas.Dialogue
         float _savedTimeScale = 1f;
         AudioSource _audio;
         AudioClip _blip;
+        bool _voiced;
         Color _bodyColor;
 
         public static DialogueRunner Active { get; private set; }
@@ -87,6 +90,7 @@ namespace SeteVidas.Dialogue
             if (!IsOpen) _savedTimeScale = Time.timeScale > 0f ? Time.timeScale : 1f;
             Time.timeScale = 0f;
             IsOpen = true;
+            SeteVidas.Audio.Sfx.Play("ui_dialogo_abre");
             if (root != null) root.SetActive(true);
             ShowLine();
             Opened?.Invoke(dialogue);
@@ -141,6 +145,7 @@ namespace SeteVidas.Dialogue
         void Close()
         {
             IsOpen = false;
+            SeteVidas.Audio.Sfx.Play("ui_dialogo_fecha");
             if (root != null) root.SetActive(false);
             Time.timeScale = _savedTimeScale;
             _closedFrame = Time.frameCount;
@@ -202,6 +207,13 @@ namespace SeteVidas.Dialogue
             }
 
             if (_audio != null) _audio.pitch = hasSpeaker ? line.Speaker.VoicePitch : 1f;
+            _voiced = false;
+            if (hasSpeaker && useVoices)
+            {
+                string voice = VoiceClipId(line.Speaker, line.Expression, line.Text, SeteVidas.Audio.Sfx.Has);
+                if (voice != null) { SeteVidas.Audio.Sfx.Play(voice); _voiced = true; }
+            }
+            else if (!hasSpeaker && _index > 0) SeteVidas.Audio.Sfx.Play("ui_avanca");
             Refresh();
         }
 
@@ -213,7 +225,52 @@ namespace SeteVidas.Dialogue
 
         void PlayBlip()
         {
+            if (_voiced) return; // o murmúrio do personagem já está falando
             if (_audio != null && _blip != null && CurrentLine.Speaker != null) _audio.PlayOneShot(_blip, blipVolume);
+        }
+
+        /// <summary>
+        /// Qual murmúrio toca numa fala (Docs/Audio/plano-sfx.md §2): <c>vox_&lt;voz&gt;_&lt;emoção&gt;</c>. A emoção vem da
+        /// expressão do retrato (com apelidos: "miuda" → pergunta, "deboche" do gato → irônico...); sem expressão, uma
+        /// pergunta ("?") usa "pergunta"; se nada existir, "neutro". Retorna null quando o falante não tem voz.
+        /// Regra pura (EditMode): <paramref name="has"/> diz se o som existe.
+        /// </summary>
+        public static string VoiceClipId(SpeakerProfile speaker, string expression, string text, Func<string, bool> has)
+        {
+            if (speaker == null || has == null) return null;
+            string voice = !string.IsNullOrEmpty(speaker.VoiceId) ? speaker.VoiceId.ToLowerInvariant() : VoiceFromName(speaker.DisplayName);
+            if (voice == null) return null;
+
+            string expr = string.IsNullOrEmpty(expression) ? null : expression.ToLowerInvariant();
+            if (expr == null && !string.IsNullOrEmpty(text) && text.TrimEnd().EndsWith("?")) expr = "pergunta";
+            if (expr != null)
+            {
+                string direct = $"vox_{voice}_{expr}";
+                if (has(direct)) return direct;
+                string alias = expr switch
+                {
+                    "miuda" => "pergunta",
+                    "deboche" => voice == "capivara" ? "deboche" : "ironico",
+                    "sorriso" => voice == "koda" ? "sorriso" : "ironico",
+                    "selo" => "serio",
+                    "bravo" => "serio",
+                    "dor" => "ferido",
+                    _ => null,
+                };
+                if (alias != null && has($"vox_{voice}_{alias}")) return $"vox_{voice}_{alias}";
+            }
+            string neutral = $"vox_{voice}_neutro";
+            return has(neutral) ? neutral : null;
+        }
+
+        static string VoiceFromName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+            string n = name.ToLowerInvariant();
+            if (n.Contains("koda") || n.Contains("golden")) return "koda";
+            if (n.Contains("contratante") || n.Contains("capivara")) return "capivara";
+            if (n.Contains("lion") || n.Contains("gato")) return "lion";
+            return null;
         }
 
         /// <summary>Bipe curto de onda quadrada (placeholder até existirem vozes de verdade).</summary>

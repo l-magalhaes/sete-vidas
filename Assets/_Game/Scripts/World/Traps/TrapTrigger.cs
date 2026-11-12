@@ -94,6 +94,7 @@ namespace SeteVidas.World.Traps
             if (!IsArmed) return;
             _rearmAt = Time.time + rearmTime;
             foreach (var e in effects) if (e != null) e.Fire();
+            SeteVidas.Audio.Sfx.Play(kind == Kind.Tripwire ? "fio" : "placa_clic", (Vector2)transform.position + Vector2.up);
             // Aviso visível: o jogador sempre sabe que disparou alguma coisa
             Combat.DamagePopup.Spawn((Vector2)transform.position + Vector2.up * 2.2f,
                 kind == Kind.Tripwire ? "ALARME!" : "CLIC!", new Color32(0xff, 0xa8, 0x3a, 0xff));

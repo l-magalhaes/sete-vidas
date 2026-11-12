@@ -62,6 +62,7 @@ namespace SeteVidas.World.Traps
             if (_toFire > 0) return;
             _toFire = burst;
             _timer = warnTime;
+            if (warnTime > 0.05f) SeteVidas.Audio.Sfx.Play("flecha_aviso", transform.position);
         }
 
         void FixedUpdate()
@@ -80,6 +81,7 @@ namespace SeteVidas.World.Traps
             {
                 var arrow = Instantiate(arrowPrefab, transform.position + new Vector3(direction * 0.6f, 0f, 0f), Quaternion.identity);
                 arrow.Launch(new Vector2(direction * speed, 0f), damage);
+                SeteVidas.Audio.Sfx.Play(autoInterval > 0f ? "seteira_disparo" : "flecha", transform.position);
             }
             _toFire--;
             _timer = burstInterval;

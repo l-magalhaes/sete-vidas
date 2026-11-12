@@ -54,6 +54,8 @@ namespace SeteVidas.Player
             _player = GetComponent<PlayerController>();
             // silhueta na sombra (melhoria 1): fica junto da furtividade, sem precisar recriar o prefab
             if (GetComponent<ShadowSilhouette>() == null) gameObject.AddComponent<ShadowSilhouette>();
+            // sons do gato (Docs/Audio/plano-sfx.md): só observam, também sem recriar o prefab
+            if (GetComponent<SeteVidas.Audio.PlayerAudio>() == null) gameObject.AddComponent<SeteVidas.Audio.PlayerAudio>();
             _combat = GetComponent<CombatController>();
             _health = GetComponent<PlayerHealth>();
             if (settings == null)

@@ -77,6 +77,7 @@ namespace SeteVidas.Enemies
             if (wall.collider != null)
             {
                 transform.position = wall.point - _velocity.normalized * 0.15f;
+                SeteVidas.Audio.Sfx.Play("virote_crava", transform.position);
                 _stuckFor = 0f;
                 return;
             }

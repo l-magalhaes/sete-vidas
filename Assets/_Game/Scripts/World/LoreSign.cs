@@ -59,6 +59,7 @@ namespace SeteVidas.World
             if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame)
             {
                 runner.Play(text, input);
+                SeteVidas.Audio.Sfx.Play("placa");
                 if (SaveManager.Data != null) SaveManager.Data.SetFlag(ReadPrefix + Key); // para o Diário
             }
         }

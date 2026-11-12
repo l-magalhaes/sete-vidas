@@ -5,7 +5,7 @@ namespace SeteVidas.Classes
 {
     /// <summary>
     /// Confirmação da troca de classe: nome da classe na cor dela e um "plim" curto gerado por código
-    /// (placeholder até existir áudio de verdade). O brilho no sprite fica no PlayerVisual.
+    /// (fallback: os SFX de Resources/Audio/SFX, Docs/Audio/plano-sfx.md). O brilho no sprite fica no PlayerVisual.
     /// </summary>
     [RequireComponent(typeof(ClassManager))]
     public class ClassSwitchFeedback : MonoBehaviour
@@ -42,12 +42,15 @@ namespace SeteVidas.Classes
         {
             if (next == null) return;
             DamagePopup.Spawn(transform.position + Vector3.up * 2f, next.DisplayName, next.ThemeColor);
-            _audio.PlayOneShot(_switchClip, volume);
+            string id = next.Class == CharacterClass.Paladin ? "classe_paladino" : "classe_ladino"; // as outras classes: VS
+            if (SeteVidas.Audio.Sfx.Has(id)) SeteVidas.Audio.Sfx.Play(id);
+            else _audio.PlayOneShot(_switchClip, volume);
         }
 
         void OnUnlocked(ClassDefinition def)
         {
-            _audio.PlayOneShot(_unlockClip, volume);
+            if (SeteVidas.Audio.Sfx.Has("classe_desbloqueada")) SeteVidas.Audio.Sfx.Play("classe_desbloqueada");
+            else _audio.PlayOneShot(_unlockClip, volume);
         }
 
         /// <summary>Varredura de frequência curta com fade: um "plim" simples.</summary>

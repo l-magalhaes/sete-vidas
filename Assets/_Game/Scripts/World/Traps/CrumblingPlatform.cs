@@ -44,7 +44,7 @@ namespace SeteVidas.World.Traps
                 if (Time.time - _fallenAt >= respawnTime) Restore();
                 return;
             }
-            if (!IsShaking && PlayerOnTop()) _timer = 0f;
+            if (!IsShaking && PlayerOnTop()) { _timer = 0f; SeteVidas.Audio.Sfx.Play("plataforma_treme", transform.position); }
             if (IsShaking)
             {
                 _timer += Time.fixedDeltaTime;
@@ -61,6 +61,7 @@ namespace SeteVidas.World.Traps
         /// <summary>Cai agora (também usado pelos testes).</summary>
         public void Fall()
         {
+            if (!IsFallen) SeteVidas.Audio.Sfx.Play("plataforma_cai", transform.position);
             _timer = -1f;
             _fallenAt = Time.time;
             _solid.enabled = false;
@@ -68,6 +69,7 @@ namespace SeteVidas.World.Traps
 
         void Restore()
         {
+            if (IsFallen && Time.time - _fallenAt >= respawnTime) SeteVidas.Audio.Sfx.Play("plataforma_volta", transform.position);
             _timer = -1f;
             _fallenAt = -1f;
             _solid.enabled = true;

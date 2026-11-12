@@ -121,6 +121,7 @@ namespace SeteVidas.EditorTools
             Debug.Log($"[Sete Vidas] Terreno e arquitetura: {painted} tiles, {terrainDetails.transform.childCount} detalhes (tufos, seixos, fendas, gárgulas, {TerrainPainter.Puddles} poças, {TerrainPainter.Tubs} tinas).");
             BuildWindows(scene, maps[FortressLayout.Map.Background]);
             BuildEdgeFog(scene);
+            BuildMusic(scene);
 
             var root = new GameObject("Fortaleza");
             SceneManager.MoveGameObjectToScene(root, scene);
@@ -510,6 +511,47 @@ namespace SeteVidas.EditorTools
         /// mostrar a parede do fim do mapa nem o vazio. Na saída, o gato some nela ao seguir para Miaravéu (o gatilho do
         /// fim, em x 243–247, fica dentro do gradiente).
         /// </summary>
+        const string MusicDir = "Assets/_Game/Audio/Music/";
+
+        /// <summary>O diretor de música (Docs/Audio/plano-musicas.md): as faixas por momento e o alto da montanha até o pulo.</summary>
+        static void BuildMusic(Scene scene)
+        {
+            var go = new GameObject("Música");
+            SceneManager.MoveGameObjectToScene(go, scene);
+            var director = go.AddComponent<SeteVidas.Audio.MusicDirector>();
+            SeteVidas.Audio.MusicDirector.Track T(SeteVidas.Audio.MusicCue cue, string file, float volume, bool resume, float loopEnd = 0f)
+            {
+                var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(MusicDir + file + ".wav");
+                if (clip == null) Debug.LogWarning("[Sete Vidas] Música não encontrada: " + MusicDir + file + ".wav");
+                else SetMusicImport(MusicDir + file + ".wav");
+                return new SeteVidas.Audio.MusicDirector.Track { Cue = cue, Clip = clip, Volume = volume, Resume = resume, LoopEnd = loopEnd };
+            }
+            var tracks = new[]
+            {
+                T(SeteVidas.Audio.MusicCue.Explore, "mus_fortaleza_base", 0.2f, true),
+                // combate e furtividade sem faixa por enquanto (pedido do usuário): a música da fase continua
+                T(SeteVidas.Audio.MusicCue.Boss, "mus_fortaleza_combate", 0.16f, false),   // a música de batalha (pedido do usuário); a mais alta: volume baixo
+                T(SeteVidas.Audio.MusicCue.Curse, "mus_maldicao", 0.28f, false),
+                T(SeteVidas.Audio.MusicCue.Sanctuary, "mus_santuario", 0.2f, false),
+            };
+            // o início no penhasco usa a mesma música da fase (pedido do usuário): sem área de montanha
+            director.Configure(tracks, Rect.zero);
+        }
+
+        /// <summary>Música longa: Vorbis com streaming (não ocupa memória toda de uma vez).</summary>
+        public static void SetMusicImport(string path)
+        {
+            var imp = AssetImporter.GetAtPath(path) as AudioImporter;
+            if (imp == null) return;
+            var s = imp.defaultSampleSettings;
+            if (s.loadType == AudioClipLoadType.Streaming && s.compressionFormat == AudioCompressionFormat.Vorbis) return;
+            s.loadType = AudioClipLoadType.Streaming;
+            s.compressionFormat = AudioCompressionFormat.Vorbis;
+            s.quality = 0.7f;
+            imp.defaultSampleSettings = s;
+            imp.SaveAndReimport();
+        }
+
         static void BuildEdgeFog(Scene scene)
         {
             var root = new GameObject("Escuridão das pontas");

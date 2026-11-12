@@ -29,6 +29,7 @@ namespace SeteVidas.EditorTools
 
         // fundo vivo (melhoria 12): as camadas que já existem na fase
         const string SkyArt = "Assets/_Game/Art/Environments/Outdoors/env_sky_sunset.png";
+        const string ThemeMusic = "Assets/_Game/Audio/Music/mus_tema_principal.wav";
         const string MountainsArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_cordilheira_a.png";
         const string ForestArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_floresta_vale.png";
 
@@ -44,10 +45,24 @@ namespace SeteVidas.EditorTools
 
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
             var cam = camGo.AddComponent<Camera>();
+            cam.eventMask = 0;   // o jogo não usa OnMouseDown: sem isso o Unity reclama "Screen position out of view frustum"
             cam.orthographic = true;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color32(0x14, 0x12, 0x1e, 0xff);
             camGo.AddComponent<AudioListener>();
+
+            // MUS-01: o tema principal (Citadel of Light), em loop
+            FortressSetup.SetMusicImport(ThemeMusic);
+            var theme = AssetDatabase.LoadAssetAtPath<AudioClip>(ThemeMusic);
+            if (theme != null)
+            {
+                var music = new GameObject("Música (tema principal)").AddComponent<AudioSource>();
+                music.clip = theme;
+                music.loop = true;
+                music.playOnAwake = true;
+                music.volume = 0.25f * PlayerPrefs.GetFloat(SeteVidas.Audio.MusicDirector.VolumeKey, 1f);
+            }
+            else Debug.LogWarning("[Sete Vidas] Tema principal não encontrado em " + ThemeMusic + ".");
 
             var es = new GameObject("EventSystem");
             es.AddComponent<EventSystem>();

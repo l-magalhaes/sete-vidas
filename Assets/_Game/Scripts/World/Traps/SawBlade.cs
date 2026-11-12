@@ -18,6 +18,21 @@ namespace SeteVidas.World.Traps
 
         int _dir = 1;
         float _pauseTimer;
+        SeteVidas.Audio.SfxLoop _whine;
+
+        // o zumbido da lâmina: ouve-se antes de ver (Docs/Audio/plano-sfx.md §8)
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            if (Application.isPlaying) _whine = SeteVidas.Audio.Sfx.Loop("serra_loop", transform);
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            if (_whine != null) _whine.Stop(0.1f);
+            _whine = null;
+        }
 
         public void Configure(float a, float b)
         {
@@ -39,6 +54,7 @@ namespace SeteVidas.World.Traps
         {
             float dt = Time.fixedDeltaTime;
             var p = transform.position;
+            if (_whine != null) _whine.Pitch = Mathf.MoveTowards(_whine.Pitch, _pauseTimer > 0f ? 0.8f : 1f, dt * 2f);
             if (_pauseTimer > 0f) _pauseTimer -= dt;
             else
             {

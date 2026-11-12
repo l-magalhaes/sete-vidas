@@ -24,13 +24,17 @@ namespace SeteVidas.World.Traps
 
         public override void Fire()
         {
-            if (_timer < 0f) _timer = 0f;
+            if (_timer >= 0f) return;
+            _timer = 0f;
+            SeteVidas.Audio.Sfx.Play("lanca_aviso", transform.position);
         }
 
         void FixedUpdate()
         {
             if (_timer < 0f) return;
+            bool wasUp = IsUp;
             _timer += Time.fixedDeltaTime;
+            if (IsUp && !wasUp) SeteVidas.Audio.Sfx.Play("lanca_sobe", transform.position);
             if (IsUp)
             {
                 var r = DangerArea();

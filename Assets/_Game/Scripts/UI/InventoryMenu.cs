@@ -152,6 +152,7 @@ namespace SeteVidas.UI
             EnsureCat(health);
             _panel.gameObject.SetActive(true);
             _openedAt = Time.unscaledTime;
+            SeteVidas.Audio.Sfx.Play("ui_inv_abre");
             Refresh();
         }
 
@@ -159,6 +160,7 @@ namespace SeteVidas.UI
         {
             if (!IsOpen) return;
             _panel.gameObject.SetActive(false);
+            SeteVidas.Audio.Sfx.Play("ui_inv_fecha");
             Time.timeScale = _savedScale > 0f ? _savedScale : 1f;
             if (_lockedInput != null) _lockedInput.SetLock(this, false);
             _lockedInput = null;
@@ -202,9 +204,9 @@ namespace SeteVidas.UI
             }
             bool confirm = (k != null && (k.enterKey.wasPressedThisFrame || k.spaceKey.wasPressedThisFrame)) || (p != null && p.buttonSouth.wasPressedThisFrame);
 
-            if (dp != 0) SetPage((Page)(((int)_page + dp + 4) % 4));
+            if (dp != 0) { SetPage((Page)(((int)_page + dp + 4) % 4)); SeteVidas.Audio.Sfx.Play("ui_aba"); }
             else if (dx != 0 || dy != 0) Move(dx, dy);
-            if (confirm) Confirm();
+            if (confirm && !Confirm() && SelectedEntry() != null && SelectedEntry().Locked) SeteVidas.Audio.Sfx.Play("ui_negado");
         }
 
         public void SetPage(Page page)
@@ -222,6 +224,7 @@ namespace SeteVidas.UI
             if (next == _cursorByPage[i]) return;
             _cursorByPage[i] = next;
             ShowDetail();
+            SeteVidas.Audio.Sfx.Play("ui_cursor_inv");
         }
 
         public void Select(int index)

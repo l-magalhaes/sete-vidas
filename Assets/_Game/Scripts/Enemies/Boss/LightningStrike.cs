@@ -32,6 +32,7 @@ namespace SeteVidas.Enemies.Boss
             _damage = damage;
             _source = source;
             if (playerLayers == 0) playerLayers = LayerMask.GetMask(Core.GameConstants.Layers.Player);
+            Audio.Sfx.Play("raio_aviso", floor + Vector2.up);
 
             if (telegraph != null)
             {
@@ -72,6 +73,7 @@ namespace SeteVidas.Enemies.Boss
         void Strike()
         {
             _struck = true;
+            Audio.Sfx.Play("raio", (Vector2)transform.position + Vector2.up);
             if (telegraph != null) telegraph.enabled = false;
             if (bolt != null) bolt.enabled = true;
             TryHit();

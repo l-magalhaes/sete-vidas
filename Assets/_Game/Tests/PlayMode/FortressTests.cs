@@ -150,6 +150,19 @@ namespace SeteVidas.Tests
             Assert.AreEqual("Ladino", SeteVidas.UI.InventoryTexts.Classes[0].Name, "A 1ª carta é a do Ladino");
         }
 
+        /// <summary>Música: o diretor está na cena e o início, no penhasco, já toca a música da fase.</summary>
+        [UnityTest]
+        public IEnumerator Music_StartsWithTheLevelTheme()
+        {
+            yield return Load();
+            var director = SeteVidas.Audio.MusicDirector.Active;
+            Assert.IsNotNull(director, "Diretor de música na cena (menu 13)");
+            for (int i = 0; i < 30; i++) yield return null;
+            Assert.AreEqual(SeteVidas.Audio.MusicCue.Explore, director.Current, "O penhasco usa a música da fase");
+            Assert.IsNotNull(director.CurrentClip, "A faixa da fase está tocando (Assets/_Game/Audio/Music)");
+            Assert.AreEqual("mus_fortaleza_base", director.CurrentClip.name);
+        }
+
         /// <summary>Melhoria 8: escuridão nas duas pontas, na frente de tudo; o fim do mapa (x 251) fica no preto.</summary>
         [UnityTest]
         public IEnumerator EdgeFog_CoversBothEndsOfTheMap()
