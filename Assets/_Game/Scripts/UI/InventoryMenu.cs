@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SeteVidas.Classes;
+using SeteVidas.Core;
 using SeteVidas.Dialogue;
 using SeteVidas.Player;
 using SeteVidas.Progression;
@@ -13,32 +14,88 @@ using UnityEngine.UI;
 namespace SeteVidas.UI
 {
     /// <summary>
-    /// Melhoria 10: o inventário (Tab, I ou Start; fecha com a mesma tecla ou Esc). Pausa o jogo e mostra quatro abas num
-    /// pergaminho grande: Lion (retrato, corações, moedas, onde está e a opção das dicas), Classes (uma carta por classe:
-    /// quem deu, a arma e os feitiços; as não recuperadas como "?"), Habilidades (as de locomoção, que valem em qualquer
-    /// classe) e Diário (as placas de lore já lidas, para reler). Q/E ou LB/RB trocam de aba; ↑/↓ escolhem.
-    /// Criado em código pelo HUD (não precisa de prefab).
+    /// O inventário (Tab, I ou Start; fecha com a mesma tecla, Esc ou B). Pausa o jogo. Spec: Docs/Design/inventario.md.
+    /// Três colunas, no jeito dos metroidvanias de pixel art: à esquerda o gato animado com a classe equipada, os
+    /// corações e as moedas; no meio uma grade de quadrados com ícones; à direita o nome e a descrição do slot
+    /// escolhido. Abas em cima: Classes, Habilidades, Itens e Diário (Q/E ou LB/RB). Setas, WASD ou D-pad andam na grade;
+    /// Enter ou A equipa a classe escolhida. Criado em código pelo HUD (não precisa de prefab).
     /// </summary>
     public class InventoryMenu : MonoBehaviour
     {
+        // ------------------------------------------------------------ medidas (pixels do jogo)
+
         const float W = 400f, H = 214f;
-        static readonly string[] Tabs = { "Lion", "Classes", "Habilidades", "Diário" };
-        static readonly Color Ink = new Color32(0x3a, 0x2a, 0x18, 0xff);
-        static readonly Color Faint = new Color32(0x8a, 0x76, 0x58, 0xff);
+        const float Margin = 8f, Top = 30f, ColumnH = 166f;
+        const float LeftW = 100f, GridW = 130f, RightW = 142f, Gap = 6f;
+        const float GridX = Margin + LeftW + Gap, RightX = GridX + GridW + Gap;
+
+        [Header("Ajustes (Docs/Design/inventario.md)")]
+        [SerializeField, Range(1, 3)] int previewScale = 2;
+        [SerializeField, Range(4, 6)] int columns = 5;
+        [SerializeField, Range(3, 7)] int rows = 6;
+        [SerializeField] float slotGap = 2f;
+        [Tooltip("Pulsos por segundo do cursor")]
+        [SerializeField] float cursorPulse = 3f;
+        [Tooltip("Tempo da entrada (s)")]
+        [SerializeField] float openTime = 0.12f;
+
+        public enum Page { Classes, Abilities, Items, Diary }
+        static readonly string[] PageNames = { "Classes", "Habilidades", "Itens", "Diário" };
+
+        static readonly Color Cream = new Color32(0xec, 0xdc, 0xb0, 0xff);
+        static readonly Color Faint = new Color32(0x8a, 0x7a, 0x96, 0xff);
+        static readonly Color Gold = new Color32(0xff, 0xe0, 0x8a, 0xff);
+        static readonly Color Shade = new Color32(0x0b, 0x09, 0x10, 0xff);
+
+        /// <summary>Uma coisa na grade.</summary>
+        public class Entry
+        {
+            public Sprite Icon;
+            public bool Locked, Equipped;
+            public string Name = "", Sub = "", Body = "", Footer = "", Badge = "";
+            /// <summary>Casa da grade (linha × colunas + coluna). No Diário pula as linhas de título dos capítulos.</summary>
+            public int Cell;
+            public Color NameColor = Cream;
+            public System.Func<bool> Confirm;
+        }
 
         static InventoryMenu s_instance;
 
-        RectTransform _panel;
+        RectTransform _panel, _window;
+        CanvasGroup _group;
+        readonly Image[] _tabPlates = new Image[4];
         readonly Text[] _tabLabels = new Text[4];
-        Text _title, _body, _side;
-        Image _portrait;
+        Text _keyLeft, _keyRight, _help, _caption;
+        Image[] _slots, _slotIcons;
+        Text[] _badges;
+        Image _cursor;
+        Image _detailIcon;
+        Text _detailName, _detailSub, _detailBody, _detailFooter;
+        InventoryCatPreview _cat;
+        RectTransform _catRoot;
+        Text _catName, _catClass, _coins, _place;
         readonly Image[] _hearts = new Image[7];
-        int _tab, _row;
-        float _savedScale = 1f;
+        Font _font;
+
+        readonly Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
+        readonly List<Texture2D> _textures = new List<Texture2D>();
+        readonly List<Entry> _entries = new List<Entry>();
+        /// <summary>Linhas da grade que são título de capítulo (Diário): linha → texto.</summary>
+        readonly Dictionary<int, string> _headers = new Dictionary<int, string>();
+        Text[] _headerTexts;
+        Image[] _headerLines;
+        readonly int[] _cursorByPage = new int[4];
+        Page _page;
+        float _savedScale = 1f, _openedAt;
         PlayerInputReader _lockedInput;
+        Vector2 _stickPrev;
 
         public static bool IsOpen => s_instance != null && s_instance._panel != null && s_instance._panel.gameObject.activeSelf;
-        public int Tab => _tab;
+        public Page CurrentPage => _page;
+        public int Tab => (int)_page;
+        public int Selected => _cursorByPage[(int)_page];
+        public IReadOnlyList<Entry> Entries => _entries;
+        public InventoryCatPreview Cat => _cat;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => s_instance = null; // Play sem recarregar o domínio
@@ -53,7 +110,12 @@ namespace SeteVidas.UI
             return s_instance;
         }
 
-        void OnDestroy() { if (s_instance == this) { if (IsOpen) Close(); s_instance = null; } }
+        void OnDestroy()
+        {
+            if (s_instance == this) { if (IsOpen) Close(); s_instance = null; }
+            foreach (var s in _sprites.Values) if (s != null) Destroy(s);
+            foreach (var t in _textures) if (t != null) Destroy(t);
+        }
 
         // ------------------------------------------------------------ abrir e fechar
 
@@ -87,7 +149,9 @@ namespace SeteVidas.UI
             var health = PlayerHealth.Active;
             _lockedInput = health != null ? health.GetComponent<PlayerInputReader>() : null;
             if (_lockedInput != null) _lockedInput.SetLock(this, true);
+            EnsureCat(health);
             _panel.gameObject.SetActive(true);
+            _openedAt = Time.unscaledTime;
             Refresh();
         }
 
@@ -100,6 +164,8 @@ namespace SeteVidas.UI
             _lockedInput = null;
         }
 
+        // ------------------------------------------------------------ controle
+
         void Update()
         {
             if (!IsOpen)
@@ -110,153 +176,405 @@ namespace SeteVidas.UI
             if (TogglePressed() || BackPressed()) { Close(); return; }
 
             var k = Keyboard.current; var p = Gamepad.current;
-            int dt = 0, dr = 0;
+            int dp = 0, dx = 0, dy = 0;
             if (k != null)
             {
-                if (k.qKey.wasPressedThisFrame || k.leftArrowKey.wasPressedThisFrame || k.aKey.wasPressedThisFrame) dt = -1;
-                if (k.eKey.wasPressedThisFrame || k.rightArrowKey.wasPressedThisFrame || k.dKey.wasPressedThisFrame) dt = 1;
-                if (k.upArrowKey.wasPressedThisFrame || k.wKey.wasPressedThisFrame) dr = -1;
-                if (k.downArrowKey.wasPressedThisFrame || k.sKey.wasPressedThisFrame) dr = 1;
+                if (k.qKey.wasPressedThisFrame) dp = -1;
+                if (k.eKey.wasPressedThisFrame) dp = 1;
+                if (k.leftArrowKey.wasPressedThisFrame || k.aKey.wasPressedThisFrame) dx = -1;
+                if (k.rightArrowKey.wasPressedThisFrame || k.dKey.wasPressedThisFrame) dx = 1;
+                if (k.upArrowKey.wasPressedThisFrame || k.wKey.wasPressedThisFrame) dy = -1;
+                if (k.downArrowKey.wasPressedThisFrame || k.sKey.wasPressedThisFrame) dy = 1;
             }
             if (p != null)
             {
-                if (p.leftShoulder.wasPressedThisFrame || p.dpad.left.wasPressedThisFrame) dt = -1;
-                if (p.rightShoulder.wasPressedThisFrame || p.dpad.right.wasPressedThisFrame) dt = 1;
-                if (p.dpad.up.wasPressedThisFrame) dr = -1;
-                if (p.dpad.down.wasPressedThisFrame) dr = 1;
+                if (p.leftShoulder.wasPressedThisFrame) dp = -1;
+                if (p.rightShoulder.wasPressedThisFrame) dp = 1;
+                if (p.dpad.left.wasPressedThisFrame) dx = -1;
+                if (p.dpad.right.wasPressedThisFrame) dx = 1;
+                if (p.dpad.up.wasPressedThisFrame) dy = -1;
+                if (p.dpad.down.wasPressedThisFrame) dy = 1;
+                // analógico: um passo por empurrão (precisa voltar ao centro para andar de novo)
+                var s = p.leftStick.ReadValue();
+                if (Mathf.Abs(_stickPrev.x) < 0.5f && Mathf.Abs(s.x) >= 0.5f) dx = s.x > 0 ? 1 : -1;
+                if (Mathf.Abs(_stickPrev.y) < 0.5f && Mathf.Abs(s.y) >= 0.5f) dy = s.y > 0 ? -1 : 1;
+                _stickPrev = s;
             }
             bool confirm = (k != null && (k.enterKey.wasPressedThisFrame || k.spaceKey.wasPressedThisFrame)) || (p != null && p.buttonSouth.wasPressedThisFrame);
 
-            if (dt != 0) { _tab = (_tab + dt + Tabs.Length) % Tabs.Length; _row = 0; }
-            if (dr != 0) _row = Mathf.Max(0, _row + dr);
-            if (confirm && _tab == 0) ToggleHints();
-            if (dt != 0 || dr != 0 || confirm) Refresh();
+            if (dp != 0) SetPage((Page)(((int)_page + dp + 4) % 4));
+            else if (dx != 0 || dy != 0) Move(dx, dy);
+            if (confirm) Confirm();
         }
 
-        static void ToggleHints() => TutorialScroll.HintsDisabled = !TutorialScroll.HintsDisabled;
+        public void SetPage(Page page)
+        {
+            _page = page;
+            Refresh();
+        }
+
+        public void Move(int dx, int dy)
+        {
+            int i = (int)_page;
+            var cells = new int[_entries.Count];
+            for (int k = 0; k < cells.Length; k++) cells[k] = _entries[k].Cell;
+            int next = InventoryGrid.MoveCells(cells, _cursorByPage[i], dx, dy, columns);
+            if (next == _cursorByPage[i]) return;
+            _cursorByPage[i] = next;
+            ShowDetail();
+        }
+
+        public void Select(int index)
+        {
+            _cursorByPage[(int)_page] = Mathf.Clamp(index, 0, Mathf.Max(0, _entries.Count - 1));
+            ShowDetail();
+        }
+
+        /// <summary>Enter / A no slot escolhido (equipar a classe). Retorna se fez alguma coisa.</summary>
+        public bool Confirm()
+        {
+            var e = SelectedEntry();
+            if (e == null || e.Locked || e.Confirm == null) return false;
+            bool done = e.Confirm();
+            if (done) Refresh();
+            return done;
+        }
+
+        Entry SelectedEntry()
+        {
+            int i = _cursorByPage[(int)_page];
+            return i >= 0 && i < _entries.Count ? _entries[i] : null;
+        }
 
         // ------------------------------------------------------------ conteúdo
 
         void Refresh()
         {
-            for (int i = 0; i < _tabLabels.Length; i++)
+            _entries.Clear();
+            _headers.Clear();
+            switch (_page)
             {
-                _tabLabels[i].text = i == _tab ? "[ " + Tabs[i] + " ]" : Tabs[i];
-                _tabLabels[i].color = i == _tab ? Ink : Faint;
-            }
-            _portrait.gameObject.SetActive(_tab == 0);
-            foreach (var h in _hearts) h.gameObject.SetActive(false);
-            _side.text = "";
-            switch (_tab)
-            {
-                case 0: FillLion(); break;
-                case 1: FillClasses(); break;
-                case 2: FillAbilities(); break;
+                case Page.Classes: FillClasses(); break;
+                case Page.Abilities: FillAbilities(); break;
+                case Page.Items: FillItems(); break;
                 default: FillDiary(); break;
             }
-        }
+            if (_page != Page.Diary) for (int k = 0; k < _entries.Count; k++) _entries[k].Cell = k;
+            int pi = (int)_page;
+            _cursorByPage[pi] = Mathf.Clamp(_cursorByPage[pi], 0, Mathf.Max(0, _entries.Count - 1));
 
-        void FillLion()
-        {
-            var data = SaveManager.Data;
-            var health = PlayerHealth.Active;
-            _title.text = "Lionel \"Lion\" — Ladino da Guilda das Nove Sombras";
-            if (_portrait.sprite == null) _portrait.sprite = CatPortrait();
-
-            if (health != null)
+            for (int i = 0; i < 4; i++)
             {
-                var states = HealthRules.Hearts(health.HeartsRecovered, health.CurrentHits);
-                bool curseDone = data != null && data.HasFlag(PlayerHealth.CurseDoneFlag);
-                for (int i = 0; i < _hearts.Length && i < states.Length; i++)
-                {
-                    bool show = states[i] != HeartState.Locked;
-                    _hearts[i].gameObject.SetActive(show);
-                    if (show) _hearts[i].sprite = HeartsHud.ClassSprite(HeartsHud.HeartClass(i, curseDone), states[i]);
-                }
+                bool on = i == pi;
+                _tabPlates[i].sprite = PanelSprite(on ? PanelLook.TabActive : PanelLook.Tab);
+                _tabLabels[i].color = on ? Gold : Faint;
             }
+            bool pad = Gamepad.current != null;
+            _keyLeft.text = pad ? "LB" : "Q";
+            _keyRight.text = pad ? "RB" : "E";
+            _help.text = pad
+                ? "D-pad: escolher   A: equipar   B: fechar"
+                : "Setas: escolher   Enter: equipar   Tab: fechar";
 
-            var sb = new StringBuilder();
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine("Moedas: " + (data != null ? data.coins : 0));
-            string sanctuary = data != null && !string.IsNullOrEmpty(data.lastSanctuaryName) ? data.lastSanctuaryName : "nenhum ainda";
-            sb.AppendLine("Onde: Cidadela do Sol Eterno · último santuário: " + sanctuary);
-            sb.AppendLine();
-            bool hintsOff = TutorialScroll.HintsDisabled;
-            sb.AppendLine("Dicas do tutorial: " + (hintsOff ? "desligadas" : "ligadas") + "   (Enter / A: trocar)");
-            _body.text = sb.ToString();
+            var byCell = new Entry[_slots.Length];
+            foreach (var e in _entries) if (e.Cell >= 0 && e.Cell < byCell.Length) byCell[e.Cell] = e;
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                var e = byCell[i];
+                bool header = _headers.ContainsKey(i / columns);
+                _slots[i].enabled = !header;   // a linha do título do capítulo não tem quadrados
+                _slots[i].sprite = SlotSprite(e == null ? SlotLook.Empty : e.Equipped ? SlotLook.Equipped : SlotLook.Normal);
+                _slotIcons[i].enabled = !header && e != null && e.Icon != null;
+                if (e != null) _slotIcons[i].sprite = e.Icon;
+                _badges[i].text = !header && e != null ? e.Badge : "";
+            }
+            int h = 0;
+            foreach (var kv in _headers)
+            {
+                if (h >= _headerTexts.Length) break;
+                _headerTexts[h].text = kv.Value;
+                _headerTexts[h].enabled = _headerLines[h].enabled = true;
+                var at = _slots[kv.Key * columns].rectTransform.anchoredPosition;
+                _headerTexts[h].rectTransform.anchoredPosition = new Vector2(at.x, at.y - 4f);
+                _headerLines[h].rectTransform.anchoredPosition = new Vector2(at.x, at.y - 17f);
+                h++;
+            }
+            for (; h < _headerTexts.Length; h++) _headerTexts[h].enabled = _headerLines[h].enabled = false;
+            RefreshLion();
+            ShowDetail();
         }
+
+        void ShowDetail()
+        {
+            var e = SelectedEntry();
+            _caption.text = Caption();
+            _detailIcon.enabled = e != null && e.Icon != null;
+            if (e == null)
+            {
+                _detailName.text = _detailSub.text = "";
+                _detailBody.text = _page == Page.Diary ? "Nenhuma placa lida ainda.\n\nAs placas se leem com " + InteractKey() + "." : "";
+                _detailFooter.text = "";
+                return;
+            }
+            _detailIcon.sprite = e.Icon;
+            _detailName.text = e.Name;
+            _detailName.color = e.NameColor;
+            _detailBody.text = e.Body;
+            _detailFooter.text = e.Footer;
+            _detailSub.text = e.Sub;
+        }
+
+        string Caption()
+        {
+            // sem "x/7": o que ainda não foi recuperado não aparece
+            switch (_page)
+            {
+                case Page.Classes: return "Classes";
+                case Page.Abilities: return "Habilidades";
+                case Page.Items: return "Itens";
+                default: return "Diário  " + _entries.Count + (_entries.Count == 1 ? " placa" : " placas");
+            }
+        }
+
+        static readonly InventoryIcon[] ClassIcons =
+        {
+            InventoryIcon.Rogue, InventoryIcon.Paladin, InventoryIcon.Mage, InventoryIcon.Monk,
+            InventoryIcon.Bard, InventoryIcon.Hunter, InventoryIcon.Druid,
+        };
 
         void FillClasses()
         {
             var manager = ClassManager.Active;
             var data = SaveManager.Data;
-            int count = InventoryTexts.Classes.Length;
-            _row = Mathf.Min(_row, count - 1);
-            var list = new StringBuilder();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < InventoryTexts.Classes.Length; i++)
             {
                 var c = (CharacterClass)i;
-                bool unlocked = data != null && data.IsUnlocked(c);
-                string label = unlocked ? (manager != null && manager.Definition(c) != null ? manager.Definition(c).DisplayName : InventoryTexts.Classes[i].Name) : "???";
-                list.AppendLine((i == _row ? "> " : "   ") + label);
+                var t = InventoryTexts.Classes[i];
+                if (data == null || !data.IsUnlocked(c)) continue;   // as que faltam ficam escondidas por enquanto
+                var def = manager != null ? manager.Definition(c) : null;
+                bool equipped = manager != null && manager.CurrentClass == c;
+                var cls = c;
+                _entries.Add(new Entry
+                {
+                    Icon = IconSprite(ClassIcons[i], false), Equipped = equipped,
+                    Name = def != null ? def.DisplayName : t.Name,
+                    NameColor = def != null ? Lighter(def.ThemeColor) : Cream,
+                    Sub = t.GivenBy,
+                    Body = t.Weapon + "\n\n\"" + t.Quote + "\"",
+                    Footer = equipped ? "Equipada" : (Gamepad.current != null ? "A: equipar" : "Enter: equipar"),
+                    Confirm = () => manager != null && manager.TrySwitch(cls),
+                });
             }
-            _side.text = list.ToString();
-            var sel = (CharacterClass)_row;
-            bool open = data != null && data.IsUnlocked(sel);
-            var t = InventoryTexts.Classes[_row];
-            _title.text = open ? t.Name : "???";
-            _body.text = open
-                ? "Quem deu: " + t.GivenBy + "\n\nArma: " + t.Weapon + "\n\nFeitiços: " + t.Spells + "\n\n\"" + t.Quote + "\""
-                : "Um coração ainda apagado.\nOutro vínculo, outro caminho.";
         }
+
+        static readonly InventoryIcon[] AbilityIcons =
+        {
+            InventoryIcon.Climb, InventoryIcon.Sneak, InventoryIcon.Backstab, InventoryIcon.DownStab,
+            InventoryIcon.DoubleJump, InventoryIcon.Dash, InventoryIcon.Anchor,
+        };
 
         void FillAbilities()
         {
-            int count = InventoryTexts.Abilities.Length;
-            _row = Mathf.Min(_row, count - 1);
-            var list = new StringBuilder();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < InventoryTexts.Abilities.Length; i++)
             {
                 var a = InventoryTexts.Abilities[i];
-                list.AppendLine((i == _row ? "> " : "   ") + (a.Unlocked ? a.Name : "???"));
+                if (!a.Unlocked) continue;   // as que faltam ficam escondidas por enquanto
+                var icon = i < AbilityIcons.Length ? AbilityIcons[i] : InventoryIcon.TabAbilities;
+                _entries.Add(new Entry { Icon = IconSprite(icon, false), Name = a.Name, Body = a.Description, Footer = "Vale em qualquer classe" });
             }
-            _side.text = list.ToString();
-            var s = InventoryTexts.Abilities[_row];
-            _title.text = s.Unlocked ? s.Name : "???";
-            _body.text = s.Unlocked ? s.Description : "Ainda não. Talvez um dia.";
+
+            // os pergaminhos de magia moram aqui: por enquanto, a cura do Koda
+            var health = PlayerHealth.Active;
+            var spell = health != null ? health.GetComponent<HealingSpell>() : null;
+            if (spell != null && spell.IsUnlocked)
+            {
+                _entries.Add(new Entry
+                {
+                    Icon = ScrollSprite(spell.Charges <= 0), Name = "Pergaminho da cura", NameColor = Gold,
+                    Sub = "Magia do Paladino (Koda)", Badge = spell.Charges + "/" + spell.MaxCharges, Body = InventoryTexts.HealScroll,
+                    Footer = spell.Charges + " de " + spell.MaxCharges + " lacres acesos",
+                });
+            }
         }
 
+        void FillItems()
+        {
+            // os corações já estão no painel do gato; a cura foi para Habilidades
+            var data = SaveManager.Data;
+            int coins = data != null ? data.coins : 0;
+            _entries.Add(new Entry
+            {
+                Icon = IconSprite(InventoryIcon.Coin, false), Name = "Moedas", NameColor = Gold, Badge = coins.ToString(),
+                Body = InventoryTexts.Coins, Footer = coins + (coins == 1 ? " moeda" : " moedas"),
+            });
+        }
+
+        /// <summary>
+        /// Diário por capítulo: cada capítulo começa numa linha nova com o título, e as placas lidas vêm embaixo, na
+        /// ordem do caminho. O capítulo atual aparece mesmo sem placas lidas.
+        /// </summary>
         void FillDiary()
         {
-            var read = new List<LoreSign>();
-            foreach (var sign in LoreSign.All) if (sign != null && sign.IsRead) read.Add(sign);
-            read.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
-            _title.text = "Diário";
-            if (read.Count == 0)
+            var byChapter = new SortedDictionary<int, List<LoreSign>>();
+            int current = InventoryTexts.ChapterOf(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            byChapter[current] = new List<LoreSign>();
+            foreach (var sign in LoreSign.All)
             {
-                _side.text = "";
-                _body.text = "Nenhuma placa lida ainda.\nAs placas se leem com " + InteractKey() + ".";
-                return;
+                if (sign == null || !sign.IsRead) continue;
+                int ch = InventoryTexts.ChapterOf(sign.gameObject.scene.name);
+                if (!byChapter.TryGetValue(ch, out var list)) byChapter[ch] = list = new List<LoreSign>();
+                list.Add(sign);
             }
-            _row = Mathf.Min(_row, read.Count - 1);
-            var list = new StringBuilder();
-            for (int i = 0; i < read.Count; i++) list.AppendLine((i == _row ? "> " : "   ") + read[i].Title);
-            _side.text = list.ToString();
-            var def = read[_row].Text;
-            var sb = new StringBuilder();
-            if (def != null) foreach (var line in def.Lines) sb.AppendLine(line.Text).AppendLine();
-            _title.text = read[_row].Title;
-            _body.text = sb.ToString();
+
+            int row = 0;
+            foreach (var kv in byChapter)
+            {
+                var chapter = InventoryTexts.Chapter(kv.Key);
+                string title = "Capítulo " + chapter.Number + " · " + chapter.Title;
+                _headers[row] = title;
+                row++;
+                var signs = kv.Value;
+                signs.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+                for (int i = 0; i < signs.Count; i++)
+                {
+                    var sb = new StringBuilder();
+                    var def = signs[i].Text;
+                    if (def != null) foreach (var line in def.Lines) sb.AppendLine(line.Text).AppendLine();
+                    _entries.Add(new Entry
+                    {
+                        Icon = IconSprite(InventoryIcon.Page, false), Name = signs[i].Title, NameColor = Gold, Sub = title,
+                        Body = sb.ToString().TrimEnd(), Cell = (row + i / columns) * columns + i % columns,
+                    });
+                }
+                row += Mathf.Max(1, (signs.Count + columns - 1) / columns);
+            }
         }
+
+        void RefreshLion()
+        {
+            var data = SaveManager.Data;
+            var health = PlayerHealth.Active;
+            var def = ClassManager.Active != null ? ClassManager.Active.Current : null;
+            _catName.text = "Lion";
+            _catClass.text = def != null ? def.DisplayName : "Ladino";
+            _catClass.color = def != null ? Lighter(def.ThemeColor) : Cream;
+            if (_cat != null) _cat.Show(def);
+
+            bool curseDone = data != null && data.HasFlag(PlayerHealth.CurseDoneFlag);
+            var states = health != null ? HealthRules.Hearts(health.HeartsRecovered, health.CurrentHits) : new HeartState[0];
+            int shown = 0;
+            for (int i = 0; i < _hearts.Length; i++)
+            {
+                bool show = i < states.Length && states[i] != HeartState.Locked;
+                _hearts[i].enabled = show;
+                if (show) { _hearts[i].sprite = HeartsHud.ClassSprite(HeartsHud.HeartClass(i, curseDone), states[i]); shown++; }
+            }
+            // os corações ficam centralizados embaixo do gato, 12 px um do outro (2 linhas se não couber)
+            const float step = 12f;
+            int perRow = Mathf.Min(shown, 7);
+            for (int i = 0, k = 0; i < _hearts.Length; i++)
+            {
+                if (!_hearts[i].enabled) continue;
+                float x = LeftW * 0.5f - (perRow - 1) * step * 0.5f + k * step - 8f;
+                _hearts[i].rectTransform.anchoredPosition = new Vector2(Mathf.Round(x), -112f);
+                k++;
+            }
+            int coins = data != null ? data.coins : 0;
+            _coins.text = coins.ToString();
+            string sanctuary = data != null && !string.IsNullOrEmpty(data.lastSanctuaryName) ? data.lastSanctuaryName : "nenhum ainda";
+            _place.text = "Cidadela do Sol Eterno\nSantuário: " + sanctuary;
+        }
+
+        static Color Lighter(Color c) => Color.Lerp(c, Color.white, 0.35f);
 
         static string InteractKey() => Gamepad.current != null ? "E (ou X)" : "E";
 
-        static Sprite CatPortrait()
+        void EnsureCat(PlayerHealth health)
         {
-            foreach (var p in Resources.FindObjectsOfTypeAll<SpeakerProfile>())
-                if (p != null && p.Portrait != null && (p.DisplayName.Contains("Lion") || p.DisplayName.Contains("Gato"))) return p.Portrait;
-            return null;
+            if (_cat == null || _cat.HasArt || health == null) return;
+            var visual = health.GetComponentInChildren<PlayerVisual>();
+            if (visual != null && visual.AnimationSet != null) _cat.Build(visual.AnimationSet);
+        }
+
+        // ------------------------------------------------------------ animação da tela
+
+        void LateUpdate()
+        {
+            if (!IsOpen) return;
+            float t = Time.unscaledTime;
+
+            // entrada: sobe 6 px e aparece
+            float k = openTime > 0f ? Mathf.Clamp01((t - _openedAt) / openTime) : 1f;
+            _group.alpha = k;
+            _window.anchoredPosition = new Vector2(0f, Mathf.Round((1f - k) * -6f));
+
+            // cursor: respira (1 px para fora e para dentro); o ícone escolhido sobe 1 px
+            int sel = _cursorByPage[(int)_page];
+            int cell = sel < _entries.Count ? Mathf.Clamp(_entries[sel].Cell, 0, _slots.Length - 1) : 0;
+            bool has = sel < _entries.Count && _entries.Count > 0;
+            _cursor.enabled = has;
+            if (has)
+            {
+                var slot = _slots[cell].rectTransform;
+                bool wide = Mathf.Sin(t * Mathf.PI * 2f * cursorPulse * 0.5f) > 0f;
+                float size = InventoryIcons.CursorSize + (wide ? 2f : 0f);
+                _cursor.rectTransform.sizeDelta = new Vector2(size, size);
+                _cursor.rectTransform.anchoredPosition = slot.anchoredPosition + new Vector2(-(size - InventoryIcons.SlotSize) * 0.5f, (size - InventoryIcons.SlotSize) * 0.5f);
+            }
+            for (int i = 0; i < _slotIcons.Length; i++)
+                _slotIcons[i].rectTransform.anchoredPosition = new Vector2(3f, has && i == cell ? -2f : -3f);
+        }
+
+        // ------------------------------------------------------------ sprites
+
+        Sprite IconSprite(InventoryIcon icon, bool locked)
+        {
+            string key = "icon_" + icon + (locked ? "_locked" : "");
+            if (_sprites.TryGetValue(key, out var s) && s != null) return s;
+            return _sprites[key] = Make(locked ? InventoryIcons.Silhouette(icon) : InventoryIcons.Draw(icon), key, 16f, Vector4.zero);
+        }
+
+        Sprite ScrollSprite(bool faded)
+        {
+            string key = "scroll" + (faded ? "_faded" : "");
+            if (_sprites.TryGetValue(key, out var s) && s != null) return s;
+            return _sprites[key] = Make(HealScrollPixels.DrawScroll(faded), key, 16f, Vector4.zero);
+        }
+
+        Sprite SlotSprite(SlotLook look)
+        {
+            string key = "slot_" + look;
+            if (_sprites.TryGetValue(key, out var s) && s != null) return s;
+            return _sprites[key] = Make(InventoryIcons.Slot(look), key, 16f, Vector4.zero);
+        }
+
+        Sprite PanelSprite(PanelLook look)
+        {
+            string key = "panel_" + look;
+            if (_sprites.TryGetValue(key, out var s) && s != null) return s;
+            float b = look == PanelLook.Main ? InventoryIcons.PanelBorder : look == PanelLook.Inset ? InventoryIcons.InsetBorder : InventoryIcons.TabBorder;
+            // 9-slice: 100 px por unidade, igual ao Canvas (1 pixel do desenho = 1 pixel do jogo)
+            return _sprites[key] = Make(InventoryIcons.Panel(look), key, 100f, new Vector4(b, b, b, b));
+        }
+
+        Sprite Make(string[,] grid, string name, float ppu, Vector4 border)
+        {
+            int h = grid.GetLength(0), w = grid.GetLength(1);
+            var px = new Color32[w * h];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    string hex = grid[y, x];
+                    // a grade vem de cima para baixo; a textura, de baixo para cima
+                    px[(h - 1 - y) * w + x] = hex != "" && ColorUtility.TryParseHtmlString(hex, out var c) ? (Color32)c : new Color32(0, 0, 0, 0);
+                }
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "ui_inventario_" + name };
+            tex.SetPixels32(px);
+            tex.Apply(false);
+            _textures.Add(tex);
+            var sprite = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), ppu, 0, SpriteMeshType.FullRect, border);
+            sprite.name = "ui_inventario_" + name;
+            return sprite;
         }
 
         // ------------------------------------------------------------ montagem
@@ -272,60 +590,205 @@ namespace SeteVidas.UI
             scaler.referenceResolution = new Vector2(480f, 270f);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.matchWidthOrHeight = 1f;
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
-            // fundo escurecido + pergaminho grande
             var root = new GameObject("Menu", typeof(RectTransform));
             _panel = (RectTransform)root.transform;
             _panel.SetParent(transform, false);
-            _panel.anchorMin = Vector2.zero; _panel.anchorMax = Vector2.one; _panel.offsetMin = _panel.offsetMax = Vector2.zero;
+            Stretch(_panel);
+            _group = root.AddComponent<CanvasGroup>();
+            _group.blocksRaycasts = false;
             var dim = NewImage("Escuro", _panel, null);
-            dim.color = new Color(0.043f, 0.039f, 0.063f, 0.7f);
+            dim.color = new Color(0.03f, 0.02f, 0.05f, 0.75f);
             Stretch(dim.rectTransform);
-            var paper = NewImage("Pergaminho", _panel, TutorialScroll.PaperSprite());
-            paper.type = Image.Type.Sliced;
-            var pr = paper.rectTransform;
-            pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0.5f, 0.5f);
-            pr.sizeDelta = new Vector2(W, H);
 
-            for (int i = 0; i < Tabs.Length; i++)
-            {
-                _tabLabels[i] = NewText("Aba " + Tabs[i], pr, font, 9, TextAnchor.MiddleCenter);
-                Place(_tabLabels[i].rectTransform, 24f + i * 92f, -10f, 86f, 14f);
-            }
-            var hint = NewText("Ajuda", pr, font, 7, TextAnchor.MiddleRight);
-            hint.color = Faint;
-            hint.text = "Q/E: abas · ↑/↓: escolher · Tab ou Esc: fechar";
-            Place(hint.rectTransform, W - 214f, -H + 16f, 200f, 10f);
+            // janela principal: moldura escura com filete dourado
+            var frame = NewImage("Janela", _panel, PanelSprite(PanelLook.Main));
+            frame.type = Image.Type.Sliced;
+            _window = frame.rectTransform;
+            _window.anchorMin = _window.anchorMax = _window.pivot = new Vector2(0.5f, 0.5f);
+            _window.sizeDelta = new Vector2(W, H);
 
-            _portrait = NewImage("Retrato", pr, null);
-            _portrait.preserveAspect = true;
-            Place(_portrait.rectTransform, 22f, -34f, 48f, 48f);
-            for (int i = 0; i < _hearts.Length; i++)
-            {
-                _hearts[i] = NewImage("Coração " + (i + 1), pr, null);
-                Place(_hearts[i].rectTransform, 80f + i * 18f, -50f, 16f, 16f);
-            }
+            BuildTabs();
+            BuildLion();
+            BuildGrid();
+            BuildDetail();
 
-            _side = NewText("Lista", pr, font, 8, TextAnchor.UpperLeft);
-            Place(_side.rectTransform, 22f, -34f, 110f, H - 60f);
-            _title = NewText("Título", pr, font, 9, TextAnchor.UpperLeft);
-            _title.fontStyle = FontStyle.Bold;
-            Place(_title.rectTransform, 140f, -32f, W - 160f, 14f);
-            _body = NewText("Texto", pr, font, 8, TextAnchor.UpperLeft);
-            _body.horizontalOverflow = HorizontalWrapMode.Wrap;
-            Place(_body.rectTransform, 140f, -50f, W - 160f, H - 76f);
+            _help = NewText("Ajuda", _window, 7, TextAnchor.MiddleCenter, Faint);
+            Place(_help.rectTransform, 0f, -(Top + ColumnH + 3f), W, 10f);
             _panel.gameObject.SetActive(false);
         }
 
-        void LateUpdate()
+        void BuildTabs()
         {
-            // na aba Lion, o texto fica ao lado do retrato e embaixo dos corações; nas outras, ao lado da lista
-            if (!IsOpen) return;
-            float x = _tab == 0 ? 80f : 140f;
-            _title.rectTransform.anchoredPosition = new Vector2(x, _tab == 0 ? -32f : -32f);
-            _body.rectTransform.anchoredPosition = new Vector2(x, _tab == 0 ? -64f : -50f);
-            _body.rectTransform.sizeDelta = new Vector2(W - x - 20f, H - 76f);
+            const float tabW = 84f, tabH = 18f, gap = 4f;
+            float x0 = (W - (4 * tabW + 3 * gap)) * 0.5f;
+            for (int i = 0; i < 4; i++)
+            {
+                var plate = NewImage("Aba " + PageNames[i], _window, PanelSprite(PanelLook.Tab));
+                plate.type = Image.Type.Sliced;
+                Place(plate.rectTransform, x0 + i * (tabW + gap), -7f, tabW, tabH);
+                _tabPlates[i] = plate;
+                var icon = NewImage("Ícone", plate.rectTransform, TabIcon(i));
+                Place(icon.rectTransform, 4f, -1f, 16f, 16f);
+                _tabLabels[i] = NewText("Nome", plate.rectTransform, 8, TextAnchor.MiddleLeft, Faint);
+                Place(_tabLabels[i].rectTransform, 22f, 0f, tabW - 24f, tabH);
+                _tabLabels[i].text = PageNames[i];
+            }
+            _keyLeft = KeyCap("Tecla da aba anterior", x0 - 20f);
+            _keyRight = KeyCap("Tecla da próxima aba", x0 + 4 * tabW + 3 * gap + 4f);
+        }
+
+        Sprite TabIcon(int page)
+        {
+            switch (page)
+            {
+                case 0: return HeartsHud.ClassSprite(0, HeartState.Full);
+                case 1: return IconSprite(InventoryIcon.TabAbilities, false);
+                case 2: return IconSprite(InventoryIcon.TabItems, false);
+                default: return IconSprite(InventoryIcon.TabDiary, false);
+            }
+        }
+
+        Text KeyCap(string name, float x)
+        {
+            var cap = NewImage(name, _window, TutorialScroll.KeySprite());
+            cap.type = Image.Type.Sliced;
+            Place(cap.rectTransform, x, -9f, 16f, 13f);
+            var t = NewText("Letra", cap.rectTransform, 7, TextAnchor.MiddleCenter, new Color32(0x24, 0x1c, 0x14, 0xff));
+            Stretch(t.rectTransform);
+            return t;
+        }
+
+        void BuildLion()
+        {
+            var inset = Inset("Gato", Margin, LeftW);
+            _catName = NewText("Nome", inset, 9, TextAnchor.UpperCenter, Cream);
+            _catName.fontStyle = FontStyle.Bold;
+            Place(_catName.rectTransform, 0f, -5f, LeftW, 12f);
+            _catClass = NewText("Classe", inset, 8, TextAnchor.UpperCenter, Cream);
+            Place(_catClass.rectTransform, 0f, -16f, LeftW, 10f);
+
+            // chão de pedra com sombra embaixo do gato
+            var floor = NewImage("Chão", inset, FloorSprite());
+            Place(floor.rectTransform, (LeftW - 64f) * 0.5f, -89f, 64f, 8f);
+
+            var catGo = new GameObject("Gato animado", typeof(RectTransform));
+            _catRoot = (RectTransform)catGo.transform;
+            _catRoot.SetParent(inset, false);
+            _catRoot.anchorMin = _catRoot.anchorMax = new Vector2(0f, 1f);
+            _catRoot.sizeDelta = Vector2.zero;
+            _catRoot.anchoredPosition = new Vector2(LeftW * 0.5f, -92f);   // pés do gato
+            _catRoot.localScale = new Vector3(previewScale, previewScale, 1f);
+            _cat = catGo.AddComponent<InventoryCatPreview>();
+
+            for (int i = 0; i < _hearts.Length; i++)
+            {
+                _hearts[i] = NewImage("Coração " + (i + 1), inset, null);
+                Place(_hearts[i].rectTransform, 0f, -112f, 16f, 16f);
+            }
+            var coin = NewImage("Moeda", inset, IconSprite(InventoryIcon.Coin, false));
+            Place(coin.rectTransform, 30f, -129f, 16f, 16f);
+            _coins = NewText("Moedas", inset, 9, TextAnchor.MiddleLeft, Gold);
+            Place(_coins.rectTransform, 48f, -129f, 40f, 16f);
+            _place = NewText("Onde", inset, 7, TextAnchor.UpperCenter, Faint);
+            _place.horizontalOverflow = HorizontalWrapMode.Wrap;
+            Place(_place.rectTransform, 2f, -147f, LeftW - 4f, 18f);
+        }
+
+        void BuildGrid()
+        {
+            var inset = Inset("Grade", GridX, GridW);
+            _caption = NewText("Título da aba", inset, 8, TextAnchor.UpperCenter, Faint);
+            Place(_caption.rectTransform, 0f, -4f, GridW, 10f);
+
+            float s = InventoryIcons.SlotSize, step = s + slotGap;
+            float gx = Mathf.Round((GridW - (columns * step - slotGap)) * 0.5f), gy = -16f;
+            int n = columns * rows;
+            _slots = new Image[n];
+            _slotIcons = new Image[n];
+            _badges = new Text[n];
+            for (int i = 0; i < n; i++)
+            {
+                var slot = NewImage("Slot " + (i + 1), inset, SlotSprite(SlotLook.Empty));
+                Place(slot.rectTransform, gx + (i % columns) * step, gy - (i / columns) * step, s, s);
+                _slots[i] = slot;
+                _slotIcons[i] = NewImage("Ícone", slot.rectTransform, null);
+                Place(_slotIcons[i].rectTransform, 3f, -3f, 16f, 16f);
+                _slotIcons[i].enabled = false;
+                _badges[i] = NewText("Quantidade", slot.rectTransform, 7, TextAnchor.LowerRight, Cream);
+                Place(_badges[i].rectTransform, 0f, 1f, s - 1f, s);
+                var o = _badges[i].gameObject.AddComponent<Outline>();
+                o.effectColor = Shade;
+                o.effectDistance = new Vector2(1f, -1f);
+            }
+            // títulos dos capítulos do Diário: ocupam uma linha da grade, com um filete embaixo
+            float rowW = columns * step - slotGap;
+            _headerTexts = new Text[3];
+            _headerLines = new Image[3];
+            for (int i = 0; i < _headerTexts.Length; i++)
+            {
+                _headerTexts[i] = NewText("Capítulo " + (i + 1), inset, 8, TextAnchor.UpperLeft, Gold);
+                Place(_headerTexts[i].rectTransform, gx, gy, rowW, 12f);
+                _headerTexts[i].enabled = false;
+                _headerLines[i] = NewImage("Filete do capítulo " + (i + 1), inset, null);
+                _headerLines[i].color = new Color32(0xa8, 0x84, 0x4a, 0xff);
+                Place(_headerLines[i].rectTransform, gx, gy, rowW, 1f);
+                _headerLines[i].enabled = false;
+            }
+            _cursor = NewImage("Cursor", inset, Make(InventoryIcons.Cursor(), "cursor", 16f, Vector4.zero));
+            Place(_cursor.rectTransform, 0f, 0f, InventoryIcons.CursorSize, InventoryIcons.CursorSize);
+        }
+
+        void BuildDetail()
+        {
+            var inset = Inset("Detalhe", RightX, RightW);
+            // o ícone em 2×, num quadrado de destaque
+            // a moldura do slot em 9-slice (esticada sem borrar)
+            var big = Make(InventoryIcons.Slot(SlotLook.Normal), "slot_grande", 100f, new Vector4(4f, 4f, 4f, 4f));
+            var frame = NewImage("Moldura do ícone", inset, big);
+            frame.type = Image.Type.Sliced;
+            Place(frame.rectTransform, (RightW - 40f) * 0.5f, -6f, 40f, 40f);
+            _detailIcon = NewImage("Ícone grande", inset, null);
+            Place(_detailIcon.rectTransform, (RightW - 32f) * 0.5f, -10f, 32f, 32f);
+            _detailName = NewText("Nome", inset, 9, TextAnchor.UpperCenter, Cream);
+            _detailName.fontStyle = FontStyle.Bold;
+            Place(_detailName.rectTransform, 4f, -48f, RightW - 8f, 12f);
+            _detailSub = NewText("De onde veio", inset, 7, TextAnchor.UpperCenter, Faint);
+            _detailSub.horizontalOverflow = HorizontalWrapMode.Wrap;
+            Place(_detailSub.rectTransform, 4f, -59f, RightW - 8f, 10f);
+            var line = NewImage("Divisória", inset, null);
+            line.color = new Color32(0x3a, 0x30, 0x46, 0xff);
+            Place(line.rectTransform, 10f, -70f, RightW - 20f, 1f);
+            _detailBody = NewText("Descrição", inset, 7, TextAnchor.UpperLeft, Cream);
+            _detailBody.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _detailBody.lineSpacing = 0.95f;
+            Place(_detailBody.rectTransform, 7f, -74f, RightW - 14f, ColumnH - 74f - 14f);
+            _detailFooter = NewText("Rodapé", inset, 7, TextAnchor.LowerCenter, Gold);
+            Place(_detailFooter.rectTransform, 4f, -(ColumnH - 13f), RightW - 8f, 10f);
+        }
+
+        RectTransform Inset(string name, float x, float w)
+        {
+            var img = NewImage(name, _window, PanelSprite(PanelLook.Inset));
+            img.type = Image.Type.Sliced;
+            Place(img.rectTransform, x, -Top, w, ColumnH);
+            return img.rectTransform;
+        }
+
+        Sprite FloorSprite()
+        {
+            // elipse de sombra 64×8 com a pedra clara na borda de cima
+            const int w = 64, h = 8;
+            var grid = new string[h, w];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    float nx = (x + 0.5f - w * 0.5f) / (w * 0.5f), ny = (y + 0.5f - h * 0.5f) / (h * 0.5f);
+                    float d = nx * nx + ny * ny;
+                    grid[y, x] = d > 1f ? "" : d > 0.75f ? (y < h / 2 ? "#3a3046" : "#140f18") : d > 0.3f ? "#100c14" : "#0b0910";
+                }
+            return Make(grid, "chao", 16f, Vector4.zero);
         }
 
         static void Stretch(RectTransform rt) { rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one; rt.offsetMin = rt.offsetMax = Vector2.zero; }
@@ -347,14 +810,14 @@ namespace SeteVidas.UI
             return img;
         }
 
-        static Text NewText(string name, RectTransform parent, Font font, int size, TextAnchor anchor)
+        Text NewText(string name, RectTransform parent, int size, TextAnchor anchor, Color color)
         {
             var go = new GameObject(name, typeof(RectTransform), typeof(Text));
             go.transform.SetParent(parent, false);
             var t = go.GetComponent<Text>();
-            t.font = font;
+            t.font = _font;
             t.fontSize = size;
-            t.color = Ink;
+            t.color = color;
             t.alignment = anchor;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Truncate;
@@ -371,12 +834,12 @@ namespace SeteVidas.UI
 
         public static readonly ClassText[] Classes =
         {
-            new ClassText { Name = "Ladino", GivenBy = "a Guilda das Nove Sombras (e anos de rua)",
-                Weapon = "Adagas. Pelas costas dói 1,5×; sem ser visto, 2,5×. Três golpes seguidos: o último avança. No ar, ↓ + ataque: quique.",
+            new ClassText { Name = "Ladino", GivenBy = "A Guilda das Nove Sombras (e a rua)",
+                Weapon = "Adagas. Pelas costas: 1,5×; sem ser visto: 2,5×. O 3º golpe avança. No ar, ↓ + ataque: quique.",
                 Spells = "nenhum", Quote = "O básico. É o que paga as contas da Luna e da Amora." },
-            new ClassText { Name = "Paladino", GivenBy = "Koda, o Dourado, no vínculo",
+            new ClassText { Name = "Paladino", GivenBy = "Vínculo com Koda, o Dourado",
                 Weapon = "Marreta. Quebra paredes rachadas. Segure o ataque: terremoto. No ar, ↓ + ataque: queda pesada.",
-                Spells = "Cura: devolve 1 coração; 3 usos, que voltam ao descansar no santuário.",
+                Spells = "Cura: devolve 1 coração; 3 usos, que voltam no santuário.",
                 Quote = "Pesada demais para um gato. Funciona." },
             new ClassText { Name = "Mago" }, new ClassText { Name = "Monge" }, new ClassText { Name = "Bardo" },
             new ClassText { Name = "Caçador" }, new ClassText { Name = "Druida" },
@@ -392,5 +855,29 @@ namespace SeteVidas.UI
             new AbilityText { Unlocked = false, Name = "Dash" },
             new AbilityText { Unlocked = false, Name = "Ancoragem" },
         };
+
+        public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
+        public const string HealScroll = "A magia do Koda: segure a cura para devolver 1 coração. Os lacres voltam a acender no santuário.";
+
+        public struct ChapterText { public int Number; public string Title, Scene; }
+
+        /// <summary>Capítulos do Diário (por cena). Por enquanto só o primeiro.</summary>
+        public static readonly ChapterText[] Chapters =
+        {
+            new ChapterText { Number = 1, Title = "A Cidadela", Scene = "Fortress_MVP" },
+        };
+
+        /// <summary>O capítulo de uma cena (cena desconhecida, como a área de testes: o primeiro).</summary>
+        public static int ChapterOf(string scene)
+        {
+            foreach (var c in Chapters) if (c.Scene == scene) return c.Number;
+            return Chapters[0].Number;
+        }
+
+        public static ChapterText Chapter(int number)
+        {
+            foreach (var c in Chapters) if (c.Number == number) return c;
+            return new ChapterText { Number = number, Title = "" };
+        }
     }
 }

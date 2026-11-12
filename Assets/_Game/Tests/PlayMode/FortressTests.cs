@@ -82,6 +82,52 @@ namespace SeteVidas.Tests
             Assert.AreEqual(0f, Time.timeScale, "O jogo pausa");
             var input = Object.FindAnyObjectByType<PlayerController>().GetComponent<PlayerInputReader>();
             Assert.IsTrue(input.GameplayLocked, "O controle do gato trava");
+            // aba Classes: só as recuperadas aparecem, o Ladino equipado; Enter na equipada não faz nada
+            menu.SetPage(SeteVidas.UI.InventoryMenu.Page.Classes);
+            var save = SeteVidas.Save.SaveManager.Data;
+            Assert.AreEqual(save.unlockedClasses.Count, menu.Entries.Count, "As classes que faltam ficam escondidas");
+            Assert.IsTrue(menu.Entries[0].Equipped, "O Ladino está equipado");
+            menu.Select(0);
+            Assert.IsFalse(menu.Confirm(), "Já equipada: nada muda");
+
+            // o gato do retrato respira com o jogo pausado (tempo real)
+            Assert.IsTrue(menu.Cat.HasArt, "O retrato usa as animações do gato");
+            var seen = new System.Collections.Generic.HashSet<Sprite>();
+            for (int i = 0; i < 30; i++) { yield return new WaitForSecondsRealtime(0.05f); seen.Add(menu.Cat.BodySprite); }
+            Assert.Greater(seen.Count, 1, "A animação idle anda mesmo pausado");
+            Assert.IsNull(menu.Cat.WeaponSprite, "Ladino: sem marreta");
+
+            // equipar o Paladino pelo inventário: a marreta aparece nas costas na hora
+            var data = SeteVidas.Save.SaveManager.Data;
+            bool hadPaladin = data.IsUnlocked(SeteVidas.Classes.CharacterClass.Paladin);
+            if (!hadPaladin) data.unlockedClasses.Add(nameof(SeteVidas.Classes.CharacterClass.Paladin));
+            menu.SetPage(SeteVidas.UI.InventoryMenu.Page.Classes);
+            menu.Select(1);
+            Assert.IsTrue(menu.Confirm(), "Equipou o Paladino");
+            Assert.AreEqual(SeteVidas.Classes.CharacterClass.Paladin, SeteVidas.Classes.ClassManager.Active.CurrentClass);
+            yield return null;
+            Assert.IsNotNull(menu.Cat.WeaponSprite, "A marreta aparece no retrato");
+            SeteVidas.Classes.ClassManager.Active.TrySwitch(SeteVidas.Classes.CharacterClass.Rogue);
+            if (!hadPaladin) data.unlockedClasses.Remove(nameof(SeteVidas.Classes.CharacterClass.Paladin));
+
+            // Habilidades: só as que o gato tem, e o pergaminho da cura (se já veio do Koda)
+            menu.SetPage(SeteVidas.UI.InventoryMenu.Page.Abilities);
+            int known = 0;
+            foreach (var a in SeteVidas.UI.InventoryTexts.Abilities) if (a.Unlocked) known++;
+            var heal = Object.FindAnyObjectByType<PlayerController>().GetComponent<SeteVidas.Player.HealingSpell>();
+            bool hasHeal = heal != null && heal.IsUnlocked;
+            Assert.AreEqual(known + (hasHeal ? 1 : 0), menu.Entries.Count, "Sem as travadas; a cura mora aqui");
+            foreach (var e in menu.Entries) Assert.AreNotEqual("???", e.Name);
+
+            // Itens: só as moedas (os corações ficam no painel do gato)
+            menu.SetPage(SeteVidas.UI.InventoryMenu.Page.Items);
+            Assert.AreEqual(1, menu.Entries.Count);
+            Assert.AreEqual("Moedas", menu.Entries[0].Name);
+
+            // Diário: o capítulo 1 tem a linha do título, as placas começam na linha de baixo
+            menu.SetPage(SeteVidas.UI.InventoryMenu.Page.Diary);
+            foreach (var e in menu.Entries) Assert.GreaterOrEqual(e.Cell, 5, "A 1ª linha é o título do capítulo");
+
             menu.Close();
             Assert.IsFalse(SeteVidas.UI.InventoryMenu.IsOpen);
             Assert.AreEqual(1f, Time.timeScale, "Volta a rodar");

@@ -115,6 +115,9 @@ namespace SeteVidas.Player
         /// <summary>Nome da animação mostrada neste quadro (para testes e depuração).</summary>
         public string CurrentClipName { get; private set; }
 
+        /// <summary>As animações do gato (o retrato do inventário usa as mesmas).</summary>
+        public CharacterAnimationSet AnimationSet => animationSet;
+
         void Reset()
         {
             controller = GetComponentInParent<PlayerController>();
