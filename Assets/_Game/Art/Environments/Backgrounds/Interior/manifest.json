@@ -63,6 +63,54 @@
       "posicionamento": { "apoio": "teto", "zonas": ["galeria", "salao", "camara"] },
       "leitura": "Silhueta quase preta pendendo do teto, na frente de tudo (3.5): só onde não cobre gato, inimigo, armadilha ou rota (nunca sobre passarela, plataforma, sacada ou arena).",
       "tags": ["primeiro_plano", "etapa6"]
+    },
+    {
+      "id": "fg_nevoa_saida",
+      "nome": "Escuridão da saída da fase",
+      "categoria": "fx",
+      "funcao": "decorativo",
+      "material": "névoa",
+      "epoca": "natural",
+      "tamanho_px": [112, 16],
+      "sprites": ["fg_nevoa_saida.png"],
+      "camada": "fg",
+      "sorting": 25,
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "livre", "zonas": ["estrada para Miaravéu"] },
+      "leitura": "Melhoria 8: gradiente pontilhado de 7 tiles na frente de tudo (repete na vertical), transparente no começo e preto no fim; depois dele, fg_nevoa_preto. O gato some nele ao seguir para Miaravéu e o fim do mapa nunca aparece.",
+      "tags": ["primeiro_plano", "melhorias"]
+    },
+    {
+      "id": "fg_nevoa_entrada",
+      "nome": "Escuridão da entrada da fase",
+      "categoria": "fx",
+      "funcao": "decorativo",
+      "material": "névoa",
+      "epoca": "natural",
+      "tamanho_px": [48, 16],
+      "sprites": ["fg_nevoa_entrada.png"],
+      "camada": "fg",
+      "sorting": 25,
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "livre", "zonas": ["alto da montanha"] },
+      "leitura": "A mesma escuridão, de 3 tiles e escura à esquerda, na parede de rocha do começo da fase.",
+      "tags": ["primeiro_plano", "melhorias"]
+    },
+    {
+      "id": "fg_nevoa_preto",
+      "nome": "Escuridão cheia",
+      "categoria": "fx",
+      "funcao": "decorativo",
+      "material": "névoa",
+      "epoca": "natural",
+      "tamanho_px": [16, 16],
+      "sprites": ["fg_nevoa_preto.png"],
+      "camada": "fg",
+      "sorting": 25,
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "livre", "zonas": ["pontas da fase"] },
+      "leitura": "Continua a escuridão para além das pontas do mapa (Tiled), para a câmera nunca ver o vazio.",
+      "tags": ["primeiro_plano", "melhorias"]
     }
   ]
 }

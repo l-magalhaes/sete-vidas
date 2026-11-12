@@ -26,6 +26,111 @@ public static class WaterSpriteGen
             Write(Splash(f), dir, "env_ext_ani_cachoeira_espuma_" + f, template);
             Write(Pool(f), dir, "env_ext_ani_lagoa_" + f, template);
         }
+        // melhoria 2: respingos do gato na lagoa (mesma paleta da cachoeira e da lagoa)
+        for (int f = 0; f < 6; f++) Write(BigSplash(f), dir, "env_ext_ani_respingo_grande_" + f, template);
+        for (int f = 0; f < 4; f++) Write(SmallSplash(f), dir, "env_ext_ani_respingo_pequeno_" + f, template);
+        for (int f = 0; f < 3; f++) Write(FootRipple(f), dir, "env_ext_ani_onda_pe_" + f, template);
+        for (int f = 0; f < 3; f++) Write(Ring(f), dir, "env_ext_ani_anel_" + f, template);
+    }
+
+    // ------------------------------------------------------------ respingos
+
+    /// <summary>Coluna de água de meia largura <paramref name="half"/> e altura <paramref name="h"/>, subindo da base, com espuma no topo.</summary>
+    static void Column(PixelCanvas cv, float cx, float half, int h)
+    {
+        int bottom = cv.H - 1;
+        for (int x = 0; x < cv.W; x++)
+        {
+            float d = Math.Abs(x + 0.5f - cx);
+            if (d > half) continue;
+            // mais alta no meio (cúpula), com a borda irregular
+            int top = bottom - (int)Math.Round(h * (1f - (d / half) * (d / half) * 0.55f)) + (int)(H(x, 7) % 2);
+            for (int y = Math.Max(0, top); y <= bottom; y++)
+            {
+                char c = y == top ? 'F' : y == top + 1 ? 'E' : d > half - 1.2f ? 'e' : ((x + y) % 5 == 0 ? 'V' : 'W');
+                cv.Force(x, y, c);
+            }
+        }
+    }
+
+    static void Drop(PixelCanvas cv, int x, int y, bool big)
+    {
+        cv.Force(x, y, 'F');
+        cv.Force(x, y + 1, 'e');
+        if (big) { cv.Force(x + 1, y, 'E'); cv.Force(x + 1, y + 1, 'e'); }
+    }
+
+    /// <summary>
+    /// Respingo grande 32×40 (queda forte, ex.: o salto de fé), 6 quadros: a coroa abre (0), a coluna sobe (1–2), quebra
+    /// em gotas (3), as gotas caem para os lados (4) e só sobram pingos rentes à água (5). A base fica na superfície.
+    /// </summary>
+    static PixelCanvas BigSplash(int f)
+    {
+        var cv = new PixelCanvas(32, 40);
+        float cx = 16f;
+        switch (f)
+        {
+            case 0: Column(cv, cx, 11f, 7); Drop(cv, 5, 30, false); Drop(cv, 25, 29, false); break;
+            case 1: Column(cv, cx, 4f, 24); Column(cv, cx, 10f, 9); Drop(cv, 8, 20, true); Drop(cv, 23, 18, true); break;
+            case 2: Column(cv, cx, 3.5f, 34); Column(cv, cx, 9f, 8); Drop(cv, 12, 2, true); Drop(cv, 19, 0, false); Drop(cv, 6, 14, true); Drop(cv, 25, 12, false); break;
+            case 3:
+                Column(cv, cx, 3f, 20); Column(cv, cx, 8f, 6);
+                Drop(cv, 10, 8, true); Drop(cv, 21, 6, true); Drop(cv, 14, 3, false); Drop(cv, 4, 16, false); Drop(cv, 27, 15, true);
+                break;
+            case 4:
+                Column(cv, cx, 5f, 6);
+                Drop(cv, 6, 22, true); Drop(cv, 25, 20, true); Drop(cv, 2, 30, false); Drop(cv, 29, 28, false); Drop(cv, 12, 18, false); Drop(cv, 19, 17, false);
+                break;
+            default:
+                Column(cv, cx, 7f, 2);
+                Drop(cv, 3, 35, false); Drop(cv, 27, 34, false); Drop(cv, 9, 33, false); Drop(cv, 22, 33, false);
+                break;
+        }
+        return cv;
+    }
+
+    /// <summary>Respingo pequeno 16×16 (queda curta ou pulo), 4 quadros: coroa, gotas subindo, gotas caindo, pingos.</summary>
+    static PixelCanvas SmallSplash(int f)
+    {
+        var cv = new PixelCanvas(16, 16);
+        switch (f)
+        {
+            case 0: Column(cv, 8f, 6f, 4); break;
+            case 1: Column(cv, 8f, 2.5f, 9); Column(cv, 8f, 5f, 3); Drop(cv, 3, 7, false); Drop(cv, 12, 6, false); break;
+            case 2: Column(cv, 8f, 2f, 4); Drop(cv, 2, 9, false); Drop(cv, 13, 8, false); Drop(cv, 6, 3, false); Drop(cv, 9, 2, false); break;
+            default: Drop(cv, 1, 13, false); Drop(cv, 14, 13, false); Drop(cv, 5, 12, false); Drop(cv, 10, 12, false); break;
+        }
+        return cv;
+    }
+
+    /// <summary>Ondinha nos pés 12×3, 3 quadros: um arco claro que se abre e some (andando dentro da água).</summary>
+    static PixelCanvas FootRipple(int f)
+    {
+        var cv = new PixelCanvas(12, 3);
+        int half = 2 + f * 2;
+        for (int x = 6 - half; x < 6 + half; x++)
+        {
+            if (x < 0 || x >= 12) continue;
+            bool edge = x == 6 - half || x == 6 + half - 1;
+            cv.Force(x, edge ? 1 : 0, f == 2 ? 's' : 'E');
+            if (edge) cv.Force(x, 2, 's');
+        }
+        return cv;
+    }
+
+    /// <summary>Anel na superfície 24×3, 3 quadros: o círculo que se abre depois do respingo, cada vez mais fraco.</summary>
+    static PixelCanvas Ring(int f)
+    {
+        var cv = new PixelCanvas(24, 3);
+        int half = 4 + f * 4;
+        char c = f == 0 ? 'E' : f == 1 ? 'e' : 's';
+        for (int x = 12 - half; x < 12 + half; x++)
+        {
+            if (x < 0 || x >= 24) continue;
+            bool edge = x <= 12 - half + 1 || x >= 12 + half - 2;
+            cv.Force(x, edge ? 1 : 2, c);
+        }
+        return cv;
     }
 
     static void Write(PixelCanvas cv, string dir, string name, string template)

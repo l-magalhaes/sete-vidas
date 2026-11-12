@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ani_respingo_pequeno
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Water/manifest.json
+  entry:
+    id: env_ext_ani_respingo_pequeno
+    nome: Respingo pequeno
+    regiao: ext
+    categoria: ani
+    funcao: decorativo
+    material: "\xE1gua"
+    epoca: natural
+    tamanho_px: 1000000010000000i
+    sprites:
+    - env_ext_ani_respingo_pequeno_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_frente
+    sorting: 9
+    colisor: nenhum
+    animacao:
+      nome: respingo
+      quadros:
+      - env_ext_ani_respingo_pequeno_0.png
+      - env_ext_ani_respingo_pequeno_1.png
+      - env_ext_ani_respingo_pequeno_2.png
+      - env_ext_ani_respingo_pequeno_3.png
+      quadros_por_variacao: 0
+      fps: 14
+      amplitude_px: 9
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - lagoa
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Toca uma vez quando o gato entra na \xE1gua numa queda curta ou num pulo, com um anel."
+    tags:
+    - agua
+    - vivo
+  variants:
+  - {fileID: 21300000, guid: b82fbb432c1e6d3b84a41e5d029e8cb0, type: 3}
+  frames:
+  - {fileID: 21300000, guid: b82fbb432c1e6d3b84a41e5d029e8cb0, type: 3}
+  - {fileID: 21300000, guid: 964b3818a233d2cea5eb9099274c3dda, type: 3}
+  - {fileID: 21300000, guid: 7f52ed73084164d97f2037d28a1495a6, type: 3}
+  - {fileID: 21300000, guid: f374cd1700641c08d2ebb323956a8ada, type: 3}

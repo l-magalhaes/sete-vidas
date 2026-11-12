@@ -2,7 +2,7 @@
 
 > Gerado por `Tools/EnvironmentSprites/gerar_catalogo.ps1` a partir dos `manifest.json`. **Não edite à mão**: mude o manifesto e rode o script de novo. Como usar a biblioteca: `guia-de-assets.md`.
 
-**142 assets** em 22 manifestos.
+**149 assets** em 22 manifestos.
 
 ## Backgrounds/Interior
 
@@ -12,6 +12,9 @@
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Interior/bg_int_janela.png) | `bg_int_janela` | Janela (vista de dentro) | decorativo | parede_fundo (-9) | 1 | **apoio parede.** Moldura com travessa; a máscara bg_int_janela_mascara recorta a parede e mostra o céu e a cordilheira daquela altura. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Interior/bg_int_janela_grande.png) | `bg_int_janela_grande` | Janela grande (vista de dentro) | decorativo | parede_fundo (-9) | 1 | **apoio parede.** A câmara: janelas amplas com mainel, o último raio de sol e a montanha do início lá atrás. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Interior/fg_corrente.png) | `fg_corrente` | Corrente de primeiro plano | decorativo | fg | 1 | **apoio teto.** Silhueta quase preta pendendo do teto, na frente de tudo (3.5): só onde não cobre gato, inimigo, armadilha ou rota (nunca sobre passarela, plataforma, sacada ou arena). |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Interior/fg_nevoa_saida.png) | `fg_nevoa_saida` | Escuridão da saída da fase | decorativo | fg (25) | 1 | **apoio livre.** Melhoria 8: gradiente pontilhado de 7 tiles na frente de tudo (repete na vertical), transparente no começo e preto no fim; depois dele, fg_nevoa_preto. O gato some nele ao seguir para Miaravéu e o fim do mapa nunca aparece. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Interior/fg_nevoa_entrada.png) | `fg_nevoa_entrada` | Escuridão da entrada da fase | decorativo | fg (25) | 1 | **apoio livre.** A mesma escuridão, de 3 tiles e escura à esquerda, na parede de rocha do começo da fase. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Interior/fg_nevoa_preto.png) | `fg_nevoa_preto` | Escuridão cheia | decorativo | fg (25) | 1 | **apoio livre.** Continua a escuridão para além das pontas do mapa (Tiled), para a câmera nunca ver o vazio. |
 
 ## Backgrounds
 
@@ -184,6 +187,10 @@
 | ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_cachoeira_nascente_0.png) | `env_ext_ani_cachoeira_nascente` | Nascente da cachoeira (fenda na rocha) | narrativo | terreno_detalhe | 1 · anim 4q | **apoio livre.** Topo da cachoeira: a água sai de uma fenda na face do penhasco (a fenda fica sobre os tiles de rocha, x 0..10 do sprite) e faz a curva até virar a coluna (x 8..31). |
 | ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_cachoeira_espuma_0.png) | `env_ext_ani_cachoeira_espuma` | Espuma da cachoeira | decorativo | decor_frente (9) | 1 · anim 4q | **apoio livre.** Onde a cachoeira bate na lagoa: a linha da água fica na linha 9 do sprite. |
 | ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_lagoa_0.png) | `env_ext_ani_lagoa` | Lagoa (tile de água) | decorativo | decor_frente (8) | 1 · anim 4q | **apoio livre.** Um tile por célula da bacia, na frente do gato (ele cai dentro). Superfície 2 px abaixo do topo do tile; as ondas emendam entre tiles. |
+| ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_respingo_grande_0.png) | `env_ext_ani_respingo_grande` | Respingo grande | decorativo | decor_frente (9) | 1 · anim 6q | **apoio livre.** Toca uma vez (WaterSurface) quando o gato entra na água caindo forte (o salto de fé): coluna d'água, gotas que voltam e dois anéis. Só na água, nunca no chão. |
+| ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_respingo_pequeno_0.png) | `env_ext_ani_respingo_pequeno` | Respingo pequeno | decorativo | decor_frente (9) | 1 · anim 4q | **apoio livre.** Toca uma vez quando o gato entra na água numa queda curta ou num pulo, com um anel. |
+| ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_onda_pe_0.png) | `env_ext_ani_onda_pe` | Ondinha nos pés | decorativo | decor_frente (9) | 1 · anim 3q | **apoio livre.** A cada 0,4 s nos pés do gato andando dentro da água, na superfície. |
+| ![](../../Assets/_Game/Art/Environments/Exterior/Water/env_ext_ani_anel_0.png) | `env_ext_ani_anel` | Anel na água | decorativo | decor_frente (9) | 1 · anim 3q | **apoio livre.** O círculo que se abre na superfície depois de um respingo (dois no respingo grande, um no pequeno). |
 
 ## Necro
 

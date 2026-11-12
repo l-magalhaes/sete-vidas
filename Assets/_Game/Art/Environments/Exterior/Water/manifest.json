@@ -83,6 +83,90 @@
       "posicionamento": { "apoio": "livre", "zonas": ["montanha", "trilha"] },
       "leitura": "Um tile por célula da bacia, na frente do gato (ele cai dentro). Superfície 2 px abaixo do topo do tile; as ondas emendam entre tiles.",
       "tags": ["agua", "vivo"]
+    },
+    {
+      "id": "env_ext_ani_respingo_grande",
+      "nome": "Respingo grande",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [32, 40],
+      "sprites": ["env_ext_ani_respingo_grande_0.png"],
+      "camada": "decor_frente",
+      "sorting": 9,
+      "animacao": {
+        "nome": "respingo",
+        "quadros": ["env_ext_ani_respingo_grande_0.png", "env_ext_ani_respingo_grande_1.png", "env_ext_ani_respingo_grande_2.png", "env_ext_ani_respingo_grande_3.png", "env_ext_ani_respingo_grande_4.png", "env_ext_ani_respingo_grande_5.png"],
+        "fps": 14,
+        "amplitude_px": 34
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["lagoa"] },
+      "leitura": "Toca uma vez (WaterSurface) quando o gato entra na água caindo forte (o salto de fé): coluna d'água, gotas que voltam e dois anéis. Só na água, nunca no chão.",
+      "tags": ["agua", "vivo"]
+    },
+    {
+      "id": "env_ext_ani_respingo_pequeno",
+      "nome": "Respingo pequeno",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [16, 16],
+      "sprites": ["env_ext_ani_respingo_pequeno_0.png"],
+      "camada": "decor_frente",
+      "sorting": 9,
+      "animacao": {
+        "nome": "respingo",
+        "quadros": ["env_ext_ani_respingo_pequeno_0.png", "env_ext_ani_respingo_pequeno_1.png", "env_ext_ani_respingo_pequeno_2.png", "env_ext_ani_respingo_pequeno_3.png"],
+        "fps": 14,
+        "amplitude_px": 9
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["lagoa"] },
+      "leitura": "Toca uma vez quando o gato entra na água numa queda curta ou num pulo, com um anel.",
+      "tags": ["agua", "vivo"]
+    },
+    {
+      "id": "env_ext_ani_onda_pe",
+      "nome": "Ondinha nos pés",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [12, 3],
+      "sprites": ["env_ext_ani_onda_pe_0.png"],
+      "camada": "decor_frente",
+      "sorting": 9,
+      "animacao": {
+        "nome": "onda",
+        "quadros": ["env_ext_ani_onda_pe_0.png", "env_ext_ani_onda_pe_1.png", "env_ext_ani_onda_pe_2.png"],
+        "fps": 10,
+        "amplitude_px": 4
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["lagoa"] },
+      "leitura": "A cada 0,4 s nos pés do gato andando dentro da água, na superfície.",
+      "tags": ["agua", "vivo"]
+    },
+    {
+      "id": "env_ext_ani_anel",
+      "nome": "Anel na água",
+      "categoria": "ani",
+      "funcao": "decorativo",
+      "material": "água",
+      "epoca": "natural",
+      "tamanho_px": [24, 3],
+      "sprites": ["env_ext_ani_anel_0.png"],
+      "camada": "decor_frente",
+      "sorting": 9,
+      "animacao": {
+        "nome": "anel",
+        "quadros": ["env_ext_ani_anel_0.png", "env_ext_ani_anel_1.png", "env_ext_ani_anel_2.png"],
+        "fps": 8,
+        "amplitude_px": 8
+      },
+      "posicionamento": { "apoio": "livre", "zonas": ["lagoa"] },
+      "leitura": "O círculo que se abre na superfície depois de um respingo (dois no respingo grande, um no pequeno).",
+      "tags": ["agua", "vivo"]
     }
   ]
 }

@@ -46,6 +46,10 @@ public static class BackgroundSpriteGen
             Write(bg, "Interior", name + "_mascara", mask);
         }
         { var c_ = FgChain(); Write(bg, "Interior", "fg_corrente", c_); }
+        // melhoria 8: escuridão nas pontas da fase (o mapa nunca mostra a parede do fim)
+        { var c_ = Fog(112, true, false); Write(bg, "Interior", "fg_nevoa_saida", c_); }
+        { var c_ = Fog(48, false, false); Write(bg, "Interior", "fg_nevoa_entrada", c_); }
+        { var c_ = Fog(16, true, true); Write(bg, "Interior", "fg_nevoa_preto", c_); }
 
         Sheet(Path.Combine(previewDir, "fundos_etapa6.png"));
     }
@@ -94,6 +98,26 @@ public static class BackgroundSpriteGen
         if (kind == WindowKind.Big)
             for (int y = (int)archY; y < border + oh; y++) frame.Px[(int)cx, y] = 'i';
         PixelKit.Outline(frame, 'k');
+    }
+
+    /// <summary>
+    /// Névoa escura em gradiente pontilhado (Bayer 4×4, nada de gradiente liso), w×16, repete na vertical:
+    /// transparente de um lado e #0b0a10 cheio do outro (darkRight: escura à direita). solid: só o preto, que
+    /// continua a escuridão para além do mapa (melhoria 8).
+    /// </summary>
+    static PixelCanvas Fog(int w, bool darkRight, bool solid)
+    {
+        PixelKit.Pal.Clear();
+        PixelKit.P('K', "#0b0a10");
+        int[,] bayer = { { 0, 8, 2, 10 }, { 12, 4, 14, 6 }, { 3, 11, 1, 9 }, { 15, 7, 13, 5 } };
+        var cv = new PixelCanvas(w, 16);
+        for (int x = 0; x < w; x++)
+        {
+            float t = solid ? 1f : (darkRight ? x : w - 1 - x) / (float)(w - 1);
+            for (int y = 0; y < 16; y++)
+                if (t * 16f > bayer[y % 4, x % 4] + 0.5f) cv.Px[x, y] = 'K';
+        }
+        return cv;
     }
 
     /// <summary>Corrente de primeiro plano (fg): silhueta quase preta, desfocada pela distância (sem detalhe).</summary>

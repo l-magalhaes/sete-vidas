@@ -170,6 +170,15 @@ namespace SeteVidas.Combat
             return s_instance;
         }
 
+        static readonly Color WaterColor = new Color32(0x7f, 0xd0, 0xf0, 0xff);   // a mesma da gota da gárgula
+
+        /// <summary>Uma gotinha d'água que pinga do gato (saiu da lagoa, melhoria 2).</summary>
+        public static void WaterDrop(Vector2 at)
+        {
+            if (!Application.isPlaying) return;
+            Instance().Emit(at, new Vector2(Random.Range(-0.4f, 0.4f), Random.Range(-0.5f, 0.5f)), 0.35f, WaterColor);
+        }
+
         /// <summary>Uma faísca dourada que sobe devagar (marreta carregando).</summary>
         public static void Glint(Vector2 at)
         {

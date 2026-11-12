@@ -120,6 +120,7 @@ namespace SeteVidas.EditorTools
                 FortressLayout.Slopes(), terrainDetails.transform);
             Debug.Log($"[Sete Vidas] Terreno e arquitetura: {painted} tiles, {terrainDetails.transform.childCount} detalhes (tufos, seixos, fendas, gárgulas, {TerrainPainter.Puddles} poças, {TerrainPainter.Tubs} tinas).");
             BuildWindows(scene, maps[FortressLayout.Map.Background]);
+            BuildEdgeFog(scene);
 
             var root = new GameObject("Fortaleza");
             SceneManager.MoveGameObjectToScene(root, scene);
@@ -461,6 +462,52 @@ namespace SeteVidas.EditorTools
         /// formato da abertura. A parede do fundo só aparece FORA das máscaras, então pelo recorte se vê o conjunto de fundo
         /// ativo (o céu e a paisagem daquela altura, com a paralaxe certa).
         /// </summary>
+        /// <summary>Escuridão da saída: gradiente de x 240 a 247 (7 tiles), preto daí para fora (melhoria 8).</summary>
+        public const float ExitFogStart = 240f, ExitFogEnd = 247f;
+        /// <summary>Escuridão da entrada: gradiente de 3 tiles sobre a parede de rocha do começo, preto à esquerda.</summary>
+        public const float EntryFogStart = -13f, EntryFogEnd = -10f;
+        const float FogBottom = -20f, FogTop = 110f, FogBeyond = 40f;
+
+        /// <summary>
+        /// Melhoria 8: névoa escura pontilhada na frente de tudo (ordem 25) nas duas pontas da fase, para a câmera nunca
+        /// mostrar a parede do fim do mapa nem o vazio. Na saída, o gato some nela ao seguir para Miaravéu (o gatilho do
+        /// fim, em x 243–247, fica dentro do gradiente).
+        /// </summary>
+        static void BuildEdgeFog(Scene scene)
+        {
+            var root = new GameObject("Escuridão das pontas");
+            SceneManager.MoveGameObjectToScene(root, scene);
+            var exit = EnvLibrary.Get("fg_nevoa_saida");
+            var entry = EnvLibrary.Get("fg_nevoa_entrada");
+            var solid = EnvLibrary.Get("fg_nevoa_preto");
+            Sprite exitSprite = First(exit), entrySprite = First(entry), solidSprite = First(solid);
+            if (exitSprite == null || entrySprite == null || solidSprite == null)
+            {
+                Debug.LogError("[Sete Vidas] Falta a névoa das pontas (fg_nevoa_*). Rode Tools/EnvironmentSprites/gerar.ps1");
+                return;
+            }
+            float h = FogTop - FogBottom, cy = (FogTop + FogBottom) * 0.5f;
+            FogStrip(root.transform, "Saída: gradiente", exitSprite, ExitFogStart, ExitFogEnd, cy, h);
+            FogStrip(root.transform, "Saída: preto", solidSprite, ExitFogEnd, ExitFogEnd + FogBeyond, cy, h);
+            FogStrip(root.transform, "Entrada: gradiente", entrySprite, EntryFogStart, EntryFogEnd, cy, h);
+            FogStrip(root.transform, "Entrada: preto", solidSprite, EntryFogStart - FogBeyond, EntryFogStart, cy, h);
+        }
+
+        static Sprite First(SeteVidas.World.Scenery.EnvAssetDefinition def) =>
+            def == null ? null : def.variants.Length > 0 ? def.variants[0] : def.frames.Length > 0 ? def.frames[0] : null;
+
+        static void FogStrip(Transform parent, string name, Sprite sprite, float x0, float x1, float cy, float h)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3((x0 + x1) * 0.5f, cy, 0f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.drawMode = SpriteDrawMode.Tiled;   // o gradiente tem a largura certa; repete só na vertical
+            sr.size = new Vector2(x1 - x0, h);
+            sr.sortingOrder = 25;
+        }
+
         static void BuildWindows(Scene scene, Tilemap background)
         {
             var wall = background.GetComponent<TilemapRenderer>();
@@ -625,6 +672,18 @@ namespace SeteVidas.EditorTools
             for (int i = 0; i < width; i++)
                 Renderer(go.transform, "Água", pool.frames[0], new Vector3(i + 0.5f, 0.5f, 0f), pool.order);
             go.AddComponent<SpriteLoop>().Configure(pool.frames, pool.frameTime);
+
+            // melhoria 2: a água reage ao gato (respingo ao cair, ondinhas andando, pingos ao sair)
+            const float px = 1f / 16f;
+            float surface = floorY + 1f - 2f * px; // a linha da água fica 2 px abaixo do topo do tile
+            go.layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable); // gatilho: só o gato
+            var area = go.AddComponent<BoxCollider2D>();
+            area.isTrigger = true;
+            area.size = new Vector2(width, 1f);
+            area.offset = new Vector2(width * 0.5f, 0.5f);
+            go.AddComponent<WaterSurface>().Configure(surface,
+                Animated("env_ext_ani_respingo_grande").frames, Animated("env_ext_ani_respingo_pequeno").frames,
+                Animated("env_ext_ani_onda_pe").frames, Animated("env_ext_ani_anel").frames);
         }
     }
 }

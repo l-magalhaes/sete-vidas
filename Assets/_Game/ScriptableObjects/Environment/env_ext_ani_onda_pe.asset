@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ani_onda_pe
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Water/manifest.json
+  entry:
+    id: env_ext_ani_onda_pe
+    nome: "Ondinha nos p\xE9s"
+    regiao: ext
+    categoria: ani
+    funcao: decorativo
+    material: "\xE1gua"
+    epoca: natural
+    tamanho_px: 0c00000003000000i
+    sprites:
+    - env_ext_ani_onda_pe_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_frente
+    sorting: 9
+    colisor: nenhum
+    animacao:
+      nome: onda
+      quadros:
+      - env_ext_ani_onda_pe_0.png
+      - env_ext_ani_onda_pe_1.png
+      - env_ext_ani_onda_pe_2.png
+      quadros_por_variacao: 0
+      fps: 10
+      amplitude_px: 4
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - lagoa
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "A cada 0,4 s nos p\xE9s do gato andando dentro da \xE1gua, na superf\xEDcie."
+    tags:
+    - agua
+    - vivo
+  variants:
+  - {fileID: 21300000, guid: db37db4818b031b6645dd6bcbf6fd376, type: 3}
+  frames:
+  - {fileID: 21300000, guid: db37db4818b031b6645dd6bcbf6fd376, type: 3}
+  - {fileID: 21300000, guid: 8b6a817891d2b1738b4df62a07c527d1, type: 3}
+  - {fileID: 21300000, guid: f2da30b30235cf30b2fe70572612418e, type: 3}

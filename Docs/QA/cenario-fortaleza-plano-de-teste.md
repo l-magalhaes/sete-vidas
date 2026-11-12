@@ -28,10 +28,12 @@ Severidade (QA): **S1** bloqueante · **S2** mecânica central quebrada ou leitu
 | CEN-11 | Galeria, salão, câmara | Atravessar com inimigos na tela | Nenhuma corrente de primeiro plano cobre o gato, um inimigo, uma armadilha ou uma plataforma | ☐ |
 | CEN-12 | Toda a fase | Procurar enfeite que pareça plataforma ou perigo | Nenhum (tapete, cano, vigas e arcos já foram trocados por isso) | ☐ |
 | CEN-13 | Queda do penhasco | Cair da montanha até a lagoa | Uma troca suave de fundo (0,6 s), do pôr do sol para o crepúsculo | ☐ |
+| CEN-13b | Lagoa | Fazer o salto de fé; depois pular de pouca altura na lagoa; andar dentro dela; sair | Salto de fé: respingo grande com dois anéis. Pulo curto: respingo pequeno. Andando: ondinhas nos pés. Saindo: pingos por meio segundo. Nenhum respingo fora da água | ☐ |
 | CEN-14 | Pátio → muralhas → galeria | Subir as três muralhas | Nenhuma troca de fundo: o céu esquenta aos poucos e o horizonte baixa | ☐ |
 | CEN-15 | Chaminés, porta do tomo, poço | Passar por cada soleira | Troca de fundo só ali (andar 72, câmara, noite) | ☐ |
 | CEN-16 | Galeria, salão, armadilhas, câmara, fundos | Olhar as janelas | Mostram o céu daquela altura e andam com a paralaxe (borda do sol, meio sol, só céu, último raio, noite) | ☐ |
 | CEN-17 | Toda a fase | Procurar objeto entrando na parede | Nenhum (tenda, santuários e caixinha de areia conferidos) | ☐ |
+| CEN-17b | Estrada para Miaravéu e alto da montanha | Andar até o fim da estrada; depois andar até a ponta esquerda do começo | Nunca se vê a parede do fim do mapa nem o vazio: escurece aos poucos (pontilhado) até o preto; na saída, o gato some no escuro antes da tela final | ☐ |
 
 ## 3. Mundo vivo
 

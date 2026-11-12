@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: env_ext_ani_respingo_grande
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Exterior/Water/manifest.json
+  entry:
+    id: env_ext_ani_respingo_grande
+    nome: Respingo grande
+    regiao: ext
+    categoria: ani
+    funcao: decorativo
+    material: "\xE1gua"
+    epoca: natural
+    tamanho_px: 2000000028000000i
+    sprites:
+    - env_ext_ani_respingo_grande_0.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: decor_frente
+    sorting: 9
+    colisor: nenhum
+    animacao:
+      nome: respingo
+      quadros:
+      - env_ext_ani_respingo_grande_0.png
+      - env_ext_ani_respingo_grande_1.png
+      - env_ext_ani_respingo_grande_2.png
+      - env_ext_ani_respingo_grande_3.png
+      - env_ext_ani_respingo_grande_4.png
+      - env_ext_ani_respingo_grande_5.png
+      quadros_por_variacao: 0
+      fps: 14
+      amplitude_px: 34
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - lagoa
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Toca uma vez (WaterSurface) quando o gato entra na \xE1gua caindo forte (o salto de f\xE9): coluna d'\xE1gua, gotas que voltam e dois an\xE9is. S\xF3 na \xE1gua, nunca no ch\xE3o."
+    tags:
+    - agua
+    - vivo
+  variants:
+  - {fileID: 21300000, guid: 9b89d4e6e6269b420b19f71c98e190fd, type: 3}
+  frames:
+  - {fileID: 21300000, guid: 9b89d4e6e6269b420b19f71c98e190fd, type: 3}
+  - {fileID: 21300000, guid: 20fa348e621abe2159cea1166ac99eb4, type: 3}
+  - {fileID: 21300000, guid: b799df3917e4db56c43a4f22c94a03db, type: 3}
+  - {fileID: 21300000, guid: fc97b9ffad140710fc58164142beed47, type: 3}
+  - {fileID: 21300000, guid: 9d1ba1c97a3910e622b05bd73156831f, type: 3}
+  - {fileID: 21300000, guid: f773483497b5bc0d5f7cb41e9e560422, type: 3}

@@ -209,8 +209,12 @@ namespace SeteVidas.Player
         }
 
         /// <summary>Maldição completa (atalho para testes e para a cena do tomo): sobra <paramref name="remainingHearts"/> e meio coração de vida.</summary>
+        /// <summary>Marca no save: a maldição terminou (o HUD passa a mostrar o coração de cada classe; antes, os 7 são do Ladino).</summary>
+        public const string CurseDoneFlag = "maldicao_completa";
+
         public void ApplyCurse(int remainingHearts = 1)
         {
+            SaveManager.Data.SetFlag(CurseDoneFlag);
             SetHeartsRecovered(remainingHearts, save: true);
             CurrentHits = 1; // quase morto
             Changed?.Invoke();

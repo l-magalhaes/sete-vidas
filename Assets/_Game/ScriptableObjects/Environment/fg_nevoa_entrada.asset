@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: fg_nevoa_entrada
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/Interior/manifest.json
+  entry:
+    id: fg_nevoa_entrada
+    nome: "Escurid\xE3o da entrada da fase"
+    regiao: cid
+    categoria: fx
+    funcao: decorativo
+    material: "n\xE9voa"
+    epoca: natural
+    tamanho_px: 3000000010000000i
+    sprites:
+    - fg_nevoa_entrada.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: fg
+    sorting: 25
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas:
+      - alto da montanha
+    fundo:
+      paralaxe: []
+      ancora: []
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "A mesma escurid\xE3o, de 3 tiles e escura \xE0 esquerda, na parede de rocha do come\xE7o da fase."
+    tags:
+    - primeiro_plano
+    - melhorias
+  variants:
+  - {fileID: 21300000, guid: 34f6b9dd016647557c7a59563c7fbc5c, type: 3}
+  frames: []

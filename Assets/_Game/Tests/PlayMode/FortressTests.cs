@@ -34,6 +34,44 @@ namespace SeteVidas.Tests
 
         static Tilemap Map(string name) => GameObject.Find("Grid/" + name).GetComponent<Tilemap>();
 
+        /// <summary>Melhoria 8: escuridão nas duas pontas, na frente de tudo; o fim do mapa (x 251) fica no preto.</summary>
+        [UnityTest]
+        public IEnumerator EdgeFog_CoversBothEndsOfTheMap()
+        {
+            yield return Load();
+            var fog = GameObject.Find("Escuridão das pontas");
+            Assert.IsNotNull(fog, "Sem a escuridão das pontas. Rode Tools > Sete Vidas > 13");
+            var renderers = fog.GetComponentsInChildren<SpriteRenderer>();
+            Assert.AreEqual(4, renderers.Length, "Gradiente e preto na saída e na entrada");
+            bool wallHidden = false, startHidden = false;
+            foreach (var r in renderers)
+            {
+                Assert.IsNotNull(r.sprite, r.name);
+                Assert.AreEqual(25, r.sortingOrder, $"{r.name}: na frente de tudo");
+                if (r.name.Contains("preto") && r.bounds.min.x <= 247.01f && r.bounds.max.x > 251f) wallHidden = true;
+                if (r.name.Contains("preto") && r.bounds.max.x >= -13.01f && r.bounds.min.x < -18f) startHidden = true;
+            }
+            Assert.IsTrue(wallHidden, "A parede do fim (x 251) fica no preto");
+            Assert.IsTrue(startHidden, "A rocha do começo (x -18) fica no preto");
+        }
+
+        /// <summary>Melhoria 2: caindo forte na lagoa (como no salto de fé), nasce o respingo grande, só na água.</summary>
+        [UnityTest]
+        public IEnumerator Lake_StrongFall_MakesBigSplash()
+        {
+            yield return Load();
+            var water = Object.FindAnyObjectByType<WaterSurface>();
+            Assert.IsNotNull(water, "Lagoa sem WaterSurface. Rode Tools > Sete Vidas > 13");
+            var player = Object.FindAnyObjectByType<PlayerController>();
+            var area = water.GetComponent<BoxCollider2D>().bounds;
+            player.Teleport(new Vector2(area.center.x, water.SurfaceY + 1.5f));
+            player.StartJump(new Vector2(0f, -15f));
+            for (int i = 0; i < 30 && water.LastSplash == 0; i++) yield return new WaitForFixedUpdate();
+            Assert.AreEqual(2, water.LastSplash, "Queda a 15 tiles/s: respingo grande");
+            Assert.Greater(water.AliveCount, 0, "O respingo está tocando");
+            Assert.LessOrEqual(water.AliveCount, WaterSurface.MaxAlive);
+        }
+
         [UnityTest]
         public IEnumerator Start_CatOnTopOfTheMountain_SevenHearts()
         {
