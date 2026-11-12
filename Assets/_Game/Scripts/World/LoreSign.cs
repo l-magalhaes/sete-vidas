@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using SeteVidas.Dialogue;
 using SeteVidas.Player;
+using SeteVidas.Save;
 using UnityEngine;
 
 namespace SeteVidas.World
@@ -18,6 +20,22 @@ namespace SeteVidas.World
         PlayerHealth _near;
 
         public DialogueDefinition Text => text;
+
+        /// <summary>Marca do save: a placa foi lida (o Diário do inventário lista as lidas, melhoria 10).</summary>
+        public const string ReadPrefix = "lido_";
+        static readonly List<LoreSign> s_all = new List<LoreSign>();
+        /// <summary>As placas da cena (o Diário acha o texto de cada uma pelo id).</summary>
+        public static IReadOnlyList<LoreSign> All => s_all;
+        /// <summary>Título para o Diário: o nome do objeto (ex.: "Placa do pátio").</summary>
+        public string Title => name;
+        public string Key => text != null ? text.ScriptId : "";
+        public bool IsRead => SaveManager.Data != null && SaveManager.Data.HasFlag(ReadPrefix + Key);
+
+        void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); }
+        void OnDisable() => s_all.Remove(this);
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => s_all.Clear(); // Play sem recarregar o domínio
 
         void OnTriggerEnter2D(Collider2D other)
         {
@@ -38,7 +56,11 @@ namespace SeteVidas.World
             if (prompt != null) prompt.gameObject.SetActive(canRead);
             if (!canRead) return;
             var input = _near.GetComponent<PlayerInputReader>();
-            if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame) runner.Play(text, input);
+            if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame)
+            {
+                runner.Play(text, input);
+                if (SaveManager.Data != null) SaveManager.Data.SetFlag(ReadPrefix + Key); // para o Diário
+            }
         }
     }
 }

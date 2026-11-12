@@ -27,6 +27,9 @@ namespace SeteVidas.UI
         [SerializeField] Button continueButton;
         [SerializeField] Button quitButton;
         [SerializeField] Button testAreaButton;
+        [Tooltip("Opções: liga e desliga as dicas do tutorial (melhoria 12)")]
+        [SerializeField] Button optionsButton;
+        [SerializeField] Text optionsLabel;
         [Tooltip("Resumo do save embaixo do Continuar")]
         [SerializeField] Text continueInfo;
 
@@ -50,6 +53,7 @@ namespace SeteVidas.UI
             if (continueButton != null) continueButton.onClick.AddListener(Continue);
             if (quitButton != null) quitButton.onClick.AddListener(Quit);
             if (testAreaButton != null) testAreaButton.onClick.AddListener(OpenTestArea);
+            if (optionsButton != null) optionsButton.onClick.AddListener(ToggleHints);
             if (confirmYes != null) confirmYes.onClick.AddListener(StartNewGame);
             if (confirmNo != null) confirmNo.onClick.AddListener(CloseConfirm);
         }
@@ -57,6 +61,8 @@ namespace SeteVidas.UI
         void Start()
         {
             if (confirmPanel != null) confirmPanel.SetActive(false);
+            // a Área de testes só aparece em build de desenvolvimento (e no editor)
+            if (testAreaButton != null) testAreaButton.gameObject.SetActive(Debug.isDebugBuild);
             Refresh();
             Select(CanContinue ? continueButton : newGameButton);
         }
@@ -67,6 +73,7 @@ namespace SeteVidas.UI
             bool has = SaveManager.HasSaveFile;
             if (continueButton != null) continueButton.interactable = has;
             if (continueInfo != null) continueInfo.text = has ? SaveSummary.Describe(SaveManager.Data) : "nenhum jogo salvo";
+            if (optionsLabel != null) optionsLabel.text = "Dicas: " + (TutorialScroll.HintsDisabled ? "desligadas" : "ligadas");
         }
 
         void LateUpdate()
@@ -125,6 +132,13 @@ namespace SeteVidas.UI
         {
             SaveManager.Slot = SaveManager.TestSlot;
             SceneManager.LoadScene(testScene);
+        }
+
+        /// <summary>Opções: liga e desliga as dicas do tutorial (fica nas preferências do jogador).</summary>
+        public void ToggleHints()
+        {
+            TutorialScroll.HintsDisabled = !TutorialScroll.HintsDisabled;
+            Refresh();
         }
 
         void CloseConfirm()

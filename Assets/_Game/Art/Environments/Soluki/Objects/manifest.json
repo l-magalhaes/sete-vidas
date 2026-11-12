@@ -294,6 +294,22 @@
       "tags": ["etapa5"]
     },
     {
+      "id": "env_sol_obj_placa_seta",
+      "nome": "Placa de seta",
+      "regiao": "sol",
+      "categoria": "obj",
+      "funcao": "narrativo",
+      "material": "madeira",
+      "epoca": "soluki",
+      "tamanho_px": [15, 20],
+      "sprites": ["env_sol_obj_placa_seta_direita.png", "env_sol_obj_placa_seta_esquerda.png", "env_sol_obj_placa_seta_cima.png", "env_sol_obj_placa_seta_baixo.png"],
+      "camada": "decor_atras",
+      "colisor": "nenhum",
+      "posicionamento": { "apoio": "chao", "zonas": ["Torre do Selo", "poço", "estrada para Miaravéu"] },
+      "leitura": "Melhoria 9: a direção sem palavra (variações: direita, esquerda, cima, baixo). Substitui os textos de direção que flutuavam no mundo.",
+      "tags": ["melhorias"]
+    },
+    {
       "id": "env_sol_obj_caixote",
       "nome": "Caixote velho",
       "regiao": "sol",

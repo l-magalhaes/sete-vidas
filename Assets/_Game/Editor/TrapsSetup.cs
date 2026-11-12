@@ -523,12 +523,52 @@ namespace SeteVidas.EditorTools
             for (int x = 1; x < 7; x++) { set(x, 5, Ink); set(x, 6, Ink); }    // a fenda continua no suporte
         });
 
-        static Sprite CrumbleSprite(bool cracked) => Draw(cracked ? "trap_crumble_cracked" : "trap_crumble", 32, 8, set =>
+        // Plataforma frágil de madeira velha (pedido do usuário): duas tábuas gastas de 16 px, com veios, um nó, pregos
+        // e a borda de cima lascada; a versão rachada (tremendo, antes de cair) tem rachaduras e lascas faltando.
+        // o contorno, H/h luz (gasta), W/w madeira, d veio, k nó, n prego, c rachadura, '.' vazio. Linha de cima primeiro.
+        static readonly string[] CrumbleWood =
         {
-            for (int y = 0; y < 8; y++) for (int x = 0; x < 32; x++)
-                set(x, y, x == 0 || x == 31 || y == 0 || y == 7 || x == 15 ? StoneEdge : new Color32(0x6e, 0x66, 0x5a, 0xff));
-            int[] crack = cracked ? new[] { 5, 9, 20, 26 } : new[] { 22 };
-            foreach (int cx in crack) for (int y = 1; y < 7; y++) set(cx + (y % 2), y, Ink); // rachaduras
+            "oHHhHHHHHHHHHHHooHHHHHhHHHHHhHHo",
+            "oWnWWWWWWWWWWnWooWnWWWWWWWWWWnWo",
+            "oWWWWddWWWWWWWWooWWWWWWWWWddWWWo",
+            "owwwwwwwdwwwwwwoowwwwwwwwwwwwwwo",
+            "owwddwwdkdwwwwwoowwwwwdddwwwwwwo",
+            "owwwwwwwdwwwwddoowwddwwwwwwwwwwo",
+            "oddddddddddddddooddddddddddddddo",
+            "oooooooooooooooooooooooooooooooo",
+        };
+        static readonly string[] CrumbleWoodCracked =
+        {
+            "oHH..HHHHHcHHHHooHHHHHh..HHHhHHo",
+            "oWnW.WWWWcWWWnWooWnWWWWW.WWWWnWo",
+            "oWWWWcdWWWcWWWWooWWWWcWWWWcdWWWo",
+            "owwwwcwwdwwcwwwoowwwwwcwwwcwwwwo",
+            "owwdcwwdkdwcwwwoowwwwwdcdwwcwwwo",
+            "owwwcwwwdwwwcddoowwddwcwwwwcwwwo",
+            "oddddcddddddcddooddddddcddddcddo",
+            "oooooooooooooooooooooooooooooooo",
+        };
+
+        static Color32 WoodColor(char c) => c switch
+        {
+            'o' => new Color32(0x2e, 0x20, 0x18, 0xff),
+            'H' => new Color32(0xb0, 0x8a, 0x5a, 0xff),
+            'h' => new Color32(0x8a, 0x6a, 0x42, 0xff),
+            'W' => new Color32(0x9a, 0x70, 0x44, 0xff),
+            'w' => new Color32(0x6b, 0x4a, 0x2b, 0xff),
+            'd' => new Color32(0x4a, 0x32, 0x1e, 0xff),
+            'k' => new Color32(0x3a, 0x26, 0x16, 0xff),
+            'n' => new Color32(0x8e, 0x8c, 0xa4, 0xff),
+            'c' => new Color32(0x1c, 0x1a, 0x24, 0xff),
+            _ => new Color32(0, 0, 0, 0),
+        };
+
+        static Sprite CrumbleSprite(bool cracked) => Draw(cracked ? "trap_crumble_madeira_rachada" : "trap_crumble_madeira", 32, 8, set =>
+        {
+            var map = cracked ? CrumbleWoodCracked : CrumbleWood;
+            for (int r = 0; r < 8; r++)
+                for (int x = 0; x < 32; x++)
+                    set(x, 7 - r, WoodColor(map[r][x]));   // a textura cresce para cima: a linha 0 do mapa é a de cima
         });
     }
 }

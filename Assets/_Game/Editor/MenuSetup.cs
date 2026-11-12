@@ -12,7 +12,8 @@ using UnityEngine.UI;
 namespace SeteVidas.EditorTools
 {
     /// <summary>
-    /// Tela inicial: cena MainMenu (primeira da build) com fundo, título, Novo jogo / Continuar / Sair e a
+    /// Tela inicial (melhoria 12: no tema): fundo vivo do pôr do sol com a Cidadela, o gato de costas no penhasco, o logo
+    /// com as sete centelhas, Continuar / Novo jogo / Opções / Área de testes / Sair em pergaminho, cursor de patinha e a
     /// confirmação de apagar o progresso. Spec: Docs/Design/tela-inicial.md.
     /// </summary>
     public static class MenuSetup
@@ -20,13 +21,16 @@ namespace SeteVidas.EditorTools
         const string Art = "Assets/_Game/Art/UI/Menu";
         const string BoxSprite = "Assets/_Game/Art/UI/Dialogue/ui_dialog_box.png";
         const string ArrowSprite = "Assets/_Game/Art/UI/Dialogue/ui_dialog_next.png";
-        const string HeartSprite = "Assets/_Game/Art/UI/Hearts/ui_heart_full.png";
-        const string CatSprite = "Assets/_Game/Art/Characters/Cat/Placeholder/chr_cat_placeholder_idle.png";
         const float UiPixelScale = 100f / 16f;
 
         static readonly Color32 Ink = new Color32(0x3b, 0x2a, 0x1e, 0xff);
         static readonly Color32 Gold = new Color32(0xf2, 0xd0, 0x4b, 0xff);
         static readonly Color32 Light = new Color32(0xe9, 0xdc, 0xb8, 0xff);
+
+        // fundo vivo (melhoria 12): as camadas que já existem na fase
+        const string SkyArt = "Assets/_Game/Art/Environments/Outdoors/env_sky_sunset.png";
+        const string MountainsArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_cordilheira_a.png";
+        const string ForestArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_floresta_vale.png";
 
         [MenuItem("Tools/Sete Vidas/12. Tela inicial (Novo jogo / Continuar)", priority = 48)]
         public static void CreateMainMenu()
@@ -35,7 +39,6 @@ namespace SeteVidas.EditorTools
             Directory.CreateDirectory(Art);
             Directory.CreateDirectory(Path.GetDirectoryName(GameConstants.MainMenuScenePath));
             AssetDatabase.Refresh();
-            var background = BackgroundSprite();
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -62,29 +65,50 @@ namespace SeteVidas.EditorTools
             scaler.matchWidthOrHeight = 1f;
             canvasGo.AddComponent<GraphicRaycaster>();
             var root = (RectTransform)canvasGo.transform;
+            var fx = canvasGo.AddComponent<TitleScreenFx>();
 
-            // Fundo 480×270 (escala inteira) e o gato olhando para a fortaleza
-            var bg = Img(root, "Fundo", background, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480f, 270f));
-            bg.raycastTarget = false;
-            var cat = Img(root, "Gato", AssetDatabase.LoadAssetAtPath<Sprite>(CatSprite), new Vector2(0.5f, 0f), new Vector2(-150f, 20f), new Vector2(48f, 72f));
+            // Fundo vivo: céu do pôr do sol, a cordilheira com a Cidadela pequena e a floresta do vale, andando devagar
+            Img(root, "Céu", AssetDatabase.LoadAssetAtPath<Sprite>(SkyArt), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480f, 270f)).raycastTarget = false;
+            // a mesma vista do alto da montanha (conjunto A da fase): a Cidadela em silhueta na frente do sol poente
+            var below = Img(root, "Base da cordilheira", null, new Vector2(0f, 0f), Vector2.zero, new Vector2(480f, 4f));
+            below.color = new Color32(0x3a, 0x22, 0x47, 0xff);   // o preenchimento abaixo da camada (preencher_abaixo)
+            below.raycastTarget = false;
+            below.rectTransform.pivot = Vector2.zero;
+            var mountains = Strip(root, "Cordilheira com a Cidadela", AssetDatabase.LoadAssetAtPath<Sprite>(MountainsArt), 960f, 200f, 3f);
+            var forest = Strip(root, "Floresta do vale", AssetDatabase.LoadAssetAtPath<Sprite>(ForestArt), 960f, 150f, -28f);
+
+            // Primeiro plano: o gato sentado na beira do penhasco, de costas, olhando a Cidadela; a cauda balança
+            var cliff = CliffSprite();
+            Img(root, "Penhasco", cliff, new Vector2(0f, 0f), Vector2.zero, new Vector2(cliff.rect.width, cliff.rect.height)).raycastTarget = false;
+            var catFrames = CatBackSprites();
+            var cat = Img(root, "Gato de costas", catFrames[0], new Vector2(0f, 0f), new Vector2(118f, CliffTop - 2f),
+                new Vector2(catFrames[0].rect.width, catFrames[0].rect.height));
             cat.raycastTarget = false;
 
-            // Título e as sete vidas
-            var title = Label(root, "Título", "SETE VIDAS", 28, Gold, new Vector2(0.5f, 1f), new Vector2(0f, -34f), new Vector2(300f, 34f));
-            title.fontStyle = FontStyle.Bold;
-            title.gameObject.AddComponent<Shadow>().effectColor = new Color32(0x2a, 0x10, 0x30, 0xff);
-            var heart = AssetDatabase.LoadAssetAtPath<Sprite>(HeartSprite);
+            // Logo em pixel art com as sete centelhas em volta (uma se apaga de vez em quando: a maldição)
+            var logo = LogoSprite();
+            Img(root, "Logo", logo, new Vector2(0.5f, 1f), new Vector2(0f, -22f), new Vector2(logo.rect.width, logo.rect.height)).raycastTarget = false;
+            var spark = SparkSprite();
+            var sparks = new Image[7];
             for (int i = 0; i < 7; i++)
-                Img(root, $"Vida {i + 1}", heart, new Vector2(0.5f, 1f), new Vector2(-54f + i * 18f, -64f), new Vector2(16f, 16f)).raycastTarget = false;
+            {
+                // num arco por cima do logo, da esquerda para a direita
+                float a = Mathf.Lerp(200f, -20f, i / 6f) * Mathf.Deg2Rad;
+                var p = new Vector2(Mathf.Round(Mathf.Cos(a) * 104f), Mathf.Round(-52f + Mathf.Sin(a) * 34f));
+                sparks[i] = Img(root, $"Centelha {i + 1}", spark, new Vector2(0.5f, 1f), p, new Vector2(5f, 5f));
+                sparks[i].raycastTarget = false;
+            }
 
-            // Botões
-            var newGame = MakeButton(root, "Novo jogo", new Vector2(70f, 10f));
-            var cont = MakeButton(root, "Continuar", new Vector2(70f, -16f));
-            var info = Label(root, "Resumo do save", "", 8, Light, new Vector2(0.5f, 0.5f), new Vector2(70f, -33f), new Vector2(240f, 12f));
-            var test = MakeButton(root, "Área de testes", new Vector2(70f, -52f));
-            var quit = MakeButton(root, "Sair", new Vector2(70f, -76f));
-            var cursor = Img(root, "Seta", AssetDatabase.LoadAssetAtPath<Sprite>(ArrowSprite), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(5f, 7f));
-            cursor.color = Gold;
+            // Botões em pergaminho, à direita
+            const float bx = 142f, bw = 116f;
+            var cont = MakeButton(root, "Continuar", new Vector2(bx, 8f), bw);
+            var info = Label(root, "Resumo do save", "", 8, Light, new Vector2(0.5f, 0.5f), new Vector2(bx, -7f), new Vector2(240f, 10f));
+            info.gameObject.AddComponent<Shadow>().effectColor = new Color32(0x1a, 0x10, 0x20, 0xff);
+            var newGame = MakeButton(root, "Novo jogo", new Vector2(bx, -24f), bw);
+            var options = MakeButton(root, "Dicas: ligadas", new Vector2(bx, -48f), bw);
+            var test = MakeButton(root, "Área de testes", new Vector2(bx, -72f), bw);
+            var quit = MakeButton(root, "Sair", new Vector2(bx, -96f), bw);
+            var cursor = Img(root, "Patinha", PawSprite(), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(7f, 7f));
             cursor.raycastTarget = false;
 
             // Confirmação: apagar o progresso
@@ -96,7 +120,13 @@ namespace SeteVidas.EditorTools
             var yes = MakeButton(panel.rectTransform, "Sim, apagar", new Vector2(-62f, -20f), 110f);
             var no = MakeButton(panel.rectTransform, "Não", new Vector2(62f, -20f), 110f);
 
-            cursor.transform.SetAsLastSibling(); // seta por cima da caixa de confirmação
+            cursor.transform.SetAsLastSibling(); // patinha por cima da caixa de confirmação
+
+            // a tela entra a partir do preto
+            var fade = Img(root, "Escuro da entrada", null, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480f, 270f));
+            fade.color = Color.black;
+            fade.raycastTarget = false;
+            fade.transform.SetAsLastSibling();
 
             var menu = canvasGo.AddComponent<MainMenu>();
             var so = new SerializedObject(menu);
@@ -106,6 +136,8 @@ namespace SeteVidas.EditorTools
             so.FindProperty("newGameButton").objectReferenceValue = newGame;
             so.FindProperty("continueButton").objectReferenceValue = cont;
             so.FindProperty("quitButton").objectReferenceValue = quit;
+            so.FindProperty("optionsButton").objectReferenceValue = options;
+            so.FindProperty("optionsLabel").objectReferenceValue = options.GetComponentInChildren<Text>();
             so.FindProperty("continueInfo").objectReferenceValue = info;
             so.FindProperty("confirmPanel").objectReferenceValue = panel.gameObject;
             so.FindProperty("confirmYes").objectReferenceValue = yes;
@@ -113,9 +145,43 @@ namespace SeteVidas.EditorTools
             so.FindProperty("cursor").objectReferenceValue = cursor.rectTransform;
             so.ApplyModifiedPropertiesWithoutUndo();
 
+            var fso = new SerializedObject(fx);
+            var layers = fso.FindProperty("layers");
+            layers.arraySize = 2;
+            SetLayer(layers.GetArrayElementAtIndex(0), mountains, 960f, 0.5f, 470f);   // longe: bem devagar; a Cidadela começa na frente do sol
+            SetLayer(layers.GetArrayElementAtIndex(1), forest, 960f, 1.5f, 242f);    // perto: um pouco mais rápido
+            fso.FindProperty("cat").objectReferenceValue = cat;
+            var frames = fso.FindProperty("catFrames");
+            frames.arraySize = catFrames.Length;
+            for (int i = 0; i < catFrames.Length; i++) frames.GetArrayElementAtIndex(i).objectReferenceValue = catFrames[i];
+            var sp = fso.FindProperty("sparks");
+            sp.arraySize = sparks.Length;
+            for (int i = 0; i < sparks.Length; i++) sp.GetArrayElementAtIndex(i).objectReferenceValue = sparks[i];
+            fso.FindProperty("fade").objectReferenceValue = fade;
+            fso.ApplyModifiedPropertiesWithoutUndo();
+
             EditorSceneManager.SaveScene(scene, GameConstants.MainMenuScenePath);
             SeteVidasSetup.RegisterScenesInBuild();
             Debug.Log("[Sete Vidas] Tela inicial criada (Scenes/MainMenu) e colocada como primeira cena da build. Abra-a e aperte Play.");
+        }
+
+        /// <summary>Uma camada do fundo que anda: duas cópias lado a lado, presas embaixo à esquerda.</summary>
+        static (RectTransform a, RectTransform b) Strip(RectTransform root, string name, Sprite sprite, float w, float h, float y)
+        {
+            var a = Img(root, name + " (1)", sprite, new Vector2(0f, 0f), new Vector2(0f, y), new Vector2(w, h));
+            var b = Img(root, name + " (2)", sprite, new Vector2(0f, 0f), new Vector2(w, y), new Vector2(w, h));
+            a.raycastTarget = b.raycastTarget = false;
+            a.rectTransform.pivot = b.rectTransform.pivot = Vector2.zero;
+            return (a.rectTransform, b.rectTransform);
+        }
+
+        static void SetLayer(SerializedProperty p, (RectTransform a, RectTransform b) strip, float width, float speed, float start)
+        {
+            p.FindPropertyRelative("A").objectReferenceValue = strip.a;
+            p.FindPropertyRelative("B").objectReferenceValue = strip.b;
+            p.FindPropertyRelative("Width").floatValue = width;
+            p.FindPropertyRelative("Speed").floatValue = speed;
+            p.FindPropertyRelative("Start").floatValue = start;
         }
 
         // --------------------------------------------------------------- UI
@@ -171,68 +237,21 @@ namespace SeteVidas.EditorTools
             return button;
         }
 
+
         // ------------------------------------------------------------- arte
 
-        /// <summary>
-        /// Fundo 480×270: céu noturno em degradê com estrelas e lua, a Fortaleza dos Paladinos em silhueta e um
-        /// brilho roxo-esverdeado da praga saindo da torre (onde fica o tomo).
-        /// </summary>
-        static Sprite BackgroundSprite()
+        const float CliffTop = 80f;   // altura do topo do penhasco na tela (px)
+
+        delegate void Painter(System.Action<int, int, Color32> set);
+
+        /// <summary>Grava (ou reaproveita) um PNG desenhado em código, com a importação de pixel art.</summary>
+        static Sprite Draw(string name, int w, int h, Painter paint)
         {
-            string path = $"{Art}/ui_menu_background.png";
+            string path = $"{Art}/{name}.png";
             var existing = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             if (existing != null) return existing;
-
-            const int w = 480, h = 270;
             var px = new Color32[w * h];
-            var top = new Color32(0x0e, 0x0c, 0x18, 0xff);
-            var bottom = new Color32(0x2a, 0x22, 0x40, 0xff);
-            var star = new Color32(0xe9, 0xdc, 0xb8, 0xff);
-            var moon = new Color32(0xf2, 0xe6, 0xc8, 0xff);
-            var keep = new Color32(0x10, 0x0e, 0x18, 0xff);
-            var window = new Color32(0xd9, 0xa4, 0x41, 0xff);
-            var plague = new Color32(0x6b, 0x2a, 0x8a, 0xff);
-            var plagueGreen = new Color32(0x8f, 0xd1, 0x4f, 0xff);
-
-            // Céu em faixas (sem dithering suave: pixel art)
-            for (int y = 0; y < h; y++)
-            {
-                float k = Mathf.Floor(y / 18f) * 18f / h;
-                var c = Color32.Lerp(bottom, top, k);
-                for (int x = 0; x < w; x++) px[y * w + x] = c;
-            }
-            var rng = new System.Random(7);
-            for (int i = 0; i < 90; i++) px[(120 + rng.Next(150)) * w + rng.Next(w)] = star;
-            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++)
-            {
-                float d = (x - 400f) * (x - 400f) + (y - 220f) * (y - 220f);
-                if (d < 16f * 16f && (x - 407f) * (x - 407f) + (y - 225f) * (y - 225f) > 14f * 14f) px[y * w + x] = moon; // lua crescente
-            }
-
-            // Fortaleza: muralha, torres com ameias e a torre do tomo
-            void Fill(int x0, int y0, int x1, int y1, Color32 c)
-            {
-                for (int y = Mathf.Max(0, y0); y <= Mathf.Min(h - 1, y1); y++)
-                for (int x = Mathf.Max(0, x0); x <= Mathf.Min(w - 1, x1); x++) px[y * w + x] = c;
-            }
-            Fill(0, 0, w - 1, 22, keep);                    // chão
-            Fill(180, 22, 470, 70, keep);                   // muralha
-            for (int x = 180; x <= 470; x += 12) Fill(x, 70, x + 6, 76, keep); // ameias
-            Fill(200, 22, 236, 120, keep);                  // torre esquerda
-            for (int x = 200; x <= 236; x += 9) Fill(x, 120, x + 5, 127, keep);
-            Fill(400, 22, 440, 110, keep);                  // torre direita
-            for (int x = 400; x <= 440; x += 9) Fill(x, 110, x + 5, 117, keep);
-            Fill(300, 22, 340, 165, keep);                  // torre do tomo
-            for (int y = 165; y <= 190; y++) Fill(320 - (190 - y) * 20 / 25, y, 320 + (190 - y) * 20 / 25, y, keep); // telhado
-            foreach (var (wx, wy) in new[] { (214, 90), (420, 80), (260, 45), (360, 50), (440, 45) }) Fill(wx, wy, wx + 3, wy + 5, window);
-            // Brilho da praga na janela do tomo
-            for (int y = 130; y <= 160; y++) for (int x = 305; x <= 335; x++)
-            {
-                float d = Mathf.Sqrt((x - 320f) * (x - 320f) + (y - 145f) * (y - 145f));
-                if (d < 4f) px[y * w + x] = plagueGreen;
-                else if (d < 12f && ((x + y) % 3 == 0)) px[y * w + x] = plague;
-            }
-
+            paint((x, y, c) => { if (x >= 0 && x < w && y >= 0 && y < h) px[y * w + x] = c; });
             var tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
             tex.SetPixels32(px);
             tex.Apply();
@@ -241,5 +260,179 @@ namespace SeteVidas.EditorTools
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             return AssetDatabase.LoadAssetAtPath<Sprite>(path);
         }
+
+        /// <summary>Mapa de caracteres (linha de cima primeiro) com contorno automático de 1 px nos 4 vizinhos.</summary>
+        static void PaintMap(System.Action<int, int, Color32> set, string[] map, int w, int h, System.Func<char, Color32> color, Color32 outline)
+        {
+            bool On(int x, int y) => y >= 0 && y < map.Length && x >= 0 && x < map[y].Length && map[y][x] != '.';
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    int my = y, mx = x;
+                    Color32? c = null;
+                    if (On(mx, my)) c = color(map[my][mx]);
+                    else if (On(mx - 1, my) || On(mx + 1, my) || On(mx, my - 1) || On(mx, my + 1)) c = outline;
+                    if (c.HasValue) set(x, h - 1 - y, c.Value);   // a textura cresce para cima
+                }
+        }
+
+        static readonly Color32 CatOutline = new Color32(0x1a, 0x1c, 0x26, 0xff);
+        static Color32 CatColor(char k) => k switch
+        {
+            'L' => new Color32(0xf4, 0xd6, 0xa3, 0xff), 'F' => new Color32(0xe3, 0xb7, 0x7d, 0xff), 'f' => new Color32(0xb9, 0x85, 0x52, 0xff),
+            'G' => new Color32(0x6a, 0x70, 0x80, 0xff), 'H' => new Color32(0x4a, 0x4f, 0x5c, 0xff), 'h' => new Color32(0x33, 0x36, 0x3f, 0xff),
+            'T' => new Color32(0x2b, 0x3a, 0x67, 0xff), 't' => new Color32(0x1c, 0x26, 0x45, 0xff),
+            _ => new Color32(0, 0, 0, 0),
+        };
+
+        // o gato sentado de costas: capuz da Guilda com as orelhas para fora, a capa com a faixa do Ladino, as ancas
+        static readonly string[] CatBack =
+        {
+            "......................",
+            "......L.....L.........",
+            "......LF...FL.........",
+            "......FHHHHHF.........",
+            ".....HHGGGGGHH........",
+            ".....HGGGGGGGH........",
+            ".....HGGGGGGGH........",
+            ".....HHGGGGGHH........",
+            "......hHHHHHh.........",
+            "....HHHHhHHhHHHH......",
+            "...HHHGHhHHhHGHHH.....",
+            "...HHHGHhHHhHGHHH.....",
+            "...HHHHHhHHhHHHHH.....",
+            "..HHHHHHhHHhHHHHHH....",
+            "..HHHHHHhHHhHHHHHH....",
+            "..TTTTTTTTTTTTTTTTT...",
+            "..ttttttttttttttttt...",
+            "..FFFFFf.....fFFFFFF..",
+            "...fff.........fff....",
+        };
+        // a cauda em 3 posições (x, y no mapa acima): levantada, deitada, mais alta
+        static readonly int[][] CatTails =
+        {
+            new[] { 18, 16, 19, 16, 20, 15, 21, 14, 21, 13, 22, 12, 22, 11 },
+            new[] { 18, 16, 19, 17, 20, 17, 21, 17, 22, 16, 23, 16, 24, 15 },
+            new[] { 18, 16, 19, 15, 20, 14, 20, 13, 21, 12, 21, 11, 22, 10 },
+        };
+
+        static Sprite[] CatBackSprites()
+        {
+            const int w = 28, h = 21;
+            var frames = new Sprite[CatTails.Length];
+            for (int f = 0; f < CatTails.Length; f++)
+            {
+                var map = new char[h][];
+                for (int y = 0; y < h; y++) { map[y] = new char[w]; for (int x = 0; x < w; x++) map[y][x] = y < CatBack.Length && x < CatBack[y].Length ? CatBack[y][x] : '.'; }
+                var t = CatTails[f];
+                for (int i = 0; i < t.Length; i += 2)
+                {
+                    bool tip = i == t.Length - 2;
+                    map[t[i + 1]][t[i]] = tip ? 'L' : 'F';
+                    if (!tip && map[t[i + 1]][t[i] + 1] == '.') map[t[i + 1]][t[i] + 1] = 'f';   // a cauda com 2 px de grossura
+                }
+                var rows = new string[h];
+                for (int y = 0; y < h; y++) rows[y] = new string(map[y]);
+                frames[f] = Draw("ui_menu_gato_costas_" + f, w, h, set => PaintMap(set, rows, w, h, CatColor, CatOutline));
+            }
+            return frames;
+        }
+
+        /// <summary>Penhasco em primeiro plano, à esquerda: rocha quase preta com a borda de cima iluminada pelo pôr do sol.</summary>
+        static Sprite CliffSprite() => Draw("ui_menu_penhasco", 200, (int)CliffTop + 2, set =>
+        {
+            var dark = new Color32(0x14, 0x10, 0x1a, 0xff);
+            var rock = new Color32(0x1e, 0x18, 0x26, 0xff);
+            var rim = new Color32(0x57, 0x4c, 0x62, 0xff);
+            var warm = new Color32(0x8a, 0x5a, 0x4a, 0xff);
+            int top = (int)CliffTop;
+            for (int x = 0; x < 200; x++)
+            {
+                // topo reto onde o gato senta (x 100..160), depois a beira cai em degraus irregulares
+                int edge = x < 160 ? top - (x < 20 ? (20 - x) / 6 : 0) + ((x * 7) % 5 == 0 ? -1 : 0)
+                                   : top - (x - 160) * (x - 160) / 22 - ((x * 13) % 4);
+                for (int y = 0; y <= edge && y < top + 2; y++)
+                {
+                    Color32 c = y >= edge - 1 ? (x > 90 && x < 170 ? warm : rim) : (((x / 6 + y / 5) % 4 == 0) ? dark : rock);
+                    set(x, y, c);
+                }
+            }
+        });
+
+        // fonte 5×7 do logo (só as letras de SETE VIDAS)
+        static readonly System.Collections.Generic.Dictionary<char, string[]> Font5x7 = new System.Collections.Generic.Dictionary<char, string[]>
+        {
+            { 'S', new[] { ".####", "#....", "#....", ".###.", "....#", "....#", "####." } },
+            { 'E', new[] { "#####", "#....", "#....", "####.", "#....", "#....", "#####" } },
+            { 'T', new[] { "#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.." } },
+            { 'V', new[] { "#...#", "#...#", "#...#", "#...#", ".#.#.", ".#.#.", "..#.." } },
+            { 'I', new[] { "###", ".#.", ".#.", ".#.", ".#.", ".#.", "###" } },
+            { 'D', new[] { "####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####." } },
+            { 'A', new[] { ".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#" } },
+        };
+
+        /// <summary>Logo "SETE VIDAS": letras de 5×7 em blocos de 3 px, dourado com brilho em cima, contorno e sombra.</summary>
+        static Sprite LogoSprite()
+        {
+            const string text = "SETE VIDAS";
+            const int scale = 3;
+            // monta a grade de 1 px por "pixel" da fonte
+            int width = 0;
+            foreach (char ch in text) width += (ch == ' ' ? 3 : Font5x7[ch][0].Length) + 1;
+            var grid = new bool[7, width];
+            int cx = 0;
+            foreach (char ch in text)
+            {
+                if (ch == ' ') { cx += 4; continue; }
+                var g = Font5x7[ch];
+                for (int y = 0; y < 7; y++) for (int x = 0; x < g[y].Length; x++) if (g[y][x] == '#') grid[y, cx + x] = true;
+                cx += g[0].Length + 1;
+            }
+            int w = width * scale + 4, h = 7 * scale + 5;
+            return Draw("ui_menu_logo", w, h, set =>
+            {
+                var gold = new Color32(0xf2, 0xd0, 0x4b, 0xff);
+                var light = new Color32(0xff, 0xf4, 0xc2, 0xff);
+                var shade = new Color32(0xc8, 0x96, 0x2a, 0xff);
+                var outline = new Color32(0x2a, 0x10, 0x30, 0xff);
+                bool Fill(int px, int py)
+                {
+                    int gx = (px - 2) / scale, gy = (py - 2) / scale;
+                    return px >= 2 && py >= 2 && gx < width && gy < 7 && grid[gy, gx];
+                }
+                for (int py = 0; py < h; py++)
+                    for (int px = 0; px < w; px++)
+                    {
+                        Color32? c = null;
+                        if (Fill(px, py))
+                        {
+                            int ry = (py - 2) % (scale * 7) / scale;     // linha da fonte
+                            c = ry <= 1 ? light : ry >= 5 ? shade : gold;
+                        }
+                        else if (Fill(px - 1, py) || Fill(px + 1, py) || Fill(px, py - 1) || Fill(px, py + 1) || Fill(px - 1, py - 1) || Fill(px - 2, py - 2))
+                            c = outline;                                  // contorno + sombra para baixo à direita
+                        if (c.HasValue) set(px, h - 1 - py, c.Value);
+                    }
+            });
+        }
+
+        /// <summary>Centelha 5×5: miolo branco e braços dourados (uma das sete vidas).</summary>
+        static Sprite SparkSprite() => Draw("ui_menu_centelha", 5, 5, set =>
+        {
+            var gold = new Color32(0xf2, 0xd0, 0x4b, 0xff);
+            var white = new Color32(0xff, 0xfa, 0xe8, 0xff);
+            set(2, 2, white);
+            set(1, 2, gold); set(3, 2, gold); set(2, 1, gold); set(2, 3, gold);
+            set(0, 2, new Color32(0xf2, 0xd0, 0x4b, 0x80)); set(4, 2, new Color32(0xf2, 0xd0, 0x4b, 0x80));
+            set(2, 0, new Color32(0xf2, 0xd0, 0x4b, 0x80)); set(2, 4, new Color32(0xf2, 0xd0, 0x4b, 0x80));
+        });
+
+        /// <summary>Cursor em forma de patinha 7×7: almofada grande e quatro dedos, dourado com contorno escuro.</summary>
+        static Sprite PawSprite() => Draw("ui_menu_patinha", 7, 7, set =>
+        {
+            string[] map = { ".#...#.", "#.#.#.#", ".#...#.", "..###..", ".#####.", ".#####.", "..###.." };
+            var gold = new Color32(0xf2, 0xd0, 0x4b, 0xff);
+            for (int y = 0; y < 7; y++) for (int x = 0; x < 7; x++) if (map[y][x] == '#') set(x, 6 - y, gold);
+        });
     }
 }

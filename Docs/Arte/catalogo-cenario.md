@@ -2,7 +2,7 @@
 
 > Gerado por `Tools/EnvironmentSprites/gerar_catalogo.ps1` a partir dos `manifest.json`. **Não edite à mão**: mude o manifesto e rode o script de novo. Como usar a biblioteca: `guia-de-assets.md`.
 
-**149 assets** em 22 manifestos.
+**150 assets** em 22 manifestos.
 
 ## Backgrounds/Interior
 
@@ -258,6 +258,7 @@
 | ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_escala.png) | `env_sol_obj_escala` | Escala da guarda | narrativo | decor_atras | 1 | **apoio parede.** Pregada na parede, 1,5 tile acima do chÃ£o, com o selo carmesim. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5). |
 | ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_prateleira.png) | `env_sol_obj_prateleira` | Prateleira do arquivo | decorativo | decor_atras | 1 | **apoio chao.** Rolos, livros e caixas de arquivo dos fundos. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5). |
 | ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_barril.png) | `env_sol_obj_barril` | Barril | decorativo | decor_atras | 1 | **apoio chao.** DepÃ³sito e cozinha. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5). |
+| ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_placa_seta_direita.png) | `env_sol_obj_placa_seta` | Placa de seta | narrativo | decor_atras | 4 | **apoio chao.** Melhoria 9: a direção sem palavra (variações: direita, esquerda, cima, baixo). Substitui os textos de direção que flutuavam no mundo. |
 | ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_caixote.png) | `env_sol_obj_caixote` | Caixote velho | decorativo | decor_atras | 1 | **apoio chao.** Decorativo (o esconderijo de caixotes Ã© outro objeto). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5). |
 | ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_sacos.png) | `env_sol_obj_sacos` | Sacos de grÃ£o | decorativo | decor_atras | 1 | **apoio chao.** Com o carimbo carmesim da Ordem. Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5). |
 | ![](../../Assets/_Game/Art/Environments/Soluki/Objects/env_sol_obj_porta_fechada_0.png) | `env_sol_obj_porta_fechada` | Porta de madeira fechada | decorativo | decor_atras | 2 | **apoio chao.** Corredor que existe mas o gato nÃ£o usa: tranca com cadeado (v0) ou tÃ¡buas pregadas (v1). Nunca rachada nem dourada (nÃ£o Ã© parede quebrÃ¡vel). Gerado por Tools/EnvironmentSprites/ObjectSpriteGen (Etapa 5). |

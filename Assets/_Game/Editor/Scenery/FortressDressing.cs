@@ -99,6 +99,10 @@ namespace SeteVidas.EditorTools
             Add(d, 10, Adult, "Adulta da estrada 1", 236.6f, 0f);
             Add(d, 10, Young, "Jovem da estrada", 241.2f, 0f);
             Fixed(d, 10, Ancient, 0, "Anciã da estrada", 248.4f, 0f);
+            // melhoria 9: placas de seta no lugar dos textos de direção (variação 0 direita, 1 esquerda, 2 cima, 3 baixo)
+            Fixed(d, 10, "env_sol_obj_placa_seta", 0, "Placa: estrada para Miaravéu", 238f, 0f);
+            Fixed(d, 7, "env_sol_obj_placa_seta", 2, "Placa: Torre do Selo", 142f, BellHall);
+            Fixed(d, 9, "env_sol_obj_placa_seta", 3, "Placa: desça pelo poço", 219.02f, SealFloor);   // posição do usuário
             Add(d, 10, "env_ext_veg_tronco_caido", "Tronco caído da estrada", 243.8f, 0f);
             // (o arbusto da estrada 1 deu lugar ao posto de comércio dos estrangeiros)
             Add(d, 10, Shrub, "Arbusto da estrada 2", 246.2f, 0f);
@@ -134,10 +138,7 @@ namespace SeteVidas.EditorTools
             Add(d, 5, "env_com_obj_wall_torch_apagada", "Tocha apagada da sombra B", 176f, WallWalk + 2.6f);
 
             // ===== 7) Salão dos Votos
-            Add(d, 7, Window, "Vitral do salão 1", 186f, BellHall + 6f);
-            Add(d, 7, Window, "Vitral do salão 2", 198f, BellHall + 6f);
             Add(d, 7, Banner, "Estandarte do salão", 192f, 81.9f);
-            Row(d, 7, "env_cid_cul_escudo_nome", "Escudos dos paladinos caídos (com nome)", 178.4f, BellHall + 3.3f, 4, 8f);
 
             // ===== 9) Câmara do Selo
             Add(d, 9, Statue, "Estátua da câmara 1", 149f, SealFloor);
@@ -145,8 +146,6 @@ namespace SeteVidas.EditorTools
             // perto do Tomo a vida some: plantas secas nos vasos ao pé das estátuas (Etapa 4)
             Add(d, 9, "env_nec_veg_vaso_seco", "Vaso seco da câmara 1", 150.7f, SealFloor);
             Add(d, 9, "env_nec_veg_vaso_seco", "Vaso seco da câmara 2", 172.8f, SealFloor);
-            Add(d, 9, Window, "Vitral da câmara 1", 155f, SealFloor + 5.5f);
-            Add(d, 9, Window, "Vitral da câmara 2", 168f, SealFloor + 5.5f);
             Add(d, 9, Banner, "Estandarte do selo", 161.5f, 109.9f);
             Add(d, 9, Banner, "Estandarte do tomo", 181.5f, 106.9f);
 
@@ -158,6 +157,11 @@ namespace SeteVidas.EditorTools
             Group(d, 3, "patio_mantimentos", 82.5f, 0f);
             // 4) Escalada: munição no alto das muralhas (a defesa de verdade)
             Group(d, 4, "defesa_muralha", 113.4f, 15f);
+            // o pombal dos mensageiros no alto da muralha, ao ar livre (pedido do usuário: antes ficava dentro da galeria)
+            Group(d, 4, "muralha_pombal", 113.4f, 15f);
+            // a aljava e os virotes na arquibancada do pátio (o usuário levou da muralha para cá)
+            Add(d, 3, "env_sol_obj_aljava", "Aljava na arquibancada", 51.97f, 7f);
+            Add(d, 3, "env_sol_obj_virotes", "Virotes na arquibancada", 52.82f, 7f);
             Group(d, 4, "defesa_braseiro", 133.9f, WallWalk);
             // 5) Galeria (alojamento): beliche e baú, a partida de dados largada, a cozinha, a escala da guarda
             // (pedido do usuário: é o alojamento, então mais camas e mesas; a armadilha foi para o pé da torre do sino)
@@ -196,10 +200,9 @@ namespace SeteVidas.EditorTools
             Add(d, 5, "env_cid_arq_portao_levantado", "Grade levantada da entrada", 137.5f, 52f);
             Fixed(d, 5, "env_mag_selo_porta", 1, "Selo da porta 2", 137.5f, 50.3f);
             Add(d, 5, "env_com_obj_corda_cortada", "Corda cortada da Guilda", 153f, 52f);
-            // 6) Torre do Sino: o sino no teto do salão sobre a chaminé, o pombal no pé da torre, porta 3 com correntes,
+            // 6) Torre do Sino: o sino no teto do salão sobre a chaminé, porta 3 com correntes,
             // seteira atrás do lançador
             Group(d, 6, "torre_sino", 209.5f, 82f);
-            Group(d, 6, "torre_pombal", 202f, WallWalk);
             Fixed(d, 6, "env_mag_selo_porta", 2, "Selo da porta 3", 207f, 50.4f);
             // 7) Salão dos Votos: colunas (nunca atrás de plataforma), tapete, o altar do juramento com uma vela apagada
             // (primeiro sinal da praga), a fissura roxa no vitral dos cacos e a porta 4 na saída para as armadilhas
@@ -224,7 +227,6 @@ namespace SeteVidas.EditorTools
             Group(d, 10, "posto_comercio", 240f, 0f);
             // 10) Fundos: estandarte velho, marca da Guilda e corda, relíquias Primatas nos cofres
             Add(d, 10, "env_cid_cul_estandarte_desbotado", "Estandarte velho dos fundos", 190.5f, 104.6f);
-            Fixed(d, 10, "env_com_cul_marca_guilda", 2, "Marca da Guilda (nove riscos)", 196.6f, SealFloor + 1.1f);
             Add(d, 10, "env_com_obj_corda_cortada", "Corda cortada dos fundos", 198f, 106f);
             Fixed(d, 10, "env_pri_obj_reliquia", 0, "Relíquia do cofre 72", 228.05f, BellHall);
             Fixed(d, 10, "env_pri_obj_reliquia", 1, "Relíquia do cofre 43", 228.05f, WallWalk);
@@ -251,7 +253,7 @@ namespace SeteVidas.EditorTools
         {
             { "exterior_acampamento", new[] { "env_ext_obj_fogueira_apagada|0|0", "env_ext_obj_mochila|1.05|0" } },
             { "patio_mantimentos", new[] { "env_sol_obj_barril|0|0", "env_sol_obj_sacos|3.9|0" } },
-            { "defesa_muralha", new[] { "env_sol_obj_aljava|0|0", "env_sol_obj_virotes|0.85|0", "env_sol_obj_corda|1.85|0" } },
+            { "defesa_muralha", new[] { "env_sol_obj_corda|1.85|0" } },   // a aljava e os virotes foram para a arquibancada (usuário)
             { "defesa_braseiro", new[] { "env_sol_obj_braseiro|0|0", "env_sol_obj_virotes|-1.05|0" } },
             { "alojamento_cama", new[] { "env_sol_obj_beliche|0|0", "env_sol_obj_bau|1.55|0" } },
             { "alojamento_dormitorio", new[] { "env_sol_obj_beliche|0|0", "env_sol_obj_beliche|2.1|0" } },
@@ -259,21 +261,21 @@ namespace SeteVidas.EditorTools
             { "alojamento_cozinha", new[] { "env_sol_obj_barril|0|0", "env_sol_obj_panela|0.95|0", "env_sol_obj_vassoura|1.75|0" } },
             { "armadilhas_mecanismo", new[] { "env_cid_obj_engrenagem|0|2.6", "env_cid_obj_alavanca|0.95|1.1", "env_cid_obj_registro|-0.95|1.5" } },
             { "armadilhas_fosso", new[] { "env_cid_obj_elmo_amassado|0|0", "env_cid_obj_escudo_amassado|2.6|0" } },
-            { "servico_arquivo", new[] { "env_sol_obj_prateleira|0|0", "env_sol_obj_caixote|1.3|0", "env_com_obj_teia|-0.45|5" } },
+            { "servico_arquivo", new[] { "env_sol_obj_prateleira|0|0", "env_sol_obj_prateleira|1.98|0", "env_sol_obj_prateleira|-1.98|0", "env_com_obj_teia|-7.45|5" } },   // arranjo do usuário
             // Etapa 5B
             { "montanha_estrada_negra", new[] { "env_pri_obj_marco|0|0", "env_ext_roc_pequena|0.75|0" } },
             { "patio_treino", new[] { "env_sol_obj_weapon_rack|0|0", "env_sol_obj_balde_agua|1.45|0", "env_sol_obj_archery_target|3|0" } },
             { "posto_comercio", new[] { "env_ext_obj_barraca_comercio|0|0", "env_cid_cul_penas|-1.05|0" } },
             { "vestigio_primata", new[] { "env_pri_obj_marco|0|0", "env_pri_obj_cristal_apagado|-6|0" } },
             { "torre_sino", new[] { "env_cid_cul_sino|0|0" } },
-            { "torre_pombal", new[] { "env_cid_cul_pombal|0|0", "env_cid_cul_penas|-1.2|0" } },
+            { "muralha_pombal", new[] { "env_cid_cul_pombal|0|0", "env_cid_cul_penas|-1.2|0" } },
             { "caixotes_pilha", new[] { "env_sol_obj_caixote|0|0", "env_sol_obj_caixote|0.85|0", "env_sol_obj_caixote|0.42|0.69" } },
             { "caixotes_dupla", new[] { "env_sol_obj_caixote|0|0", "env_sol_obj_caixote|0.85|0" } },
             { "trilha_carga_largada", new[] { "env_sol_obj_caixote|-0.6|0", "env_sol_obj_sacos|0.6|0" } },
             { "salao_colunas", new[] { "env_cid_arq_coluna|0|0", "env_cid_arq_coluna|8|0" } },
-            { "salao_altar", new[] { "env_cid_cul_placa_juramento|0|4", "env_cid_cul_emblema|0|6.6", "env_cid_cul_vela|-1.4|0", "env_cid_cul_vela_apagada|1.4|0" } },
+            { "salao_altar", new[] { "env_cid_cul_vela|-1.4|0", "env_cid_cul_vela_apagada|1.4|0" } },   // a placa e o emblema saíram (usuário)
             { "camara_correntes", new[] { "env_mag_corrente|0|0", "env_mag_corrente|11|0", "env_mag_selo_cera|0|-3.3|0", "env_mag_selo_cera|11|-3.3|1" } },
-            { "camara_runas", new[] { "env_mag_runa|0|2.5", "env_nec_veia|10.1|1.5|2", "env_mag_runa|11.1|2.5", "env_nec_veia|19.1|3.5|2", "env_mag_runa|29.1|2.5" } },
+            { "camara_runas", new[] { "env_nec_veia|10.1|1.5|2", "env_nec_veia|19.1|3.5|2" } },   // as runas saíram (usuário)
             { "servico_deposito", new[] { "env_sol_obj_barril|0|0", "env_sol_obj_sacos|1.05|0", "env_sol_obj_caixote|2.15|0" } },
         };
 

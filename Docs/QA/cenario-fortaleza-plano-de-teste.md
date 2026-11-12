@@ -34,6 +34,8 @@ Severidade (QA): **S1** bloqueante · **S2** mecânica central quebrada ou leitu
 | CEN-16 | Galeria, salão, armadilhas, câmara, fundos | Olhar as janelas | Mostram o céu daquela altura e andam com a paralaxe (borda do sol, meio sol, só céu, último raio, noite) | ☐ |
 | CEN-17 | Toda a fase | Procurar objeto entrando na parede | Nenhum (tenda, santuários e caixinha de areia conferidos) | ☐ |
 | CEN-17b | Estrada para Miaravéu e alto da montanha | Andar até o fim da estrada; depois andar até a ponta esquerda do começo | Nunca se vê a parede do fim do mapa nem o vazio: escurece aos poucos (pontilhado) até o preto; na saída, o gato some no escuro antes da tela final | ☐ |
+| CEN-17d | Toda a fase | Jogar do começo ao fim, com teclado e depois com controle | Nenhuma palavra flutuando no mundo; cada dica entra no pergaminho do canto, com a tecla do controle em uso, e some ao fazer a ação; não volta depois de feita; some durante os diálogos; placas de seta na Torre do Selo, no poço e na estrada | ☐ |
+| CEN-17e | Qualquer lugar | Apertar Tab (e I, e Start no controle); trocar as abas; ler uma placa e abrir o Diário; desligar as dicas; fechar com Esc | O jogo para enquanto o inventário está aberto; as 4 abas mostram Lion, Classes, Habilidades e Diário; a placa lida aparece no Diário com o texto; com as dicas desligadas, nenhuma dica aparece; fechando, tudo volta | ☐ |
 
 ## 3. Mundo vivo
 

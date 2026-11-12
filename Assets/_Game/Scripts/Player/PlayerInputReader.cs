@@ -13,6 +13,9 @@ namespace SeteVidas.Player
 
         [SerializeField] InputActionAsset actions;
 
+        /// <summary>O asset de controles (as dicas leem o nome das teclas dele).</summary>
+        public InputActionAsset Actions => actions;
+
         InputActionMap _map;
         InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass, _heal;
         readonly InputAction[] _classSlots = new InputAction[7];

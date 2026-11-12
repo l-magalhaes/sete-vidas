@@ -217,6 +217,9 @@ namespace SeteVidas.EditorTools
                 case "sign":
                     TrapsSetup.Sign(t, o.X, o.Y, o.Text);
                     break;
+                case "hint":
+                    Hint(t, o);
+                    break;
                 case "lore":
                     if (dialogues.TryGetValue(o.Id, out var text)) CitadelDecorSetup.Sign(t, o.Name, o.X, o.Y, text);
                     else Debug.LogWarning($"[Sete Vidas] Placa sem texto: {o.Id}");
@@ -462,6 +465,40 @@ namespace SeteVidas.EditorTools
         /// formato da abertura. A parede do fundo só aparece FORA das máscaras, então pelo recorte se vê o conjunto de fundo
         /// ativo (o céu e a paisagem daquela altura, com a paralaxe certa).
         /// </summary>
+        /// <summary>
+        /// Melhoria 9: área invisível de uma dica do tutorial (no lugar dos textos que flutuavam). x = meio, y = chão,
+        /// W×H = a área; Link = "tecla:quando some[:flag]" (tecla: andar, pular, agachar, atacar, cima, interagir, classe, curar,
+        /// nenhuma; some: acao, cobertura, ler; flag: só aparece com ela no save).
+        /// </summary>
+        static void Hint(Transform parent, FortressLayout.Obj o)
+        {
+            var go = new GameObject("Dica: " + o.Text) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3(o.X, o.Y, 0f);
+            var box = go.AddComponent<BoxCollider2D>();
+            box.isTrigger = true;
+            box.size = new Vector2(o.W > 0f ? o.W : 5f, o.H > 0f ? o.H : 4f);
+            box.offset = new Vector2(0f, box.size.y * 0.5f);
+            string[] parts = (o.Link ?? "").Split(':');
+            var key = parts[0] switch
+            {
+                "pular" => HintKey.Jump,
+                "agachar" => HintKey.Crouch,
+                "atacar" => HintKey.Attack,
+                "cima" => HintKey.Up,
+                "andar" => HintKey.Move,
+                "interagir" => HintKey.Interact,
+                "classe" => HintKey.NextClass,
+                "curar" => HintKey.Heal,
+                _ => HintKey.None,
+            };
+            var dismiss = parts.Length > 1 && parts[1] == "cobertura" ? HintDismiss.Cover
+                        : parts.Length > 1 && parts[1] == "ler" ? HintDismiss.Read : HintDismiss.Action;
+            if (key == HintKey.None && dismiss == HintDismiss.Action) dismiss = HintDismiss.Read; // sem tecla, não há ação
+            string requires = parts.Length > 2 ? parts[2] : "";   // 3ª parte: flag do save exigida (ex.: vinculo_golden)
+            go.AddComponent<TutorialHint>().Configure(o.Id, key, o.Text, dismiss, requires);
+        }
+
         /// <summary>Escuridão da saída: gradiente de x 240 a 247 (7 tiles), preto daí para fora (melhoria 8).</summary>
         public const float ExitFogStart = 240f, ExitFogEnd = 247f;
         /// <summary>Escuridão da entrada: gradiente de 3 tiles sobre a parede de rocha do começo, preto à esquerda.</summary>

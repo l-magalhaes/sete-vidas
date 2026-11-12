@@ -27,3 +27,14 @@ Entrar no jogo em segundos: continuar de onde parou (o santuário) ou começar d
 - [PROPOSTA] Um único save (sem escolher slot).
 - [PROPOSTA] Sem tela de opções no MVP (volume, controles); entra no Vertical Slice.
 - [PROPOSTA] Sem "voltar ao menu" durante o jogo no MVP (pausa com menu fica para depois).
+
+## No tema (melhoria 12, 12/11/2026)
+
+- **Fundo vivo:** a mesma vista do alto da montanha (conjunto A da fase): o céu do pôr do sol, a cordilheira com a Cidadela em silhueta bem na frente do sol poente e a floresta do vale, com a cor de preenchimento de cada camada embaixo. As camadas andam devagar (0,5 e 1,5 px/s, repetindo a cada 960 px), então a Cidadela fica à vista por vários minutos.
+- **Primeiro plano:** um penhasco escuro à esquerda, com a borda de cima iluminada, e o gato sentado nele, **de costas** (capuz da Guilda com as orelhas para fora, a capa com a faixa do Ladino), olhando a Cidadela; a cauda balança em 3 quadros.
+- **Logo "SETE VIDAS":** letras de 5×7 em blocos de 3 px, dourado com brilho em cima, contorno e sombra (172×26), com **sete centelhas** num arco por cima; de 5 a 9 s, uma se apaga e volta devagar (a maldição).
+- **Menu em pergaminho**, à direita: Continuar (com o resumo do save embaixo), Novo jogo (com a confirmação de antes), **Dicas: ligadas/desligadas** (a opção fica nas preferências do jogador, não no save: um jogo novo não religa as dicas), Área de testes e Sair. **Cursor de patinha.**
+- **Área de testes só em build de desenvolvimento** (e no editor).
+- **Entrada:** fade a partir do preto (0,8 s).
+- Ficou de fora: o gato se levantar e a câmera descer ao escolher (a cena troca direto, como antes).
+- Arte gerada pelo `MenuSetup` (menu 12) em `Art/UI/Menu`; vida da tela em `TitleScreenFx`. Maquete: `SeteVidasDocs/Referencias/tela_inicial_maquete.png`.

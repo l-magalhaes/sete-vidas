@@ -53,6 +53,7 @@ namespace SeteVidas.UI
 
         void Start()
         {
+            InventoryMenu.Ensure(); // melhoria 10: o inventário (Tab, I ou Start) vem junto do HUD
             // save de antes da marca: tomo pego e menos de 7 corações = a maldição já passou
             var data = SaveManager.Data;
             var health = PlayerHealth.Active;

@@ -34,6 +34,61 @@ namespace SeteVidas.Tests
 
         static Tilemap Map(string name) => GameObject.Find("Grid/" + name).GetComponent<Tilemap>();
 
+        /// <summary>Melhoria 9: nenhuma palavra flutuando no mundo; entrar na área de uma dica mostra o pergaminho, sair esconde.</summary>
+        [UnityTest]
+        public IEnumerator Tutorial_HintsInAScroll_NoFloatingText()
+        {
+            yield return Load();
+            foreach (var tm in Object.FindObjectsByType<TextMesh>(FindObjectsSortMode.None))
+                Assert.IsFalse(tm.name.StartsWith("Placa: ") || (tm.transform.parent != null && tm.transform.parent.name.StartsWith("Placa: ")), $"Texto flutuando: {tm.text}");
+            var hints = Object.FindObjectsByType<TutorialHint>(FindObjectsSortMode.None);
+            Assert.GreaterOrEqual(hints.Length, 10, "As dicas do tutorial no lugar dos textos");
+
+            TutorialHint jump = null; // a dica de atacar, nos bonecos do pátio (some ao atacar; o teste não ataca)
+            foreach (var h in hints) if (h.Id == "atacar") jump = h;
+            Assert.IsNotNull(jump, "Dica de atacar");
+            SeteVidas.Save.SaveManager.Data.flags.Remove(SeteVidas.UI.TutorialScroll.FlagPrefix + "atacar");
+            SeteVidas.Save.SaveManager.Data.flags.Remove(SeteVidas.UI.TutorialScroll.DisabledFlag);
+            SeteVidas.UI.TutorialScroll.HintsDisabled = false;
+
+            var player = Object.FindAnyObjectByType<PlayerController>();
+            player.Teleport(new Vector2(jump.transform.position.x, jump.transform.position.y + 0.05f));
+            for (int i = 0; i < 20; i++) yield return null;
+            Assert.IsTrue(SeteVidas.UI.TutorialScroll.Exists, "O pergaminho foi criado");
+            Assert.AreEqual("atacar", SeteVidas.UI.TutorialScroll.Get().CurrentId);
+
+            player.Teleport(new Vector2(jump.transform.position.x - 8f, jump.transform.position.y + 0.05f)); // longe das outras dicas do pátio
+            for (int i = 0; i < 5; i++) yield return null;
+            Assert.IsNull(SeteVidas.UI.TutorialScroll.Get().CurrentId, "Saiu da área: a dica sai");
+        }
+
+        /// <summary>Melhoria 10: o inventário abre (pausa o jogo e trava o controle) e fecha (volta tudo); não abre em diálogo.</summary>
+        [UnityTest]
+        public IEnumerator Inventory_OpensPausedAndCloses()
+        {
+            yield return Load();
+            for (int i = 0; i < 3; i++) yield return null;
+            var menu = SeteVidas.UI.InventoryMenu.Ensure();
+            var runner = SeteVidas.Dialogue.DialogueRunner.Active;
+            if (runner != null && runner.IsOpen)
+            {
+                Assert.IsFalse(SeteVidas.UI.InventoryMenu.CanOpen(), "Durante o diálogo, não abre");
+                for (int i = 0; i < 20 && runner.IsOpen; i++) runner.Advance();
+                yield return null;
+            }
+            Assert.IsFalse(SeteVidas.UI.InventoryMenu.IsOpen);
+            menu.Open();
+            Assert.IsTrue(SeteVidas.UI.InventoryMenu.IsOpen, "Abriu");
+            Assert.AreEqual(0f, Time.timeScale, "O jogo pausa");
+            var input = Object.FindAnyObjectByType<PlayerController>().GetComponent<PlayerInputReader>();
+            Assert.IsTrue(input.GameplayLocked, "O controle do gato trava");
+            menu.Close();
+            Assert.IsFalse(SeteVidas.UI.InventoryMenu.IsOpen);
+            Assert.AreEqual(1f, Time.timeScale, "Volta a rodar");
+            Assert.IsFalse(input.GameplayLocked);
+            Assert.AreEqual("Ladino", SeteVidas.UI.InventoryTexts.Classes[0].Name, "A 1ª carta é a do Ladino");
+        }
+
         /// <summary>Melhoria 8: escuridão nas duas pontas, na frente de tudo; o fim do mapa (x 251) fica no preto.</summary>
         [UnityTest]
         public IEnumerator EdgeFog_CoversBothEndsOfTheMap()
@@ -331,9 +386,9 @@ namespace SeteVidas.Tests
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
             Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
-            // 164 itens no FortressDressing (Etapas 1–8 e as melhorias), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
-            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 189 objetos
-            Assert.AreEqual(189, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
+            // 152 itens no FortressDressing (Etapas 1–8 e as melhorias), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
+            // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 179 objetos (com as placas de seta da melhoria 9 e o arranjo do usuário: sem vitrais, escudos com nome, runas, marca da Guilda, placa e emblema do altar)
+            Assert.AreEqual(179, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
             foreach (var sr in dressing.GetComponentsInChildren<SpriteRenderer>())
                 Assert.IsNotNull(sr.sprite, $"{sr.name} sem sprite: id fora da biblioteca?");
             Assert.AreEqual(-5, GameObject.Find("Fortaleza/Enfeites/Estátua do guardião").GetComponent<SpriteRenderer>().sortingOrder,

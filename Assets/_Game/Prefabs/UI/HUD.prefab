@@ -967,8 +967,13 @@ MonoBehaviour:
   half: {fileID: 21300000, guid: 63e6856add903ee4489bd2d7258e69be, type: 3}
   empty: {fileID: 21300000, guid: e522eaaf066607944a56926d43f4795a, type: 3}
   locked: {fileID: 21300000, guid: c74ec539389521e4694b8c3d638a94c4, type: 3}
+  classHearts: 1
+  recoverPulse: 0.35
+  loseFade: 0.45
   healFull: {fileID: 0}
   healEmpty: {fileID: 0}
+  healScroll: 1
+  scrollFlash: 0.18
 --- !u!114 &6620481937515502938
 MonoBehaviour:
   m_ObjectHideFlags: 0

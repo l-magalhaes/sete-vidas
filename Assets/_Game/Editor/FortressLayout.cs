@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 12;
+        public const int Version = 16; // 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
 
         public enum Map { Ground, Climbable, Background }
 
@@ -217,7 +217,6 @@ namespace SeteVidas.EditorTools
 
             // ===== 1) Montanha: alto do penhasco, cachoeira, salto de fé até a lagoa
             Add(o, "trigger", "Chegada", 4f, CliffTop + 1.5f, w: 4f, h: 3f, id: "D-FORT-01", link: "intro_fortaleza");
-            Add(o, "sign", "Placa do salto", 9.5f, CliffTop + 2.6f, text: "salto de fé: corra e pule →");
             // Cachoeira: nasce de uma fenda na face do penhasco (topo da água em 55, longe da corrida do salto) e cai
             // colada na face (x 13,0..14,5) até a superfície da lagoa (-0,125). Y = superfície, H = altura até o topo.
             Add(o, "waterfall", "Cachoeira", 13.75f, -0.125f, h: 55.125f);
@@ -226,7 +225,6 @@ namespace SeteVidas.EditorTools
 
             // ===== 2) Trilha
             Add(o, "lore", "Marco da estrada", 23.8f, 0f, id: "D-PLACA-10");   // longe da beira da lagoa (rampa em 22)
-            Add(o, "sign", "Placa do pulo", 25f, 2.6f, text: "Espaço: pular");
             Add(o, "coin", "Moeda (pedra alta)", 32f, 3.7f, id: "fort_pedra", value: 1);
             Add(o, "spikes", "Espinhos do fosso", 39f, -2f, w: 4f);
             Add(o, "coin", "Moeda (sobre o fosso)", 39f, 3.2f, id: "fort_fosso", value: 1);
@@ -238,35 +236,30 @@ namespace SeteVidas.EditorTools
             // Lançadores (bloco de 16 px): o bloco de pedra dentro da parede, só a boca de bronze para fora. Centro em
             // x = face da parede + 0,06 (parede à direita, atira para a esquerda) ou − 0,125 (parede à esquerda)
             Add(o, "launcher", "Lançador do pátio", 50.06f, 1.2f, facing: -1, a: 0f);
-            Add(o, "sign", "Placa da arquibancada", 46.5f, 3f, text: "S: agachar (passe por baixo)");
             Add(o, "coin", "Moeda (sob a arquibancada)", 53f, 0.5f, id: "fort_passagem", value: 1);
             Add(o, "archer", "Atirador da arquibancada", 50.6f, 7f, facing: -1);
             Add(o, "lore", "Placa do pátio", 58f, 0f, id: "D-PLACA-01");
             Add(o, "dummy", "Boneco de treino 1", 60.5f, 0f, facing: 1);
             Add(o, "dummy", "Boneco de treino 2", 64.5f, 0f, facing: -1);
-            Add(o, "sign", "Placa dos bonecos", 62.5f, 3.4f, text: "bonecos: pelas costas dói mais");
             Add(o, "sentinel", "Instrutor do pátio", 76f, 0f, facing: -1, a: 72f, b: 80f);
             Add(o, "shadow", "Sombra da tenda", 84.4f, 2.5f, w: 6f, h: 5f);
             Add(o, "bush", "Fardo de feno", 84.4f, 0f, text: "feno");        // esconderijo: o desenho é um fardo de feno de verdade
             Add(o, "noisy", "Palha do pátio", 80.4f, 0f, w: 1f, text: "palha");     // entre o instrutor e a tenda: passe devagar
-            Add(o, "sign", "Placa da torre de escalada", 91f, 3.6f, text: "↑ pule de parede em parede");
             Add(o, "launcher", "Seteira da torre de escalada", 93.06f, 10.2f, facing: -1, a: 1.8f);
             Add(o, "coin", "Moeda (torre de escalada)", 93.5f, 19.6f, id: "fort_torre", value: 1);
             Add(o, "sentinel", "Guarda da torre de vigia", 99f, 0f, facing: 1, a: 95f, b: 103f);
             Add(o, "plate", "Placa de pressão do portão", 104f, 0f, w: 2f, link: "Lanças do portão");
             Add(o, "spears", "Lanças do portão", 105f, 0f);
             Add(o, "wall", "Porta rachada do estábulo", 112.5f, 0f, id: "fortaleza_estabulo");
-            Add(o, "sign", "Placa das rachaduras", 110.5f, 5.2f, text: "rachaduras douradas... precisa de força");
+            // (a placa "rachaduras douradas" saiu: a parede rachada já diz, melhoria 9)
             Add(o, "coin", "Moeda do estábulo 1", 115f, 0.6f, id: "fort_estabulo_1", value: 5);
             Add(o, "coin", "Moeda do estábulo 2", 117f, 0.6f, id: "fort_estabulo_2", value: 5);
             Add(o, "lore", "Placa do estábulo", 116f, 0f, id: "D-PLACA-05");
 
             // ===== 4) Escalada das vinhas
-            Add(o, "sign", "Placa das vinhas", 109.5f, 7.5f, text: "W: escalar as vinhas");
             Add(o, "coin", "Moeda (vinha 1)", 111.4f, 10f, id: "fort_hera", value: 1);
             Add(o, "coin", "Moeda (muralha 1)", 116f, 15.6f, id: "fort_muralha1", value: 1);
             Add(o, "launcher", "Seteira da muralha", 120.06f, 16.2f, facing: -1, a: 2.2f);
-            Add(o, "sign", "Placa da seteira", 115.5f, 18.3f, text: "flechas: agache");
             Add(o, "sentinel", "Vigia da muralha", 123f, 29f, facing: 1, a: 121f, b: 126f);
             Add(o, "coin", "Moeda (muralha 3)", 132f, WallWalk + 0.6f, id: "fort_muralha3", value: 1);
 
@@ -278,13 +271,11 @@ namespace SeteVidas.EditorTools
             Add(o, "lore", "Placa do alojamento", 164.4f, WallWalk, id: "D-PLACA-02");   // junto dos dormitórios
             Add(o, "shadow", "Sombra da galeria A", 148f, WallWalk + 2.5f, w: 10f, h: 5f);
             Add(o, "bush", "Caixotes", 162.3f, WallWalk, text: "caixotes"); // esconderijo junto das camas: caixotes, não moita
-            Add(o, "sign", "Placa dos caixotes", 162.3f, WallWalk + 2.6f, text: "atrás dos caixotes: agache");
             // mais esconderijos de caixotes espalhados pelo andar e em cima da passarela (pedido do usuário)
             Add(o, "bush", "Caixotes embaixo do atirador", 183.45f, WallWalk, text: "caixotes");
-            Add(o, "bush", "Caixotes do pé da torre", 208.6f, WallWalk, text: "caixotes");
+            // (os "Caixotes do pé da torre" saíram a pedido do usuário)
             Add(o, "bush", "Caixotes da passarela 1", 158f, 48f, text: "caixotes");
             Add(o, "bush", "Caixotes da passarela 2", 164.6f, 48f, text: "caixotes");
-            Add(o, "sign", "Placa da sombra", 146f, WallWalk + 3.4f, text: "na sombra, ninguém te vê");   // de pé já some (exposição 0,3)
             Add(o, "sentinel", "Sentinela da galeria", 159f, WallWalk, facing: -1, a: 155f, b: 164f);
             Add(o, "coin", "Moeda (passarela)", 160f, 48.6f, id: "fort_passarela", value: 1);
             Add(o, "noisy", "Sininhos do alojamento", 170.5f, WallWalk, text: "sininhos"); // alarme improvisado: agache para passar
@@ -302,21 +293,19 @@ namespace SeteVidas.EditorTools
             Add(o, "noisy", "Balde do alojamento", 192f, WallWalk, text: "balde");   // entre a mesa e a cozinha (o lugar dele virou esconderijo)
 
             // ===== 6) Torre do Sino
-            Add(o, "sign", "Placa da torre", 206f, WallWalk + 4.5f, text: "↑ pule de parede em parede");
             Add(o, "launcher", "Seteira da torre do sino", 211.06f, 57.2f, facing: -1, a: 2.5f);
             Add(o, "saw", "Serra da torre do sino", 209.5f, 64.5f, a: 208.6f, b: 210.4f);
             Add(o, "coin", "Moeda (torre do sino)", 209f, 68f, id: "fort_sino", value: 1);
 
             // ===== 7) Salão dos Votos e Galeria das Armadilhas (andar 72, para a esquerda)
             Add(o, "lore", "Placa do juramento", 205f, BellHall, id: "D-PLACA-03");
-            Add(o, "sign", "Placa do salão", 208.5f, BellHall + 3.2f, text: "← clique: adagas · por trás dói mais");
             Add(o, "sentinel", "Sentinela do salão A", 200f, BellHall, facing: -1, a: 196f, b: 204f);
             Add(o, "sentinel", "Sentinela do salão B", 189f, BellHall, facing: 1, a: 185f, b: 194f);
             Add(o, "sentinel", "Sentinela do salão C", 179.5f, BellHall, facing: -1, a: 176f, b: 183f);
             Add(o, "coin", "Moeda (plataforma do salão)", 191.5f, 75.6f, id: "fort_salao", value: 1);
             Add(o, "noisy", "Cacos do vitral", 186.5f, BellHall, w: 2f, text: "cacos");   // embaixo do vitral rachado: pule por cima
             Add(o, "archer", "Atirador da sacada", 201f, 78f, facing: -1);
-            Add(o, "sign", "Placa das armadilhas", 176f, BellHall + 4.5f, text: "← cuidado: armadilhas");
+            // (a placa "cuidado: armadilhas" saiu: as armadilhas já se veem, melhoria 9)
             Add(o, "noisy", "Cacos da lamparina", 175.5f, BellHall, w: 1f, text: "cacos");
             for (int i = 0; i < 6; i++)
                 Add(o, "flame", "Jato " + (i + 1), 172.5f - 2f * i, BellHall, a: i * 0.35f);
@@ -327,25 +316,25 @@ namespace SeteVidas.EditorTools
             Add(o, "coin", "Moeda (fosso da galeria)", 148f, BellHall + 2.6f, id: "fort_fosso_alto", value: 1);
 
             // ===== 8) Torre do Selo
-            Add(o, "sign", "Placa da torre do selo", 142f, BellHall + 4f, text: "↑ a Torre do Selo");
+            // (a placa "a Torre do Selo" virou uma placa de seta para cima, no FortressDressing, melhoria 9)
             Add(o, "launcher", "Seteira da torre do selo", 139.875f, 89.2f, facing: 1, a: 2f);
             Add(o, "saw", "Serra da torre do selo", 141.5f, 90.5f, a: 140.6f, b: 142.4f);
             Add(o, "coin", "Moeda (torre do selo)", 141f, 97f, id: "fort_selo", value: 1);
 
             // ===== 9) Câmara do Selo (o chefe e o tomo vêm do BossSetup.PlaceArena)
             Add(o, "lore", "Placa da câmara", 144.6f, SealFloor, id: "D-PLACA-04");
-            Add(o, "lore", "Altar de Sethra (câmara)", 143.5f, SealFloor, id: "D-PLACA-12");   // logo depois da chaminé (o chão volta em x 143)
+            // (o "Altar de Sethra (câmara)", D-PLACA-12, saiu a pedido do usuário: ficava colado na placa da câmara)
 
             // ===== 10) Depois do Paladino: porta rachada do tomo, passagem, poço e cofres, estrada
             Add(o, "wall", "Porta rachada da sala do tomo", 185.5f, SealFloor, id: "fortaleza_tomo_fundos");
-            Add(o, "sign", "Placa da porta do tomo", 183f, SealFloor + 4.6f, text: "rachaduras douradas →");
+            // (a placa "rachaduras douradas" saiu: a parede rachada já diz, melhoria 9)
             Add(o, "sentinel", "Guarda da retaguarda", 192f, SealFloor, facing: -1, a: 188f, b: 197f);
             Add(o, "noisy", "Balde dos fundos", 198.6f, SealFloor, text: "balde");
             Add(o, "wall", "Parede rachada do cofre do guardião", 200.5f, SealFloor, id: "fortaleza_cofre_guardiao");
             Add(o, "coin", "Moeda do guardião 1", 202.5f, SealFloor + 0.6f, id: "fort_guardiao_1", value: 5);
             Add(o, "coin", "Moeda do guardião 2", 204.5f, SealFloor + 0.6f, id: "fort_guardiao_2", value: 5);
             Add(o, "lore", "Diário do guardião", 206.5f, SealFloor, id: "D-PLACA-06");
-            Add(o, "sign", "Placa do poço", 216f, SealFloor + 3f, text: "↓ desça pelos patamares");
+            // (a placa "desça pelos patamares" virou uma placa de seta para baixo, no FortressDressing, melhoria 9)
             // Descida com armadilhas: de cada saliência se vê o perigo seguinte; espere a serra passar ou a flecha sair e desça
             Add(o, "saw", "Serra do poço A", 220f, 97.5f, a: 218.6f, b: 221.4f);               // embaixo do buraco: cronometrar a queda
             Add(o, "launcher", "Seteira do poço A1", 223.06f, 90.6f, facing: -1, a: 2f);
@@ -363,9 +352,59 @@ namespace SeteVidas.EditorTools
             Vault(o, WallWalk, "fortaleza_cofre_43", "fort_cofre43", "D-PLACA-08", "Pedra dos votos");
             Vault(o, 15, "fortaleza_cofre_15", "fort_cofre15", "D-PLACA-09", "Lista dos guardiões");
             Add(o, "wall", "Portão dos fundos", 223.5f, 0f, id: "fortaleza_portao_fundos");
-            Add(o, "sign", "Placa da estrada", 238f, 3.2f, text: "estrada para Miaravéu →");
+            // (a placa "estrada para Miaravéu" virou uma placa de seta para a direita, no FortressDressing, melhoria 9)
             Add(o, "trigger", "Saída da fortaleza", 245f, 2f, w: 4f, h: 4f, id: "D-FIM", text: "menu");
+            Hints(o);
             return o;
+        }
+
+        /// <summary>
+        /// Dicas do tutorial (melhoria 9), na ordem em que o jogador encontra cada mecânica (pedido do usuário: ordem
+        /// coerente com a fase). x = meio da área, y = chão. Link = "tecla:quando some[:flag exigida]".
+        /// Mesmo id = mesma dica (a segunda área só aparece se a primeira não foi feita).
+        /// </summary>
+        static void Hints(List<Obj> o)
+        {
+            // 1) Montanha: andar e o salto de fé
+            H(o, "andar", "ande até a beira", 2.5f, CliffTop, 5f, 4f, "andar:acao");
+            H(o, "salto", "corra e pule no abismo", 8f, CliffTop, 6f, 4f, "pular:acao");
+            // 2) Trilha: ler as placas, as folhas secas e o fosso de espinhos
+            H(o, "ler", "leia as placas", 23.8f, 0f, 3f, 4f, "interagir:acao");
+            H(o, "folhas", "folhas secas: passe agachado", 32.5f, 0f, 3f, 4f, "agachar:acao");
+            H(o, "espinhos", "pule por cima dos espinhos", 36.5f, 0f, 2f, 4f, "pular:ler");
+            // 3) Pátio: as flechas, atacar nos bonecos, o guarda e o esconderijo no feno
+            H(o, "agachar", "agache: as flechas passam", 46.5f, 0f, 6f, 4f, "agachar:acao");
+            H(o, "atacar", "ataque com as adagas", 58.5f, 0f, 3f, 4f, "atacar:acao");
+            H(o, "costas", "pelas costas dói mais", 62.5f, 0f, 4f, 4f, "atacar:ler");
+            H(o, "combo", "três golpes: o último avança", 66.5f, 0f, 3f, 4f, "atacar:ler");
+            H(o, "guarda", "não deixe o guarda te ver", 70f, 0f, 3f, 4f, "nenhuma:ler");
+            H(o, "esconder", "agache atrás do feno", 84.4f, 0f, 3f, 4f, "agachar:cobertura");
+            H(o, "parede", "pule de parede em parede", 91f, 0f, 4f, 8f, "pular:ler");
+            H(o, "placa", "agachado, a placa não dispara", 101.5f, 0f, 3f, 4f, "agachar:ler");
+            // 4) Muralhas: escalar, o pulo agarrado e a seteira
+            H(o, "vinhas", "escale as vinhas", 109.5f, 0f, 5f, 5f, "cima:acao");
+            H(o, "pulo_agarrado", "segure ↑ e pule: sobe mais", 111f, 4f, 2.5f, 8f, "pular:ler");
+            H(o, "flechas", "agache: as flechas passam", 115.5f, 15f, 5f, 4f, "agachar:acao");
+            // 5) Galeria: o santuário, a sombra, os caixotes e os sininhos
+            H(o, "santuario", "descanse no santuário", 139f, WallWalk, 4f, 4f, "interagir:acao");
+            H(o, "sombra", "na sombra, ninguém te vê", 146f, WallWalk, 5f, 4f, "nenhuma:ler");
+            H(o, "esconder", "agache atrás dos caixotes", 162.3f, WallWalk, 4f, 4f, "agachar:cobertura");
+            H(o, "sininhos", "agache sob os sininhos", 168.8f, WallWalk, 2f, 4f, "agachar:acao");
+            H(o, "parede", "pule de parede em parede", 206f, WallWalk, 4f, 6f, "pular:ler");
+            // 6) Salão (vindo da direita): os cacos, a madeira que cede e o quique nos espinhos
+            H(o, "cacos", "pule por cima dos cacos", 189.5f, BellHall, 2f, 4f, "pular:ler");
+            H(o, "pogo", "no ar, ↓ + ataque: quique", 155f, BellHall, 3f, 4f, "atacar:ler");
+            H(o, "madeira", "a madeira velha cede: não pare", 151.5f, BellHall, 2f, 4f, "nenhuma:ler");
+            // 7) Depois do vínculo com o Koda (Paladino): trocar de classe, a cura, o terremoto e a parede rachada
+            H(o, "trocar", "troque de classe", 160f, SealFloor, 12f, 5f, "classe:acao:vinculo_golden");
+            H(o, "cura", "use a cura do Koda", 170f, SealFloor, 6f, 5f, "curar:acao:vinculo_golden");
+            H(o, "terremoto", "segure o ataque: terremoto", 151f, SealFloor, 5f, 5f, "atacar:ler:vinculo_golden");
+            H(o, "quebrar", "marreta: quebre a parede rachada", 183f, SealFloor, 3f, 5f, "atacar:ler:vinculo_golden");
+        }
+
+        static void H(List<Obj> o, string id, string text, float x, float floor, float w, float h, string link)
+        {
+            Add(o, "hint", "Dica: " + id, x, floor, w: w, h: h, id: id, text: text, link: link);
         }
 
         static void Vault(List<Obj> o, int floor, string wallId, string coinId, string loreKey, string loreName)

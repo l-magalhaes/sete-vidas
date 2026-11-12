@@ -45,6 +45,11 @@ public static partial class ObjectSpriteGen
         Write(s_sol, "env_sol_obj_prateleira", Shelf());
         Write(s_sol, "env_sol_obj_barril", Barrel());
         Write(s_sol, "env_sol_obj_caixote", Crate());
+        // melhoria 9: placa de madeira com seta, sem palavra (substitui os textos de direção que flutuavam)
+        Write(s_sol, "env_sol_obj_placa_seta_direita", ArrowSign(0));
+        Write(s_sol, "env_sol_obj_placa_seta_esquerda", ArrowSign(0).Mirror());
+        Write(s_sol, "env_sol_obj_placa_seta_cima", ArrowSign(1));
+        Write(s_sol, "env_sol_obj_placa_seta_baixo", ArrowSign(2));
         Write(s_sol, "env_sol_obj_sacos", Sacks());
         Write(s_sol, "env_com_obj_teia", Cobweb());
         // portas fechadas: corredores que o gato não usa
@@ -510,6 +515,44 @@ public static partial class ObjectSpriteGen
             "IiiiiiiiiiiI",
             ".wwwwwwwwww.",
         }, true);
+    }
+
+    /// <summary>
+    /// Placa de seta 14×19 (melhoria 9): poste de madeira com uma tábua. 0 = a tábua em forma de seta para a direita
+    /// (espelhada = esquerda); 1 = tábua reta com a seta para cima pintada; 2 = para baixo. Nenhuma palavra.
+    /// </summary>
+    static PixelCanvas ArrowSign(int kind)
+    {
+        Palette();
+        string[] board;
+        if (kind == 0)
+            board = new[]
+            {
+                "WWWWWWWWWW...",
+                "WwwwwwwwwwW..",
+                "Wwwdwwwwwwww.",
+                "Wwwwwwwwwwwww",
+                "Wwwwwwwwwwww.",
+                "wwwwwwwwwwd..",
+                "dddddddddd...",
+            };
+        else
+        {
+            board = new[]
+            {
+                "WWWWWWWWWWW",
+                "WwwwwhwwwwW",
+                "WwwwhhhwwwW",
+                "WwwhhhhhwwW",
+                "WwwwwhwwwwW",
+                "wwwwwhwwwww",
+                "ddddddddddd",
+            };
+            if (kind == 2) { var flip = (string[])board.Clone(); for (int r = 1; r <= 5; r++) flip[r] = board[6 - r]; flip[5] = flip[5].Replace('W', 'w'); flip[1] = "W" + flip[1].Substring(1); board = flip; }
+        }
+        var rows = new List<string>(board);
+        for (int r = 0; r < 12; r++) rows.Add(r % 4 == 1 ? "....dw......." : "....ww.......");   // o poste
+        return Map(rows.ToArray(), true);
     }
 
     static PixelCanvas Crate()
