@@ -47,15 +47,30 @@ namespace SeteVidas.Tests
             TutorialHint jump = null; // a dica de atacar, nos bonecos do pátio (some ao atacar; o teste não ataca)
             foreach (var h in hints) if (h.Id == "atacar") jump = h;
             Assert.IsNotNull(jump, "Dica de atacar");
-            SeteVidas.Save.SaveManager.Data.flags.Remove(SeteVidas.UI.TutorialScroll.FlagPrefix + "atacar");
-            SeteVidas.Save.SaveManager.Data.flags.Remove(SeteVidas.UI.TutorialScroll.DisabledFlag);
+            var data = SeteVidas.Save.SaveManager.Data;
+            data.flags.Remove(SeteVidas.UI.TutorialScroll.FlagPrefix + "atacar");
+            data.flags.Remove(SeteVidas.UI.TutorialScroll.DisabledFlag);
+            // o gato nasce na área da dica "andar" (penhasco do início): marca as do começo como vistas para elas
+            // não ocuparem o pergaminho antes da dica testada
+            data.SetFlag(SeteVidas.UI.TutorialScroll.FlagPrefix + "andar");
+            data.SetFlag(SeteVidas.UI.TutorialScroll.FlagPrefix + "salto");
             SeteVidas.UI.TutorialScroll.HintsDisabled = false;
 
             var player = Object.FindAnyObjectByType<PlayerController>();
+            var health = player.GetComponent<PlayerHealth>();
+            health.Shielded = true;   // nenhuma flecha ou armadilha manda o gato de volta ao começo durante o teste
+            for (int i = 0; i < 5; i++) yield return null;   // a cena assenta (Start, primeiro passo da física)
+            // a fala de abertura pausa o jogo (sem física, a área da dica não percebe o gato): passa as falas
+            var runner = SeteVidas.Dialogue.DialogueRunner.Active;
+            for (int i = 0; i < 20 && runner != null && runner.IsOpen; i++) runner.Advance();
+            yield return null;
+            Assert.Greater(Time.timeScale, 0f, "O jogo voltou a rodar depois da fala");
             player.Teleport(new Vector2(jump.transform.position.x, jump.transform.position.y + 0.05f));
             for (int i = 0; i < 20; i++) yield return null;
             Assert.IsTrue(SeteVidas.UI.TutorialScroll.Exists, "O pergaminho foi criado");
-            Assert.AreEqual("atacar", SeteVidas.UI.TutorialScroll.Get().CurrentId);
+            Assert.AreEqual("atacar", SeteVidas.UI.TutorialScroll.Get().CurrentId,
+                $"Dica na tela errada; gato em {player.Body.position}, dica em {jump.transform.position}");
+            health.Shielded = false;
 
             player.Teleport(new Vector2(jump.transform.position.x - 8f, jump.transform.position.y + 0.05f)); // longe das outras dicas do pátio
             for (int i = 0; i < 5; i++) yield return null;
