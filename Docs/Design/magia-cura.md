@@ -3,7 +3,7 @@
 **Pilar:** 1 (sete corações, sete classes) | **Escopo:** MVP | **Status:** implementado, aguarda playtest
 
 ## Regra
-- **Desbloqueio:** junto com a classe **Paladino**, no vínculo com Koda (D-GOLDEN-01-SISTEMA avisa: "Magia de cura aprendida! Aperte F para curar 1 coração. 3 usos; o santuário recarrega.").
+- **Desbloqueio:** junto com a classe **Paladino**, no vínculo com Koda (D-GOLDEN-01-SISTEMA avisa: "Cura aprendida! Aperte F para recuperar 1 coração. 3 usos; o santuário recarrega.").
 - **Efeito:** cura **1 coração** (2 hits), sem passar do máximo de corações recuperados.
 - **Usos:** **3**. Quando acabam, só voltam ao **descansar num santuário** (`Sanctuary.Rest`). Morrer e renascer no santuário **não** recarrega. **[PROPOSTA de ajuste no playtest]**
 - **Classe:** funciona em **qualquer classe** depois de aprendida. É uma magia que o Lion aprendeu com Koda, não um golpe da marreta. **[PROPOSTA]**

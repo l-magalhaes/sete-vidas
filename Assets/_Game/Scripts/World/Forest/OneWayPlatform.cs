@@ -23,6 +23,13 @@ namespace SeteVidas.World
             if (layer >= 0) gameObject.layer = layer;
             var col = GetComponent<BoxCollider2D>();
             col.usedByEffector = true;
+            // galho fino demais é atravessado em queda rápida: engrossa para baixo, sem mudar o topo
+            if (col.size.y < PlatformRules.MinOneWayThickness)
+            {
+                float top = col.offset.y + col.size.y * 0.5f;
+                col.size = new Vector2(col.size.x, PlatformRules.MinOneWayThickness);
+                col.offset = new Vector2(col.offset.x, top - PlatformRules.MinOneWayThickness * 0.5f);
+            }
             var eff = GetComponent<PlatformEffector2D>();
             eff.useOneWay = true;
             eff.useOneWayGrouping = true;

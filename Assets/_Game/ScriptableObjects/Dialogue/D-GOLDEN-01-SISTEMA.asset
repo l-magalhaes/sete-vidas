@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01-SISTEMA
   Required: 1
-  Revision: 2
+  Revision: 3
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
@@ -22,4 +22,4 @@ MonoBehaviour:
     Text: "Paladino desbloqueado! Aperte {trocar_classe} para trocar de classe."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Magia de cura aprendida! Aperte {curar} para curar 1 cora\xE7\xE3o. 3 usos; o santu\xE1rio recarrega."
+    Text: "Cura aprendida! Aperte {curar} para recuperar 1 cora\xE7\xE3o. 3 usos; o santu\xE1rio recarrega."

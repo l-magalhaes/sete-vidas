@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01
   Required: 1
-  Revision: 5
+  Revision: 6
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
@@ -31,16 +31,7 @@ MonoBehaviour:
     Text: "O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: ferido
-    Text: "Quando o selo rompeu, gastei a \xFAltima for\xE7a que eu tinha para segurar a praga que saiu do livro."
-  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: ferido
-    Text: "Contive um pouco. S\xF3 um pouco. Ela j\xE1 escorre pelas muralhas e vai se espalhar por todo lugar."
-  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: ironico
-    Text: "E voc\xEA vai atr\xE1s do tomo assim? Mal fica de p\xE9."
+    Text: "Gastei minha \xFAltima for\xE7a segurando a praga do livro. Contive pouco; ela j\xE1 se espalha."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: serio
-    Text: "N\xE3o agora. Preciso descansar antes de ir atr\xE1s dele. Mas a praga n\xE3o espera por mim."
-  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: serio
-    Text: "Jure me ajudar a recuperar o tomo e destru\xED-lo. Em troca, minha for\xE7a \xE9 sua."
+    Text: "Preciso descansar. Jure me ajudar a recuperar o tomo e destru\xED-lo, e minha for\xE7a \xE9 sua."

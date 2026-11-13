@@ -93,16 +93,13 @@ SISTEMA: Uma moeda de ouro pesada, cunhada com um olho roxo. Vale 100 moedas com
 GATO (irônico): Cem moedas por seis vidas. Já fiz negócios piores. Não lembro quando.
 GATO: Vou guardar. Um dia eu devolvo... com juros.
 
-## D-GOLDEN-01 — O resgate (obrigatório; rev. 5)
-KODA: Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco.
+## D-GOLDEN-01 — O resgate (obrigatório; rev. 6)
+KODA (ferido): Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco.
 GATO (irônico): Ótimo. Agora o cão de lata vai me dar sermão antes de eu morrer.
 KODA: Sermão nenhum. Quem fez isso? Quem levou o tomo?
 GATO: O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas.
-KODA (ferido): Quando o selo rompeu, gastei a última força que eu tinha para segurar a praga que saiu do livro.
-KODA (ferido): Contive um pouco. Só um pouco. Ela já escorre pelas muralhas e vai se espalhar por todo lugar.
-GATO (irônico): E você vai atrás do tomo assim? Mal fica de pé.
-KODA (sério): Não agora. Preciso descansar antes de ir atrás dele. Mas a praga não espera por mim.
-KODA: Jure me ajudar a recuperar o tomo e destruí-lo. Em troca, minha força é sua.
+KODA (ferido): Gastei minha última força segurando a praga do livro. Contive pouco; ela já se espalha.
+KODA (sério): Preciso descansar. Jure me ajudar a recuperar o tomo e destruí-lo, e minha força é sua.
 
 ## D-GOLDEN-01b — O juramento (obrigatório)
 GATO: Destruir o tomo... tanto faz. Eu quero a capivara.

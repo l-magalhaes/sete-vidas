@@ -33,6 +33,8 @@ namespace SeteVidas.Save
         public List<string> flags = new List<string>();
         /// <summary>Santuários já visitados, de todas as cenas: os destinos da viagem rápida (Floresta, 13/11/2026).</summary>
         public List<SanctuaryVisit> visitedSanctuaries = new List<SanctuaryVisit>();
+        /// <summary>Salas já vistas, de todas as cenas: o que a aba Mapa desenha (Docs/Design/floresta-mecanicas.md §6).</summary>
+        public List<MapRoomRecord> mapRooms = new List<MapRoomRecord>();
 
         public static SaveData NewGame() => new SaveData();
 
@@ -44,6 +46,29 @@ namespace SeteVidas.Save
         }
 
         public bool IsUnlocked(CharacterClass c) => unlockedClasses.Contains(c.ToString());
+    }
+
+    /// <summary>Uma sala do mapa já vista: retângulo em coordenadas do mapa da região (tiles) e o que há nela.</summary>
+    [Serializable]
+    public class MapRoomRecord
+    {
+        public string scene = "";
+        public string id = "";
+        /// <summary>Nome da região (agrupa as salas numa página do mapa).</summary>
+        public string region = "";
+        public float x, y, w, h;
+        public List<MapMarker> markers = new List<MapMarker>();
+    }
+
+    /// <summary>Ícone no mapa: santuário ou baú (o estado do baú vem das flags).</summary>
+    [Serializable]
+    public class MapMarker
+    {
+        public const string Sanctuary = "santuario";
+        public const string Chest = "bau";
+        public string kind = "";
+        public string id = "";
+        public float x, y;
     }
 
     /// <summary>Um santuário visitado: o que a viagem rápida precisa saber sem carregar a cena dele.</summary>

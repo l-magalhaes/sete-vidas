@@ -137,3 +137,17 @@ O `StealthController` já emite passos (0,15), aterrissagem (0,4) e golpe (0,3).
 | Galho frágil caindo | 0,5 | 8 |
 
 Esses barulhos também acordam Morcegos (ver bestiário).
+
+## 9. Residências [APROVADO, pedido do usuário 13/11/2026]
+
+- Porta de residência (`ResidenceDoor`): perto dela, **E: entrar**. A tela escurece e a cena muda para uma **cena pequena**, o interior. A mesma porta, do lado de dentro (**E: sair**), volta para a frente da casa.
+- Pode ser **trancada**: sem a chave, o Lion diz "Trancada. Deve ter uma chave por aí."; com a chave, destranca para sempre (`porta_aberta_<id>`) e a chave some do inventário.
+- Vale para o jogo todo: casas, **lojas** e outros estabelecimentos. Convenção: o interior tem a entrada `entrada` logo depois da porta; o exterior tem uma entrada com o id da porta (ex.: `cabana_vulpis`) na frente dela.
+- Primeira: a **cabana da Vulpis** (trancada; a chave fica em outra sala do hub). Teste: cena `Forest_Test_Cabin`.
+
+## 10. Chave, sala-arena e inimigos básicos (F1, para a sala-hub)
+
+- **Chave** (`KeyPickup`): encostar pega (`chave_<id>`); aparece em Itens até a porta dela ser aberta.
+- **Sala-arena** (`ArenaRoom`): entrar fecha os portões; derrotados todos os inimigos de dentro, abrem para sempre (`arena_vencida_<id>`) e os inimigos dela não voltam. Morrer reabre a arena.
+  - **Levas:** a arena pode ter levas seguintes (`ArenaRoom.SetWaves`), desligadas até a anterior morrer; após ~0,9 s de aviso (faíscas onde vão sair) entram. A arena só abre depois da última. Morcegos soltos por um Broto dentro da área também contam. Morrer: as levas voltam a esperar. Na C de teste: plantas → Broto + 3 morcegos.
+- **Galho Seco** e **Planta Carnívora** em versão básica (`DryBranch`, `CarnivorousPlant`, base `ForestEnemy`), com os valores do bestiário. As variantes infectadas e a arte final ficam para a F4.

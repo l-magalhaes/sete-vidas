@@ -145,9 +145,9 @@ Cada fase termina com algo **jogável e testável**. Arte e som entram em todas 
 - **Música:** novos `MusicCue` (Forest, Ruins, Blight, Nest, Isyathy, Vulpis, Tobi) e ambiência por região.
 - **Testes EditMode:** regras de pogo, contador de madeiras, persistência de flags por cena, transições, destinos da viagem rápida.
 - **Pronto quando:** dá para andar entre duas cenas de teste, quebrar um tronco, abrir um baú, sair e voltar com tudo lembrado, e viajar entre dois santuários.
-- **Estado (13/11/2026): implementado, aguardando teste no Unity** (menu **20. Floresta F1: cenas de teste**; roteiro em `Docs/QA/floresta-f1-plano-de-teste.md`). Falta só a **tela de mapa**.
+- **Estado (13/11/2026): implementado e em teste no Unity** (menu **20. Floresta F1: cenas de teste**, cenas A, B e C; roteiro em `Docs/QA/floresta-f1-plano-de-teste.md`). Inclui a **aba Mapa** (`MapRoom`, `MapRules`, `SaveData.mapRooms`), o **Cacto Flutuante** básico (`FloatingCactus`) e, pedido do usuário, **chave + porta trancada + sala-arena** (`KeyPickup`, `LockedDoor`, `ArenaRoom`, `KeyRules`/`ArenaRules`).
   - Código: `SceneTravel`/`RoomExit`/`RoomEntrance` (World/Travel), `TravelRules` + `TravelMenu` + `SaveData.visitedSanctuaries`, `BreakableWall` com material madeira (`BreakableRules`), `WoodChest` + `ReconstructionWood`, `IPogoTarget`, layer `Platform` + `OneWayPlatform`/`SwayingBranch`/`SinkingLeaf`/`BounceMushroom` (World/Forest), descida baixo + pulo no `GroundCheck`/`PlayerController`, `CameraLook`, `Cutscene`/`CutsceneRunner`, `SpeechBubble` + `LionBarks`, `MusicArea` + 7 `MusicCue` novos, capítulo 2 no Diário.
-  - Testes: `ForestFoundationTests` (24). Cenas `Forest_Test_*` usam o save de testes (`SaveManager.IsTestScene`).
+  - Testes: `ForestFoundationTests` (32). Cenas `Forest_Test_*` usam o save de testes (`SaveManager.IsTestScene`).
 
 ### F2 — Graybox jogável da floresta inteira
 

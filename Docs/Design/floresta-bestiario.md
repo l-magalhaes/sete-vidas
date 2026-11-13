@@ -91,3 +91,16 @@ Escondida em buracos e raízes; só os olhos aparecem.
 | Serpente | 32 × 16 | escondida (olhos), aviso, bote, esticada, recolher, dano, morte | chocalho, sibilo, bote |
 
 Os nomes dos sons seguem o padrão do `Sfx` atual (ver `Docs/Audio/floresta-audio.md`).
+
+---
+
+## Ajustes do usuário (13/11/2026) [APROVADO]
+
+| Inimigo | Mudança |
+|---|---|
+| **Galho Seco** | **Fica parado** (não patrulha) e é **alto: 5,5 tiles**. Corpo sólido: não dá para passar por cima (o pulo chega a 4 e agarrar a borda a 5). É preciso derrubá-lo. Continua: disfarce, braço erguido (0,6 s), pancada à frente (2,5 tiles), braço preso 1 s (pogo e dano dobrado pelas costas). Vida 6 |
+| **Broto** (variação do Galho Seco) | Folhas e brotos no topo; **solta morcegos das folhas**: um a cada 4 s, no máximo 2 vivos, com o gato a até 10 tiles. Os morcegos dele não voltam ao reiniciar o mundo |
+| **Planta Carnívora** | **Bote de pescoço comprido** (ideia de mecânica: o bicho preso que estica e avança): abre a boca (0,6 s), a cabeça vai até **6 tiles** na direção do gato (até 80° da frente da planta, nunca para trás da parede), fica 0,25 s lá e volta em 0,7 s. **Pogo só na volta** (flor turquesa) |
+| **Morcego Noturno** | **Persegue**: acorda com o gato a 4 tiles (agachado, só a 2) ou com barulho ≥ 0,3; voa atrás dele (4,5 tiles/s, voo ondulado), encosta (1 hit), recua 0,7 s e volta; a mais de 14 tiles desiste e volta ao poleiro. Sem pogo. Vida 2 |
+
+Implementação (versão básica, arte provisória): `ForestEnemy` (base), `DryBranch`, `CarnivorousPlant`, `NightBat`, regras em `ForestEnemyRules`.

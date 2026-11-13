@@ -39,9 +39,9 @@ namespace SeteVidas.UI
         [Tooltip("Tempo da entrada (s)")]
         [SerializeField] float openTime = 0.12f;
 
-        public enum Page { Classes, Abilities, Items, Diary, Controls }
-        static readonly string[] PageNames = { "Classes", "Habilidades", "Itens", "Diário", "Controles" };
-        const int PageCount = 5;
+        public enum Page { Classes, Abilities, Items, Map, Diary, Controls }
+        static readonly string[] PageNames = { "Classes", "Habilidades", "Itens", "Mapa", "Diário", "Controles" };
+        const int PageCount = 6;
 
         static readonly Color Cream = new Color32(0xec, 0xdc, 0xb0, 0xff);
         static readonly Color Faint = new Color32(0x8a, 0x7a, 0x96, 0xff);
@@ -161,6 +161,7 @@ namespace SeteVidas.UI
             EnsureCat(health);
             _panel.gameObject.SetActive(true);
             _openedAt = Time.unscaledTime;
+            _mapRegionChosen = false;
             SeteVidas.Audio.Sfx.Play("ui_inv_abre");
             Refresh();
         }
@@ -226,6 +227,7 @@ namespace SeteVidas.UI
 
         public void Move(int dx, int dy)
         {
+            if (_page == Page.Map) { CycleRegion(dx != 0 ? dx : dy); return; }
             if (_page == Page.Controls || _entries.Count == 0) return;   // a aba Controles só mostra a lista
             int i = (int)_page;
             var cells = new int[_entries.Count];
@@ -271,6 +273,7 @@ namespace SeteVidas.UI
                 case Page.Abilities: FillAbilities(); break;
                 case Page.Items: FillItems(); break;
                 case Page.Controls: break;   // a lista de comandos é desenhada à parte (RefreshControls)
+                case Page.Map: break;        // o mapa é desenhado à parte (RefreshMap)
                 default: FillDiary(); break;
             }
             if (_page != Page.Diary) for (int k = 0; k < _entries.Count; k++) _entries[k].Cell = k;
@@ -288,11 +291,14 @@ namespace SeteVidas.UI
             SetGlyph(_keyRight, InputPrompts.Glyph(GameAction.TabRight));
             if (_page == Page.Controls)
                 _help.Set(new PromptRow.Item(GameAction.TabLeft, "abas", GameAction.TabRight), new PromptRow.Item(GameAction.Back, "fechar"));
+            else if (_page == Page.Map)
+                _help.Set(new PromptRow.Item(GameAction.Navigate, "região"), new PromptRow.Item(GameAction.Back, "fechar"));
             else if (_page == Page.Classes)
                 _help.Set(new PromptRow.Item(GameAction.Navigate, "escolher"), new PromptRow.Item(GameAction.Confirm, "equipar"), new PromptRow.Item(GameAction.Back, "fechar"));
             else
                 _help.Set(new PromptRow.Item(GameAction.Navigate, "escolher"), new PromptRow.Item(GameAction.Back, "fechar"));
             RefreshControls();
+            RefreshMap();
 
             var byCell = new Entry[_slots.Length];
             foreach (var e in _entries) if (e.Cell >= 0 && e.Cell < byCell.Length) byCell[e.Cell] = e;
@@ -459,6 +465,7 @@ namespace SeteVidas.UI
                 case Page.Abilities: return "Habilidades";
                 case Page.Items: return "Itens";
                 case Page.Controls: return "Controles";
+                case Page.Map: return "Mapa";
                 default: return "Diário  " + _entries.Count + (_entries.Count == 1 ? " placa" : " placas");
             }
         }
@@ -548,6 +555,14 @@ namespace SeteVidas.UI
                     Footer = built ? "A ponte está de pé" : SeteVidas.Progression.ReconstructionWood.Label(data),
                 });
             }
+
+            // chaves no bolso (somem depois de abrir a porta delas)
+            foreach (var key in SeteVidas.World.KeyRules.KeysInPocket(data, SeteVidas.World.KeyRules.DoorOfKey))
+                _entries.Add(new Entry
+                {
+                    Icon = IconSprite(InventoryIcon.Key, false), Name = SeteVidas.World.KeyRules.Name(key), NameColor = Gold,
+                    Body = InventoryTexts.KeyText(key), Footer = "Abre uma porta",
+                });
         }
 
         /// <summary>
@@ -643,6 +658,8 @@ namespace SeteVidas.UI
         {
             if (!IsOpen) return;
             float t = Time.unscaledTime;
+            // o gato pisca no mapa (tempo real: o jogo está pausado)
+            if (_mapCat != null && _page == Page.Map) _mapCat.enabled = ((int)(t * 3f) & 1) == 0;
 
             // entrada: sobe 6 px e aparece
             float k = openTime > 0f ? Mathf.Clamp01((t - _openedAt) / openTime) : 1f;
@@ -754,6 +771,7 @@ namespace SeteVidas.UI
             BuildLion();
             BuildGrid();
             BuildDetail();
+            BuildMap();   // por cima da grade e do detalhe; só aparece na aba Mapa
 
             // rodapé: [botão] escolher   [botão] equipar   [botão] fechar, no aparelho em uso
             _help = PromptRow.Create(_window, "Ajuda", _font, 7, Faint, new Vector2(0f, -(Top + ColumnH + 2f)), W);
@@ -763,7 +781,7 @@ namespace SeteVidas.UI
 
         void BuildTabs()
         {
-            const float tabW = 68f, tabH = 18f, gap = 3f;   // 5 abas (a 5ª: Controles)
+            const float tabW = 59f, tabH = 18f, gap = 3f;   // 6 abas (a 4ª: Mapa; a 6ª: Controles)
             float x0 = (W - (PageCount * tabW + (PageCount - 1) * gap)) * 0.5f;
             for (int i = 0; i < PageCount; i++)
             {
@@ -792,10 +810,11 @@ namespace SeteVidas.UI
         {
             switch (page)
             {
-                case 0: return HeartsHud.ClassSprite(0, HeartState.Full);
-                case 1: return IconSprite(InventoryIcon.TabAbilities, false);
-                case 2: return IconSprite(InventoryIcon.TabItems, false);
-                case 3: return IconSprite(InventoryIcon.TabDiary, false);
+                case (int)Page.Classes: return HeartsHud.ClassSprite(0, HeartState.Full);
+                case (int)Page.Abilities: return IconSprite(InventoryIcon.TabAbilities, false);
+                case (int)Page.Items: return IconSprite(InventoryIcon.TabItems, false);
+                case (int)Page.Map: return IconSprite(InventoryIcon.Map, false);
+                case (int)Page.Diary: return IconSprite(InventoryIcon.TabDiary, false);
                 default: return InputGlyphs.ForPaths("<Gamepad>/dpad");
             }
         }
@@ -980,6 +999,131 @@ namespace SeteVidas.UI
             return img;
         }
 
+        // ------------------------------------------------------------ aba Mapa
+
+        static readonly Color MapRoomFill = new Color32(0x2e, 0x48, 0x34, 0xff);   // salas vistas: verde da Floresta
+        static readonly Color MapRoomEdge = new Color32(0x6c, 0x86, 0x60, 0xff);
+        static readonly Color MapSanctuary = new Color32(0xff, 0xd3, 0x4d, 0xff);   // âmbar: lugar seguro
+        static readonly Color MapSanctuaryOff = new Color32(0x8a, 0x62, 0x1e, 0xff);
+        static readonly Color MapChest = new Color32(0xc4, 0x98, 0x60, 0xff);
+        static readonly Color MapChestOpen = new Color32(0x52, 0x46, 0x40, 0xff);
+        static readonly Color MapCat = new Color32(0xff, 0xf4, 0xdc, 0xff);
+
+        RectTransform _mapRoot, _mapArea;
+        Text _mapTitle, _mapLegend;
+        Sprite _white;
+        readonly List<Image> _mapPool = new List<Image>();
+        int _mapUsed;
+        int _mapRegion;
+        Image _mapCat;
+
+        const float MapW = GridW + Gap + RightW, MapAreaH = ColumnH - 34f;
+
+        void BuildMap()
+        {
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, name = "ui_mapa_branco" };
+            tex.SetPixel(0, 0, Color.white);
+            tex.Apply(false);
+            _textures.Add(tex);
+            _white = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 100f);
+
+            _mapRoot = Inset("Mapa", GridX, MapW);
+            _mapTitle = NewText("Região", _mapRoot, 8, TextAnchor.UpperCenter, Gold);
+            Place(_mapTitle.rectTransform, 0f, -4f, MapW, 11f);
+            var area = new GameObject("Área", typeof(RectTransform));
+            area.transform.SetParent(_mapRoot, false);
+            _mapArea = (RectTransform)area.transform;
+            Place(_mapArea, 4f, -17f, MapW - 8f, MapAreaH);
+            _mapLegend = NewText("Legenda", _mapRoot, 7, TextAnchor.UpperCenter, Faint);
+            Place(_mapLegend.rectTransform, 0f, -(ColumnH - 14f), MapW, 10f);
+            _mapLegend.text = "santuário · baú · baú aberto · você";
+            _mapRoot.gameObject.SetActive(false);
+        }
+
+        void CycleRegion(int dir)
+        {
+            var regions = SeteVidas.World.MapRules.Regions(SaveManager.Data);
+            if (dir == 0 || regions.Count < 2) return;
+            _mapRegion = (_mapRegion + (dir > 0 ? 1 : -1) + regions.Count) % regions.Count;
+            _mapRegionChosen = true;
+            SeteVidas.Audio.Sfx.Play("ui_cursor_inv");
+            RefreshMap();
+        }
+
+        Image MapRect(Vector2 bottomLeft, Vector2 size, Color color)
+        {
+            Image img;
+            if (_mapUsed < _mapPool.Count) img = _mapPool[_mapUsed];
+            else
+            {
+                img = NewImage("Mapa " + _mapUsed, _mapArea, _white);
+                img.rectTransform.anchorMin = img.rectTransform.anchorMax = img.rectTransform.pivot = Vector2.zero;
+                _mapPool.Add(img);
+            }
+            _mapUsed++;
+            img.enabled = true;
+            img.color = color;
+            img.rectTransform.anchoredPosition = new Vector2(Mathf.Round(bottomLeft.x), Mathf.Round(bottomLeft.y));
+            img.rectTransform.sizeDelta = new Vector2(Mathf.Max(1f, Mathf.Round(size.x)), Mathf.Max(1f, Mathf.Round(size.y)));
+            return img;
+        }
+
+        void RefreshMap()
+        {
+            if (_mapRoot == null) return;
+            bool on = _page == Page.Map;
+            _mapRoot.gameObject.SetActive(on);
+            if (!on) return;
+
+            _mapUsed = 0;
+            _mapCat = null;
+            var data = SaveManager.Data;
+            var regions = SeteVidas.World.MapRules.Regions(data);
+            bool hasCat = SeteVidas.World.MapRoom.TryPlayerOnMap(out string catRegion, out Vector2 catPoint);
+            if (regions.Count == 0)
+            {
+                _mapTitle.text = "Mapa";
+                foreach (var i in _mapPool) i.enabled = false;
+                _mapLegend.text = "Nenhuma sala vista ainda. As salas aparecem quando você passa por elas.";
+                return;
+            }
+            // abre na região onde o gato está
+            if (_mapRegion >= regions.Count) _mapRegion = 0;
+            if (!_mapRegionChosen && hasCat) { int at = regions.IndexOf(catRegion); if (at >= 0) _mapRegion = at; }
+            string region = regions[_mapRegion];
+            _mapTitle.text = regions.Count > 1 ? "◄  " + region + "  ►" : region;
+            _mapLegend.text = "santuário · baú · baú aberto · você";
+
+            var rooms = SeteVidas.World.MapRules.RoomsIn(data, region);
+            var world = SeteVidas.World.MapRules.Bounds(rooms);
+            var panel = _mapArea.sizeDelta;
+            float s = SeteVidas.World.MapRules.FitScale(world, panel);
+            Vector2 P(float x, float y) => SeteVidas.World.MapRules.ToPanel(new Vector2(x, y), world, panel, s);
+
+            foreach (var r in rooms)
+            {
+                var a = P(r.x, r.y);
+                var size = new Vector2(r.w, r.h) * s;
+                MapRect(a, size, MapRoomEdge);                                            // borda clara
+                MapRect(a + Vector2.one, size - 2f * Vector2.one, MapRoomFill);          // miolo
+            }
+            foreach (var r in rooms)
+                foreach (var m in r.markers)
+                {
+                    var p = P(m.x, m.y);
+                    if (m.kind == SeteVidas.Save.MapMarker.Sanctuary)
+                        MapRect(p - new Vector2(2f, 0f), new Vector2(4f, 4f),
+                            SeteVidas.World.MapRules.SanctuaryLit(data, r.scene, m.id) ? MapSanctuary : MapSanctuaryOff);
+                    else if (m.kind == SeteVidas.Save.MapMarker.Chest)
+                        MapRect(p - new Vector2(1.5f, 0f), new Vector2(3f, 3f),
+                            SeteVidas.World.MapRules.ChestOpen(data, m.id) ? MapChestOpen : MapChest);
+                }
+            if (hasCat && catRegion == region) _mapCat = MapRect(P(catPoint.x, catPoint.y) - new Vector2(1.5f, 0f), new Vector2(3f, 3f), MapCat);
+            for (int i = _mapUsed; i < _mapPool.Count; i++) _mapPool[i].enabled = false;
+        }
+
+        bool _mapRegionChosen; // trocou de região com ◄ ►: vale até fechar o inventário (ao abrir, volta à região do gato)
+
         Text NewText(string name, RectTransform parent, int size, TextAnchor anchor, Color color)
         {
             var go = new GameObject(name, typeof(RectTransform), typeof(Text));
@@ -1029,6 +1173,9 @@ namespace SeteVidas.UI
         public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
         public const string Wood = "Tábuas firmes, secas, de lei. Escondidas em baús pela floresta. A Tobi reconstrói a ponte com doze delas. E vinte moedas.";
         public const string WoodDone = "Viraram ponte. Menos uma, que a Tobi guardou no bolso. Taxa de material.";
+        public static string KeyText(string key) => key == "cabana"
+            ? "Chave de ferro com uma pena de flecha amarrada. Abre a cabana no alto da árvore. Ninguém deixa uma chave assim à toa."
+            : "Uma chave. Para alguma porta por aí.";
         public const string HealScroll = "A magia do Koda: segure {curar} para devolver 1 coração. Os lacres voltam a acender no santuário.";
 
         public struct ChapterText { public int Number; public string Title, Scene; }

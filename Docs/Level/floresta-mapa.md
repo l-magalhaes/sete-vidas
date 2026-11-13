@@ -51,6 +51,13 @@
 - A cada ~2 telas de subida, um **patamar** largo (≥ 6 tiles), sem inimigos, às vezes com placa, baú ou vista.
 - O topo das salas verticais tem **recompensa visual**: a ponte mais perto, a lua, a silhueta da Isyathy (§6).
 
+**Salas-hub com 3 saídas [APROVADO, pedido do usuário 13/11/2026]**
+- Cada região tem pelo menos uma **sala-hub** com aberturas para **3 salas de desafios diferentes**. Exemplo (cena de teste C, a Encruzilhada):
+  1. **Sala da chave**: quebrar um tronco rachado para pegar a chave.
+  2. **Sala-arena**: vários inimigos; ao entrar, os portões fecham; derrotados todos, abrem para sempre (morrer reabre).
+  3. **Subida até uma porta trancada**: a **cabana da Vulpis** (D3 Refúgio), que só abre com a chave.
+- As três saídas são legíveis do hub (placas provisórias, depois por arte: luz, flechas, grades) e voltam para ele.
+
 **Câmera (F1)**
 - Cinemachine com zona morta vertical menor que a horizontal; ao cair mais de 1 s, a câmera **olha para baixo**.
 - Agachado e parado por 0,6 s, a câmera desce 4 tiles para o gato ver o que tem embaixo.

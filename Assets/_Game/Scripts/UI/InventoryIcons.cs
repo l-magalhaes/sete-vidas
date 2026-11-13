@@ -9,7 +9,7 @@ namespace SeteVidas.UI
         Rogue, Paladin, Mage, Monk, Bard, Hunter, Druid,
         Climb, Sneak, Backstab, DownStab, DoubleJump, Dash, Anchor,
         Coin, Page, TabAbilities, TabItems, TabDiary,
-        Wood,
+        Wood, Map, Key,
     }
 
     /// <summary>Como o quadrado de um slot é desenhado.</summary>
@@ -61,6 +61,8 @@ namespace SeteVidas.UI
                 case InventoryIcon.TabAbilities: pal = Paw(g); break;
                 case InventoryIcon.TabItems: pal = Pouch(g); break;
                 case InventoryIcon.Wood: pal = Planks(g); break;
+                case InventoryIcon.Map: pal = FoldedMap(g); break;
+                case InventoryIcon.Key: pal = KeyShape(g); break;
                 default: pal = Book(g); break;
             }
             return Colorize(g, Size, Size, ParsePalette(pal), true);
@@ -312,6 +314,24 @@ namespace SeteVidas.UI
             P(g, 5, 9, 'l'); P(g, 5, 10, 'l'); P(g, 6, 8, 'l');
             R(g, 4, 13, 9, 1, 'B');
             return "b=#a8703a B=#6a4422 l=#d89a50 G=#e0b04a o=#a8702a";
+        }
+
+        /// <summary>Chave dourada: argola à esquerda, haste e dois dentes.</summary>
+        static string KeyShape(char[,] g)
+        {
+            Disc(g, 4, 8, 3, 'G'); Disc(g, 4, 8, 1, '.');
+            R(g, 7, 7, 7, 2, 'G'); R(g, 11, 9, 1, 2, 'G'); R(g, 13, 9, 1, 3, 'G');
+            P(g, 3, 6, 'w'); L(g, 8, 7, 12, 7, 'w');
+            return "G=#e0b04a w=#fff4c2";
+        }
+
+        /// <summary>Aba Mapa: papel dobrado em três, com uma trilha pontilhada e um X.</summary>
+        static string FoldedMap(char[,] g)
+        {
+            R(g, 2, 3, 4, 10, 'p'); R(g, 6, 4, 4, 10, 'q'); R(g, 10, 3, 4, 10, 'p');
+            P(g, 4, 6, 't'); P(g, 5, 8, 't'); P(g, 7, 9, 't'); P(g, 8, 7, 't'); P(g, 10, 8, 't');
+            P(g, 11, 5, 'x'); P(g, 13, 7, 'x'); P(g, 12, 6, 'x'); P(g, 11, 7, 'x'); P(g, 13, 5, 'x');
+            return "p=#ecdcb0 q=#c8b48a t=#8a6a40 x=#e0b04a";
         }
 
         /// <summary>Madeira de Reconstrução: duas tábuas empilhadas, com veio e um prego.</summary>

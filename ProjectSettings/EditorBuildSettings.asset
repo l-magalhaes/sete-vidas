@@ -19,10 +19,16 @@ EditorBuildSettings:
     guid: f027cb4df0f25fe4bbd59756107467ac
   - enabled: 1
     path: Assets/_Game/Scenes/World/Forest/Forest_Test_A.unity
-    guid: cf0033d4ec1547945845a59d2a4737b1
+    guid: 0bb4c42487c804d469114a05c56cdf0a
   - enabled: 1
     path: Assets/_Game/Scenes/World/Forest/Forest_Test_B.unity
-    guid: d4930817aceebe4439a2f0aad6035a99
+    guid: 6ebca692cacaf2347ae184d2aaa9fbb6
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_Test_C.unity
+    guid: 6be4066921fa1914cba8410f75e266d2
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_Test_Cabin.unity
+    guid: 673ca5a2f02e79a479679197686f8687
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02

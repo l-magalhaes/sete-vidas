@@ -3,14 +3,16 @@ using UnityEngine;
 namespace SeteVidas.World.Traps
 {
     /// <summary>
-    /// Serra que corre num trilho entre dois pontos (X), girando, com uma pausa em cada ponta.
-    /// Pule por cima dela ou espere numa plataforma.
+    /// Serra que corre num trilho entre dois pontos, girando, com uma pausa em cada ponta: na horizontal (X) ou, com
+    /// <c>vertical</c>, subindo e descendo (Y). Pule por cima dela, passe por baixo ou espere numa plataforma.
     /// </summary>
     public class SawBlade : TrapBase
     {
-        [Tooltip("Pontas do trilho (X no mundo)")]
+        [Tooltip("Pontas do trilho no mundo (X; ou Y se vertical)")]
         [SerializeField] float fromX;
         [SerializeField] float toX;
+        [Tooltip("Sobe e desce em vez de ir de um lado ao outro")]
+        [SerializeField] bool vertical;
         [SerializeField, Min(0.1f)] float speed = 4f;
         [SerializeField, Min(0f)] float pause = 0.4f;
         [SerializeField] float radius = 0.55f;
@@ -34,14 +36,20 @@ namespace SeteVidas.World.Traps
             _whine = null;
         }
 
-        public void Configure(float a, float b)
+        public void Configure(float a, float b, bool upDown = false)
         {
+            vertical = upDown;
             fromX = Mathf.Min(a, b);
             toX = Mathf.Max(a, b);
         }
 
         protected override Rect DangerArea()
         {
+            if (vertical)
+            {
+                float x = transform.position.x;
+                return new Rect(x - radius, fromX - radius, 2f * radius, toX - fromX + 2f * radius);
+            }
             float y = transform.position.y;
             return new Rect(fromX - radius, y - radius, toX - fromX + 2f * radius, 2f * radius);
         }
@@ -59,8 +67,9 @@ namespace SeteVidas.World.Traps
             else
             {
                 float target = _dir > 0 ? toX : fromX;
-                p.x = Mathf.MoveTowards(p.x, target, speed * dt);
-                if (Mathf.Approximately(p.x, target)) { _dir = -_dir; _pauseTimer = pause; }
+                float now = Mathf.MoveTowards(vertical ? p.y : p.x, target, speed * dt);
+                if (vertical) p.y = now; else p.x = now;
+                if (Mathf.Approximately(now, target)) { _dir = -_dir; _pauseTimer = pause; }
                 transform.position = p;
             }
             HitPlayerIn(p, new Vector2(radius * 1.6f, radius * 1.6f));

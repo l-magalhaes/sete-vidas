@@ -21,6 +21,7 @@ namespace SeteVidas.Player
         Rigidbody2D _body;
         BoxCollider2D _collider;
         GroundCheck _ground;
+        float _platformStandTime; // em pé num galho de mão única há quanto tempo (descer só depois de um instante)
         readonly JumpTimers _timers = new JumpTimers();
         bool _isJumping;        // subindo por causa de um pulo (permite o corte ao soltar o botão)
         bool _dropRequested;    // S apertado enquanto pendurado
@@ -174,8 +175,10 @@ namespace SeteVidas.Player
             if (grounded && Mathf.Abs(v.x) > 0.01f && _ground.SteepAhead(v.x > 0f ? 1 : -1, settings.ColliderWidth))
                 v.x = 0f;
 
-            // Baixo + pulo em cima de um galho de mão única: desce por ele em vez de pular (Floresta)
-            if (grounded && SeteVidas.World.PlatformRules.WantsDropThrough(_ground.OnPlatformOnly, _timers.CanJump, input.CrouchHeld, input.MoveY)
+            // Baixo + pulo em cima de um galho de mão única: desce por ele em vez de pular (Floresta).
+            // Só depois de 0,15 s em pé nele: quem pousa fazendo pogo segura baixo e pode ter um pulo guardado.
+            _platformStandTime = grounded && _ground.OnPlatformOnly ? _platformStandTime + dt : 0f;
+            if (grounded && SeteVidas.World.PlatformRules.WantsDropThrough(_ground.OnPlatformOnly, _timers.CanJump, input.CrouchHeld, input.MoveY, _platformStandTime)
                 && _ground.DropThroughPlatforms())
             {
                 _timers.Consume();

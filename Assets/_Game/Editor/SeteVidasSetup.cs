@@ -565,6 +565,7 @@ namespace SeteVidas.EditorTools
                     !existing.path.StartsWith(forestFolder + "/"))
                     scenes.Add(new EditorBuildSettingsScene(existing.path, false));
             EditorBuildSettings.scenes = scenes.ToArray();
+            AssetDatabase.SaveAssets(); // grava ProjectSettings/EditorBuildSettings.asset na hora
         }
     }
 }

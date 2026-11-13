@@ -48,26 +48,23 @@ namespace SeteVidas.EditorTools
 
             var result = new GoldenDialogues
             {
-                // D-GOLDEN-01 (rev. 5): o resgate. Koda gastou a última força segurando a praga do livro e precisa descansar
-                Bond = Conversation("D-GOLDEN-01", true, 5,
+                // D-GOLDEN-01 (rev. 6): o resgate. Koda gastou a última força segurando a praga do livro e precisa descansar
+                Bond = Conversation("D-GOLDEN-01", true, 6,
                     (golden, "ferido", "Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco."),
                     (cat, "ironico", "Ótimo. Agora o cão de lata vai me dar sermão antes de eu morrer."),
                     (golden, "", "Sermão nenhum. Quem fez isso? Quem levou o tomo?"),
                     (cat, "", "O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas."),
-                    (golden, "ferido", "Quando o selo rompeu, gastei a última força que eu tinha para segurar a praga que saiu do livro."),
-                    (golden, "ferido", "Contive um pouco. Só um pouco. Ela já escorre pelas muralhas e vai se espalhar por todo lugar."),
-                    (cat, "ironico", "E você vai atrás do tomo assim? Mal fica de pé."),
-                    (golden, "serio", "Não agora. Preciso descansar antes de ir atrás dele. Mas a praga não espera por mim."),
-                    (golden, "serio", "Jure me ajudar a recuperar o tomo e destruí-lo. Em troca, minha força é sua.")),
+                    (golden, "ferido", "Gastei minha última força segurando a praga do livro. Contive pouco; ela já se espalha."),
+                    (golden, "serio", "Preciso descansar. Jure me ajudar a recuperar o tomo e destruí-lo, e minha força é sua.")),
                 // D-GOLDEN-01b: o gato aceita, movido pela vingança
                 BondFollowUp = Conversation("D-GOLDEN-01b", true, 2,
                     (cat, "", "Destruir o tomo... tanto faz. Eu quero a capivara."),
                     (cat, "", "Ninguém me usa como chave e me paga com troco. Ninguém."),
                     (golden, "serio", "Vingança é um começo ruim. Mas é um começo. Jure, e levante."),
                     (cat, "", "Eu juro. Pelo tomo, pela moeda... e pelas seis vidas que ele me tirou.")),
-                Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 2,
+                Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 3,
                     (null, "", "Paladino desbloqueado! Aperte {trocar_classe} para trocar de classe."),
-                    (null, "", "Magia de cura aprendida! Aperte {curar} para curar 1 coração. 3 usos; o santuário recarrega.")),
+                    (null, "", "Cura aprendida! Aperte {curar} para recuperar 1 coração. 3 usos; o santuário recarrega.")),
                 // D-GOLDEN-02 (rev. 2), em rodízio: lembram o juramento
                 Idle = new[]
                 {

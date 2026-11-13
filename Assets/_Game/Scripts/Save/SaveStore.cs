@@ -101,6 +101,9 @@ namespace SeteVidas.Save
             data.flags ??= new List<string>();
             data.visitedSanctuaries ??= new List<SanctuaryVisit>();
             data.visitedSanctuaries.RemoveAll(v => v == null || string.IsNullOrEmpty(v.id) || string.IsNullOrEmpty(v.scene));
+            data.mapRooms ??= new List<MapRoomRecord>();
+            data.mapRooms.RemoveAll(r => r == null || string.IsNullOrEmpty(r.id) || string.IsNullOrEmpty(r.scene));
+            foreach (var r in data.mapRooms) r.markers ??= new List<MapMarker>();
         }
     }
 }
