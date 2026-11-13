@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-02a
   Required: 0
-  Revision: 2
+  Revision: 3
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: ferido
+    Text: "Ainda sinto a praga do livro nas patas. Preciso descansar antes de ir atr\xE1s do tomo."
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: 
-    Text: "Paredes rachadas n\xE3o resistem a um golpe honesto."
+    Text: "At\xE9 l\xE1, a minha for\xE7a vai com voc\xEA. Paredes rachadas n\xE3o resistem a um golpe honesto."

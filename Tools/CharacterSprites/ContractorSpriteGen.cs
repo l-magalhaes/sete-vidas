@@ -1,6 +1,9 @@
 // O Contratante (Capivara Necromante): sprites da cena do tomo e retratos.
 // Lore: sobrevivente da Guerra dos Corredores Mortos, infectado por uma praga; uma das mãos é esquelética
 // (Lore Oficial §VI; Personagens.md §3). Canvas 48×48, pivot no centro da borda de baixo.
+// Visual (refeito em 12/11/2026, pedido do usuário com duas referências): capivara roliça de cara emburrada,
+// focinho largo com a mancha do nariz, dentro de um capuz alto de ponta dobrada com debrum dourado; manto de barra
+// rasgada, cajado com garra de osso e orbe da praga flutuando, pingente verde e sombra no chão.
 // C# 5. Compilado junto com PixelKit.cs por Tools/CharacterSprites/gerar.ps1.
 using System;
 using System.Collections.Generic;
@@ -13,14 +16,17 @@ public static class ContractorSpriteGen
     public static void InitPalette()
     {
         PixelKit.Pal.Clear();
-        PixelKit.P('o', "#1a1c26");                                                    // contorno
-        PixelKit.P('F', "#8a5a3c"); PixelKit.P('f', "#6b4430"); PixelKit.P('l', "#a8764f"); PixelKit.P('k', "#4a2e20"); // pelo
-        PixelKit.P('R', "#4a2266"); PixelKit.P('r', "#2e1640"); PixelKit.P('q', "#6a3a8a"); // manto
-        PixelKit.P('G', "#8fd14f"); PixelKit.P('Q', "#d6ff8a");                         // praga (runas, olhos)
+        PixelKit.P('o', "#1a1420");                                                    // contorno
+        PixelKit.P('F', "#b98256"); PixelKit.P('f', "#93603f"); PixelKit.P('l', "#d4a26e"); PixelKit.P('k', "#4e2f24"); // pelo
+        PixelKit.P('N', "#7e4a3a"); PixelKit.P('n', "#9a5e48"); PixelKit.P('p', "#c97c68");                            // nariz, bochecha
+        PixelKit.P('R', "#3e2b55"); PixelKit.P('r', "#291c3b"); PixelKit.P('q', "#5a4176"); PixelKit.P('h', "#140e1e"); // manto, fundo do capuz
+        PixelKit.P('G', "#8fd14f"); PixelKit.P('Q', "#d6ff8a");                         // praga (orbe, pingente, olhos)
         PixelKit.P('Y', "#d9a441"); PixelKit.P('y', "#a8782a");                         // ouro
         PixelKit.P('U', "#e6e0d0"); PixelKit.P('u', "#b8b0a0"); PixelKit.P('x', "#7a7468"); // osso
+        PixelKit.P('W', "#6b4430"); PixelKit.P('D', "#3e271c");                         // madeira do cajado
         PixelKit.P('M', "#5b2a6e"); PixelKit.P('m', "#3d1b4a");                         // o tomo
         PixelKit.P('V', "#7a3a9a"); PixelKit.P('v', "#4a1e66");                         // névoa roxa
+        PixelKit.P('s', "#0c0910");                                                    // sombra no chão
         PixelKit.P('w', "#ffffff");
     }
 
@@ -28,7 +34,8 @@ public static class ContractorSpriteGen
     {
         public int Dy;                              // respiração
         public int Hem;                             // barra do manto balançando (-1, 0, 1)
-        public Point Hand = new Point(32, 31);      // mão de osso
+        public int Orb;                             // o orbe flutuando (sobe e desce)
+        public Point Hand = new Point(32, 32);      // mão de osso
         public int Fingers;                         // 0 = relaxados, 1 = abertos, 2 = fechados (segurando), 3 = batendo
         public bool Tome;                           // segurando o tomo com a mão de osso
         public bool Coin;                           // moeda entre os dedos
@@ -44,53 +51,112 @@ public static class ContractorSpriteGen
     {
         var cv = new PixelCanvas(W, H);
         int dy = p.Dy;
-        // manto: largo e pesado, alarga até o chão; lado de trás na sombra
-        for (int y = 22 + dy; y < 48; y++)
+        Staff(cv, p);                                                                    // atrás de tudo
+        // manto: em sino, pesado, barra rasgada em pontas; costas na sombra, frente com uma aresta de luz
+        const int cx = 23;
+        for (int y = 24 + dy; y <= 46; y++)
         {
-            float k = (y - 22 - dy) / 25f;
-            int half = (int)(6.5f + k * 6.5f);
-            int cx = 23;
-            for (int x = cx - half; x <= cx + half; x++)
+            float k = (y - 24 - dy) / 22f;
+            int back = (int)(6f + k * k * 9f + k * 1f), front = (int)(6f + k * 5f);   // abre mais para trás (cauda do manto)
+            for (int x = cx - back; x <= cx + front; x++)
             {
-                char c = x < cx - half + 3 ? 'r' : 'R';
-                if ((x == cx - 2 || x == cx + 4) && y > 30 + dy) c = 'r';                // dobras
-                if (y >= 45) c = 'Y';                                                    // barra dourada
-                if (y == 47) c = (x + p.Hem) % 3 == 0 ? '.' : 'R';                       // barra puída
-                cv.Set(x + (y > 40 ? p.Hem : 0), y, c);
+                int tear = (int)(PixelKit.Noise(x, 3, 11) * 2.99f);                   // 0..2: pontas da barra
+                if (x < cx - back + 4) tear += (cx - back + 4 - x);                    // a cauda sobe na ponta de trás
+                if (y > 46 - tear) continue;
+                char c = 'R';
+                if (x < cx - back + 3 + (int)(k * 3f)) c = 'r';
+                else if (x == cx + front) c = 'q';
+                if ((x == cx - 4 || x == cx + 1) && y > 31 + dy && y < 44) c = 'r';   // dobras
+                if (x == cx - 3 && y > 33 + dy && y < 42) c = 'q';
+                if (x >= cx + 3 && x <= cx + 3 + (int)(k * 3f) && x < cx + front && y > 29 + dy) c = 'h'; // abertura do manto
+                cv.Set(x + (y > 38 ? p.Hem : 0), y, c);
             }
         }
-        // runas verde-ácido da praga no manto
-        int[][] runes = { new[] { 19, 36 }, new[] { 19, 37 }, new[] { 20, 38 }, new[] { 27, 40 }, new[] { 28, 40 }, new[] { 28, 41 }, new[] { 22, 43 } };
-        foreach (var r in runes) cv.Force(r[0], r[1] + dy, 'G');
-        // capuz caído nos ombros
-        PixelKit.Ellipse(cv, 21.5f, 24f + dy, 8f, 3.4f, (a, b) => a < -0.3f ? 'r' : 'q');
-        // cabeça de capivara: bloco largo, focinho reto e alto
-        PixelKit.Ellipse(cv, 22f, 17f + dy, 7.2f, 6f, (a, b) => a < -0.5f ? 'f' : (b < -0.55f ? 'l' : 'F'));
-        for (int y = 13; y <= 21; y++)
-            for (int x = 26; x <= 33; x++)
-            {
-                if (x == 33 && (y == 13 || y == 21)) continue;
-                cv.Force(x, y + dy, y <= 14 ? 'l' : (y >= 20 ? 'f' : 'F'));
-            }
-        cv.Force(32, 15 + dy, 'k'); cv.Force(33, 15 + dy, 'k');                         // narina
-        for (int x = 29; x <= 33; x++) cv.Force(x, 19 + dy, 'k');                       // boca
-        if (p.Face == "grin") { cv.Force(28, 18 + dy, 'k'); cv.Force(30, 20 + dy, 'U'); cv.Force(31, 20 + dy, 'U'); }  // incisivos à mostra
-        // orelha pequena e redonda
-        cv.Force(17, 11 + dy, 'f'); cv.Force(18, 11 + dy, 'f'); cv.Force(17, 12 + dy, 'k'); cv.Force(18, 12 + dy, 'f');
-        // olho: brilho verde da praga, pálpebra pesada (deboche)
-        int ex = 25, ey = 15 + dy;
-        if (p.Face == "wide") { cv.Force(ex, ey - 1, 'Q'); cv.Force(ex, ey, 'G'); cv.Force(ex + 1, ey, 'G'); cv.Force(ex + 1, ey - 1, 'G'); }
-        else { cv.Force(ex - 1, ey - 1, 'k'); cv.Force(ex, ey - 1, 'k'); cv.Force(ex + 1, ey - 1, 'k'); cv.Force(ex, ey, 'Q'); cv.Force(ex + 1, ey, 'G'); }
-        // corrente de ouro com a medalha
-        for (int x = 18; x <= 28; x++)
+        // runas da praga brilhando na abertura do manto
+        int[][] runes = { new[] { 26, 33 }, new[] { 27, 36 }, new[] { 26, 37 }, new[] { 27, 40 }, new[] { 28, 42 }, new[] { 14, 40 }, new[] { 15, 41 } };
+        foreach (var r in runes) cv.Force(r[0] + (r[1] > 38 ? p.Hem : 0), r[1] + (r[1] > 38 ? 0 : dy), 'G');
+        // capuz: domo redondo com a ponta dobrada para trás, caindo nos ombros
+        PixelKit.Ellipse(cv, 21.5f, 25f + dy, 9.5f, 3.4f, (a, b) => a < -0.4f ? 'r' : 'R');
+        PixelKit.Ellipse(cv, 22f, 16f + dy, 8.2f, 8.6f, (a, b) => a < -0.55f ? 'r' : (b < -0.6f && a < 0.4f && a > -0.5f ? 'q' : 'R'));
+        PixelKit.Thick(cv, 17, 9 + dy, 13, 6 + dy, 2, (t, j) => j == 0 ? 'q' : 'R');       // ponta
+        cv.Force(12, 6 + dy, 'R'); cv.Force(11, 7 + dy, 'R'); cv.Force(11, 8 + dy, 'r'); cv.Force(12, 7 + dy, 'R');
+        // orelha redonda escapando por um rasgo no alto do capuz
+        cv.Force(24, 7 + dy, 'f'); cv.Force(25, 7 + dy, 'f'); cv.Force(24, 8 + dy, 'k'); cv.Force(25, 8 + dy, 'f');
+        // abertura do capuz (fundo escuro) com debrum dourado fino
+        PixelKit.Ellipse(cv, 27f, 17f + dy, 6.6f, 7.4f, (a, b) =>
         {
-            int yy = 26 + dy + (int)(Math.Abs(x - 23) < 3 ? 1 : 0);
-            cv.Force(x, yy, x % 2 == 0 ? 'Y' : 'y');
+            float d = (float)Math.Sqrt(a * a + b * b);
+            if (d > 0.87f && a < 0.3f) return b < 0f ? 'Y' : 'y';
+            return 'h';
+        });
+        // cabeça: bochechas roliças dentro do capuz
+        PixelKit.Ellipse(cv, 28f, 17.5f + dy, 5.2f, 5.6f, (a, b) => a < -0.55f ? 'f' : (b < -0.55f ? 'l' : 'F'));
+        // focinho: bloco largo e alto, cantos redondos, para fora do capuz
+        for (int y = 13; y <= 23; y++)
+            for (int x = 29; x <= 37; x++)
+            {
+                bool corner = (x >= 36 && (y == 13 || y == 23)) || (x == 37 && (y == 14 || y == 22));
+                if (corner) continue;
+                char c = y <= 14 ? 'l' : (y >= 21 ? 'f' : 'F');
+                cv.Force(x, y + dy, c);
+            }
+        // mancha do nariz na frente do focinho, narina e o "bico" da boca
+        for (int y = 14; y <= 18; y++)
+            for (int x = 33; x <= 37; x++)
+                if (!(x == 37 && y == 14) && !(x == 33 && (y == 14 || y == 18))) cv.Force(x, y + dy, y == 14 ? 'n' : 'N');
+        cv.Force(35, 15 + dy, 'k'); cv.Force(36, 16 + dy, 'k');
+        cv.Force(35, 19 + dy, 'k'); cv.Force(34, 20 + dy, 'k'); cv.Force(36, 20 + dy, 'k');
+        cv.Force(29, 19 + dy, 'p'); cv.Force(30, 19 + dy, 'p');                         // bochecha
+        if (p.Face == "grin")
+        {
+            for (int x = 30; x <= 35; x++) cv.Force(x, 20 + dy, 'k');
+            cv.Force(36, 21 + dy, 'U'); cv.Force(37, 21 + dy, 'U'); cv.Force(36, 22 + dy, 'u');        // incisivos à mostra
         }
-        cv.Force(23, 28 + dy, 'Y'); cv.Force(24, 28 + dy, 'Y'); cv.Force(23, 29 + dy, 'y'); cv.Force(24, 29 + dy, 'Y');
+        // olho: brilho verde da praga sob a pálpebra pesada (cara emburrada)
+        int ex = 30, ey = 15 + dy;
+        if (p.Face == "wide")
+        {
+            cv.Force(ex - 1, ey - 2, 'k'); cv.Force(ex, ey - 2, 'k'); cv.Force(ex + 1, ey - 2, 'k');
+            cv.Force(ex, ey - 1, 'Q'); cv.Force(ex + 1, ey - 1, 'G'); cv.Force(ex, ey, 'G'); cv.Force(ex + 1, ey, 'k');
+        }
+        else
+        {
+            cv.Force(ex - 1, ey - 2, 'k'); cv.Force(ex, ey - 1, 'k'); cv.Force(ex + 1, ey - 1, 'k'); cv.Force(ex + 2, ey - 1, 'k');
+            cv.Force(ex, ey, 'Q'); cv.Force(ex + 1, ey, 'G');
+        }
+        // corrente de ouro com o pingente da praga
+        for (int x = 18; x <= 29; x++) cv.Force(x, 26 + dy + (Math.Abs(x - 23) < 3 ? 1 : 0), x % 2 == 0 ? 'Y' : 'y');
+        cv.Force(23, 28 + dy, 'Y'); cv.Force(24, 28 + dy, 'Y');
+        cv.Force(22, 29 + dy, 'Y'); cv.Force(23, 29 + dy, 'Q'); cv.Force(24, 29 + dy, 'G'); cv.Force(25, 29 + dy, 'y');
+        cv.Force(23, 30 + dy, 'G'); cv.Force(24, 30 + dy, 'G'); cv.Force(23, 31 + dy, 'y'); cv.Force(24, 31 + dy, 'y');
         // manga e mão de osso
-        Arm(cv, new Point(26, 27 + dy), p);
+        Arm(cv, new Point(28, 28 + dy), p);
         return cv;
+    }
+
+    /// <summary>Cajado na mão de trás: madeira, garra de osso no alto e o orbe da praga flutuando dentro dela.</summary>
+    static void Staff(PixelCanvas cv, Pose p)
+    {
+        int dy = p.Dy, sx = 9;
+        for (int y = 9 + dy; y <= 46; y++)
+        {
+            cv.Set(sx, y, 'W'); cv.Set(sx - 1, y, 'D');
+            if (y == 20 + dy || y == 37) cv.Set(sx + 1, y, 'W');                         // nós da madeira
+        }
+        // braço de trás (manga na sombra) estendido até o cajado
+        PixelKit.Thick(cv, 17, 27 + dy, 12, 29 + dy, 3, (t, j) => j == 0 ? 'R' : 'r');
+        // garra de osso: dois dedos curvos que seguram o orbe
+        int oy = 5 + dy;
+        int[][] claw = { new[] { -3, 3 }, new[] { -4, 2 }, new[] { -4, 1 }, new[] { -4, 0 }, new[] { -3, -1 },
+                         new[] { 2, 3 }, new[] { 3, 2 }, new[] { 3, 1 }, new[] { 3, 0 }, new[] { 2, -1 },
+                         new[] { -2, 4 }, new[] { -1, 4 }, new[] { 0, 4 }, new[] { 1, 4 } };
+        foreach (var c in claw) cv.Set(sx + c[0], oy + c[1], c[1] == 4 || c[0] > 0 ? 'u' : 'U');
+        // a mão de pelo (de trás) segurando o cajado
+        cv.Set(sx, 29 + dy, 'F'); cv.Set(sx + 1, 29 + dy, 'F'); cv.Set(sx, 30 + dy, 'f'); cv.Set(sx + 1, 30 + dy, 'F'); cv.Set(sx - 1, 30 + dy, 'f');
+        // orbe flutuando
+        int ocx = sx, ocy = oy + 1 - p.Orb;
+        PixelKit.Ellipse(cv, ocx + 0.5f, ocy + 0.5f, 2.6f, 2.6f, (a, b) => (a < -0.1f && b < -0.1f) ? 'Q' : 'G');
+        cv.Force(ocx - 1, ocy - 1, 'w');
     }
 
     static void Arm(PixelCanvas cv, Point shoulder, Pose p)
@@ -136,8 +202,8 @@ public static class ContractorSpriteGen
     static PixelCanvas Render(Pose p, int seed)
     {
         var body = Body(p);
-        PixelKit.Outline(body, 'o', "GQ");
-        if (p.Reveal >= 1f && !p.Mist) return body;
+        PixelKit.Outline(body, 'o', "GQw");
+        if (p.Reveal >= 1f && !p.Mist) { Shadow(body, 1f); return body; }
         var cv = new PixelCanvas(W, H);
         for (int x = 0; x < W; x++)
             for (int y = 0; y < H; y++)
@@ -157,7 +223,21 @@ public static class ContractorSpriteGen
                     float n = PixelKit.Noise(x, y, seed + 3);
                     if (cv.Px[x, y] == '.' && n > d) cv.Px[x, y] = n > d + 0.35f ? 'V' : 'v';
                 }
+        Shadow(cv, p.Reveal);
         return cv;
+    }
+
+    /// <summary>Sombra oval no chão, embaixo do manto (encolhe enquanto ele surge ou some).</summary>
+    static void Shadow(PixelCanvas cv, float size)
+    {
+        if (size < 0.2f) return;
+        float rx = 6f + 9f * size;
+        for (int x = 0; x < W; x++)
+            for (int y = 45; y < 48; y++)
+            {
+                float a = (x + 0.5f - 23.5f) / rx, b = (y + 0.5f - 46.5f) / 1.6f;
+                if (a * a + b * b <= 1f && cv.Px[x, y] == '.') cv.Px[x, y] = 's';
+            }
     }
 
     static readonly List<PixelKit.Clip> Clips = new List<PixelKit.Clip>();
@@ -182,11 +262,11 @@ public static class ContractorSpriteGen
             With(std, p => { p.Reveal = 0.8f; p.Mist = true; }),
             With(std, p => { p.Reveal = 1f; p.Mist = true; }));
 
-        // parado: respira, o manto balança, os dedos de osso batem devagar
+        // parado: respira, o manto balança, os dedos de osso batem devagar e o orbe flutua
         Add("idle", 0.25f, true,
             std,
-            With(std, p => { p.Fingers = 3; }),
-            With(std, p => { p.Dy = 1; p.Hem = 1; }),
+            With(std, p => { p.Fingers = 3; p.Orb = 1; }),
+            With(std, p => { p.Dy = 1; p.Hem = 1; p.Orb = 1; }),
             With(std, p => { p.Dy = 1; p.Hem = 1; p.Fingers = 3; }));
 
         // sorriso de deboche (falas da revelação)
@@ -223,63 +303,107 @@ public static class ContractorSpriteGen
 
     // ------------------------------------------------------------- retratos
 
-    // 48×48 olhando para a direita (espelhado depois: o contratante fala do lado direito).
+    // 48×48 em três quartos, olhando para a direita (espelhado depois: o contratante fala do lado direito).
+    // Capuz alto de ponta dobrada e debrum dourado emoldurando a cara emburrada; mancha larga do nariz com a boca em "人".
     static PixelCanvas Portrait(string expr)
     {
         var cv = new PixelCanvas(48, 48);
-        // manto e capuz caído
-        PixelKit.Ellipse(cv, 22f, 50f, 24f, 13f, (a, b) => a < -0.4f ? 'r' : 'R');
-        PixelKit.Ellipse(cv, 21f, 37f, 15f, 5f, (a, b) => a < -0.3f ? 'r' : 'q');
-        // corrente de ouro e medalha
-        for (int x = 8; x <= 34; x++) cv.Force(x, 41 + (Math.Abs(x - 21) < 6 ? 1 : 0), x % 2 == 0 ? 'Y' : 'y');
-        PixelKit.Ellipse(cv, 21.5f, 45f, 2.6f, 2.6f, (a, b) => b < 0 ? 'Y' : 'y');
-        // cabeça de capivara
-        PixelKit.Ellipse(cv, 20f, 22f, 13f, 11.5f, (a, b) => a < -0.55f ? 'f' : (b < -0.6f ? 'l' : 'F'));
-        for (int y = 15; y <= 32; y++)
-            for (int x = 26; x <= 42; x++)
+        // ombros do manto
+        PixelKit.Ellipse(cv, 22f, 53f, 25f, 13f, (a, b) => a < -0.45f ? 'r' : (a > 0.7f ? 'q' : 'R'));
+        // capuz: domo grande, ponta caindo para trás
+        PixelKit.Thick(cv, 11, 9, 4, 3, 3, (t, j) => j == 0 ? 'q' : 'R');
+        cv.Force(2, 3, 'R'); cv.Force(2, 4, 'r'); cv.Force(3, 2, 'R');
+        PixelKit.Ellipse(cv, 21f, 23f, 17f, 19f, (a, b) => a < -0.6f ? 'r' : (b < -0.75f && a < 0.4f && a > -0.55f ? 'q' : 'R'));
+        // orelha redonda escapando por um rasgo no alto do capuz
+        PixelKit.Ellipse(cv, 28f, 5f, 2.6f, 2.2f, (a, b) => (a > -0.3f && b > -0.1f) ? 'k' : 'f');
+        // abertura do capuz (fundo escuro) com debrum dourado fino
+        PixelKit.Ellipse(cv, 29f, 25f, 13.5f, 15.5f, (a, b) =>
+        {
+            float d = (float)Math.Sqrt(a * a + b * b);
+            if (d > 0.91f && a < 0.35f) return b < 0f ? 'Y' : 'y';
+            return 'h';
+        });
+        // cabeça roliça
+        PixelKit.Ellipse(cv, 29f, 24f, 11f, 11f, (a, b) => a < -0.6f ? 'f' : (b < -0.6f ? 'l' : 'F'));
+        // focinho largo e alto, cantos redondos
+        for (int y = 20; y <= 34; y++)
+            for (int x = 28; x <= 45; x++)
             {
-                if ((x >= 41 && (y <= 16 || y >= 31)) || (x == 42 && (y <= 17 || y >= 30))) continue;
-                cv.Force(x, y, y <= 17 ? 'l' : (y >= 29 ? 'f' : 'F'));
+                int cut = (y == 20 || y == 34) ? 2 : ((y == 21 || y == 33) ? 1 : 0);
+                if (x > 45 - cut) continue;
+                cv.Force(x, y, y <= 21 ? 'l' : (y >= 32 ? 'f' : 'F'));
             }
-        // narinas, boca e queixo
-        cv.Force(40, 19, 'k'); cv.Force(41, 19, 'k'); cv.Force(40, 20, 'k');
-        for (int x = 33; x <= 42; x++) cv.Force(x, 27, 'k');
-        if (expr == "deboche") { cv.Force(32, 26, 'k'); cv.Force(31, 25, 'k'); cv.Force(41, 28, (char)85); cv.Force(42, 28, (char)85); cv.Force(41, 29, (char)117); cv.Force(42, 29, (char)117); }
-        // orelha pequena
-        PixelKit.Ellipse(cv, 12f, 11.5f, 2.6f, 2.2f, (a, b) => a > 0.2f ? 'k' : 'f');
-        // olho: brilho verde, pálpebra pesada
-        int ex = 26, ey = 18;
-        if (expr == "revelacao")
+        // mancha do nariz e narinas
+        for (int y = 21; y <= 27; y++)
+            for (int x = 36; x <= 45; x++)
+            {
+                bool corner = (y == 21 && (x == 36 || x >= 44)) || (y == 27 && (x == 36 || x == 45));
+                if (!corner) cv.Force(x, y, y == 21 ? 'n' : 'N');
+            }
+        cv.Force(38, 24, 'k'); cv.Force(38, 25, 'k'); cv.Force(43, 24, 'k'); cv.Force(43, 25, 'k');
+        cv.Force(39, 22, 'n'); cv.Force(40, 22, 'n');                                               // brilho do nariz
+        // boca em "人"
+        cv.Force(40, 28, 'k'); cv.Force(40, 29, 'k');
+        if (expr == "deboche")
         {
-            // arregalado: íris verde 3×3 com pupila em fenda
-            for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) cv.Force(ex + x, ey + y, 'G');
-            cv.Force(ex - 1, ey - 1, 'Q'); cv.Force(ex, ey - 1, 'k'); cv.Force(ex, ey, 'k'); cv.Force(ex, ey + 1, 'k');
-            for (int x = ex - 2; x <= ex + 2; x++) cv.Force(x, ey - 2, 'k');
+            cv.Force(39, 30, 'k'); cv.Force(41, 30, 'k'); cv.Force(38, 30, 'k'); cv.Force(42, 30, 'k');
+            cv.Force(37, 29, 'k'); cv.Force(43, 29, 'k');                                          // cantos subindo: sorriso torto
+            cv.Force(39, 31, 'U'); cv.Force(40, 31, 'U'); cv.Force(41, 31, 'U'); cv.Force(39, 32, 'u'); cv.Force(41, 32, 'u'); // incisivos
+            cv.Force(40, 32, 'x');
         }
-        else
+        else if (expr == "revelacao")
         {
-            for (int x = ex - 3; x <= ex + 3; x++) cv.Force(x, ey - 1, 'k');                            // pálpebra pesada
-            for (int x = ex - 2; x <= ex + 2; x++) cv.Force(x, ey, x == ex ? 'Q' : 'G');
-            for (int x = ex - 2; x <= ex + 2; x++) cv.Force(x, ey + 1, 'k');
+            for (int x = 38; x <= 42; x++) cv.Force(x, 31, 'k');
+            cv.Force(39, 30, 'k'); cv.Force(41, 30, 'k'); cv.Force(39, 32, 'h'); cv.Force(40, 32, 'h'); cv.Force(41, 32, 'h'); // boca aberta
         }
-        // a mão de osso erguida na frente do peito, sob o focinho, girando a moeda na ponta dos dedos
-        PixelKit.Outline(cv, 'o', "GQw");                                                           // contorno da cabeça antes da mão
+        else { cv.Force(39, 30, 'k'); cv.Force(41, 30, 'k'); cv.Force(38, 31, 'k'); cv.Force(42, 31, 'k'); }
+        // bochecha
+        cv.Force(23, 28, 'p'); cv.Force(24, 28, 'p'); cv.Force(25, 28, 'p'); cv.Force(24, 29, 'p');
+        // olhos: o de perto grande, o de longe pequeno junto da ponte do focinho
+        Eye(cv, 25, 20, 4, expr);
+        Eye(cv, 35, 18, 2, expr);
+        // corrente de ouro e pingente da praga
+        for (int x = 8; x <= 36; x++) cv.Force(x, 42 + (Math.Abs(x - 22) < 6 ? 1 : 0), x % 2 == 0 ? 'Y' : 'y');
+        PixelKit.Ellipse(cv, 22.5f, 45.5f, 2.6f, 2.6f, (a, b) => (a * a + b * b > 0.5f) ? (b < 0 ? 'Y' : 'y') : 'G');
+        cv.Force(22, 45, 'Q');
+        PixelKit.Outline(cv, 'o', "GQw");
+        // a mão de osso erguida, girando a moeda na ponta dos dedos (ou faíscas da praga na revelação)
         var hand = new PixelCanvas(48, 48);
-        PixelKit.Thick(hand, 33, 47, 37, 42, 4, (t, j) => j < 2 ? 'q' : 'R');                          // manga
-        for (int y = 38; y <= 41; y++) for (int x = 35; x <= 39; x++) hand.Force(x, y, x == 35 ? 'u' : 'U'); // palma
-        hand.Force(37, 39, 'x'); hand.Force(36, 40, 'x'); hand.Force(38, 40, 'x');                       // vãos dos ossos
-        int[] fxs = { 35, 37, 39 };
+        PixelKit.Thick(hand, 39, 49, 42, 47, 4, (t, j) => j < 2 ? 'q' : 'R');                       // manga
+        for (int y = 43; y <= 46; y++) for (int x = 40; x <= 44; x++) hand.Force(x, y, x == 40 ? 'u' : 'U'); // palma
+        hand.Force(42, 44, 'x'); hand.Force(41, 45, 'x'); hand.Force(43, 45, 'x');
+        int[] fxs = { 40, 42, 44 };
         foreach (int fx in fxs)
-            for (int y = 37; y >= 33 - (fx == 37 ? 1 : 0); y--) hand.Force(fx, y, y == 35 ? 'x' : 'U');     // dedos para cima, juntas
-        hand.Force(34, 39, 'U'); hand.Force(33, 38, 'U'); hand.Force(33, 37, 'x');                       // polegar
+            for (int y = 42; y >= 39 - (fx == 42 ? 1 : 0); y--) hand.Force(fx, y, y == 40 ? 'x' : 'U');
+        hand.Force(39, 44, 'U'); hand.Force(38, 43, 'U'); hand.Force(38, 42, 'x');                   // polegar
         if (expr != "revelacao")
         {
-            PixelKit.Ellipse(hand, 37.5f, 30f, 2.4f, 2.4f, (a, b) => b < -0.2f ? 'Y' : 'y'); hand.Force(37, 29, 'w');
+            PixelKit.Ellipse(hand, 42.5f, 36f, 2.4f, 2.4f, (a, b) => b < -0.2f ? 'Y' : 'y'); hand.Force(42, 35, 'w');
         }
-        else { hand.Force(36, 31, 'G'); hand.Force(38, 30, 'Q'); hand.Force(40, 32, 'G'); hand.Force(34, 32, 'G'); } // faíscas da praga
+        else { hand.Force(41, 37, 'G'); hand.Force(43, 36, 'Q'); hand.Force(45, 38, 'G'); hand.Force(39, 38, 'G'); hand.Force(43, 34, 'G'); }
         PixelKit.Outline(hand, 'o', "GQw");
         cv.Paste(hand);
         return cv;
+    }
+
+    /// <summary>Olho do retrato: brilho verde da praga sob a pálpebra pesada (ou arregalado, na revelação).</summary>
+    static void Eye(PixelCanvas cv, int x, int y, int w, string expr)
+    {
+        if (expr == "revelacao")
+        {
+            for (int i = 0; i < w; i++) { cv.Force(x + i, y - 2, 'k'); cv.Force(x + i, y - 1, 'G'); cv.Force(x + i, y, 'G'); cv.Force(x + i, y + 1, 'G'); }
+            cv.Force(x, y - 1, 'Q');
+            int px = x + w / 2;
+            cv.Force(px, y - 1, 'k'); cv.Force(px, y, 'k'); cv.Force(px, y + 1, 'k');                  // pupila em fenda
+            for (int i = 0; i < w; i++) cv.Force(x + i, y + 2, 'k');
+            return;
+        }
+        // sobrancelha franzida: desce em direção ao focinho
+        for (int i = -1; i <= w; i++) cv.Force(x + i, y - 2 + (i >= w / 2 ? 1 : 0), 'k');
+        bool narrow = expr == "deboche";
+        for (int i = 0; i < w; i++) cv.Force(x + i, y, i == 0 ? 'Q' : 'G');
+        if (!narrow && w > 2) for (int i = 1; i < w; i++) cv.Force(x + i, y + 1, 'G');
+        for (int i = 0; i < w; i++) cv.Force(x + i, y + (narrow || w <= 2 ? 1 : 2), 'k');
     }
 
     static readonly string[][] PortraitList = {
@@ -307,7 +431,7 @@ public static class ContractorSpriteGen
         }
         if (!string.IsNullOrEmpty(previewDir))
         {
-            PixelKit.PreviewClips(Clips, System.IO.Path.Combine(previewDir, "contratante_animacoes.png"), 7, new Rectangle(4, 6, 42, 42), "#1e1b2c");
+            PixelKit.PreviewClips(Clips, System.IO.Path.Combine(previewDir, "contratante_animacoes.png"), 7, new Rectangle(0, 0, 48, 48), "#1e1b2c");
             PixelKit.PreviewPortraits(portraits, names, System.IO.Path.Combine(previewDir, "contratante_retratos.png"), 6);
         }
         return "Contratante: " + result + ", retratos: " + portraits.Count;
@@ -317,7 +441,7 @@ public static class ContractorSpriteGen
     {
         InitPalette();
         BuildClips();
-        PixelKit.PreviewClips(Clips, System.IO.Path.Combine(dir, "contratante_animacoes.png"), 7, new Rectangle(4, 6, 42, 42), "#3a3350");
+        PixelKit.PreviewClips(Clips, System.IO.Path.Combine(dir, "contratante_animacoes.png"), 7, new Rectangle(0, 0, 48, 48), "#3a3350");
         var portraits = new List<PixelCanvas>(); var names = new List<string>();
         foreach (var p in PortraitList) { portraits.Add(Portrait(p[1]).Mirror()); names.Add(p[1]); }
         PixelKit.PreviewPortraits(portraits, names, System.IO.Path.Combine(dir, "contratante_retratos.png"), 6);
