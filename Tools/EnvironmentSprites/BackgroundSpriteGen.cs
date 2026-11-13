@@ -35,6 +35,7 @@ public static class BackgroundSpriteGen
         { var c_ = StartMountain(0.45f); Write(bg, "Ext", "bg_ext_montanha_inicio_longe", c_); }
         { var c_ = CitadelNear(); Write(bg, "Cid", "bg_cid_fachada_perto", c_); }
         { var c_ = Miaraveu(); Write(bg, "Mia", "bg_mia_telhados_horizonte", c_); }
+        WriteAetherion(bg);   // a torre dos magos ao longe (melhoria 12/11/2026), com os quadros da corrupção
 
         // 6B: janelas dos interiores (moldura + máscara da abertura) e silhuetas de primeiro plano
         foreach (var kind in new[] { WindowKind.Slit, WindowKind.Window, WindowKind.Big })
@@ -679,5 +680,258 @@ public static class BackgroundSpriteGen
         for (int k = 0; k < 6; k++) for (int x = bt + k / 2; x < bt + 6 - k / 2; x++) cv.Force(x, bty - 28 - k, 't');
         cv.Force(bt + 2, bty - 22, 'K'); cv.Force(bt + 3, bty - 22, 'K');
         return cv;
+    }
+
+    // ------------------------------------------------- Aetherion, a Torre dos Mil Saberes (marco distante)
+
+    // Pedido do usuário (12/11/2026): no lugar da Cidadela do fundo do conjunto A, a torre dos magos da lore
+    // (SeteVidasDocs/Sete-Vidas_Lore_Oficial_v1.md §IV): tão alta que o topo some nas nuvens, andares de cima
+    // quebrados desde a Guerra dos Corredores Mortos. É a área final do jogo. A corrupção aparece no par da praga
+    // (roxo #5b2a6e + verde-ácido #8fd14f, liberado aqui porque ela é a origem da praga): coroa de nuvens roxas que
+    // gira, janelas verdes que pulsam fora de sincronia, brilho roxo fraco no topo e um clarão lilás dos relâmpagos.
+    // Os quadros da coroa, das janelas e do clarão ficam na pasta Ext/Aetherion e são tocados pelo AetherionFx.
+
+    const int AeW1 = 110, AeH1 = 180, AeCx1 = 55;
+
+    /// <summary>Silhueta da torre na escala 1 (110×180) e as janelas (1×2 px, ponto de cima).</summary>
+    static bool[,] AeMask1(List<Point> windows)
+    {
+        int W = AeW1, H = AeH1, cx = AeCx1;
+        var m = new bool[W, H];
+        Func<int, int> half = y => 6 + (int)((y - 30) * 6f / (H - 30));
+        for (int y = 30; y < H; y++)
+        {
+            int hw = half(y);
+            if (y >= 46 && (y - 46) % 22 < 2) hw += 1;                     // anéis entre os setores
+            for (int x = cx - hw; x <= cx + hw; x++) m[x, y] = true;
+        }
+        // topo quebrado: colunas de alturas diferentes e mordidas
+        for (int x = cx - 6; x <= cx + 6; x++)
+        {
+            bool bitten = Hash(x, 1, 77) < 0.25f;
+            int top = bitten ? 33 : 30 - (int)(Hash(x, 0, 77) * 14);
+            for (int y = top; y < 34; y++) m[x, y] = true;
+        }
+        // fragmento inclinado (o que sobrou de uma torre das Câmaras Superiores) e um toco à direita
+        AeLine(m, cx - 4, 22, cx - 11, 7);
+        AeLine(m, cx - 3, 22, cx - 10, 7);
+        for (int y = 17; y < 30; y++) { Mark(m, cx + 4, y); Mark(m, cx + 5, y); }
+        // Observatório Celeste: plataforma e cúpula à esquerda
+        int y0 = 112, hwo = half(y0);
+        for (int x = cx - hwo - 7; x <= cx - hwo; x++) for (int y = y0; y < y0 + 3; y++) Mark(m, x, y);
+        for (int x = cx - hwo - 9; x <= cx - hwo + 1; x++)
+            for (int y = y0 - 6; y < y0; y++)
+            {
+                float dx = (x + 0.5f - (cx - hwo - 3.5f)) / 5f, dy = (y + 0.5f - y0) / 6f;
+                if (dx * dx + dy * dy <= 1f) Mark(m, x, y);
+            }
+        Mark(m, cx - hwo - 4, y0 - 7);                                      // a agulha da luneta
+        // Jardins Suspensos: dois terraços à direita com copas redondas
+        foreach (int yg in new[] { 134, 150 })
+        {
+            int hwg = half(yg);
+            for (int x = cx + hwg; x <= cx + hwg + 7; x++) { Mark(m, x, yg); Mark(m, x, yg + 1); }
+            foreach (int tx in new[] { cx + hwg + 2, cx + hwg + 6 })
+                for (int x = tx - 2; x <= tx + 2; x++)
+                    for (int y = yg - 4; y < yg; y++)
+                        if ((x - tx) * (x - tx) + (y - (yg - 2)) * (y - (yg - 2)) <= 5) Mark(m, x, y);
+        }
+        // janelas: duas por setor, desencontradas, e duas nos andares quebrados
+        if (windows != null)
+        {
+            windows.Add(new Point(cx - 1, 37)); windows.Add(new Point(cx + 3, 41));
+            for (int ys = 53; ys < H - 14; ys += 22)
+            {
+                windows.Add(new Point(cx - 3, ys));
+                windows.Add(new Point(cx + 2, ys + 7));
+                if (ys > 100) windows.Add(new Point(cx - 6, ys + 12));
+            }
+        }
+        return m;
+    }
+
+    static void AeLine(bool[,] m, int x0, int y0, int x1, int y1)
+    {
+        int steps = Math.Max(Math.Abs(x1 - x0), Math.Abs(y1 - y0));
+        for (int i = 0; i <= steps; i++)
+        {
+            float t = steps == 0 ? 0f : i / (float)steps;
+            Mark(m, (int)Math.Round(x0 + (x1 - x0) * t), (int)Math.Round(y0 + (y1 - y0) * t));
+        }
+    }
+
+    static void Mark(bool[,] m, int x, int y)
+    {
+        if (x >= 0 && y >= 0 && x < m.GetLength(0) && y < m.GetLength(1)) m[x, y] = true;
+    }
+
+    /// <summary>A máscara na escala <paramref name="s"/> (amostra do mais próximo; a do menu é a metade).</summary>
+    static bool[,] AeMask(float s, List<Point> windows)
+    {
+        var w1 = new List<Point>();
+        var m1 = AeMask1(w1);
+        int W = (int)Math.Round(AeW1 * s), H = (int)Math.Round(AeH1 * s);
+        var m = new bool[W, H];
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                m[x, y] = m1[Math.Min(AeW1 - 1, (int)(x / s)), Math.Min(AeH1 - 1, (int)(y / s))];
+        if (windows != null)
+            foreach (var p in w1) windows.Add(new Point((int)Math.Round(p.X * s), (int)Math.Round(p.Y * s)));
+        return m;
+    }
+
+    static bool At(bool[,] m, int x, int y)
+    {
+        return x >= 0 && y >= 0 && x < m.GetLength(0) && y < m.GetLength(1) && m[x, y];
+    }
+
+    /// <summary>A torre: corpo na névoa da distância, borda do lado da luz, janelas escuras, névoa na base e o
+    /// brilho roxo fraco no topo quebrado. <paramref name="night"/>: luz da lua à esquerda, tudo mais escuro.</summary>
+    static PixelCanvas AetherionTower(float s, bool night)
+    {
+        PixelKit.Pal.Clear();
+        PixelKit.P('A', night ? "#1e1a34" : "#4a2a52");
+        PixelKit.P('a', night ? "#3e3a5c" : "#7a4a6e");
+        PixelKit.P('d', night ? "#141024" : "#2e1a38");
+        PixelKit.P('e', night ? "#1a1630" : "#5a3a5e");
+        PixelKit.P('P', "#5b2a6e");
+        var win = new List<Point>();
+        var m = AeMask(s, win);
+        int W = m.GetLength(0), H = m.GetLength(1);
+        var cv = new PixelCanvas(W, H);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                if (!m[x, y]) continue;
+                char c = 'A';
+                bool litEdge = night ? !At(m, x - 1, y) : !At(m, x + 1, y);
+                if (litEdge || !At(m, x, y - 1)) c = 'a';
+                if (At(m, x, y - 1) && !At(m, x, y + 1) && y < H - 1) c = 'd';     // sombra embaixo dos anéis e terraços
+                if (y > H - (int)(22 * s) && (x + y) % 2 == 0) c = 'e';             // névoa na base
+                cv.Px[x, y] = c;
+            }
+        foreach (var p in win) { cv.Force(p.X, p.Y, 'd'); if (s >= 0.9f) cv.Force(p.X, p.Y + 1, 'd'); }
+        // brilho roxo fraco em volta do topo quebrado (pontilhado, só onde não há torre)
+        int cx = (int)Math.Round(AeCx1 * s), cy = (int)Math.Round(24 * s);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                if (m[x, y]) continue;
+                float dx = (x - cx) / (16f * s), dy = (y - cy) / (14f * s);
+                float d = dx * dx + dy * dy;
+                if (d < 1f && (x + y * 2) % (d < 0.4f ? 3 : 5) == 0) cv.Px[x, y] = 'P';
+            }
+        return cv;
+    }
+
+    /// <summary>
+    /// Coroa de tempestade (6 quadros em loop): nuvens roxas numa elipse em volta do topo, girando; as de trás passam
+    /// por trás da torre. Um anel de dentro gira no sentido contrário, mais rápido (a espiral).
+    /// </summary>
+    static PixelCanvas AetherionClouds(float s, bool night, int frame)
+    {
+        PixelKit.Pal.Clear();
+        PixelKit.P('c', night ? "#16122a" : "#2e1a3a");
+        PixelKit.P('C', "#5b2a6e");
+        PixelKit.P('k', night ? "#0e0c1c" : "#22122c");
+        var m = AeMask(s, null);
+        int W = m.GetLength(0), H = m.GetLength(1);
+        var cv = new PixelCanvas(W, H);
+        float cx = AeCx1 * s, cy = 22f * s;
+        Ring(cv, m, cx, cy + 2f * s, 38f * s, 9f * s, 11, frame / 6f, true, s);
+        Ring(cv, m, cx, cy - 6f * s, 22f * s, 5f * s, 8, -frame * 2 / 6f, false, s);
+        Ring(cv, m, cx, cy - 13f * s, 10f * s, 2.5f * s, 5, frame * 3 / 6f, false, s);   // o olho da espiral, por cima do topo
+        return cv;
+    }
+
+    static void Ring(PixelCanvas cv, bool[,] m, float cx, float cy, float rx, float ry, int n, float shift, bool big, float s)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            double t = (i + shift) / n * Math.PI * 2;
+            float bx = cx + rx * (float)Math.Cos(t), by = cy + ry * (float)Math.Sin(t);
+            bool front = Math.Sin(t) > 0;
+            float brx = (big ? 11f : 7f) * s + 3f * s * (float)Math.Abs(Math.Cos(t)), bry = (big ? 4f : 3f) * s + 0.5f;
+            for (int y = (int)(by - bry - 1); y <= (int)(by + bry + 1); y++)
+                for (int x = (int)(bx - brx - 1); x <= (int)(bx + brx + 1); x++)
+                {
+                    if (x < 0 || y < 0 || x >= cv.W || y >= cv.H) continue;
+                    float dx = (x + 0.5f - bx) / brx, dy = (y + 0.5f - by) / bry;
+                    float d = dx * dx + dy * dy;
+                    if (d > 1f) continue;
+                    if (!front && m[x, y]) continue;                               // passa por trás da torre
+                    if (d > 0.7f && (x + y) % 2 == 0) continue;                    // borda macia em pontilhado
+                    cv.Px[x, y] = dy < -0.35f ? 'C' : dy > 0.4f ? 'k' : 'c';
+                }
+            // rastro pontilhado atrás de cada nuvem (o giro)
+            float dir = -Math.Sin(t) >= 0 ? 1f : -1f;
+            for (int k = 1; k <= (int)(6 * s) + 1; k += 2)
+            {
+                int x = (int)(bx - dir * (brx + k * 2)), y = (int)by;
+                if (x >= 0 && x < cv.W && y >= 0 && y < cv.H && (front || !m[x, y])) cv.Px[x, y] = 'c';
+            }
+        }
+    }
+
+    /// <summary>Janelas acesas em verde-ácido (3 quadros, cada um com outras janelas acesas: pulsam fora de sincronia).</summary>
+    static PixelCanvas AetherionWindows(float s, int frame)
+    {
+        PixelKit.Pal.Clear();
+        PixelKit.P('G', "#8fd14f");
+        PixelKit.P('g', "#4e7a3a");
+        var win = new List<Point>();
+        var m = AeMask(s, win);
+        var cv = new PixelCanvas(m.GetLength(0), m.GetLength(1));
+        for (int i = 0; i < win.Count; i++)
+        {
+            float h = Hash(i, frame, 5);
+            if (h < 0.45f) continue;
+            var p = win[i];
+            cv.Force(p.X, p.Y, h > 0.8f ? 'G' : 'g');
+            if (s >= 0.9f) cv.Force(p.X, p.Y + 1, 'g');
+        }
+        return cv;
+    }
+
+    /// <summary>Clarão do relâmpago: o contorno da torre aceso em lilás e o topo quebrado mais claro.</summary>
+    static PixelCanvas AetherionFlash(float s)
+    {
+        PixelKit.Pal.Clear();
+        PixelKit.P('L', "#c8a0ff");
+        PixelKit.P('l', "#e8d8ff");
+        var m = AeMask(s, null);
+        int W = m.GetLength(0), H = m.GetLength(1);
+        var cv = new PixelCanvas(W, H);
+        int topLimit = (int)(48 * s);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                if (!m[x, y]) continue;
+                bool rim = !At(m, x - 1, y) || !At(m, x + 1, y) || !At(m, x, y - 1);
+                if (!rim) continue;
+                if (y > H * 0.7f && (x + y) % 2 == 0) continue;                    // a luz vem de cima
+                cv.Px[x, y] = y < topLimit ? 'l' : 'L';
+            }
+        return cv;
+    }
+
+    static void WriteAetherion(string bg)
+    {
+        { var c_ = AetherionTower(1f, false); Write(bg, "Ext", "bg_ext_aetherion", c_); }
+        { var c_ = AetherionTower(1f, true); Write(bg, "Ext", "bg_ext_aetherion_noite", c_); }
+        { var c_ = AetherionTower(0.5f, false); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_menu", c_); }
+        for (int f = 0; f < 6; f++)
+        {
+            { var c_ = AetherionClouds(1f, false, f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_nuvens_" + f, c_); }
+            { var c_ = AetherionClouds(1f, true, f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_nuvens_noite_" + f, c_); }
+            { var c_ = AetherionClouds(0.5f, false, f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_menu_nuvens_" + f, c_); }
+        }
+        for (int f = 0; f < 3; f++)
+        {
+            { var c_ = AetherionWindows(1f, f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_janelas_" + f, c_); }
+            { var c_ = AetherionWindows(0.5f, f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_menu_janelas_" + f, c_); }
+        }
+        { var c_ = AetherionFlash(1f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_clarao", c_); }
+        { var c_ = AetherionFlash(0.5f); Write(bg, "Ext/Aetherion", "bg_ext_aetherion_menu_clarao", c_); }
     }
 }

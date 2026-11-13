@@ -28,6 +28,8 @@ namespace SeteVidas.Combat
         [SerializeField] SpriteRenderer spriteRenderer;
         [SerializeField] Collider2D hurtbox;
         [SerializeField] TextMesh statusLabel;
+        [Tooltip("Mostra vida e estado em texto sobre o boneco (depuração; pedido do usuário: sem textos de vida no jogo)")]
+        [SerializeField] bool showStatusLabel;
 
         float _combatUntil = -1f;
         float _recoilUntil, _blinkUntil, _respawnAt;
@@ -71,7 +73,6 @@ namespace SeteVidas.Combat
             _recoilUntil = Time.time + recoilTime;
             _blinkUntil = Time.time + blinkTime;
 
-            DamagePopup.Spawn(transform.position + Vector3.up * 1.9f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
             // mesmo clarão e faíscas dos inimigos (melhoria 3); o balanço do boneco já é o recuo dele
             var reaction = new HitReactionTable().For(HitReactionRules.WeightOf(info.Type, info.Angle));
             var flash = HitFlash.For(spriteRenderer);
@@ -103,7 +104,8 @@ namespace SeteVidas.Combat
                 spriteRenderer.enabled = !IsDefeated && (!blinking || ((int)(Time.time * 30f) & 1) == 0);
             }
 
-            if (statusLabel != null)
+            if (statusLabel != null) statusLabel.gameObject.SetActive(showStatusLabel);
+            if (statusLabel != null && showStatusLabel)
             {
                 string state = IsDefeated ? "derrotado" : InCombat ? "em combate" : "calmo";
                 string arrow = facing == Side.Right ? "olha >" : "< olha";

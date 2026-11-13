@@ -30,6 +30,11 @@ public static class TemplarSpriteGen
         P('W', "#6b4a2b"); P('w', "#8c6640");                    // haste da lança
         P('D', "#a9bcd6"); P('d', "#f4f7fb");                    // lâmina
         P('E', "#f4f7fb");                                       // brilho do olho
+        // Templário Zumbi (a praga do tomo): pelo morto, sobreveste suja, olho verde-ácido e veias roxas
+        P('Z', "#7d7058"); P('z', "#544a3c"); P('q', "#a89a7a"); // pelo morto, sombra, focinho
+        P('U', "#b8b09a"); P('u', "#7e7868");                    // sobreveste suja e rasgos
+        P('j', "#8a8690"); P('r', "#6a5048");                    // aço sem brilho, ferrugem
+        P('G', "#8fd14f"); P('V', "#5b2a6e");                    // olho e veias (o par da praga)
     }
 
     // ------------------------------------------------------------ canvas
@@ -125,6 +130,11 @@ public static class TemplarSpriteGen
             case "angry": // olho estreito, dentes à mostra
                 set(6, 8, 'o'); set(5, 8, 'o'); set(9, 10, 'E'); set(9, 11, 'E'); set(9, 12, 'o');
                 break;
+            case "zombie": // orelhas caídas, olho aberto (vira verde-ácido no ZombieSkin), boca aberta e torta
+                rows[0] = "...............";
+                rows[1] = ".KKK...KK......";
+                set(9, 10, 'o'); set(9, 11, 'o'); set(10, 10, 'o');
+                break;
             case "hurt": // olho fechado, orelhas para trás, boca aberta
                 rows[0] = "...............";
                 rows[1] = ".KKK..KKK......";
@@ -150,6 +160,8 @@ public static class TemplarSpriteGen
 
     /// <summary>Gera a variante do atirador (capuz de couro, aljava, besta).</summary>
     static bool Archer;
+    /// <summary>Gera o Templário Zumbi (depois do tomo): mesmo corpo, sem arma, pelo morto, olho verde-ácido e veias roxas.</summary>
+    static bool Zombie;
 
     // Tronco (12×10): ombreiras de aço, sobreveste branca com a pata dourada da Ordem, cinto, saia em duas abas.
     static readonly string[] Torso = {
@@ -216,6 +228,7 @@ public static class TemplarSpriteGen
         if (p.Crossbow) CrossbowAt(cv, p.FrontHand.X + 0.5f, p.FrontHand.Y + 0.5f, p.BowAngle, p.Loaded, p.Released);
         else if (!p.NoSpear) Spear(cv, p.FrontHand.X + 0.5f, p.FrontHand.Y + 0.5f, p.SpearAngle, p.SpearBack);
         Arm(cv, fsx, fsy, p.FrontHand, 'I', 'J');
+        if (Zombie) ZombieSkin(cv);
         if (outline) Outline(cv);
         return cv;
     }
@@ -324,6 +337,13 @@ public static class TemplarSpriteGen
         var d0 = With(hit, p => { p.SpearAngle = 115f; });
         var d1 = With(std, p => { p.HeadV = "hurt"; p.Py = 39; p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); p.FrontHand = new Point(38, 36); p.SpearAngle = 140f; p.SpearBack = 6f; });
         AddCanvas("death", 0.12f, false, Render(d0, true), Render(d1, true), Fallen(45f), Fallen(90f), Fallen(90f));
+
+        // abate furtivo: trava de susto (olho arregalado), a lança escorrega, os joelhos cedem e tomba de cara para
+        // a frente, sem recuar (a adaga veio de trás). O primeiro quadro segura mais (o "congela" do golpe).
+        var s0 = With(std, p => { p.HeadV = "alert"; p.HeadDy = -1; p.SpearAngle = 96f; p.FrontHand = new Point(39, 32); });
+        var s1 = With(std, p => { p.HeadV = "hurt"; p.HeadDx = 1; p.TorsoDy = 1; p.Py = 37; p.SpearAngle = 118f; p.SpearBack = 9f; p.FrontHand = new Point(38, 35); });
+        var s2 = With(std, p => { p.HeadV = "hurt"; p.HeadDx = 1; p.HeadDy = 1; p.Py = 39; p.BodyDx = 1; p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); p.NoSpear = true; p.FrontHand = new Point(39, 37); });
+        AddCanvas("death_stealth", 0.12f, false, Render(s0, true), Render(s0, true), Render(s1, true), Render(s2, true), Fallen(45f, true), Fallen(90f, true), Fallen(90f, true));
     }
 
     // Besta: coronha de madeira (a mão segura no meio), arco de aço na frente, corda e o virote no trilho.
@@ -353,11 +373,12 @@ public static class TemplarSpriteGen
     }
 
     // Corpo girado para trás em volta dos pés (cai de costas), lança largada no chão.
-    static Canvas Fallen(float degrees)
+    // forward = true: tomba de cara para a frente (abate furtivo: morte silenciosa, "death_stealth")
+    static Canvas Fallen(float degrees, bool forward = false)
     {
-        var body = Render(new Pose { HeadV = "hurt", NoSpear = true, FrontHand = new Point(36, 35) }, false);
+        var body = Render(new Pose { HeadV = Zombie ? "zombie" : "hurt", NoSpear = true, FrontHand = new Point(36, 35) }, false);
         var cv = new Canvas();
-        double a = -degrees * Math.PI / 180.0;                       // negativo: tomba para trás (cabeça para a esquerda)
+        double a = (forward ? degrees : -degrees) * Math.PI / 180.0;  // negativo: tomba para trás (cabeça para a esquerda)
         float cs = (float)Math.Cos(a), sn = (float)Math.Sin(a);
         float cx = 32f, cy = 43.5f;
         float lift = degrees >= 89f ? 7f : 2f;                       // deitado: o corpo assenta no chão
@@ -370,7 +391,15 @@ public static class TemplarSpriteGen
                 char c = body.Get((int)Math.Floor(sx), (int)Math.Floor(sy));
                 if (c != '.') cv.Px[x, y] = c;
             }
-        if (Archer)
+        if (Zombie) { }                                              // zumbi: sem arma
+        else if (forward)
+        {
+            // a arma escorrega da mão e fica para trás, no chão
+            if (Archer) CrossbowAt(cv, degrees >= 89f ? 22.5f : 25.5f, 42.5f, 180f, false, true);
+            else if (degrees >= 89f) Spear(cv, 30.5f, 42.5f, 180f, 10f);
+            else Spear(cv, 27.5f, 40.5f, 200f, 8f);
+        }
+        else if (Archer)
         {
             if (degrees >= 89f) CrossbowAt(cv, 40.5f, 42.5f, 0f, false, true); // besta largada no chão
             else CrossbowAt(cv, 39.5f, 39.5f, -30f, false, true);
@@ -379,6 +408,99 @@ public static class TemplarSpriteGen
         else Spear(cv, 38.5f, 38.5f, 160f, 8f);
         Outline(cv);
         return cv;
+    }
+
+    // ---------------------------------------------------- o Templário Zumbi
+
+    /// <summary>
+    /// Troca as cores do templário pelas do zumbi (pedido do usuário, 12/11/2026): pelo morto, aço sem brilho com
+    /// ferrugem, sobreveste suja e rasgada, o olho verde-ácido e veias roxas no pelo. Determinístico pela posição.
+    /// </summary>
+    static void ZombieSkin(Canvas cv)
+    {
+        for (int x = 0; x < W; x++)
+            for (int y = 0; y < H; y++)
+            {
+                char c = cv.Px[x, y];
+                int h = (x * 7 + y * 13) % 17;
+                switch (c)
+                {
+                    case 'A': cv.Px[x, y] = h == 0 ? 'V' : 'Z'; break;
+                    case 'a': cv.Px[x, y] = 'z'; break;
+                    case 'Q': cv.Px[x, y] = h == 3 ? 'V' : 'q'; break;
+                    case 'K': cv.Px[x, y] = h == 5 ? 'V' : 'K'; break;
+                    case 'P': cv.Px[x, y] = h % 5 == 0 ? 'u' : 'U'; break;
+                    case 'p': cv.Px[x, y] = 'u'; break;
+                    case 'I': cv.Px[x, y] = h == 7 ? 'r' : 'j'; break;
+                    case 'i': cv.Px[x, y] = h % 6 == 1 ? 'r' : 'i'; break;
+                    case 'Y': cv.Px[x, y] = 'y'; break;
+                    case 'E': cv.Px[x, y] = 'G'; break;
+                }
+            }
+        // rasgos na barra da sobreveste: alguns pixels somem
+        for (int x = 0; x < W; x++)
+            for (int y = 1; y < H; y++)
+                if ((cv.Px[x, y] == 'U' || cv.Px[x, y] == 'u') && cv.Get(x, y + 1) == '.' && (x * 3 + y) % 4 == 0) cv.Px[x, y] = '.';
+    }
+
+    /// <summary>O corpo deitado se desfazendo em fiapos roxos (morte do zumbi): tira pixels e tinge alguns de roxo.</summary>
+    static Canvas Dissolve(Canvas src, int level)
+    {
+        var cv = new Canvas();
+        for (int x = 0; x < W; x++)
+            for (int y = 0; y < H; y++)
+            {
+                char c = src.Px[x, y];
+                if (c == '.') continue;
+                int h = (x * 11 + y * 5 + level * 3) % 7;
+                if (h < level * 2) continue;                       // some
+                cv.Px[x, y] = h == level * 2 ? 'V' : c;            // borda roxa onde está sumindo
+            }
+        // fiapos subindo
+        for (int k = 0; k < 6; k++)
+        {
+            int fx = 22 + k * 4 + level, fy = 40 - level * 3 - (k % 3) * 2;
+            cv.Set(fx, fy, 'V'); if (level > 1) cv.Set(fx + 1, fy - 2, 'V');
+        }
+        return cv;
+    }
+
+    static void BuildZombieClips()
+    {
+        Clips.Clear();
+        // curvado, cabeça para a frente e para baixo, os dois braços estendidos à frente (sem arma)
+        var slump = new Pose { HeadV = "zombie", NoSpear = true, HeadDx = 1, HeadDy = 1, TorsoDy = 1,
+                               FrontHand = new Point(42, 32), BackHand = new Point(40, 34) };
+        Add("idle", 0.3f, true, slump,
+            With(slump, p => { p.HeadDx = 2; p.FrontHand = new Point(42, 33); p.BackHand = new Point(40, 35); }),
+            With(slump, p => { p.HeadDx = 2; p.HeadDy = 2; p.FrontHand = new Point(42, 34); }),
+            With(slump, p => { p.FrontHand = new Point(42, 33); }));
+        // arrastando os pés: passos curtos, o corpo balança de um lado para o outro
+        Add("walk", 0.2f, true,
+            With(slump, p => { p.BackFoot = new Point(28, 43); p.FrontFoot = new Point(35, 43); }),
+            With(slump, p => { p.TorsoDy = 2; p.HeadDx = 2; p.BackFoot = new Point(30, 43); p.FrontFoot = new Point(34, 42); p.FrontHand = new Point(42, 33); }),
+            With(slump, p => { p.BackFoot = new Point(34, 43); p.FrontFoot = new Point(29, 43); }),
+            With(slump, p => { p.TorsoDy = 2; p.HeadDx = 0; p.BackFoot = new Point(32, 42); p.FrontFoot = new Point(31, 43); p.BackHand = new Point(40, 35); }));
+        // perseguição: inclinado, braços esticados para pegar, passadas largas e tortas
+        var lunge = With(slump, p => { p.HeadDx = 2; p.BodyDx = 1; p.TorsoDy = 0; p.FrontHand = new Point(44, 30); p.BackHand = new Point(42, 32); });
+        Add("run", 0.1f, true,
+            With(lunge, p => { p.BackFoot = new Point(25, 43); p.FrontFoot = new Point(38, 43); }),
+            With(lunge, p => { p.TorsoDy = 1; p.BackFoot = new Point(29, 41); p.FrontFoot = new Point(35, 43); p.FrontHand = new Point(44, 31); }),
+            With(lunge, p => { p.BackFoot = new Point(37, 43); p.FrontFoot = new Point(27, 43); }),
+            With(lunge, p => { p.TorsoDy = 1; p.BackFoot = new Point(33, 43); p.FrontFoot = new Point(30, 41); p.BackHand = new Point(42, 33); }));
+        // sentiu o gato: a cabeça dá um tranco para cima e volta
+        Add("alert", 0.08f, false,
+            With(slump, p => { p.HeadDy = -1; p.HeadDx = 0; p.TorsoDy = 0; p.FrontHand = new Point(43, 30); }),
+            With(slump, p => { p.HeadDy = 0; p.HeadDx = 2; p.FrontHand = new Point(43, 31); }),
+            slump);
+        var hit = With(slump, p => { p.HeadDx = -1; p.BodyDx = -1; p.FrontHand = new Point(40, 30); p.BackHand = new Point(38, 31); });
+        Add("hurt", 0.1f, false, hit, With(hit, p => { p.HeadDx = 0; p.BodyDx = 0; }));
+        // morte: cai de costas e se desfaz em fiapos roxos
+        var lying = Fallen(90f);
+        AddCanvas("death", 0.12f, false, Render(hit, true), Fallen(45f), lying, lying, Dissolve(lying, 1), Dissolve(lying, 2), Dissolve(lying, 3));
+        // golpe pelas costas que mata: tomba de cara para a frente e se desfaz
+        var down = Fallen(90f, true);
+        AddCanvas("death_stealth", 0.12f, false, Render(slump, true), Fallen(45f, true), down, down, Dissolve(down, 1), Dissolve(down, 2), Dissolve(down, 3));
     }
 
     // ------------------------------------------------ o Cão Sentinela Atirador
@@ -426,6 +548,10 @@ public static class TemplarSpriteGen
         Add("hurt", 0.1f, false, hit, With(hit, p => { p.HeadDx = 0; p.BodyDx = 0; }));
         var d1 = With(rest, p => { p.HeadV = "hurt"; p.Py = 39; p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); p.FrontHand = new Point(38, 37); p.BowAngle = -80f; p.Loaded = false; p.Released = true; });
         AddCanvas("death", 0.12f, false, Render(hit, true), Render(d1, true), Fallen(45f), Fallen(90f), Fallen(90f));
+        var s0 = With(rest, p => { p.HeadV = "alert"; p.HeadDy = -1; p.BowAngle = -50f; });
+        var s1 = With(rest, p => { p.HeadV = "hurt"; p.HeadDx = 1; p.TorsoDy = 1; p.Py = 37; p.BowAngle = -80f; p.FrontHand = new Point(38, 35); p.BackHand = new Point(35, 34); });
+        var s2 = With(rest, p => { p.HeadV = "hurt"; p.HeadDx = 1; p.HeadDy = 1; p.Py = 39; p.BodyDx = 1; p.BackFoot = new Point(27, 43); p.FrontFoot = new Point(37, 43); p.Crossbow = false; p.FrontHand = new Point(39, 37); p.BackHand = null; });
+        AddCanvas("death_stealth", 0.12f, false, Render(s0, true), Render(s0, true), Render(s1, true), Render(s2, true), Fallen(45f, true), Fallen(90f, true), Fallen(90f, true));
     }
 
     /// <summary>Virote 10×3 apontando para a direita (o jogo gira conforme a mira).</summary>
@@ -473,6 +599,7 @@ public static class TemplarSpriteGen
     }
 
     public const string CrossbowAssetGuid = "a2f4c6e8b0d24f6a9c1e3b5d7f9a1c46";
+    public const string ZombieAssetGuid = "d4b8f2a6c0e14b7d9f3a5c7e1b9d2f48";
     public const string BoltSpriteGuidKey = "bolt/enm_bolt.png";
 
     public static string Run(string projectRoot, string metaTemplatePath, string previewPath)
@@ -500,7 +627,14 @@ public static class TemplarSpriteGen
         if (!File.Exists(boltPath + ".meta"))
             File.WriteAllText(boltPath + ".meta", template.Replace("__GUID__", Guid(BoltSpriteGuidKey)).Replace("__ALIGN__", "0").Replace("__PIVOTY__", "0.5"));
         Archer = false;
-        return "lanceiro: " + spear + " frames, atirador: " + bow + " frames";
+
+        // Templário Zumbi (depois do tomo)
+        Zombie = true;
+        BuildZombieClips();
+        int zombie = WriteSet(projectRoot, template, "TemplarZombie", "enm_zombie_", "ZombieTemplarAnimationSet", ZombieAssetGuid);
+        if (!string.IsNullOrEmpty(previewPath)) Preview(Path.Combine(Path.GetDirectoryName(previewPath), "zumbi_animacoes.png"), 6);
+        Zombie = false;
+        return "lanceiro: " + spear + " frames, atirador: " + bow + " frames, zumbi: " + zombie + " frames";
     }
 
     /// <summary>Grava os frames de <see cref="Clips"/> e o asset CharacterAnimationSet. Retorna o número de frames.</summary>
@@ -524,7 +658,7 @@ public static class TemplarSpriteGen
                 string path = Path.Combine(art, rel);
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 using (var bmp = ToBitmap(c.Frames[i].Px, W, H)) bmp.Save(path, ImageFormat.Png);
-                string gu = Guid(filePrefix == "enm_templar_" ? rel : "archer/" + rel);
+                string gu = Guid(filePrefix == "enm_templar_" ? rel : filePrefix == "enm_zombie_" ? "zombie/" + rel : "archer/" + rel);
                 File.WriteAllText(path + ".meta", template.Replace("__GUID__", gu).Replace("__ALIGN__", "9").Replace("__PIVOTY__", "0"));
                 y.Append("    - sprite: {fileID: 21300000, guid: " + gu + ", type: 3}\n      overlay: {fileID: 0}\n");
                 y.Append("      tail: {x: 0, y: 0}\n      chest: {x: 0, y: 14}\n      trim: {x: 0, y: 0}\n      body: {x: 0, y: 0}\n      hasTail: 0\n      hasTrim: 0\n");
@@ -541,7 +675,7 @@ public static class TemplarSpriteGen
     public static void Preview(string path, int S)
     {
         if (Pal.Count == 0) InitPalette();
-        if (Clips.Count == 0) { if (Archer) BuildCrossbowClips(); else BuildClips(); }
+        if (Clips.Count == 0) { if (Zombie) BuildZombieClips(); else if (Archer) BuildCrossbowClips(); else BuildClips(); }
         int cols = 1; foreach (var c in Clips) cols = Math.Max(cols, c.Frames.Count);
         const int x0 = 4, y0 = 8, cw = 60, ch = 36;
         using (var bmp = new Bitmap(cols * (cw * S + 6), Clips.Count * (ch * S + 18)))

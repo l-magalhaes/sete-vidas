@@ -133,7 +133,9 @@ namespace SeteVidas.Combat
                 angle = DamageCalculator.Classify(attackerPosition.x, target.transform.position.x,
                     facing.FacingDirection, facing.InCombat);
 
-            int amount = DamageCalculator.Apply(BaseDamage, angle, Multipliers);
+            var multipliers = Multipliers;
+            if (angle == AttackAngle.Back && target.TryGetComponent(out IBackDamageMultiplier custom)) multipliers.Back = custom.BackMultiplier;
+            int amount = DamageCalculator.Apply(BaseDamage, angle, multipliers);
             Vector2 dir = ((Vector2)target.transform.position - attackerPosition);
             dir = dir.sqrMagnitude > 1e-6f ? dir.normalized : Vector2.right;
             return new DamageInfo(amount, dir, Type, angle, source);

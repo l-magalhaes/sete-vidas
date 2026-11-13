@@ -491,3 +491,21 @@ Passos e água agora vêm de gravação (`Tools/Audio/foley/originais/`: `corrid
 | `gato_splash_01..02` (entrar na água) | o 1º impacto / um respingo menor, 0,3 s | mais agudo (×1,12 e ×1,2): corpo de gato |
 
 O jogo toca `gato_passo` correndo (≥ 60% da velocidade, o mesmo limite do ruído de passo) e `gato_passo_lento` andando; agachado continua o passo sintético quase mudo. As receitas sintéticas desses sons ficaram desligadas no `SfxBank` (`UseSynthFoley`), então o `gerar_sfx.ps1` não sobrescreve as gravações.
+
+## Zumbi e veneno (12/11/2026)
+Sintetizados em `Tools/Audio/SfxBank.cs` (`gerar_sfx.ps1 zumbi` e `gerar_sfx.ps1 veneno`). Spec: `Docs/Design/zumbi-templario.md`.
+
+| Id | Quando | Camadas | Var. | Volume / alcance / máx. |
+|---|---|---|---|---|
+| `zumbi_passo` | a cada 0,6 s vagando, 0,3 s correndo | raspão de ruído (BP 500→900 Hz) + baque grave + tinido enferrujado baixo | 5 | 0,2 · 12 tiles · 3 |
+| `zumbi_ocioso` | a cada 4–9 s vagando | gemido grave (voz 68 Hz, rosnado alto) **com o timbre da praga** | 4 | 0,22 · 11 · 2 (2,5 s entre dois) |
+| `zumbi_sente` | sentiu o gato (o "!" dele) | gemido que sobe (praga) + golpe de metal | 3 | 0,62 · 18 · 2, abaixa a música (0,8) |
+| `zumbi_caca` | a cada 1,4–2,2 s perseguindo | respiração rasgada (praga) + sopro | 3 | 0,36 · 14 · 2 |
+| `zumbi_dano` | levou golpe | baque mole + estalo de carne seca + metal enferrujado + grunhido (praga) | 4 | 0,4 · 16 · 3 |
+| `zumbi_morte` | morreu | gemido que cai (praga) + queda + chiado que sobe e some (os fiapos) | 3 | 0,45 · 18 · 2 |
+| `zumbi_toque` | encostou no gato (envenena) | tapa úmido (BP 1,8 kHz) + chiado ácido (HP) + nota da praga que cai | 3 | 0,6 · gato · 1 |
+| `veneno_tique` | cada tique | bolha (seno 500→1400 Hz) + estouro + quadrada A4→E4 + chiado | 3 | 0,45 · gato · 1; pitch 0,85 quando pode matar; 50% e pitch 1,15 quando segura no último meio coração |
+| `veneno_passa` | o veneno acabou | sopro claro + E5–A5 em triângulo | 1 | 0,3 · gato · 1 |
+
+Leitura: o arrasto do zumbi chega antes dele aparecer (médios-graves, espacial); o toque e o veneno ficam nos
+médios-agudos e não são espaciais (são do gato). A praga só soa nos mortos e no tomo.

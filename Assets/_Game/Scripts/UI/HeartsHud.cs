@@ -30,7 +30,8 @@ namespace SeteVidas.UI
 
         static readonly Dictionary<int, Sprite> s_classSprites = new Dictionary<int, Sprite>();
         HeartState[] _last;
-        float[] _pulseUntil, _fadeUntil;
+        float[] _pulseUntil, _fadeUntil, _shakeUntil;
+        const float HitShake = 0.25f;
         Vector2[] _basePos;
         Image _paladinGlow;
 
@@ -71,6 +72,7 @@ namespace SeteVidas.UI
                 _last = (HeartState[])states.Clone();
                 _pulseUntil = new float[states.Length];
                 _fadeUntil = new float[states.Length];
+                _shakeUntil = new float[states.Length];
                 _basePos = new Vector2[hearts.Length];
                 for (int i = 0; i < hearts.Length; i++) if (hearts[i] != null) _basePos[i] = hearts[i].rectTransform.anchoredPosition;
             }
@@ -84,6 +86,9 @@ namespace SeteVidas.UI
                 bool fading = states[i] == HeartState.Locked && Time.unscaledTime < _fadeUntil[i];
                 hearts[i].enabled = !classHearts || states[i] != HeartState.Locked || fading;
                 var tint = hearts[i].color;
+                // envenenado (Templário Zumbi): os corações piscam em verde da praga, em dois degraus
+                bool sick = health.IsPoisoned && ((int)(Time.unscaledTime * (health.PoisonIsLethal ? 8f : 4f)) & 1) == 0;
+                tint.r = sick ? 0.62f : 1f; tint.g = 1f; tint.b = sick ? 0.5f : 1f;
                 tint.a = fading && loseFade > 0f ? Mathf.Clamp01((_fadeUntil[i] - Time.unscaledTime) / loseFade) : 1f;
                 hearts[i].color = tint;
 
@@ -100,6 +105,10 @@ namespace SeteVidas.UI
 
                 // recuperou o coração (estava travado): pulsa
                 if (_last[i] == HeartState.Locked && states[i] != HeartState.Locked) _pulseUntil[i] = Time.unscaledTime + recoverPulse;
+                // no lugar do "-1 hit" / "+1 hit" que flutuava no gato: o coração que mudou treme (dano) ou pulsa (cura)
+                bool bothOpen = _last[i] != HeartState.Locked && states[i] != HeartState.Locked;
+                if (bothOpen && states[i] > _last[i]) _shakeUntil[i] = Time.unscaledTime + HitShake;
+                if (bothOpen && states[i] < _last[i]) _pulseUntil[i] = Time.unscaledTime + recoverPulse;
                 _last[i] = states[i];
                 float left = _pulseUntil[i] - Time.unscaledTime;
                 float k = left > 0f && recoverPulse > 0f ? Mathf.Sin((1f - left / recoverPulse) * Mathf.PI) : 0f;
@@ -108,7 +117,10 @@ namespace SeteVidas.UI
                 rt.localScale = new Vector3(scale, scale, 1f);
                 // o pivô é o canto de cima: compensa para crescer a partir do meio
                 Vector2 grow = rt.sizeDelta * (scale - 1f) * 0.5f;
-                rt.anchoredPosition = _basePos[i] + new Vector2(-grow.x, grow.y);
+                // tremor de 1 px para os lados, em pixels inteiros
+                float shakeLeft = _shakeUntil[i] - Time.unscaledTime;
+                float shake = shakeLeft > 0f ? (((int)(shakeLeft * 40f) & 1) == 0 ? 1f : -1f) : 0f;
+                rt.anchoredPosition = _basePos[i] + new Vector2(-grow.x + shake, grow.y);
             }
             UpdatePaladinGlow(curseDone && classHearts && states.Length > 1 && states[1] != HeartState.Locked);
             UpdateHealCharges(health);

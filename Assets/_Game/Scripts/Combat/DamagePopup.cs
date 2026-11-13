@@ -3,46 +3,13 @@ using UnityEngine;
 namespace SeteVidas.Combat
 {
     /// <summary>
-    /// Texto de depuração que sobe e some (dano no boneco de treino). Não é a UI final.
+    /// Texto dos prompts de interação ("E: falar", "E: ler"), montado pelos setups do editor.
+    /// Os números de dano e os avisos flutuantes saíram (pedido do usuário, 12/11/2026): o retorno do golpe é
+    /// o flash, as faíscas e o som; os avisos que ficaram usam a fonte em pixel (<see cref="PixelPopup"/>).
     /// </summary>
-    public class DamagePopup : MonoBehaviour
+    public static class DamagePopup
     {
-        const float Lifetime = 0.7f;
-        const float Rise = 0.9f;
-
-        TextMesh _text;
-        Color _color;
-        float _age;
-        Vector3 _start;
-
-        public static DamagePopup Spawn(Vector3 position, string text, Color color)
-        {
-            var go = new GameObject("DamagePopup");
-            go.transform.position = position;
-            var popup = go.AddComponent<DamagePopup>();
-            popup._text = CreateText(go, text, color, 60);
-            popup._color = color;
-            popup._start = position;
-            return popup;
-        }
-
-        /// <summary>Texto do dano: "5 FURTIVO", "3 COSTAS" ou só o número.</summary>
-        public static string DamageLabel(in DamageInfo info) => info.Angle switch
-        {
-            AttackAngle.StealthBack => $"{info.Amount} FURTIVO",
-            AttackAngle.Back => $"{info.Amount} COSTAS",
-            _ => info.Amount.ToString(),
-        };
-
-        /// <summary>Branco de frente, laranja pelas costas, vermelho furtivo.</summary>
-        public static Color ColorFor(AttackAngle angle) => angle switch
-        {
-            AttackAngle.StealthBack => new Color32(0xff, 0x4d, 0x4d, 0xff),
-            AttackAngle.Back => new Color32(0xff, 0xa8, 0x3a, 0xff),
-            _ => Color.white,
-        };
-
-        /// <summary>TextMesh de depuração com a fonte embutida do Unity. Altura ≈ fontSize × 0,01 tile.</summary>
+        /// <summary>TextMesh com a fonte embutida do Unity. Altura ≈ fontSize × 0,01 tile.</summary>
         public static TextMesh CreateText(GameObject go, string text, Color color, int fontSize)
         {
             var mesh = go.AddComponent<TextMesh>();
@@ -58,17 +25,6 @@ namespace SeteVidas.Combat
             renderer.sharedMaterial = font.material;
             renderer.sortingOrder = 50;
             return mesh;
-        }
-
-        void Update()
-        {
-            _age += Time.unscaledDeltaTime; // continua subindo durante o hitstop
-            float t = _age / Lifetime;
-            transform.position = _start + Vector3.up * (Rise * (1f - (1f - t) * (1f - t)));
-            var c = _color;
-            c.a = t < 0.6f ? 1f : Mathf.Clamp01(1f - (t - 0.6f) / 0.4f);
-            _text.color = c;
-            if (t >= 1f) Destroy(gameObject);
         }
     }
 }

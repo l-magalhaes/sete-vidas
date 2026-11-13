@@ -31,6 +31,15 @@ namespace SeteVidas.Combat
         void TakeDamage(in DamageInfo info);
     }
 
+    /// <summary>
+    /// Alvo com o próprio multiplicador de golpe pelas costas (Templário Zumbi: nunca é surpreendido, mas leva
+    /// dano dobrado por trás, pedido do usuário de 12/11/2026). Vale no lugar do <see cref="DamageMultipliers.Back"/>.
+    /// </summary>
+    public interface IBackDamageMultiplier
+    {
+        float BackMultiplier { get; }
+    }
+
     /// <summary>Alvo que tem frente e costas. Sem esta interface, todo golpe conta como de frente.</summary>
     public interface IFacingTarget
     {

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c28baf2de9dc73842b0ee9659d909ff3, type: 3}
+  m_Name: ZombieSettings
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Enemies.Zombie.ZombieSettings
+  MaxHealth: 6
+  BackMultiplier: 2
+  WanderSpeed: 0.8
+  ChaseSpeed: 3.2
+  TurnPause: 0.5
+  GravityScale: 4
+  BodySize: {x: 0.75, y: 1.6}
+  SightRange: 6
+  CloseRange: 2
+  SenseHeight: 2
+  HearingMultiplier: 1
+  LoseTime: 3
+  AlertTime: 0.5
+  ContactSize: {x: 0.85, y: 1.5}
+  ContactCooldown: 0.5
+  Reactions:
+    Light:
+      Knockback: 3
+      Lift: 0
+      Flash: 0.05
+      Stun: 0.2
+      SquashPx: 1
+      Sparks: 3
+      Dust: 0
+      ShakePx: 0
+      ShakeTime: 0
+    Strong:
+      Knockback: 5
+      Lift: 0
+      Flash: 0.1
+      Stun: 0.3
+      SquashPx: 1
+      Sparks: 5
+      Dust: 0
+      ShakePx: 0
+      ShakeTime: 0
+    Heavy:
+      Knockback: 7
+      Lift: 1.5
+      Flash: 0.1
+      Stun: 0.45
+      SquashPx: 2
+      Sparks: 5
+      Dust: 1
+      ShakePx: 2
+      ShakeTime: 0.15
+    LightInterruptBefore: 0.5
+    KnockbackScale: 1
+  CorpseTime: 0.2

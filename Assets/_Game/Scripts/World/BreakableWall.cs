@@ -58,13 +58,17 @@ namespace SeteVidas.World
 
             if (info.Type != requiredType)
             {
-                DamagePopup.Spawn(transform.position + Vector3.up * (_solid.size.y + 0.3f), "tink", new Color32(0xb8, 0xbf, 0xcc, 0xff));
+                // a lâmina resvala: faíscas de aço cinza no ponto do golpe (sem texto)
+                Vector2 tinkAt = (Vector2)transform.position + Vector2.up * (_solid.size.y * 0.5f) - info.Direction.normalized * (_solid.size.x * 0.5f);
+                HitSparks.Burst(tinkAt, 5, new Color32(0xe8, 0xec, 0xf2, 0xff), new Color32(0xb8, 0xbf, 0xcc, 0xff), 2f, 5f, 0.18f, 25f, 0.2f);
                 SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position);
                 return; // adagas não arranham a parede
             }
 
             Health = Mathf.Max(0, Health - info.Amount);
-            DamagePopup.Spawn(transform.position + Vector3.up * (_solid.size.y + 0.3f), info.Amount.ToString(), new Color32(0xff, 0xd3, 0x4d, 0xff));
+            // lascas de pedra saltando da parede (sem número de dano)
+            Vector2 chipAt = (Vector2)transform.position + Vector2.up * (_solid.size.y * 0.5f) - info.Direction.normalized * (_solid.size.x * 0.5f);
+            HitSparks.Burst(chipAt, 8, new Color32(0x9a, 0x8c, 0x7c, 0xff), new Color32(0x5e, 0x52, 0x4a, 0xff), 2f, 6f, 0.4f, 30f, 0.5f);
             if (spriteRenderer != null && crackedSprite != null && Health <= maxHealth / 2) spriteRenderer.sprite = crackedSprite;
             if (Health > 0) SeteVidas.Audio.Sfx.Play("parede_racha", transform.position);
             if (Health <= 0) Break();

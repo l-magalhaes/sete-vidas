@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_ext_aetherion_noite
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/manifest.json
+  entry:
+    id: bg_ext_aetherion_noite
+    nome: Aetherion de noite
+    regiao: ext
+    categoria: plx
+    funcao: narrativo
+    material: silhueta
+    epoca: natural
+    tamanho_px: 6e000000b4000000i
+    sprites:
+    - Ext/bg_ext_aetherion_noite.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: bg_longe
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0.06
+      - 0.15
+      ancora:
+      - 0
+      - 0
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu:
+      - noite
+      lado_da_luz: esquerda
+      valor_max: 0.35
+      conjuntos:
+      - H
+    leitura: "A torre de noite (borda da lua \xE0 esquerda); sem o sol, a corrup\xE7\xE3o aparece mais (AetherionFx no modo noite). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs."
+    tags:
+    - fundo
+    - aetherion
+    - praga
+  variants:
+  - {fileID: 21300000, guid: 78fd10d9d971fb14a4773378ad8bc664, type: 3}
+  frames: []

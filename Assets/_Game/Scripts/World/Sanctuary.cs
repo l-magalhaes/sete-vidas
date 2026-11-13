@@ -61,6 +61,8 @@ namespace SeteVidas.World
         public bool IsActiveCheckpoint => Application.isPlaying && SaveManager.Data.lastSanctuaryId == sanctuaryId;
 
         void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); }
+
+        void Start() => SeteVidas.UI.WorldPrompt.Upgrade(prompt); // o botão do aparelho em uso no lugar de "E: ..."
         void OnDisable() => s_all.Remove(this);
 
         public static IReadOnlyList<Sanctuary> All => s_all;
@@ -150,7 +152,7 @@ namespace SeteVidas.World
             health.SetCollapsed(false, graceAfter: 0f);                  // o visual toca "nap_wake"
             yield return new WaitForSeconds(getUpTime);
 
-            DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, "Salvo", new Color32(0xff, 0xd3, 0x4d, 0xff));
+            SavedFx();
             if (input != null) input.SetLock(this, false);
             health.Shielded = false;
             _resting = false;
@@ -176,7 +178,24 @@ namespace SeteVidas.World
             if (heal != null) heal.Refill();                         // magia de cura volta aos 3 usos
             SaveManager.SaveAtSanctuary(sanctuaryId, displayName);
             GameEvents.RaiseWorldReset();
-            if (popup) DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, "Salvo", new Color32(0xff, 0xd3, 0x4d, 0xff));
+            if (popup) SavedFx();
+        }
+
+        /// <summary>
+        /// "Salvo": anéis de luz dourada que se abrem do santuário, centelhas subindo e o aviso em pixel
+        /// (no lugar do texto na fonte do Unity).
+        /// </summary>
+        void SavedFx()
+        {
+            var gold = new Color32(0xff, 0xd3, 0x4d, 0xff);
+            var light = new Color32(0xff, 0xf4, 0xc2, 0xff);
+            Vector2 c = (Vector2)transform.position + Vector2.up * 1.2f;
+            PixelRing.Spawn(c, 4, 22, 0.45f, light, 1);
+            PixelRing.Spawn(c, 2, 14, 0.4f, gold, 1, 0.12f);
+            for (int i = 0; i < 10; i++)
+                HitSparks.Rise(c + new Vector2(Random.Range(-0.8f, 0.8f), Random.Range(-1f, 0.2f)), i % 2 == 0 ? (Color)gold : light,
+                               Random.Range(1.2f, 2.4f), Random.Range(0.5f, 0.9f));
+            PixelPopup.Spawn(transform.position + Vector3.up * 2.4f, "Salvo", gold);
         }
 
 #if UNITY_EDITOR

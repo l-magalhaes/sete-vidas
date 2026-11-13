@@ -104,12 +104,12 @@ namespace SeteVidas.Combat
         }
     }
 
-    /// <summary>Faíscas na armadura e poeira de impacto: pontinhos de 1 px que voam e caem (pool de 32).</summary>
+    /// <summary>Faíscas na armadura e poeira de impacto: pontinhos de 1 px que voam e caem (pool de 128).</summary>
     public class HitSparks : MonoBehaviour
     {
-        struct Bit { public Vector2 Velocity; public float Life, Age; }
+        struct Bit { public Vector2 Velocity; public float Life, Age, Gravity; }
 
-        const int Capacity = 32;
+        const int Capacity = 128; // o terremoto e os golpes do Koda soltam muitos de uma vez
         static HitSparks s_instance;
         static Sprite s_pixel;
 
@@ -186,6 +186,34 @@ namespace SeteVidas.Combat
             Instance().Emit(at, new Vector2(Random.Range(-0.6f, 0.6f), Random.Range(2.5f, 4f)), 0.3f, GlintColor);
         }
 
+        /// <summary>Explosão de <paramref name="count"/> pontinhos para todos os lados, alternando as duas cores.</summary>
+        public static void Burst(Vector2 at, int count, Color a, Color b, float speedMin = 3f, float speedMax = 7f,
+                                 float life = 0.3f, float gravity = 20f, float upBias = 0.3f)
+        {
+            if (!Application.isPlaying || count <= 0) return;
+            var inst = Instance();
+            for (int i = 0; i < count; i++)
+            {
+                float ang = (i + Random.value * 0.6f) / count * Mathf.PI * 2f;
+                var v = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang) + upBias) * Random.Range(speedMin, speedMax);
+                inst.Emit(at, v, life * Random.Range(0.8f, 1.2f), i % 2 == 0 ? a : b, gravity);
+            }
+        }
+
+        /// <summary>Um pontinho que sobe devagar (luz da cura, brasas): quase sem gravidade, para cima.</summary>
+        public static void Rise(Vector2 at, Color color, float speed = 1.5f, float life = 0.6f)
+        {
+            if (!Application.isPlaying) return;
+            Instance().Emit(at, new Vector2(Random.Range(-0.3f, 0.3f), speed), life, color, -0.5f);
+        }
+
+        /// <summary>Um pontinho com velocidade e gravidade escolhidas (lascas do terremoto, pedrinhas).</summary>
+        public static void One(Vector2 at, Vector2 velocity, Color color, float life, float gravity = 30f)
+        {
+            if (!Application.isPlaying) return;
+            Instance().Emit(at, velocity, life, color, gravity);
+        }
+
         struct WaveFx { public Vector2 Origin; public float Range, Duration, Age, NextPuff; }
         readonly List<WaveFx> _waves = new List<WaveFx>();
 
@@ -220,7 +248,7 @@ namespace SeteVidas.Combat
             }
         }
 
-        void Emit(Vector2 at, Vector2 velocity, float life, Color color)
+        void Emit(Vector2 at, Vector2 velocity, float life, Color color, float gravity = 30f)
         {
             if (s_pixel == null)
             {
@@ -249,7 +277,7 @@ namespace SeteVidas.Combat
             r.color = color;
             r.enabled = true;
             r.transform.position = at;
-            _bits[_next] = new Bit { Velocity = velocity, Life = life };
+            _bits[_next] = new Bit { Velocity = velocity, Life = life, Gravity = gravity };
         }
 
         void Update()
@@ -263,7 +291,7 @@ namespace SeteVidas.Combat
                 var b = _bits[i];
                 b.Age += dt;
                 if (b.Age >= b.Life) { r.enabled = false; continue; }
-                b.Velocity += Vector2.down * 30f * dt;
+                b.Velocity += Vector2.down * b.Gravity * dt;
                 Vector2 p = (Vector2)r.transform.position + b.Velocity * dt;
                 // no grid de pixel: nada de pontinho tremido entre dois pixels
                 r.transform.position = new Vector3(Mathf.Round(p.x * 16f) / 16f, Mathf.Round(p.y * 16f) / 16f, 0f);

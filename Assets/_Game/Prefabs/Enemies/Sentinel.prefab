@@ -264,7 +264,7 @@ MonoBehaviour:
   boltSprite: {fileID: 0}
   alertIcon: {fileID: 6313013600712559648}
   debugLabel: {fileID: 8310502607012671390}
-  showDebugLabel: 1
+  showDebugLabel: 0
 --- !u!1 &4676152340724279262
 GameObject:
   m_ObjectHideFlags: 0

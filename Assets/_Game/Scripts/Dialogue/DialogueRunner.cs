@@ -163,7 +163,7 @@ namespace SeteVidas.Dialogue
         void ShowLine()
         {
             var line = _dialogue.Lines[_index];
-            _typer.Start(line.Text);
+            _typer.Start(SeteVidas.UI.InputPrompts.Format(line.Text)); // {trocar_classe}, {curar}... viram o botão do aparelho em uso
             bool hasSpeaker = line.Speaker != null;
             bool left = hasSpeaker && line.Speaker.Side == SpeakerProfile.ScreenSide.Left;
             var face = hasSpeaker ? line.Speaker.PortraitFor(line.Expression) : null;

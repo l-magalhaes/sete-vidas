@@ -95,11 +95,39 @@ namespace SeteVidas.World.Traps
             _rearmAt = Time.time + rearmTime;
             foreach (var e in effects) if (e != null) e.Fire();
             SeteVidas.Audio.Sfx.Play(kind == Kind.Tripwire ? "fio" : "placa_clic", (Vector2)transform.position + Vector2.up);
-            // Aviso visível: o jogador sempre sabe que disparou alguma coisa
-            Combat.DamagePopup.Spawn((Vector2)transform.position + Vector2.up * 2.2f,
-                kind == Kind.Tripwire ? "ALARME!" : "CLIC!", new Color32(0xff, 0xa8, 0x3a, 0xff));
+            AlarmFx();
             NoiseSystem.Emit((Vector2)transform.position + Vector2.up, noiseRadius, noiseLoudness, gameObject,
                 kind == Kind.Tripwire ? "fio de alarme" : "placa de pressão");
+        }
+
+        static readonly Color AlarmOrange = new Color32(0xff, 0xa8, 0x3a, 0xff);
+        static readonly Color AlarmLight = new Color32(0xff, 0xe0, 0xa0, 0xff);
+
+        /// <summary>
+        /// Aviso visível sem texto (pedido do usuário: o "ALARME!" saiu). O jogador sempre sabe que disparou algo:
+        /// ondas de barulho em pixel saem do ponto (as mesmas do círculo de ruído da furtividade), o fio solta
+        /// faíscas onde arrebentou e a placa levanta poeira dos dois lados.
+        /// </summary>
+        void AlarmFx()
+        {
+            Vector2 p = transform.position;
+            if (kind == Kind.Tripwire)
+            {
+                Vector2 snap = p + Vector2.up * (wireHeight + wireThickness * 0.5f);
+                Combat.HitSparks.Burst(snap, 8, AlarmLight, AlarmOrange, 2f, 5f, 0.25f, 20f, 0.2f);
+                for (int i = 0; i < 3; i++)
+                    Combat.PixelRing.Spawn(snap, 3, 26 + i * 6, 0.5f, i == 0 ? AlarmLight : AlarmOrange, 1, i * 0.14f);
+            }
+            else
+            {
+                Vector2 plate = p + Vector2.up * 0.1f;
+                for (int s = -1; s <= 1; s += 2)
+                    for (int i = 0; i < 3; i++)
+                        Combat.HitSparks.One(plate + new Vector2(s * width * 0.5f, 0f), new Vector2(s * Random.Range(1f, 2.5f), Random.Range(0.5f, 1.5f)),
+                                             new Color32(0x8c, 0x82, 0x74, 0xff), Random.Range(0.25f, 0.4f), 8f);
+                for (int i = 0; i < 2; i++)
+                    Combat.PixelRing.Spawn(plate + Vector2.up * 0.3f, 3, 16 + i * 6, 0.4f, i == 0 ? AlarmLight : AlarmOrange, 1, i * 0.12f, 12, 0.5f);
+            }
         }
 
         void LateUpdate()

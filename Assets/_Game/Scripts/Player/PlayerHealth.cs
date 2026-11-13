@@ -72,6 +72,55 @@ namespace SeteVidas.Player
 
         public void GrantPogoGrace(float seconds) => _pogoGraceUntil = Mathf.Max(_pogoGraceUntil, Time.time + seconds);
 
+        // ------------------------------------------------------------ veneno
+
+        PoisonState _poison;
+
+        /// <summary>Envenenado (Templário Zumbi): perde meio coração por segundo (<see cref="PoisonRules"/>).</summary>
+        public bool IsPoisoned => _poison.Active;
+        /// <summary>O próximo tique pode matar (encostou de novo durante o veneno).</summary>
+        public bool PoisonIsLethal => _poison.Lethal;
+        /// <summary>Encostou num zumbi (começou ou reiniciou o veneno).</summary>
+        public event Action Poisoned;
+        /// <summary>Um tique do veneno (tirou vida ou segurou no último meio coração).</summary>
+        public event Action<int> PoisonTicked;
+
+        /// <summary>Encostou num Templário Zumbi: envenena ou reinicia os 3 s do veneno.</summary>
+        public void Poison()
+        {
+            if (IsDead || IsCollapsed || Shielded) return;
+            _poison = PoisonRules.Apply(_poison);
+            SeteVidas.Audio.Sfx.Play("zumbi_toque");
+            Poisoned?.Invoke();
+            Changed?.Invoke();
+        }
+
+        /// <summary>Tira o veneno (morte, renascer, descansar).</summary>
+        public void CurePoison()
+        {
+            if (!_poison.Active) return;
+            _poison = default;
+            Changed?.Invoke();
+        }
+
+        void Update()
+        {
+            if (!_poison.Active) return;
+            if (IsDead || IsCollapsed) { _poison = default; return; }
+            bool lethal = _poison.Lethal;
+            if (PoisonRules.Step(ref _poison, Time.deltaTime, CurrentHits, out int damage))
+            {
+                if (damage > 0) CurrentHits = HealthRules.ApplyDamage(CurrentHits, damage);
+                // tique: mais grave quando o veneno pode matar; fraco e agudo quando segurou no último meio coração
+                if (damage > 0) SeteVidas.Audio.Sfx.Play("veneno_tique", null, 1f, lethal ? 0.85f : 1f);
+                else SeteVidas.Audio.Sfx.Play("veneno_tique", null, 0.5f, 1.15f);
+                if (!_poison.Active && !HealthRules.IsDead(CurrentHits)) SeteVidas.Audio.Sfx.Play("veneno_passa");
+                PoisonTicked?.Invoke(damage);
+                Changed?.Invoke();
+                if (HealthRules.IsDead(CurrentHits)) { _poison = default; StartCoroutine(DeathRoutine()); }
+            }
+        }
+
         // ------------------------------------------------------------- dano
 
         public void TakeDamage(in DamageInfo info)
@@ -86,7 +135,6 @@ namespace SeteVidas.Player
             float vy = s.LaunchVelocityFor(s.KnockbackHeight, Time.fixedDeltaTime);
             _player.ApplyKnockback(new Vector2(dir * s.KnockbackSpeed, vy), s.KnockbackControlLock);
 
-            DamagePopup.Spawn(transform.position + Vector3.up * 1.8f, $"-{info.Amount} hit", new Color32(0xff, 0x6b, 0x6b, 0xff));
             Damaged?.Invoke(info);
             Changed?.Invoke();
 
@@ -102,7 +150,6 @@ namespace SeteVidas.Player
             if (IsDead || hits <= 0 || CurrentHits >= MaxHits) return false;
             int before = CurrentHits;
             CurrentHits = HealthRules.Heal(CurrentHits, hits, HeartsRecovered);
-            DamagePopup.Spawn(transform.position + Vector3.up * 1.8f, $"+{CurrentHits - before} hit", new Color32(0x7d, 0xe0, 0x7a, 0xff));
             Changed?.Invoke();
             return true;
         }
@@ -116,7 +163,6 @@ namespace SeteVidas.Player
             if (IsDead || IsCollapsed || IsInvulnerable || info.Amount <= 0) return;
             CurrentHits = HealthRules.ApplyDamage(CurrentHits, info.Amount);
             _invulnerableUntil = Time.time + _player.Settings.InvulnerabilityTime;
-            DamagePopup.Spawn(transform.position + Vector3.up * 1.8f, $"-{info.Amount} hit", new Color32(0xff, 0x6b, 0x6b, 0xff));
             Damaged?.Invoke(info);
             Changed?.Invoke();
 
@@ -144,6 +190,7 @@ namespace SeteVidas.Player
         public void RestoreFull()
         {
             if (IsDead) return;
+            _poison = default; // descansar cura o veneno
             CurrentHits = MaxHits;
             Changed?.Invoke();
         }
@@ -153,6 +200,7 @@ namespace SeteVidas.Player
         IEnumerator DeathRoutine()
         {
             IsDead = true;
+            _poison = default;
             if (_input != null) _input.enabled = false; // sem controle enquanto morre
             Died?.Invoke();
 
@@ -176,6 +224,7 @@ namespace SeteVidas.Player
             if (safe != null) safe.ResetTo(_player.Body.position);
             CurrentHits = MaxHits;
             _invulnerableUntil = -1f;
+            _poison = default;
             IsDead = false;
             GameEvents.RaiseWorldReset(); // inimigos voltam (decisão de 09/11/2026)
             Respawned?.Invoke();

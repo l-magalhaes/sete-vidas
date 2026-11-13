@@ -70,6 +70,7 @@ namespace SeteVidas.World
 
         void Start()
         {
+            SeteVidas.UI.WorldPrompt.Upgrade(prompt); // o botão do aparelho em uso no lugar de "E: ..."
             if (book != null) _bookRest = book.transform.localPosition;
             if (IsTaken) AfterCurseState();
             // o zumbido da praga perto do pedestal (o único som do mundo com o timbre da praga)

@@ -17,7 +17,7 @@ namespace SeteVidas.UI
     /// O inventário (Tab, I ou Start; fecha com a mesma tecla, Esc ou B). Pausa o jogo. Spec: Docs/Design/inventario.md.
     /// Três colunas, no jeito dos metroidvanias de pixel art: à esquerda o gato animado com a classe equipada, os
     /// corações e as moedas; no meio uma grade de quadrados com ícones; à direita o nome e a descrição do slot
-    /// escolhido. Abas em cima: Classes, Habilidades, Itens e Diário (Q/E ou LB/RB). Setas, WASD ou D-pad andam na grade;
+    /// escolhido. Abas em cima: Classes, Habilidades, Itens, Diário e Controles (Q/E ou LB/RB). Setas, WASD ou D-pad andam na grade;
     /// Enter ou A equipa a classe escolhida. Criado em código pelo HUD (não precisa de prefab).
     /// </summary>
     public class InventoryMenu : MonoBehaviour
@@ -39,8 +39,9 @@ namespace SeteVidas.UI
         [Tooltip("Tempo da entrada (s)")]
         [SerializeField] float openTime = 0.12f;
 
-        public enum Page { Classes, Abilities, Items, Diary }
-        static readonly string[] PageNames = { "Classes", "Habilidades", "Itens", "Diário" };
+        public enum Page { Classes, Abilities, Items, Diary, Controls }
+        static readonly string[] PageNames = { "Classes", "Habilidades", "Itens", "Diário", "Controles" };
+        const int PageCount = 5;
 
         static readonly Color Cream = new Color32(0xec, 0xdc, 0xb0, 0xff);
         static readonly Color Faint = new Color32(0x8a, 0x7a, 0x96, 0xff);
@@ -57,15 +58,22 @@ namespace SeteVidas.UI
             public int Cell;
             public Color NameColor = Cream;
             public System.Func<bool> Confirm;
+            /// <summary>Botão mostrado no rodapé, antes do texto (ex.: o de confirmar, em "equipar").</summary>
+            public GameAction? FooterAction;
         }
 
         static InventoryMenu s_instance;
 
         RectTransform _panel, _window;
         CanvasGroup _group;
-        readonly Image[] _tabPlates = new Image[4];
-        readonly Text[] _tabLabels = new Text[4];
-        Text _keyLeft, _keyRight, _help, _caption;
+        readonly Image[] _tabPlates = new Image[PageCount];
+        readonly Text[] _tabLabels = new Text[PageCount];
+        Image _keyLeft, _keyRight, _footerGlyph;
+        PromptRow _help;
+        Text _caption;
+        Image[] _ctrlGlyphs;
+        Text[] _ctrlLabels;
+        Vector2 _footerPos, _footerSize;
         Image[] _slots, _slotIcons;
         Text[] _badges;
         Image _cursor;
@@ -84,7 +92,7 @@ namespace SeteVidas.UI
         readonly Dictionary<int, string> _headers = new Dictionary<int, string>();
         Text[] _headerTexts;
         Image[] _headerLines;
-        readonly int[] _cursorByPage = new int[4];
+        readonly int[] _cursorByPage = new int[PageCount];
         Page _page;
         float _savedScale = 1f, _openedAt;
         PlayerInputReader _lockedInput;
@@ -112,6 +120,7 @@ namespace SeteVidas.UI
 
         void OnDestroy()
         {
+            InputDevices.Changed -= OnDeviceChanged;
             if (s_instance == this) { if (IsOpen) Close(); s_instance = null; }
             foreach (var s in _sprites.Values) if (s != null) Destroy(s);
             foreach (var t in _textures) if (t != null) Destroy(t);
@@ -204,7 +213,7 @@ namespace SeteVidas.UI
             }
             bool confirm = (k != null && (k.enterKey.wasPressedThisFrame || k.spaceKey.wasPressedThisFrame)) || (p != null && p.buttonSouth.wasPressedThisFrame);
 
-            if (dp != 0) { SetPage((Page)(((int)_page + dp + 4) % 4)); SeteVidas.Audio.Sfx.Play("ui_aba"); }
+            if (dp != 0) { SetPage((Page)(((int)_page + dp + PageCount) % PageCount)); SeteVidas.Audio.Sfx.Play("ui_aba"); }
             else if (dx != 0 || dy != 0) Move(dx, dy);
             if (confirm && !Confirm() && SelectedEntry() != null && SelectedEntry().Locked) SeteVidas.Audio.Sfx.Play("ui_negado");
         }
@@ -217,6 +226,7 @@ namespace SeteVidas.UI
 
         public void Move(int dx, int dy)
         {
+            if (_page == Page.Controls || _entries.Count == 0) return;   // a aba Controles só mostra a lista
             int i = (int)_page;
             var cells = new int[_entries.Count];
             for (int k = 0; k < cells.Length; k++) cells[k] = _entries[k].Cell;
@@ -260,24 +270,29 @@ namespace SeteVidas.UI
                 case Page.Classes: FillClasses(); break;
                 case Page.Abilities: FillAbilities(); break;
                 case Page.Items: FillItems(); break;
+                case Page.Controls: break;   // a lista de comandos é desenhada à parte (RefreshControls)
                 default: FillDiary(); break;
             }
             if (_page != Page.Diary) for (int k = 0; k < _entries.Count; k++) _entries[k].Cell = k;
             int pi = (int)_page;
             _cursorByPage[pi] = Mathf.Clamp(_cursorByPage[pi], 0, Mathf.Max(0, _entries.Count - 1));
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < PageCount; i++)
             {
                 bool on = i == pi;
                 _tabPlates[i].sprite = PanelSprite(on ? PanelLook.TabActive : PanelLook.Tab);
                 _tabLabels[i].color = on ? Gold : Faint;
             }
-            bool pad = Gamepad.current != null;
-            _keyLeft.text = pad ? "LB" : "Q";
-            _keyRight.text = pad ? "RB" : "E";
-            _help.text = pad
-                ? "D-pad: escolher   A: equipar   B: fechar"
-                : "Setas: escolher   Enter: equipar   Tab: fechar";
+            // os botões das abas e o rodapé no aparelho em uso (controle de Xbox ou teclado e mouse)
+            SetGlyph(_keyLeft, InputPrompts.Glyph(GameAction.TabLeft));
+            SetGlyph(_keyRight, InputPrompts.Glyph(GameAction.TabRight));
+            if (_page == Page.Controls)
+                _help.Set(new PromptRow.Item(GameAction.TabLeft, "abas", GameAction.TabRight), new PromptRow.Item(GameAction.Back, "fechar"));
+            else if (_page == Page.Classes)
+                _help.Set(new PromptRow.Item(GameAction.Navigate, "escolher"), new PromptRow.Item(GameAction.Confirm, "equipar"), new PromptRow.Item(GameAction.Back, "fechar"));
+            else
+                _help.Set(new PromptRow.Item(GameAction.Navigate, "escolher"), new PromptRow.Item(GameAction.Back, "fechar"));
+            RefreshControls();
 
             var byCell = new Entry[_slots.Length];
             foreach (var e in _entries) if (e.Cell >= 0 && e.Cell < byCell.Length) byCell[e.Cell] = e;
@@ -285,7 +300,7 @@ namespace SeteVidas.UI
             {
                 var e = byCell[i];
                 bool header = _headers.ContainsKey(i / columns);
-                _slots[i].enabled = !header;   // a linha do título do capítulo não tem quadrados
+                _slots[i].enabled = !header && _page != Page.Controls;   // a linha do título do capítulo não tem quadrados
                 _slots[i].sprite = SlotSprite(e == null ? SlotLook.Empty : e.Equipped ? SlotLook.Equipped : SlotLook.Normal);
                 _slotIcons[i].enabled = !header && e != null && e.Icon != null;
                 if (e != null) _slotIcons[i].sprite = e.Icon;
@@ -312,20 +327,128 @@ namespace SeteVidas.UI
             var e = SelectedEntry();
             _caption.text = Caption();
             _detailIcon.enabled = e != null && e.Icon != null;
+            if (_page == Page.Controls)
+            {
+                // a página de controles: o aparelho em uso e como trocar
+                bool pad = InputDevices.Current == InputDeviceKind.Gamepad;
+                _detailIcon.enabled = true;
+                _detailIcon.sprite = ControlsIcon();
+                _detailName.text = pad ? "Controle (Xbox)" : "Teclado e mouse";
+                _detailName.color = Gold;
+                _detailSub.text = "o aparelho em uso agora";
+                _detailBody.text = pad
+                    ? "Os avisos do jogo mostram os botões do controle. Toque no teclado ou no mouse e eles passam a mostrar as teclas."
+                    : "Os avisos do jogo mostram as teclas. Aperte um botão do controle e eles passam a mostrar os botões dele.";
+                SetFooter("", null);
+                return;
+            }
             if (e == null)
             {
                 _detailName.text = _detailSub.text = "";
                 _detailBody.text = _page == Page.Diary ? "Nenhuma placa lida ainda.\n\nAs placas se leem com " + InteractKey() + "." : "";
-                _detailFooter.text = "";
+                SetFooter("", null);
                 return;
             }
             _detailIcon.sprite = e.Icon;
             _detailName.text = e.Name;
             _detailName.color = e.NameColor;
-            _detailBody.text = e.Body;
-            _detailFooter.text = e.Footer;
+            _detailBody.text = InputPrompts.Format(e.Body);
+            SetFooter(e.Footer, e.FooterAction);
             _detailSub.text = e.Sub;
         }
+
+        /// <summary>Rodapé do detalhe; com <paramref name="action"/>, o botão dela aparece antes do texto ("[A] equipar").</summary>
+        void SetFooter(string text, GameAction? action)
+        {
+            _detailFooter.text = text;
+            var rt = _detailFooter.rectTransform;
+            var glyph = action.HasValue && !string.IsNullOrEmpty(text) ? InputPrompts.Glyph(action.Value) : null;
+            _footerGlyph.enabled = glyph != null;
+            if (glyph == null)
+            {
+                _detailFooter.alignment = TextAnchor.LowerCenter;
+                rt.anchoredPosition = _footerPos;
+                rt.sizeDelta = _footerSize;
+                return;
+            }
+            // [botão] 3 px [texto], o par centrado no rodapé
+            float gw = glyph.rect.width, tw = Mathf.Ceil(_detailFooter.preferredWidth), total = gw + 3f + tw;
+            float x0 = Mathf.Round(_footerPos.x + (_footerSize.x - total) * 0.5f);
+            _footerGlyph.sprite = glyph;
+            _footerGlyph.rectTransform.sizeDelta = new Vector2(gw, glyph.rect.height);
+            _footerGlyph.rectTransform.anchoredPosition = new Vector2(x0, _footerPos.y - _footerSize.y + glyph.rect.height);
+            _detailFooter.alignment = TextAnchor.LowerLeft;
+            rt.anchoredPosition = new Vector2(x0 + gw + 3f, _footerPos.y);
+            rt.sizeDelta = new Vector2(tw + 2f, _footerSize.y);
+        }
+
+        static void SetGlyph(Image img, Sprite glyph)
+        {
+            img.sprite = glyph;
+            img.enabled = glyph != null;
+            if (glyph != null) img.rectTransform.sizeDelta = new Vector2(glyph.rect.width, glyph.rect.height);
+        }
+
+        // ------------------------------------------------------------ controles
+
+        /// <summary>A lista da aba Controles: o que cada botão faz, no aparelho em uso (só o que o gato já sabe fazer).</summary>
+        static List<PromptRow.Item> ControlList()
+        {
+            var list = new List<PromptRow.Item>
+            {
+                new PromptRow.Item(GameAction.Move, "andar"),
+                new PromptRow.Item(GameAction.Jump, "pular"),
+                new PromptRow.Item(GameAction.Crouch, "agachar"),
+                new PromptRow.Item(GameAction.Up, "escalar a hera"),
+                new PromptRow.Item(GameAction.Attack, "atacar"),
+                new PromptRow.Item(GameAction.Interact, "falar, ler, pegar"),
+            };
+            var data = SaveManager.Data;
+            bool paladin = data != null && data.IsUnlocked(CharacterClass.Paladin);
+            if (paladin)
+            {
+                list.Add(new PromptRow.Item(GameAction.PrevClass, "trocar de classe", GameAction.NextClass));
+                list.Add(new PromptRow.Item(GameAction.Heal, "curar (segure)"));
+            }
+            list.Add(new PromptRow.Item(GameAction.Inventory, "inventário"));
+            list.Add(new PromptRow.Item(GameAction.Back, "fechar, voltar"));
+            return list;
+        }
+
+        void RefreshControls()
+        {
+            bool on = _page == Page.Controls;
+            var list = on ? ControlList() : new List<PromptRow.Item>();
+            var kind = InputDevices.Current;
+            for (int i = 0; i < _ctrlGlyphs.Length; i++)
+            {
+                bool show = i < list.Count;
+                _ctrlGlyphs[i].enabled = _ctrlLabels[i].enabled = show;
+                if (!show) continue;
+                var it = list[i];
+                string paths = InputPrompts.PathFor(it.Action, kind);
+                if (it.Also.HasValue) paths += "|" + InputPrompts.PathFor(it.Also.Value, kind);
+                SetGlyph(_ctrlGlyphs[i], InputGlyphs.ForPaths(paths));
+                _ctrlLabels[i].text = it.Label;
+            }
+            if (on) for (int i = 0; i < _slots.Length; i++) { _slotIcons[i].enabled = false; _badges[i].text = ""; }
+        }
+
+        /// <summary>Quantos comandos a aba Controles mostra agora (testes).</summary>
+        public int ControlRows
+        {
+            get
+            {
+                int n = 0;
+                if (_ctrlGlyphs != null) foreach (var g in _ctrlGlyphs) if (g.enabled) n++;
+                return n;
+            }
+        }
+
+        Sprite ControlsIcon() => InputDevices.Current == InputDeviceKind.Gamepad
+            ? InputGlyphs.ForPaths("<Gamepad>/dpad") : InputGlyphs.ForPaths("<Mouse>/leftButton");
+
+        void OnDeviceChanged() { if (IsOpen) Refresh(); }
 
         string Caption()
         {
@@ -335,6 +458,7 @@ namespace SeteVidas.UI
                 case Page.Classes: return "Classes";
                 case Page.Abilities: return "Habilidades";
                 case Page.Items: return "Itens";
+                case Page.Controls: return "Controles";
                 default: return "Diário  " + _entries.Count + (_entries.Count == 1 ? " placa" : " placas");
             }
         }
@@ -364,7 +488,7 @@ namespace SeteVidas.UI
                     NameColor = def != null ? Lighter(def.ThemeColor) : Cream,
                     Sub = t.GivenBy,
                     Body = t.Weapon + "\n\n\"" + t.Quote + "\"",
-                    Footer = equipped ? "Equipada" : (Gamepad.current != null ? "A: equipar" : "Enter: equipar"),
+                    Footer = equipped ? "Equipada" : "equipar", FooterAction = equipped ? (GameAction?)null : GameAction.Confirm,
                     Confirm = () => manager != null && manager.TrySwitch(cls),
                 });
             }
@@ -490,7 +614,7 @@ namespace SeteVidas.UI
 
         static Color Lighter(Color c) => Color.Lerp(c, Color.white, 0.35f);
 
-        static string InteractKey() => Gamepad.current != null ? "E (ou X)" : "E";
+        static string InteractKey() => InputPrompts.Name(GameAction.Interact);
 
         void EnsureCat(PlayerHealth health)
         {
@@ -617,29 +741,37 @@ namespace SeteVidas.UI
             BuildGrid();
             BuildDetail();
 
-            _help = NewText("Ajuda", _window, 7, TextAnchor.MiddleCenter, Faint);
-            Place(_help.rectTransform, 0f, -(Top + ColumnH + 3f), W, 10f);
+            // rodapé: [botão] escolher   [botão] equipar   [botão] fechar, no aparelho em uso
+            _help = PromptRow.Create(_window, "Ajuda", _font, 7, Faint, new Vector2(0f, -(Top + ColumnH + 2f)), W);
+            InputDevices.Changed += OnDeviceChanged;
             _panel.gameObject.SetActive(false);
         }
 
         void BuildTabs()
         {
-            const float tabW = 84f, tabH = 18f, gap = 4f;
-            float x0 = (W - (4 * tabW + 3 * gap)) * 0.5f;
-            for (int i = 0; i < 4; i++)
+            const float tabW = 68f, tabH = 18f, gap = 3f;   // 5 abas (a 5ª: Controles)
+            float x0 = (W - (PageCount * tabW + (PageCount - 1) * gap)) * 0.5f;
+            for (int i = 0; i < PageCount; i++)
             {
                 var plate = NewImage("Aba " + PageNames[i], _window, PanelSprite(PanelLook.Tab));
                 plate.type = Image.Type.Sliced;
                 Place(plate.rectTransform, x0 + i * (tabW + gap), -7f, tabW, tabH);
                 _tabPlates[i] = plate;
                 var icon = NewImage("Ícone", plate.rectTransform, TabIcon(i));
-                Place(icon.rectTransform, 4f, -1f, 16f, 16f);
-                _tabLabels[i] = NewText("Nome", plate.rectTransform, 8, TextAnchor.MiddleLeft, Faint);
+                if (i == (int)Page.Controls) Place(icon.rectTransform, 6f, -3f, 11f, 11f);   // o direcional, no tamanho dele
+                else Place(icon.rectTransform, 4f, -1f, 16f, 16f);
+                _tabLabels[i] = NewText("Nome", plate.rectTransform, 7, TextAnchor.MiddleLeft, Faint);
                 Place(_tabLabels[i].rectTransform, 22f, 0f, tabW - 24f, tabH);
                 _tabLabels[i].text = PageNames[i];
             }
-            _keyLeft = KeyCap("Tecla da aba anterior", x0 - 20f);
-            _keyRight = KeyCap("Tecla da próxima aba", x0 + 4 * tabW + 3 * gap + 4f);
+            // os botões das abas (Q/E ou LB/RB, em pixel art), encostados nas pontas da fileira
+            _keyLeft = NewImage("Botão da aba anterior", _window, null);
+            _keyLeft.rectTransform.anchorMin = _keyLeft.rectTransform.anchorMax = new Vector2(0f, 1f);
+            _keyLeft.rectTransform.pivot = new Vector2(1f, 1f);
+            _keyLeft.rectTransform.anchoredPosition = new Vector2(x0 - 3f, -10f);
+            _keyRight = NewImage("Botão da próxima aba", _window, null);
+            _keyRight.rectTransform.anchorMin = _keyRight.rectTransform.anchorMax = _keyRight.rectTransform.pivot = new Vector2(0f, 1f);
+            _keyRight.rectTransform.anchoredPosition = new Vector2(x0 + PageCount * tabW + (PageCount - 1) * gap + 3f, -10f);
         }
 
         Sprite TabIcon(int page)
@@ -649,7 +781,8 @@ namespace SeteVidas.UI
                 case 0: return HeartsHud.ClassSprite(0, HeartState.Full);
                 case 1: return IconSprite(InventoryIcon.TabAbilities, false);
                 case 2: return IconSprite(InventoryIcon.TabItems, false);
-                default: return IconSprite(InventoryIcon.TabDiary, false);
+                case 3: return IconSprite(InventoryIcon.TabDiary, false);
+                default: return InputGlyphs.ForPaths("<Gamepad>/dpad");
             }
         }
 
@@ -739,6 +872,21 @@ namespace SeteVidas.UI
                 Place(_headerLines[i].rectTransform, gx, gy, rowW, 1f);
                 _headerLines[i].enabled = false;
             }
+            // aba Controles: uma linha por comando ([botão] o que faz), no lugar da grade
+            _ctrlGlyphs = new Image[12];
+            _ctrlLabels = new Text[12];
+            for (int i = 0; i < _ctrlGlyphs.Length; i++)
+            {
+                float y = -18f - i * 13f;
+                _ctrlGlyphs[i] = NewImage("Comando " + (i + 1), inset, null);
+                _ctrlGlyphs[i].rectTransform.anchorMin = _ctrlGlyphs[i].rectTransform.anchorMax = new Vector2(0f, 1f);
+                _ctrlGlyphs[i].rectTransform.pivot = new Vector2(1f, 1f);
+                _ctrlGlyphs[i].rectTransform.anchoredPosition = new Vector2(52f, y);   // os botões alinhados à direita da coluna
+                _ctrlGlyphs[i].enabled = false;
+                _ctrlLabels[i] = NewText("O que faz", inset, 7, TextAnchor.MiddleLeft, Cream);
+                Place(_ctrlLabels[i].rectTransform, 56f, y, GridW - 58f, 11f);
+                _ctrlLabels[i].enabled = false;
+            }
             _cursor = NewImage("Cursor", inset, Make(InventoryIcons.Cursor(), "cursor", 16f, Vector4.zero));
             Place(_cursor.rectTransform, 0f, 0f, InventoryIcons.CursorSize, InventoryIcons.CursorSize);
         }
@@ -769,6 +917,11 @@ namespace SeteVidas.UI
             Place(_detailBody.rectTransform, 7f, -74f, RightW - 14f, ColumnH - 74f - 14f);
             _detailFooter = NewText("Rodapé", inset, 7, TextAnchor.LowerCenter, Gold);
             Place(_detailFooter.rectTransform, 4f, -(ColumnH - 13f), RightW - 8f, 10f);
+            _footerPos = _detailFooter.rectTransform.anchoredPosition;
+            _footerSize = _detailFooter.rectTransform.sizeDelta;
+            _footerGlyph = NewImage("Botão do rodapé", inset, null);
+            Place(_footerGlyph.rectTransform, 0f, 0f, 11f, 11f);
+            _footerGlyph.enabled = false;
         }
 
         RectTransform Inset(string name, float x, float w)
@@ -838,10 +991,10 @@ namespace SeteVidas.UI
         public static readonly ClassText[] Classes =
         {
             new ClassText { Name = "Ladino", GivenBy = "A Guilda das Nove Sombras (e a rua)",
-                Weapon = "Adagas. Pelas costas: 1,5×; sem ser visto: 2,5×. O 3º golpe avança. No ar, ↓ + ataque: quique.",
+                Weapon = "Adagas. Pelas costas: 1,5×; sem ser visto: 2,5×. O 3º golpe avança. No ar, {agachar} + {atacar}: quique.",
                 Spells = "nenhum", Quote = "O básico. É o que paga as contas da Luna e da Amora." },
             new ClassText { Name = "Paladino", GivenBy = "Vínculo com Koda, o Dourado",
-                Weapon = "Marreta. Quebra paredes rachadas. Segure o ataque: terremoto. No ar, ↓ + ataque: queda pesada.",
+                Weapon = "Marreta. Quebra paredes rachadas. Segure {atacar}: terremoto. No ar, {agachar} + {atacar}: queda pesada.",
                 Spells = "Cura: devolve 1 coração; 3 usos, que voltam no santuário.",
                 Quote = "Pesada demais para um gato. Funciona." },
             new ClassText { Name = "Mago" }, new ClassText { Name = "Monge" }, new ClassText { Name = "Bardo" },
@@ -850,17 +1003,17 @@ namespace SeteVidas.UI
 
         public static readonly AbilityText[] Abilities =
         {
-            new AbilityText { Unlocked = true, Name = "Escalar", Description = "↑ junto da hera: sobe a parede. Espaço: pula para longe; ↑ + Espaço: sobe agarrado. A hera seca aguenta um gato. Por pouco." },
+            new AbilityText { Unlocked = true, Name = "Escalar", Description = "{subir} junto da hera: sobe a parede. {pular}: pula para longe; {subir} + {pular}: sobe agarrado. A hera seca aguenta um gato. Por pouco." },
             new AbilityText { Unlocked = true, Name = "Agachar e furtividade", Description = "Agachado, o gato faz menos barulho e passa por baixo. Na sombra, ninguém vê; atrás de feno e caixotes, agachado, some de vez." },
             new AbilityText { Unlocked = true, Name = "Ataque pelas costas", Description = "Por trás: 1,5×. Por trás e sem ser visto: 2,5× (a Sentinela cai de um golpe). Esbarrar nela, nem pensar." },
-            new AbilityText { Unlocked = true, Name = "Estocada para baixo", Description = "No ar, ↓ + ataque: crava a adaga embaixo e quica no inimigo, no espinho ou na serra. Dá para emendar." },
+            new AbilityText { Unlocked = true, Name = "Estocada para baixo", Description = "No ar, {agachar} + {atacar}: crava a adaga embaixo e quica no inimigo, no espinho ou na serra. Dá para emendar." },
             new AbilityText { Unlocked = false, Name = "Pulo duplo" },
             new AbilityText { Unlocked = false, Name = "Dash" },
             new AbilityText { Unlocked = false, Name = "Ancoragem" },
         };
 
         public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
-        public const string HealScroll = "A magia do Koda: segure a cura para devolver 1 coração. Os lacres voltam a acender no santuário.";
+        public const string HealScroll = "A magia do Koda: segure {curar} para devolver 1 coração. Os lacres voltam a acender no santuário.";
 
         public struct ChapterText { public int Number; public string Title, Scene; }
 

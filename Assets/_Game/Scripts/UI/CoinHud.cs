@@ -1,3 +1,4 @@
+using SeteVidas.Combat;
 using SeteVidas.Progression;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,7 +20,9 @@ namespace SeteVidas.UI
         [SerializeField] Color gainColor = new Color32(0xff, 0xd3, 0x4d, 0xff);
 
         RectTransform _root;
-        Text _count, _gain;
+        Image _count, _gain;      // texto na fonte em pixel (PixelFont), em pixels do HUD
+        string _countText = "";
+        Vector2 _countPos, _gainPos;
         float _bumpUntil, _gainUntil;
         int _shown = -1;
 
@@ -31,7 +34,6 @@ namespace SeteVidas.UI
         void Build()
         {
             if (_root != null) return;
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             _root = NewRect("Moedas", transform);
             _root.anchorMin = _root.anchorMax = _root.pivot = new Vector2(0f, 1f);
             _root.anchoredPosition = position;
@@ -44,9 +46,11 @@ namespace SeteVidas.UI
             img.sprite = icon;
             img.raycastTarget = false;
 
-            _count = NewText("Quantidade", _root, font, textColor, new Vector2(12f, 1f));
-            _gain = NewText("Ganho", _root, font, gainColor, new Vector2(48f, 1f));
-            _gain.text = "";
+            _countPos = new Vector2(11f, 0f);
+            _gainPos = new Vector2(40f, 0f);
+            _count = NewLabel("Quantidade", _root, _countPos);
+            _gain = NewLabel("Ganho", _root, _gainPos);
+            _gain.enabled = false;
         }
 
         static RectTransform NewRect(string name, Transform parent)
@@ -57,25 +61,22 @@ namespace SeteVidas.UI
             return rt;
         }
 
-        static Text NewText(string name, RectTransform parent, Font font, Color color, Vector2 at)
+        static Image NewLabel(string name, RectTransform parent, Vector2 at)
         {
             var rt = NewRect(name, parent);
             rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0f, 1f);
             rt.anchoredPosition = at;
-            rt.sizeDelta = new Vector2(48f, 12f);
-            var t = rt.gameObject.AddComponent<Text>();
-            t.font = font;
-            t.fontSize = 9;
-            t.fontStyle = FontStyle.Bold;
-            t.color = color;
-            t.alignment = TextAnchor.UpperLeft;
-            t.horizontalOverflow = HorizontalWrapMode.Overflow;
-            t.verticalOverflow = VerticalWrapMode.Overflow;
-            t.raycastTarget = false;
-            var shadow = rt.gameObject.AddComponent<Shadow>();
-            shadow.effectColor = new Color32(0x1a, 0x1c, 0x26, 0xff);
-            shadow.effectDistance = new Vector2(1f, -1f);
-            return t;
+            var img = rt.gameObject.AddComponent<Image>();
+            img.raycastTarget = false;
+            return img;
+        }
+
+        /// <summary>Põe o texto na fonte em pixel, no tamanho exato do sprite (1 px do sprite = 1 px do HUD).</summary>
+        static void SetLabel(Image img, string text, Color color)
+        {
+            var sprite = PixelFont.Render(text, color, PixelFont.Outline, 0f);
+            img.sprite = sprite;
+            img.rectTransform.sizeDelta = new Vector2(sprite.rect.width, sprite.rect.height);
         }
 
         void OnChanged(int total, int delta)
@@ -83,25 +84,33 @@ namespace SeteVidas.UI
             if (delta <= 0) return;
             _bumpUntil = Time.unscaledTime + 0.25f;
             _gainUntil = Time.unscaledTime + 1.2f;
-            if (_gain != null) _gain.text = "+" + delta;
+            if (_gain != null) SetLabel(_gain, "+" + delta, gainColor);
         }
 
         void LateUpdate()
         {
             if (_count == null) return;
             int coins = CoinPurse.Coins;
-            if (coins != _shown) { _shown = coins; _count.text = coins.ToString(); }
-            float bump = Time.unscaledTime < _bumpUntil ? 1f + 0.25f * ((_bumpUntil - Time.unscaledTime) / 0.25f) : 1f;
-            _count.rectTransform.localScale = new Vector3(bump, bump, 1f);
+            if (coins != _shown)
+            {
+                _shown = coins;
+                _countText = coins.ToString();
+                SetLabel(_count, _countText, textColor);
+            }
+            // pulo de 2 px que desce em passos (sem escala: o número continua no grid do pixel)
+            float left = _bumpUntil - Time.unscaledTime;
+            int jump = left > 0.17f ? 2 : left > 0.08f ? 1 : 0;
+            _count.rectTransform.anchoredPosition = _countPos + new Vector2(0f, jump);
             if (_gain != null)
             {
-                float left = _gainUntil - Time.unscaledTime;
-                _gain.enabled = left > 0f;
-                if (left > 0f) { var c = gainColor; c.a = Mathf.Clamp01(left / 0.4f); _gain.color = c; }
+                float gainLeft = _gainUntil - Time.unscaledTime;
+                // "+N" ao lado do número; no fim pisca em vez de sumir na transparência
+                _gain.enabled = gainLeft > 0f && (gainLeft > 0.3f || ((int)(gainLeft * 20f) & 1) == 0);
+                _gain.rectTransform.anchoredPosition = new Vector2(_countPos.x + _count.rectTransform.sizeDelta.x + 3f, _countPos.y);
             }
         }
 
         /// <summary>Texto mostrado (testes).</summary>
-        public string ShownText => _count != null ? _count.text : "";
+        public string ShownText => _countText;
     }
 }

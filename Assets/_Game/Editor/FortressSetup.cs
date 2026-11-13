@@ -131,6 +131,7 @@ namespace SeteVidas.EditorTools
             DressingBuilder.Build(dressing.transform, FortressDressing.Items());
             FortressLife.Build(root.transform, dressing.transform);   // Etapa 7: vento, partículas, bichos, pulsos
             BuildScenery(scene);
+            BuildZombieOutbreak(scene);
 
             SeteVidasSetup.BuildTileColliders(scene);
             PlayerSetup.PlaceInScene(scene); // gato + câmera no PlayerSpawn; salva a cena
@@ -612,6 +613,106 @@ namespace SeteVidas.EditorTools
             }
         }
 
+        const string ZombieSettingsPath = "Assets/_Game/ScriptableObjects/Enemies/ZombieSettings.asset";
+        const string ZombieAnimationsPath = "Assets/_Game/ScriptableObjects/Enemies/ZombieTemplarAnimationSet.asset";
+        const string NoFrictionPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
+        const string OutbreakName = "Zumbis (depois do tomo)";
+
+        /// <summary>
+        /// O Templário Zumbi (Docs/Design/zumbi-templario.md): o ZombieOutbreak troca os templários pelos zumbis quando
+        /// o tomo é pego e põe os postos extras do FortressLayout.ZombiePosts.
+        /// </summary>
+        static void BuildZombieOutbreak(Scene scene)
+        {
+            var settings = AssetDatabase.LoadAssetAtPath<SeteVidas.Enemies.Zombie.ZombieSettings>(ZombieSettingsPath);
+            if (settings == null)
+            {
+                settings = ScriptableObject.CreateInstance<SeteVidas.Enemies.Zombie.ZombieSettings>();
+                Directory.CreateDirectory(Path.GetDirectoryName(ZombieSettingsPath));
+                AssetDatabase.CreateAsset(settings, ZombieSettingsPath);
+                AssetDatabase.SaveAssets();
+            }
+            var animations = AssetDatabase.LoadAssetAtPath<SeteVidas.Player.CharacterAnimationSet>(ZombieAnimationsPath);
+            if (animations == null) Debug.LogWarning("[Sete Vidas] Falta a arte do zumbi (rode Tools/EnemySprites/gerar.ps1)");
+            var posts = new List<SeteVidas.Enemies.Zombie.ZombieOutbreak.Post>();
+            foreach (var p in FortressLayout.ZombiePosts())
+                posts.Add(new SeteVidas.Enemies.Zombie.ZombieOutbreak.Post { name = p.Name, at = new Vector2(p.X, p.Y), facing = p.Facing, minX = p.A, maxX = p.B });
+
+            var go = new GameObject(OutbreakName);
+            SceneManager.MoveGameObjectToScene(go, scene);
+            go.AddComponent<SeteVidas.Enemies.Zombie.ZombieOutbreak>().Configure(settings, animations,
+                AssetDatabase.LoadAssetAtPath<PhysicsMaterial2D>(NoFrictionPath), posts.ToArray());
+        }
+
+        /// <summary>Põe (ou refaz) os zumbis na Fortaleza aberta, sem recriar a fase: os ajustes feitos à mão continuam.</summary>
+        [MenuItem("Tools/Sete Vidas/13c. Fortaleza: zumbis depois do tomo", priority = 51)]
+        public static void RebuildZombiesOnly()
+        {
+            var scene = SceneManager.GetActiveScene();
+            if (scene.path != GameConstants.FortressScenePath)
+            {
+                EditorUtility.DisplayDialog("Sete Vidas", "Abra a cena da Fortaleza (Scenes/World/Fortress_MVP) antes.", "Ok");
+                return;
+            }
+            var old = GameObject.Find(OutbreakName);
+            if (old != null) Object.DestroyImmediate(old);
+            BuildZombieOutbreak(scene);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[Sete Vidas] Zumbis da Fortaleza prontos: os templários viram zumbis quando o tomo é pego.");
+        }
+
+        const string AetherionArt ="Assets/_Game/Art/Environments/Backgrounds/Ext/Aetherion/";
+
+        /// <summary>
+        /// A corrupção da torre dos magos (nuvens, janelas, clarão; relâmpago, corvos e fiapos são do componente).
+        /// <paramref name="prefix"/> "bg_ext_aetherion" (fase) ou "bg_ext_aetherion_menu" (tela inicial).
+        /// </summary>
+        internal static SeteVidas.World.AetherionFx AddAetherionFx(GameObject target, bool night, string prefix, float scale)
+        {
+            var cloudFrames = new List<Sprite>();
+            for (int i = 0; i < 6; i++)
+            {
+                var s = AssetDatabase.LoadAssetAtPath<Sprite>(AetherionArt + prefix + (night ? "_nuvens_noite_" : "_nuvens_") + i + ".png");
+                if (s != null) cloudFrames.Add(s);
+            }
+            var windowFrames = new List<Sprite>();
+            for (int i = 0; i < 3; i++)
+            {
+                var s = AssetDatabase.LoadAssetAtPath<Sprite>(AetherionArt + prefix + "_janelas_" + i + ".png");
+                if (s != null) windowFrames.Add(s);
+            }
+            var flash = AssetDatabase.LoadAssetAtPath<Sprite>(AetherionArt + prefix + "_clarao.png");
+            if (cloudFrames.Count == 0) Debug.LogWarning("[Sete Vidas] Falta a arte de Aetherion (rode Tools/EnvironmentSprites/gerar.ps1)");
+            var fx = target.AddComponent<SeteVidas.World.AetherionFx>();
+            fx.Configure(cloudFrames.ToArray(), windowFrames.ToArray(), flash, night, scale);
+            return fx;
+        }
+
+        /// <summary>
+        /// Refaz só o céu e as montanhas (os conjuntos de fundo) na Fortaleza aberta, sem recriar a fase: os ajustes
+        /// feitos à mão na cena continuam. Use depois de mudar o FortressBackgrounds ou os desenhos de fundo.
+        /// </summary>
+        [MenuItem("Tools/Sete Vidas/13b. Fortaleza: atualizar só os fundos", priority = 50)]
+        public static void RebuildBackgroundsOnly()
+        {
+            var scene = SceneManager.GetActiveScene();
+            if (scene.path != GameConstants.FortressScenePath)
+            {
+                EditorUtility.DisplayDialog("Sete Vidas", "Abra a cena da Fortaleza (Scenes/World/Fortress_MVP) antes.", "Ok");
+                return;
+            }
+            var old = GameObject.Find("Céu e montanhas");
+            int index = old != null ? old.transform.GetSiblingIndex() : -1;
+            if (old != null) Object.DestroyImmediate(old);
+            BuildScenery(scene);
+            var fresh = GameObject.Find("Céu e montanhas");
+            if (fresh != null && index >= 0) fresh.transform.SetSiblingIndex(index);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[Sete Vidas] Fundos da Fortaleza refeitos (o resto da cena ficou como estava).");
+        }
+
         static void BuildScenery(Scene scene)
         {
             // Etapa 6: um conjunto de fundo por trecho (A–H, FortressBackgrounds) e o BackgroundSets troca entre eles
@@ -627,6 +728,8 @@ namespace SeteVidas.EditorTools
                     Vector2? factor = l.FactorX > 0f || l.FactorY > 0f ? new Vector2(l.FactorX, l.FactorY) : (Vector2?)null;
                     var layerGo = DressingBuilder.Background(setRoot.transform, l.Id, l.Id, new Vector2(l.AnchorX, l.AnchorY), factor, l.Order);
                     if (l.BlendToY > l.BlendFromY) layerGo.AddComponent<SkyHeightBlend>().Configure(l.BlendFromY, l.BlendToY);   // céu que muda com a altura
+                    if (l.Id == FortressBackgrounds.AetherionId || l.Id == FortressBackgrounds.AetherionNightId)
+                        AddAetherionFx(layerGo, l.Id == FortressBackgrounds.AetherionNightId, "bg_ext_aetherion", 1f);
                 }
                 setRoot.SetActive(set.Key == FortressBackgrounds.Start);
                 entries.Add(new BackgroundSets.SetEntry { key = set.Key, root = setRoot });

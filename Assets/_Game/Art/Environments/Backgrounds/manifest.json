@@ -141,6 +141,52 @@
       "tags": ["fundo", "etapa6"]
     },
     {
+      "id": "bg_ext_aetherion",
+      "nome": "Aetherion, a torre dos magos (ao longe)",
+      "regiao": "ext",
+      "categoria": "plx",
+      "funcao": "narrativo",
+      "material": "silhueta",
+      "epoca": "natural",
+      "tamanho_px": [110, 180],
+      "sprites": ["Ext/bg_ext_aetherion.png"],
+      "camada": "bg_longe",
+      "fundo": {
+        "paralaxe": [0.06, 0.15],
+        "ancora": [0, 0],
+        "repete": false,
+        "estado_do_ceu": ["por_do_sol"],
+        "lado_da_luz": "direita",
+        "valor_max": 0.35,
+        "conjuntos": ["A", "F", "G"]
+      },
+      "leitura": "Marco distante e área final do jogo (Lore Oficial §IV): torre altíssima com o topo quebrado, o Observatório e os Jardins Suspensos, atrás da cordilheira. A corrupção (coroa de nuvens roxas girando, janelas verde-ácido, relâmpagos lilás, corvos e fiapos) é tocada pelo AetherionFx com os quadros de Ext/Aetherion. Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs.",
+      "tags": ["fundo", "aetherion", "praga"]
+    },
+    {
+      "id": "bg_ext_aetherion_noite",
+      "nome": "Aetherion de noite",
+      "regiao": "ext",
+      "categoria": "plx",
+      "funcao": "narrativo",
+      "material": "silhueta",
+      "epoca": "natural",
+      "tamanho_px": [110, 180],
+      "sprites": ["Ext/bg_ext_aetherion_noite.png"],
+      "camada": "bg_longe",
+      "fundo": {
+        "paralaxe": [0.06, 0.15],
+        "ancora": [0, 0],
+        "repete": false,
+        "estado_do_ceu": ["noite"],
+        "lado_da_luz": "esquerda",
+        "valor_max": 0.35,
+        "conjuntos": ["H"]
+      },
+      "leitura": "A torre de noite (borda da lua à esquerda); sem o sol, a corrupção aparece mais (AetherionFx no modo noite). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs.",
+      "tags": ["fundo", "aetherion", "praga"]
+    },
+    {
       "id": "bg_ext_cordilheira",
       "nome": "Cordilheira (sem a Cidadela)",
       "regiao": "ext",

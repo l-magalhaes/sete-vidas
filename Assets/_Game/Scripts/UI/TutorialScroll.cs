@@ -149,15 +149,26 @@ namespace SeteVidas.UI
 
         // ------------------------------------------------------------ tecla
 
-        void TrackDevice()
+        // o aparelho em uso vem do InputDevices (o mesmo dos avisos, do inventário e dos menus)
+        void TrackDevice() => _gamepad = InputDevices.Current == InputDeviceKind.Gamepad;
+
+        /// <summary>O ícone em pixel art da tecla ou do botão da dica no aparelho em uso.</summary>
+        static Sprite KeyGlyph(HintKey key)
         {
-            var pad = Gamepad.current;
-            if (pad != null && (pad.buttonSouth.wasPressedThisFrame || pad.buttonWest.wasPressedThisFrame || pad.leftStick.ReadValue().sqrMagnitude > 0.25f
-                                || pad.dpad.ReadValue().sqrMagnitude > 0.25f || pad.startButton.wasPressedThisFrame))
-                _gamepad = true;
-            else if ((Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame) ||
-                     (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame))
-                _gamepad = false;
+            switch (key)
+            {
+                case HintKey.None: return null;
+                case HintKey.Jump: return InputPrompts.Glyph(GameAction.Jump);
+                case HintKey.Crouch: return InputPrompts.Glyph(GameAction.Crouch);
+                case HintKey.Attack: return InputPrompts.Glyph(GameAction.Attack);
+                case HintKey.Up: return InputPrompts.Glyph(GameAction.Up);
+                case HintKey.Interact: return InputPrompts.Glyph(GameAction.Interact);
+                case HintKey.Heal: return InputPrompts.Glyph(GameAction.Heal);
+                case HintKey.NextClass:
+                    var kind = InputDevices.Current;
+                    return InputGlyphs.ForPaths(InputPrompts.PathFor(GameAction.PrevClass, kind) + "|" + InputPrompts.PathFor(GameAction.NextClass, kind));
+                default: return InputPrompts.Glyph(GameAction.Move);
+            }
         }
 
         /// <summary>O texto da tecla de <paramref name="key"/> no controle atual ("Espaço", "S", "clique", "A"...).</summary>
@@ -230,14 +241,17 @@ namespace SeteVidas.UI
         void Fill(TutorialHint hint)
         {
             _phrase.text = hint.Phrase;
-            string label = KeyLabel(hint.Key);
-            _keyBox.gameObject.SetActive(label != "");
+            // o botão ou a tecla em pixel art (controle de Xbox ou teclado e mouse, o que estiver em uso)
+            var glyph = KeyGlyph(hint.Key);
+            _keyBox.gameObject.SetActive(glyph != null);
             float keyW = 0f;
-            if (label != "")
+            if (glyph != null)
             {
-                _keyText.text = label;
-                keyW = Mathf.Max(12f, Mathf.Ceil(_keyText.preferredWidth) + 6f);
-                _keyBox.sizeDelta = new Vector2(keyW, 13f);
+                _keyImage.sprite = glyph;
+                _keyImage.type = Image.Type.Simple;
+                _keyText.text = "";
+                keyW = glyph.rect.width;
+                _keyBox.sizeDelta = new Vector2(keyW, glyph.rect.height);
             }
             _phrase.rectTransform.anchoredPosition = new Vector2(10f + (keyW > 0f ? keyW + 5f : 0f), 0f);
         }

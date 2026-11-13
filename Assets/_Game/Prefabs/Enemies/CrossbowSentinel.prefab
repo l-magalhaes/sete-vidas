@@ -160,7 +160,7 @@ MonoBehaviour:
   boltSprite: {fileID: 21300000, guid: 44eece1ec6106563301fdb6c6c2a02bd, type: 3}
   alertIcon: {fileID: 8237356768964437901}
   debugLabel: {fileID: 8247123467992047006}
-  showDebugLabel: 1
+  showDebugLabel: 0
 --- !u!1 &3604938924064066156
 GameObject:
   m_ObjectHideFlags: 0

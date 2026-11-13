@@ -42,6 +42,8 @@ namespace SeteVidas.World
         /// <summary>O vínculo terminou (classe e coração concedidos).</summary>
         public event Action Bonded;
 
+        void Start() => SeteVidas.UI.WorldPrompt.Upgrade(prompt); // o botão do aparelho em uso no lugar de "E: falar"
+
         void OnTriggerEnter2D(Collider2D other)
         {
             var health = other.GetComponentInParent<PlayerHealth>();
@@ -131,7 +133,10 @@ namespace SeteVidas.World
             else if (!data.IsUnlocked(grantsClass)) data.unlockedClasses.Add(grantsClass.ToString());
             player.AddHeart(); // +1 coração e grava o save
 
-            DamagePopup.Spawn(player.transform.position + Vector3.up * 2.2f, "+1 coração", new Color32(0xff, 0x8a, 0x9a, 0xff));
+            Vector2 chest = player.transform.position + Vector3.up * 1.2f;
+            HitSparks.Burst(chest, 10, new Color32(0xff, 0xc8, 0xd0, 0xff), new Color32(0xe0, 0x3c, 0x4a, 0xff), 2f, 4f, 0.4f, 4f, 0.5f);
+            PixelRing.Spawn(chest, 3, 14, 0.35f, new Color32(0xff, 0x8a, 0x9a, 0xff));
+            PixelPopup.Spawn(player.transform.position + Vector3.up * 2.2f, "+1", new Color32(0xff, 0x8a, 0x9a, 0xff), PixelIcons.Heart());
             Bonded?.Invoke();
         }
     }

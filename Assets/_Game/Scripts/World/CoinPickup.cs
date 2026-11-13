@@ -93,7 +93,14 @@ namespace SeteVidas.World
             SeteVidas.Audio.Sfx.Play(value >= 100 ? "moeda100" : value >= 5 ? "moeda5" : "moeda");
             if (IsPersistent) SaveManager.Data.SetFlag(CoinPurse.FlagFor(pickupId));
             SaveManager.Save();
-            DamagePopup.Spawn(transform.position + Vector3.up * 0.6f, value == 1 ? "+1 moeda" : $"+{value} moedas", new Color32(0xff, 0xd3, 0x4d, 0xff));
+            // brilho dourado no lugar da moeda e "+N" em pixel com o ícone dela (o contador do HUD dá o pulo)
+            var gold = new Color32(0xff, 0xd3, 0x4d, 0xff);
+            Vector2 at = transform.position;
+            HitSparks.Burst(at, value >= 5 ? 10 : 6, new Color32(0xff, 0xf4, 0xc2, 0xff), gold, 2f, 4.5f, 0.3f, 6f, 0.4f);
+            PixelRing.Spawn(at, 2, value >= 5 ? 9 : 6, 0.22f, new Color32(0xff, 0xf4, 0xc2, 0xff));
+            Sprite icon = spin != null && spin.Length > 0 ? spin[0] : spriteRenderer != null ? spriteRenderer.sprite : null;
+            if (icon != null && icon.rect.height > 12f) icon = null; // moeda grande (a do Contratante): só o número
+            PixelPopup.Spawn(transform.position + Vector3.up * 0.5f, "+" + value, gold, icon);
 
             var runner = DialogueRunner.Active;
             if (pickupDialogue != null && runner != null && !runner.IsOpen && by != null)

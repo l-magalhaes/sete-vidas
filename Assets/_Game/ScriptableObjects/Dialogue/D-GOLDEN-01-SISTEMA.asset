@@ -19,7 +19,7 @@ MonoBehaviour:
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: Paladino desbloqueado! Aperte 2 (ou Q/R) para trocar de classe.
+    Text: "Paladino desbloqueado! Aperte {trocar_classe} para trocar de classe."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Magia de cura aprendida! Aperte F para curar 1 cora\xE7\xE3o. 3 usos; o santu\xE1rio recarrega."
+    Text: "Magia de cura aprendida! Aperte {curar} para curar 1 cora\xE7\xE3o. 3 usos; o santu\xE1rio recarrega."

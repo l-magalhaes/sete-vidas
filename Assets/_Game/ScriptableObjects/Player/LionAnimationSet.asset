@@ -837,6 +837,66 @@ MonoBehaviour:
       body: {x: -3, y: -3}
       hasTail: 1
       hasTrim: 1
+  - name: assassinate
+    frameTime: 0.05
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 61f4762c338bde187485019ba932e61e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -6.5, y: 5.5}
+      chest: {x: -0.5, y: 8.5}
+      trim: {x: -4.5, y: 8}
+      body: {x: -1, y: -1}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 0f4e06d23113fb825a6786dcd9463c27, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -3.5, y: 8.5}
+      chest: {x: 2.5, y: 11.5}
+      trim: {x: -1.5, y: 12}
+      body: {x: 2, y: 2}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: cb8a48771835482be30af1bac3928a4a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -2.5, y: 6.5}
+      chest: {x: 3.5, y: 9.5}
+      trim: {x: -0.5, y: 10}
+      body: {x: 3, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 3e925c6f33a163d3afc39e597e7a6a20, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -2.5, y: 6.5}
+      chest: {x: 3.5, y: 9.5}
+      trim: {x: -0.5, y: 10}
+      body: {x: 3, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 40e9e3901135ae340d372df5ae303069, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -2.5, y: 6.5}
+      chest: {x: 3.5, y: 9.5}
+      trim: {x: -0.5, y: 10}
+      body: {x: 3, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 9edda724edd40087b11c41ebc1ee9273, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 1.5, y: 9.5}
+      trim: {x: -2.5, y: 10}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 95e279a36298a32ba57cdbacc62ac6dd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -5.5, y: 6.5}
+      chest: {x: 0.5, y: 9.5}
+      trim: {x: -3.5, y: 10}
+      body: {x: 0, y: 0}
+      hasTail: 1
+      hasTrim: 1
   - name: hammer1_windup
     frameTime: 0.1
     loop: 0

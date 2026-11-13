@@ -240,9 +240,16 @@ namespace SeteVidas.Tests
             Assert.IsNotNull(GameObject.Find("Fortaleza/Cachoeira"), "Cachoeira no penhasco do início");
             Assert.IsNotNull(GameObject.Find("Fortaleza/Lagoa"), "Lagoa onde o gato cai");
             Assert.IsNotNull(GameObject.Find("Céu e montanhas"), "Céu do pôr do sol e montanhas");
-            var far = GameObject.Find("Céu e montanhas/Conjunto A: Alto da montanha/bg_ext_cordilheira_a");
+            var far = GameObject.Find("Céu e montanhas/Conjunto A: Alto da montanha/bg_ext_cordilheira");
             Assert.IsNotNull(far, "Conjunto A (alto da montanha) montado pela biblioteca de cenário");
             Assert.IsNotNull(far.GetComponent<SeteVidas.World.ParallaxLayer>(), "com paralaxe");
+            // a Cidadela saiu do fundo do início (daqui ela já está perto); no lugar, Aetherion corrompida ao longe
+            Assert.IsNull(GameObject.Find("Céu e montanhas/Conjunto A: Alto da montanha/bg_ext_cordilheira_a"), "Sem a Cidadela ao longe");
+            var tower = GameObject.Find("Céu e montanhas/Conjunto A: Alto da montanha/bg_ext_aetherion");
+            Assert.IsNotNull(tower, "Aetherion, a torre dos magos, ao longe");
+            Assert.IsNotNull(tower.GetComponent<SeteVidas.World.AetherionFx>(), "com a corrupção animada");
+            Assert.IsNull(GameObject.Find("Céu e montanhas/Conjunto V: Vale, muralhas e galeria/bg_ext_montanha_inicio"),
+                "O penhasco do fundo do vale saiu: fica a floresta");
             Assert.AreEqual("A", Object.FindAnyObjectByType<SeteVidas.World.Scenery.BackgroundSets>().CurrentSet);
         }
 

@@ -131,14 +131,14 @@ namespace SeteVidas.Player
         void OnEnable()
         {
             if (classes != null) classes.ClassChanged += OnClassChanged;
-            if (health != null) { health.Damaged += OnDamaged; health.Died += OnDied; health.Respawned += OnRespawned; }
+            if (health != null) { health.Damaged += OnDamaged; health.Died += OnDied; health.Respawned += OnRespawned; health.Poisoned += OnPoisoned; health.PoisonTicked += OnPoisonTick; }
             if (combat != null) combat.Hit += OnHit;
         }
 
         void OnDisable()
         {
             if (classes != null) classes.ClassChanged -= OnClassChanged;
-            if (health != null) { health.Damaged -= OnDamaged; health.Died -= OnDied; health.Respawned -= OnRespawned; }
+            if (health != null) { health.Damaged -= OnDamaged; health.Died -= OnDied; health.Respawned -= OnRespawned; health.Poisoned -= OnPoisoned; health.PoisonTicked -= OnPoisonTick; }
             if (combat != null) combat.Hit -= OnHit;
             transform.localScale = Vector3.one;
         }
@@ -213,6 +213,43 @@ namespace SeteVidas.Player
                               spriteRenderer.sortingLayerID, spriteRenderer.sortingOrder + 3);
         }
 
+        // ------------------------------------------------------------ veneno (Templário Zumbi)
+
+        static readonly Color PoisonGreen = new Color32(0x8f, 0xd1, 0x4f, 0xff);   // o verde-ácido da praga
+        static readonly Color PoisonDim = new Color32(0x4e, 0x7a, 0x3a, 0xff);
+        float _nextBubble;
+
+        void OnPoisoned()
+        {
+            _flashColor = PoisonGreen;
+            _flashUntil = Time.time + switchFlashTime * 0.8f;
+            if (_tail != null) _tail.Bristle(0.25f);
+        }
+
+        /// <summary>Cada tique: o gato pisca verde, encolhe 1 px e solta um punhado de bolhas.</summary>
+        void OnPoisonTick(int damage)
+        {
+            _flashColor = PoisonGreen;
+            _flashUntil = Time.time + switchFlashTime;
+            if (damage > 0) _squash = new Vector2(1.08f, 0.92f);
+            Vector3 chest = ChestWorld();
+            for (int i = 0; i < 5; i++)
+                Combat.HitSparks.Rise((Vector2)chest + new Vector2(Random.Range(-0.4f, 0.4f), Random.Range(-0.3f, 0.3f)),
+                                      i % 2 == 0 ? PoisonGreen : PoisonDim, Random.Range(1.5f, 2.5f), 0.5f);
+        }
+
+        /// <summary>Envenenado: bolhas verdes subindo do corpo de vez em quando.</summary>
+        void UpdatePoisonFx(float dt)
+        {
+            if (health == null || !health.IsPoisoned || health.IsDead) return;
+            _nextBubble -= dt;
+            if (_nextBubble > 0f) return;
+            _nextBubble = health.PoisonIsLethal ? 0.08f : 0.14f;
+            Vector3 chest = ChestWorld();
+            Combat.HitSparks.Rise((Vector2)chest + new Vector2(Random.Range(-0.35f, 0.35f), Random.Range(-0.5f, 0.2f)),
+                                  Random.value < 0.6f ? PoisonGreen : PoisonDim, Random.Range(0.8f, 1.6f), Random.Range(0.35f, 0.6f));
+        }
+
         void OnDamaged(DamageInfo info)
         {
             _hurtTime = 0f;
@@ -250,12 +287,17 @@ namespace SeteVidas.Player
         void OnHit(IDamageable target, DamageInfo info)
         {
             if (animationSet == null || info.Angle == AttackAngle.Front) return;
-            var c = target as Component;
-            Vector3 at = c != null ? c.transform.position + Vector3.up * 0.75f : transform.position + Vector3.right * _facing;
+            // A estrela branca do golpe pelas costas saiu (pedido do usuário, 12/11/2026): o retorno fica no som,
+            // no flash do inimigo e, no furtivo, no bote abaixo.
             bool stealth = info.Angle == AttackAngle.StealthBack;
-            SpriteFx.Play(animationSet.backstab, stealth ? 0.04f : 0.03f, at, false, Color.white,
-                          spriteRenderer.sortingLayerID, spriteRenderer.sortingOrder + 4);
             if (!stealth) return;
+            // Abate furtivo: o gato crava as duas adagas (animação própria) e o tempo segura um instante.
+            // O templário toca a morte silenciosa dele (EnemyAI, "death_stealth").
+            if (target is SeteVidas.Enemies.EnemyAI enemy && enemy.IsDead && PlayAction("assassinate"))
+            {
+                Hitstop.Trigger(0.12f);
+                return;
+            }
             _squash = stealthHitSquash;
             // rastro azul-noite do bote
             for (int i = 0; i < 3; i++)
@@ -326,6 +368,7 @@ namespace SeteVidas.Player
             UpdateTrimAndChest(frame, bodyVisible, color.a);
             UpdateTailAndCape(frame, bodyVisible, dt, color);
             UpdateSlash();
+            UpdatePoisonFx(dt);
 
             _wasGrounded = controller.IsGrounded;
             _wasClimbingWall = wallClimb != null && wallClimb.IsClimbing;

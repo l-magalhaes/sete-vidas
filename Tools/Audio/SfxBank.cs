@@ -364,6 +364,55 @@ public static class SfxBank
             Sx.At(0.25, Sx.G(Sx.Mix(Sx.Metal(380, 0.6, 0.12, s), Sx.LP(Sx.Thump(110, 50, 0.3, 0.1), 700), Sx.Jingle(0.3, 60, 1500, s)), 0.8)),
             Sx.At(0.55, Sx.G(Sx.Metal(900, 0.3, 0.07, s + 9), 0.4))));
 
+        // ======================================================== TEMPLÁRIO ZUMBI (depois do tomo) e VENENO
+        // Os mortos da praga: a voz passa sempre pelo timbre exclusivo da praga (Plague), o resto da armadura soa
+        // enferrujado e abafado. Médios-graves (inimigo); o toque e o veneno ficam nos médios-agudos (são do gato).
+        var zumbi = new Sx.Voice { F0 = 68, Formant = 0.78, Rate = 1.5, Breath = 0.45, Growl = 0.85, Muffle = 1600, Melody = 0.03, Decline = 0.15 };
+        Add(l, "Inimigos", "sfx_zumbi_passo", 5, s => Sx.Mix(
+            // o pé arrastado na pedra: raspão longo de ruído que sobe e cai, sem o tinido do guarda
+            Sx.G(Sx.BP(Sx.Noise(0.28, Sx.AHR(0.04, 0.12, 0.12), s), Sx.Lin(500 * J(s, 0.15), 900, 0.28), 2.5), 0.8),
+            Sx.LP(Sx.Thump(95 * J(s, 0.1), 50, 0.08, 0.03), 700),
+            Sx.At(0.04, Sx.G(Sx.LP(Sx.Jingle(0.12, 30, 1300, s), 1800), 0.12))));
+        Add(l, "Inimigos", "sfx_zumbi_ocioso", 4, s =>
+            Plague(Sx.LP(Say(zumbi, new[] { "hhhrrrr...", "uuurrhh...", "hhh-hrr...", "grrrhh..." }[s % 4], s), 1800), s));
+        // sentiu o gato (o "!" do zumbi): gemido que sobe, sem o chip do alerta dos templários (não é um soldado)
+        Add(l, "Inimigos", "sfx_zumbi_sente", 3, s => Sx.Mix(
+            Plague(Sx.G(Say(new Sx.Voice { F0 = 82, Formant = 0.82, Rate = 0.9, Breath = 0.4, Growl = 0.9, Muffle = 2200, Melody = 0.12, Decline = -0.35 },
+                new[] { "hrraaagh!", "uuurraah!", "grraah!" }[s % 3], s), 1.3), s),
+            Sx.At(0.05, Sx.G(Sx.Metal(420 * J(s, 0.05), 0.3, 0.08, s), 0.3))));
+        // perseguição: respiração rasgada em rajadas curtas
+        Add(l, "Inimigos", "sfx_zumbi_caca", 3, s => Sx.Mix(
+            Plague(Sx.G(Say(zumbi, "hah-hah-hahh", s), 0.9), s),
+            Sx.G(Sx.BP(Sx.Noise(0.5, Sx.Swell(0.5, 1.5), s + 3), 1100, 1.5), 0.3)));
+        Add(l, "Inimigos", "sfx_zumbi_dano", 4, s => Sx.Mix(
+            Sx.LP(Sx.Thump(140 * J(s, 0.1), 60, 0.12, 0.04), 1200),                          // pancada mole
+            Sx.G(Sx.BP(Sx.Crackle(0.15, Sx.Lin(300, 60, 0.15), Sx.Perc(0.002, 0.06), s), 900, 2), 0.6), // carne seca
+            Sx.G(Sx.Metal(330 * J(s, 0.08), 0.18, 0.05, s), 0.25),                            // aço enferrujado
+            Sx.At(0.04, Plague(Sx.G(Say(zumbi, new[] { "hk!", "ghh!", "urk!", "hngh!" }[s % 4], s), 0.8), s))));
+        // morte: o gemido cai e o corpo se desfaz em fiapos (chiado que sobe e some, como a animação)
+        Add(l, "Inimigos", "sfx_zumbi_morte", 3, s => Sx.Mix(
+            Plague(Say(new Sx.Voice { F0 = 75, Formant = 0.8, Rate = 1.6, Breath = 0.5, Growl = 0.7, Muffle = 1500, Decline = 0.5 }, "uuuoohhh...", s), s),
+            Sx.At(0.3, Sx.G(Sx.LP(Sx.Thump(90, 40, 0.3, 0.1), 600), 0.8)),
+            Sx.At(0.3, Sx.G(Sx.LP(Sx.Jingle(0.25, 40, 1200, s), 1500), 0.3)),
+            Sx.At(0.55, Sx.G(Sx.HP(Sx.Crackle(0.9, Sx.Lin(900, 100, 0.9), Sx.AHR(0.15, 0.3, 0.45), s + 5), 1800), 0.5)),
+            Sx.At(0.55, Sx.G(Sx.Reverse(Sx.Reverb(Sx.Noise(0.06, Sx.Perc(0.001, 0.03), s + 7), 0.9, 1.0, 0.9)), 0.4))));
+        // o toque que envenena: tapa úmido + chiado ácido (avisa que a regra disparou, mesmo sem olhar)
+        Add(l, "Gato", "sfx_zumbi_toque", 3, s => Sx.Mix(
+            Sx.G(Sx.BP(Sx.Noise(0.06, Sx.Perc(0.001, 0.03), s), 1800 * J(s, 0.1), 1.2), 0.9),
+            Sx.LP(Sx.Thump(220 * J(s, 0.08), 110, 0.07, 0.02), 1600),
+            Sx.At(0.03, Sx.G(Sx.HP(Sx.Crackle(0.35, Sx.Lin(1500, 400, 0.35), Sx.Perc(0.01, 0.15), s + 1), 2500), 0.55)),
+            Sx.At(0.03, Sx.G(Plague(Sx.Osc(Sx.W.Tri, 0.3, Sx.Geo(Sx.Hz("E5"), Sx.Hz("Bb4"), 0.3), Sx.Perc(0.005, 0.12)), s), 0.35))));
+        // cada tique do veneno: uma bolha que estoura e uma nota curta que cai (o gato perdendo vida)
+        Add(l, "Gato", "sfx_veneno_tique", 3, s => Sx.Mix(
+            Sx.G(Sx.Osc(Sx.W.Sine, 0.08, Sx.Geo(500 * J(s, 0.1), 1400, 0.08), Sx.Perc(0.002, 0.05)), 0.6),   // bolha
+            Sx.At(0.07, Sx.G(Sx.BP(Sx.Noise(0.03, Sx.Perc(0.001, 0.012), s), 3000, 2), 0.6)),            // estouro
+            Sx.At(0.05, Sx.G(Sx.Osc(Sx.W.Square, 0.18, Sx.Geo(Sx.Hz("A4"), Sx.Hz("E4"), 0.18), Sx.Perc(0.003, 0.09)), 0.18)),
+            Sx.At(0.05, Sx.G(Sx.HP(Sx.Crackle(0.2, Sx.Lin(800, 200, 0.2), Sx.Perc(0.01, 0.1), s + 2), 2200), 0.35))));
+        // o veneno passou: um suspiro curto e claro (o perigo acabou)
+        Add(l, "Gato", "sfx_veneno_passa", 1, s => Sx.Mix(
+            Sx.G(Sx.BP(Sx.Noise(0.3, Sx.AHR(0.03, 0.1, 0.17), s), Sx.Lin(1800, 1000, 0.3), 1.5), 0.5),
+            Sx.At(0.08, Sx.G(Chip(new[] { "E5", "A5" }, 0.07, Sx.W.Tri), 0.2))));
+
         // ======================================================== ATIRADOR E SETEIRAS
         Add(l, "Inimigos", "sfx_besta_mira", 2, s => Sx.Mix(
             Sx.G(Sx.BP(Sx.Crackle(0.9, Sx.Lin(30, 220, 0.9), Sx.Swell(0.9, 1.2), s), 1500, 4), 0.8),

@@ -75,6 +75,23 @@ namespace SeteVidas.Enemies.Boss
 
         public static GoldenBoss Active { get; private set; }
 
+        // o dourado do Paladino (o mesmo da marreta do gato e do HUD)
+        internal static readonly Color32 Gold = new Color32(0xf2, 0xc9, 0x6b, 0xff);
+        internal static readonly Color32 ShieldLight = new Color32(0xff, 0xf4, 0xc2, 0xff);
+
+        // ---- para os efeitos (BossFx) e os testes
+        /// <summary>Pés do Koda (centro da base do corpo).</summary>
+        public Vector2 Feet => _body != null ? _body.position : (Vector2)transform.position;
+        /// <summary>Altura do chão da arena.</summary>
+        public float GroundY => _spawn.y;
+        /// <summary>Centro da área da marretada, à frente do corpo.</summary>
+        public Vector2 SwingPoint => settings != null ? SwingCenter() : Feet;
+        /// <summary>Onde o salto vai cair (vale a partir do fim da preparação).</summary>
+        public float LeapTargetX => _leapTargetX;
+        /// <summary>Tempo no estado atual e quanto ele dura (0 = sem fim marcado).</summary>
+        public float StateTime => _stateTime;
+        public float StateDuration => _stateDuration;
+
         public State Current { get; private set; } = State.Dormant;
         public int Health { get; private set; }
         public int MaxHealth => settings != null ? settings.MaxHealth : 1;
@@ -106,6 +123,7 @@ namespace SeteVidas.Enemies.Boss
             _box.enabled = false; // só sólido para golpes durante a luta
             _shield = BuildShield();
             if (GetComponent<SeteVidas.Audio.BossAudio>() == null) gameObject.AddComponent<SeteVidas.Audio.BossAudio>(); // sons (só observa)
+            if (GetComponent<BossFx>() == null) gameObject.AddComponent<BossFx>(); // efeitos dos golpes (só observa)
         }
 
         void OnEnable() { Active = this; SolidBodies.Register(this); }
@@ -369,14 +387,17 @@ namespace SeteVidas.Enemies.Boss
                 SeteVidas.Audio.Sfx.Play("escudo_dong", transform.position + Vector3.up * 1.5f);
                 if (Time.time >= _nextShieldPopup)
                 {
-                    _nextShieldPopup = Time.time + 0.4f;
-                    DamagePopup.Spawn(transform.position + Vector3.up * 2.6f, "escudo!", new Color32(0xff, 0xf0, 0xa8, 0xff));
+                    // a bolha pisca e solta faíscas claras onde o golpe bateu (sem o texto "escudo!")
+                    _nextShieldPopup = Time.time + 0.25f;
+                    float hitSide = info.Direction.x >= 0f ? -1f : 1f;
+                    Vector2 bubble = _body.position + new Vector2(hitSide * 1.6f, 1.6f);
+                    HitSparks.Burst(bubble, 6, ShieldLight, Gold, 2f, 5f, 0.2f, 10f, 0.2f);
+                    PixelRing.Spawn(bubble, 1, 5, 0.15f, ShieldLight);
                 }
                 return;
             }
             Health = Mathf.Max(0, Health - info.Amount);
             _blinkUntil = Time.time + 0.15f;
-            DamagePopup.Spawn(transform.position + Vector3.up * 2.4f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
             HitReact(info);
 
             if (Health <= 0)
@@ -395,7 +416,12 @@ namespace SeteVidas.Enemies.Boss
                 {
                     _sinceHeal = 0f;
                     Enter(State.Stagger, settings.StaggerTime);
-                    DamagePopup.Spawn(transform.position + Vector3.up * 3f, "interrompido!", new Color32(0xff, 0xd3, 0x4d, 0xff));
+                    // a cura se parte: a luz dourada explode para fora (sem o texto "interrompido!")
+                    Vector2 chest = _body.position + Vector2.up * (settings.BodySize.y * 0.6f);
+                    HitSparks.Burst(chest, 16, ShieldLight, Gold, 3f, 7f, 0.35f, 15f, 0.2f);
+                    PixelRing.Spawn(chest, 4, 26, 0.3f, ShieldLight, 2);
+                    PixelRing.Spawn(chest, 2, 16, 0.25f, Gold, 1, 0.08f);
+                    CameraShake.Shake(2f, 0.15f);
                 }
             }
         }
@@ -491,7 +517,8 @@ namespace SeteVidas.Enemies.Boss
 
             if (healAura != null && healAura.enabled)
             {
-                float pulse = 0.35f + 0.25f * Mathf.Sin(Time.time * 6f);
+                // pulsa em dois degraus (sem fade contínuo: o jeito do pixel art)
+                float pulse = ((int)(Time.time * 5f) & 1) == 0 ? 0.6f : 0.4f;
                 var c = healAura.color; c.a = pulse; healAura.color = c;
             }
             UpdateShield();
@@ -582,10 +609,11 @@ namespace SeteVidas.Enemies.Boss
             // cresce ao surgir, pulsa, e pisca branco quando um golpe bate nele
             float grow = Mathf.Clamp01(_stateTime / 0.15f);
             if (Current == State.Lightning) grow = 1f;
-            float s = Mathf.Lerp(0.6f, 1f, grow) * (1f + 0.03f * Mathf.Sin(Time.time * 9f));
+            // cresce em três degraus e fica no tamanho exato do desenho (sem escala quebrada no pixel)
+            float s = grow < 0.34f ? 0.6f : grow < 0.67f ? 0.8f : 1f;
             _shield.transform.localScale = new Vector3(s, s, 1f);
             bool flash = Time.time < _shieldFlashUntil;
-            float a = flash ? 1f : 0.7f + 0.2f * Mathf.Sin(Time.time * 7f);
+            float a = flash ? 1f : ((int)(Time.time * 4f) & 1) == 0 ? 0.85f : 0.7f;
             _shield.color = flash ? new Color(1.4f, 1.4f, 1.4f, a) : new Color(1f, 1f, 1f, a);
         }
 

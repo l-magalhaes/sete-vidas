@@ -41,6 +41,7 @@ namespace SeteVidas.UI
         [SerializeField] GameObject seal;
 
         readonly TypewriterText _typer = new TypewriterText();
+        PromptRow _hintRow;
         int _index = -1;
         int _baseFontSize;
         bool _finished;
@@ -53,6 +54,14 @@ namespace SeteVidas.UI
         {
             Time.timeScale = 1f;
             if (body != null) _baseFontSize = body.fontSize;
+            // "continuar · pular" com os botões do aparelho em uso (no lugar do texto "E / Enter: continuar · Esc: pular")
+            if (hint != null)
+            {
+                _hintRow = PromptRow.Create(hint.rectTransform, "Botões", hint.font, hint.fontSize, hint.color,
+                    new Vector2(0f, 0f), hint.rectTransform.rect.width);
+                _hintRow.Set(new PromptRow.Item(GameAction.Confirm, "continuar"), new PromptRow.Item(GameAction.Skip, "pular"));
+                hint.text = "";
+            }
             StartMusic();
             if (contract == null || contract.Lines.Count == 0) { Finish(); return; }
             Show(0);
@@ -66,7 +75,7 @@ namespace SeteVidas.UI
             if (SkipPressed()) { Finish(); return; }
 
             if (_typer.Tick(Time.unscaledDeltaTime, charsPerSecond) > 0 && body != null) body.text = _typer.VisibleText;
-            if (hint != null) hint.enabled = _typer.IsComplete;
+            if (_hintRow != null) _hintRow.gameObject.SetActive(_typer.IsComplete);
             if (AdvancePressed()) Advance();
         }
 

@@ -41,7 +41,7 @@ namespace SeteVidas.Classes
         void OnChanged(ClassDefinition previous, ClassDefinition next)
         {
             if (next == null) return;
-            DamagePopup.Spawn(transform.position + Vector3.up * 2f, next.DisplayName, next.ThemeColor);
+            PixelPopup.Spawn(transform.position + Vector3.up * 2f, next.DisplayName, next.ThemeColor);
             string id = next.Class == CharacterClass.Paladin ? "classe_paladino" : "classe_ladino"; // as outras classes: VS
             if (SeteVidas.Audio.Sfx.Has(id)) SeteVidas.Audio.Sfx.Play(id);
             else _audio.PlayOneShot(_switchClip, volume);

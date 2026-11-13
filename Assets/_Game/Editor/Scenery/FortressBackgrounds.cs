@@ -49,41 +49,50 @@ namespace SeteVidas.EditorTools
         /// <summary>O conjunto em que a cena começa (o gato nasce no alto da montanha).</summary>
         public const string Start = "A";
 
+        /// <summary>Aetherion, a torre dos magos corrompida (marco distante; os efeitos ficam no AetherionFx).</summary>
+        public const string AetherionId = "bg_ext_aetherion", AetherionNightId = "bg_ext_aetherion_noite";
+        /// <summary>Atrás da cordilheira (-90) e na frente do céu (-100 e -99).</summary>
+        public const int AetherionOrder = -95;
+
         public static List<Set> Sets()
         {
             var s = new List<Set>();
             // A. Alto da montanha (área 1): pôr do sol, sol tocando o horizonte. Câmera de referência (2, 64).
+            // Sem a Cidadela ao longe (pedido do usuário, 12/11/2026: daqui ela já está perto, só falta cair): no lugar,
+            // Aetherion, a torre dos magos corrompida, à direita da tela (a área final do jogo).
             Add(s, "A", "Alto da montanha",
                 L("bg_ceu_por_do_sol", 0, 0),
-                L("bg_ext_cordilheira_a", -139.7f, 50.7f),      // a Cidadela pequena à direita da tela
+                Lo(AetherionId, 152f, 68.2f, 0, 0, AetherionOrder),
+                L("bg_ext_cordilheira", -139.7f, 50.7f),
                 L("bg_ext_floresta_vale", 2f, 45.7f));
             // V. Vale, muralhas e galeria (áreas 2 a 5): UM conjunto só para todo o exterior de baixo (a galeria vê esse
             // mesmo exterior pela entrada). Nada troca com a altura: o céu do crepúsculo vira a borda do sol aos poucos
-            // (câmera de y 10 a 40) e a paralaxe vertical baixa o horizonte. A montanha do início fica bem à esquerda
-            // (atrás do penhasco de verdade) e sai da tela conforme o gato se afasta; a Cidadela grande à direita.
+            // (câmera de y 10 a 40) e a paralaxe vertical baixa o horizonte. A Cidadela grande à direita. (A montanha do
+            // início saiu, pedido do usuário de 12/11/2026: no lugar do penhasco escuro fica a faixa uniforme da floresta.)
             // Câmera de referência (60, 6). (Revisão: com conjuntos separados para trilha, pátio e muralha, subir poucos
             // tiles trocava o ambiente inteiro.)
             Add(s, "V", "Vale, muralhas e galeria",
                 L("bg_ceu_crepusculo", 0, 0),
                 Lb("bg_ceu_borda_do_sol", 10f, 40f),
                 L("bg_ext_cordilheira", 60f, 2.7f),
-                Lo("bg_ext_montanha_inicio", 10f, 10f, 0.15f, 0.15f, -88),     // fica para trás aos poucos conforme o gato anda
                 L("bg_cid_fachada_perto", 106f, 3f),
                 Lo("bg_ext_morros_pinheiros", 60f, -9f, 0.35f, 0.4f, -70));   // borda da floresta, na frente da base do castelo
             // F. Andar 72 (salão, armadilhas, torres): meio sol, horizonte baixo, mar de copas embaixo.
             Add(s, "F", "Interior alto",
                 L("bg_ceu_meio_sol", 0, 0),
+                Lo(AetherionId, 308f, 72.5f, 0, 0, AetherionOrder),
                 L("bg_ext_cordilheira", 170f, 55f),
                 L("bg_ext_copas_de_cima", 170f, 51.7f));       // o topo das copas fica abaixo do horizonte
-            // G. Topo (câmara): o último raio; olhando para trás, a montanha do início pequena à esquerda.
+            // G. Topo (câmara): o último raio e Aetherion ao longe (a montanha do início saiu, pedido do usuário).
             Add(s, "G", "Topo",
                 L("bg_ceu_ultimo_raio", 0, 0),
+                Lo(AetherionId, 293f, 101.5f, 0, 0, AetherionOrder),
                 L("bg_ext_cordilheira", 150f, 84f),
-                Lo("bg_ext_montanha_inicio_longe", 58.3f, 89f, 0, 0, -88),
                 L("bg_ext_copas_de_cima", 150f, 81.7f));
             // H. Noite e saída (área 10, depois da maldição): lua, cordilheira escura e Miaravéu na estrada.
             Add(s, "H", "Noite e saída",
                 L("bg_ceu_noite", 0, 0),
+                Lo(AetherionNightId, 63f, 22.5f, 0, 0, AetherionOrder),    // à esquerda: Miaravéu fica à direita
                 L("bg_ext_cordilheira_noite", 240f, 5f),
                 L("bg_mia_telhados_horizonte", 230f, 1.7f));
             return s;

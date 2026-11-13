@@ -32,6 +32,7 @@ namespace SeteVidas.EditorTools
         const string ThemeMusic = "Assets/_Game/Audio/Music/mus_tema_principal.wav";
         const string MountainsArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_cordilheira_a.png";
         const string ForestArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_floresta_vale.png";
+        const string AetherionMenuArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/Aetherion/bg_ext_aetherion_menu.png";
 
         [MenuItem("Tools/Sete Vidas/12. Tela inicial (Novo jogo / Continuar)", priority = 48)]
         public static void CreateMainMenu()
@@ -84,8 +85,20 @@ namespace SeteVidas.EditorTools
 
             // Fundo vivo: céu do pôr do sol, a cordilheira com a Cidadela pequena e a floresta do vale, andando devagar
             Img(root, "Céu", AssetDatabase.LoadAssetAtPath<Sprite>(SkyArt), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(480f, 270f)).raycastTarget = false;
+            // Aetherion, a torre dos magos corrompida, pequena no horizonte atrás da cordilheira: a área final do jogo
+            // (pedido do usuário, 12/11/2026). Fica parada: mais longe que as montanhas, que andam devagar.
+            var towerSprite = AssetDatabase.LoadAssetAtPath<Sprite>(AetherionMenuArt);
+            if (towerSprite != null)
+            {
+                var tower = Img(root, "Aetherion ao longe", towerSprite, new Vector2(0f, 0f), new Vector2(400f, 125f),
+                    new Vector2(towerSprite.rect.width, towerSprite.rect.height));
+                tower.raycastTarget = false;
+                tower.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                FortressSetup.AddAetherionFx(tower.gameObject, false, "bg_ext_aetherion_menu", 0.5f);
+            }
+            else Debug.LogWarning("[Sete Vidas] Falta a arte de Aetherion (rode Tools/EnvironmentSprites/gerar.ps1)");
             // a mesma vista do alto da montanha (conjunto A da fase): a Cidadela em silhueta na frente do sol poente
-            var below = Img(root, "Base da cordilheira", null, new Vector2(0f, 0f), Vector2.zero, new Vector2(480f, 4f));
+            var below =Img(root, "Base da cordilheira", null, new Vector2(0f, 0f), Vector2.zero, new Vector2(480f, 4f));
             below.color = new Color32(0x3a, 0x22, 0x47, 0xff);   // o preenchimento abaixo da camada (preencher_abaixo)
             below.raycastTarget = false;
             below.rectTransform.pivot = Vector2.zero;
@@ -117,12 +130,10 @@ namespace SeteVidas.EditorTools
             // Botões em pergaminho, à direita
             const float bx = 142f, bw = 116f;
             var cont = MakeButton(root, "Continuar", new Vector2(bx, 8f), bw);
-            var info = Label(root, "Resumo do save", "", 8, Light, new Vector2(0.5f, 0.5f), new Vector2(bx, -7f), new Vector2(240f, 10f));
-            info.gameObject.AddComponent<Shadow>().effectColor = new Color32(0x1a, 0x10, 0x20, 0xff);
-            var newGame = MakeButton(root, "Novo jogo", new Vector2(bx, -24f), bw);
-            var options = MakeButton(root, "Dicas: ligadas", new Vector2(bx, -48f), bw);
-            var test = MakeButton(root, "Área de testes", new Vector2(bx, -72f), bw);
-            var quit = MakeButton(root, "Sair", new Vector2(bx, -96f), bw);
+            var newGame = MakeButton(root, "Novo jogo", new Vector2(bx, -16f), bw);   // sem o resumo do save embaixo do Continuar (pedido do usuário)
+            var options = MakeButton(root, "Dicas: ligadas", new Vector2(bx, -40f), bw);
+            var test = MakeButton(root, "Área de testes", new Vector2(bx, -64f), bw);
+            var quit = MakeButton(root, "Sair", new Vector2(bx, -88f), bw);
             var cursor = Img(root, "Patinha", PawSprite(), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(7f, 7f));
             cursor.raycastTarget = false;
 
@@ -153,7 +164,6 @@ namespace SeteVidas.EditorTools
             so.FindProperty("quitButton").objectReferenceValue = quit;
             so.FindProperty("optionsButton").objectReferenceValue = options;
             so.FindProperty("optionsLabel").objectReferenceValue = options.GetComponentInChildren<Text>();
-            so.FindProperty("continueInfo").objectReferenceValue = info;
             so.FindProperty("confirmPanel").objectReferenceValue = panel.gameObject;
             so.FindProperty("confirmYes").objectReferenceValue = yes;
             so.FindProperty("confirmNo").objectReferenceValue = no;

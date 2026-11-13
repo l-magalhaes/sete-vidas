@@ -43,9 +43,11 @@ namespace SeteVidas.Enemies
         [SerializeField] TextMesh alertIcon;
         [Tooltip("Estado e suspeita (depuração)")]
         [SerializeField] TextMesh debugLabel;
-        [SerializeField] bool showDebugLabel = true;
+        [Tooltip("Estado, suspeita e vida em texto (só depuração; pedido do usuário: sem textos de vida no jogo)")]
+        [SerializeField] bool showDebugLabel;
 
         readonly AlertBrain _brain = new AlertBrain();
+        AlertIcon _alertPixel;
         Rigidbody2D _body;
         BoxCollider2D _box;
         EnemyPerception _perception;
@@ -76,6 +78,24 @@ namespace SeteVidas.Enemies
         public AlertBrain Brain => _brain;
         public int Health => _health;
         public bool IsDead => _brain.State == AlertState.Dead;
+        /// <summary>O posto deste inimigo (onde nasce, para onde olha e a faixa da patrulha): o zumbi que o substitui depois do tomo usa o mesmo.</summary>
+        public Vector2 SpawnPoint => _body != null && _spawn != Vector2.zero ? _spawn : (Vector2)transform.position;
+        public int StartFacing => startFacing >= 0 ? 1 : -1;
+        /// <summary>Faixa da patrulha (min, max). Sem patrulha (atirador parado): os dois iguais à posição.</summary>
+        public Vector2 PatrolRange
+        {
+            get
+            {
+                float x = SpawnPoint.x;
+                if (patrolPoints == null || patrolPoints.Length == 0) return new Vector2(x, x);
+                float min = x, max = x;
+                foreach (float p in patrolPoints) { min = Mathf.Min(min, p); max = Mathf.Max(max, p); }
+                return new Vector2(min, max);
+            }
+        }
+
+        /// <summary>Morreu num golpe furtivo pelas costas (toca a morte silenciosa).</summary>
+        public bool WasStealthKilled { get; private set; }
         public bool IsAttacking => _attackPhase != AttackPhase.None;
         public bool IsWindingUp => _attackPhase == AttackPhase.Windup;
         /// <summary>Fase do golpe (ou do tiro: mirando, disparando, recarregando). Usada pelos sons.</summary>
@@ -558,7 +578,18 @@ namespace SeteVidas.Enemies
             _health = Mathf.Max(0, _health - info.Amount);
             _blinkUntil = Time.time + 0.2f;
             _hurtAt = Time.time;
-            DamagePopup.Spawn(transform.position + Vector3.up * 2.1f, DamagePopup.DamageLabel(info), DamagePopup.ColorFor(info.Angle));
+
+            // Abate furtivo (pedido do usuário): sem clarão nem faíscas e sem virar para o gato; o corpo trava e tomba
+            // para a frente ("death_stealth"), enquanto o gato toca "assassinate" (PlayerVisual).
+            WasStealthKilled = _health <= 0 && info.Angle == AttackAngle.StealthBack;
+            if (WasStealthKilled)
+            {
+                _blinkUntil = 0f;
+                HitSparks.Burst(_body.position + Vector2.up * (settings.BodySize.y * 0.6f), 4,
+                                new Color32(0x2b, 0x3a, 0x67, 0xff), new Color32(0x14, 0x0f, 0x18, 0xff), 1f, 2.5f, 0.3f, 10f, 0f);
+                Die();
+                return;
+            }
 
             // reação do corpo (melhoria 3): interrompe o ataque conforme o peso, recua, pisca branco, faíscas
             var weight = HitReactionRules.WeightOf(info.Type, info.Angle);
@@ -648,6 +679,7 @@ namespace SeteVidas.Enemies
         void Respawn()
         {
             _stunTimer = 0f;
+            WasStealthKilled = false;
             _health = settings.MaxHealth;
             _brain.Reset();
             _body.bodyType = RigidbodyType2D.Dynamic;
@@ -712,9 +744,9 @@ namespace SeteVidas.Enemies
 
             if (IsDead)
             {
-                var death = animations.Get("death");
+                var death = (WasStealthKilled ? animations.Get("death_stealth") : null) ?? animations.Get("death");
                 frame = death != null ? death.At(_deathTimer) : null;
-                CurrentClipName = "death";
+                CurrentClipName = death != null ? death.name : "death";
                 // deitado um instante, depois some
                 float lie = death != null ? death.Duration : 0f;
                 float fade = Mathf.Clamp01((_deathTimer - lie - 0.4f) / 0.4f);
@@ -764,19 +796,26 @@ namespace SeteVidas.Enemies
         {
             if (alertIcon != null)
             {
+                // o TextMesh do prefab só marca o lugar: o ícone em pixel art nasce ali na primeira vez
+                if (_alertPixel == null)
+                {
+                    alertIcon.gameObject.SetActive(false);
+                    _alertPixel = AlertIcon.Create(alertIcon.transform.parent, alertIcon.transform.localPosition);
+                }
                 switch (_brain.State)
                 {
                     case AlertState.Suspicious:
+                        float threshold = Mathf.Max(0.01f, settings.Alert.InvestigateThreshold);
+                        _alertPixel.Show(AlertIcon.Mark.Question, _brain.IsHunting, _brain.Suspicion / threshold);
+                        break;
                     case AlertState.Investigating:
-                        alertIcon.text = "?";
-                        alertIcon.color = _brain.IsHunting ? new Color32(0xff, 0x8a, 0x3b, 0xff) : new Color32(0xff, 0xd8, 0x4d, 0xff); // laranja: caçando
+                        _alertPixel.Show(AlertIcon.Mark.Question, _brain.IsHunting, 1f); // laranja: caçando
                         break;
                     case AlertState.Combat:
-                        alertIcon.text = "!";
-                        alertIcon.color = new Color32(0xff, 0x3b, 0x3b, 0xff);
+                        _alertPixel.Show(AlertIcon.Mark.Exclamation, false, 1f);
                         break;
                     default:
-                        alertIcon.text = "";
+                        _alertPixel.Show(AlertIcon.Mark.None, false, 0f);
                         break;
                 }
             }

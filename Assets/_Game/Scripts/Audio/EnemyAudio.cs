@@ -57,7 +57,8 @@ namespace SeteVidas.Audio
 
             if (_ai.IsDead)
             {
-                if (!_dead) Play("guarda_morte", VoicePitch);
+                // abate furtivo: um gemido abafado, baixo (o golpe silencioso não grita para a fortaleza toda)
+                if (!_dead) Sfx.Play("guarda_morte", (Vector2)transform.position + Vector2.up, _ai.WasStealthKilled ? 0.35f : 1f, VoicePitch * (_ai.WasStealthKilled ? 0.85f : 1f));
                 _dead = true;
                 return;
             }

@@ -46,9 +46,9 @@ namespace SeteVidas.Audio
         static readonly Dictionary<string, SfxSettings> s_table = new Dictionary<string, SfxSettings>
         {
             // ---------------- gato: corpo (fundo; sempre no centro da tela, não espacial)
-            { "gato_passo", new SfxSettings(0.13f, 0f, 2, 0.06f) },               // correndo (foley gravado)
-            { "gato_passo_lento", new SfxSettings(0.1f, 0f, 2, 0.06f) },          // andando devagar (foley)
-            { "gato_passo_agachado", new SfxSettings(0.035f, 0f, 2, 0.08f) },   // agachar = ruído 0: quase mudo
+            { "gato_passo", new SfxSettings(0.07f, 0f, 2, 0.06f) },               // correndo (foley gravado; era 0,13: pedido do usuário)
+            { "gato_passo_lento", new SfxSettings(0.05f, 0f, 2, 0.06f) },          // andando devagar (foley)
+            { "gato_passo_agachado", new SfxSettings(0.02f, 0f, 2, 0.08f) },   // agachar = ruído 0: quase mudo
             { "gato_pulo", new SfxSettings(0.12f, 0f, 1) },
             { "gato_aterrissa", new SfxSettings(0.16f, 0f, 1) },
             { "gato_aterrissa_pesada", new SfxSettings(0.4f, 0f, 1) },           // faz barulho na regra: tem que se ouvir
@@ -65,7 +65,7 @@ namespace SeteVidas.Audio
             { "adaga_golpe", new SfxSettings(0.22f, 0f, 2) },
             { "adaga_golpe2", new SfxSettings(0.26f, 0f, 2) },
             { "acerto", new SfxSettings(0.42f, 0f, 3) },
-            { "acerto_costas", new SfxSettings(0.52f, 0f, 3) },
+            { "acerto_costas", new SfxSettings(0.48f, 0f, 3) },
             { "acerto_furtivo", new SfxSettings(0.8f, 0f, 2, 0.02f, duck: 0.5f) },   // a recompensa da furtividade
             { "adaga_tink", new SfxSettings(0.3f, 0f, 2) },
             { "estocada", new SfxSettings(0.24f, 0f, 1) },
@@ -104,6 +104,17 @@ namespace SeteVidas.Audio
             { "lanca_golpe", new SfxSettings(0.4f, 14f, 3) },
             { "guarda_dano", new SfxSettings(0.4f, 16f, 3) },
             { "guarda_morte", new SfxSettings(0.45f, 18f, 2) },
+            // ---------------- templário zumbi (depois do tomo): o arrasto avisa que ele está perto, mesmo fora da tela
+            { "zumbi_passo", new SfxSettings(0.2f, 12f, 3, 0.08f, 0.1f) },
+            { "zumbi_ocioso", new SfxSettings(0.22f, 11f, 2, 0.06f, 2.5f) },
+            { "zumbi_sente", new SfxSettings(0.62f, 18f, 2, 0.05f, 0.5f, duck: 0.8f) },  // o "!" do zumbi
+            { "zumbi_caca", new SfxSettings(0.36f, 14f, 2, 0.06f, 1f) },
+            { "zumbi_dano", new SfxSettings(0.4f, 16f, 3) },
+            { "zumbi_morte", new SfxSettings(0.45f, 18f, 2) },
+            // ---------------- veneno (são do gato: não espaciais, médios-agudos)
+            { "zumbi_toque", new SfxSettings(0.6f, 0f, 1, 0.04f, 0.25f) },
+            { "veneno_tique", new SfxSettings(0.45f, 0f, 1, 0.03f, 0.2f) },
+            { "veneno_passa", new SfxSettings(0.3f, 0f, 1, 0f) },
             { "besta_mira", new SfxSettings(0.38f, 18f, 3, 0f) },                    // telégrafo
             { "besta_trava", new SfxSettings(0.65f, 18f, 3, 0.02f) },                // hora de sair do lugar
             { "besta_disparo", new SfxSettings(0.45f, 18f, 3) },

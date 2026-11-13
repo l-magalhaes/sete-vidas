@@ -602,6 +602,38 @@ public static partial class LionSpriteGen
             With(cAtk, p => { p.FrontHand = new Point(17, 19); p.FrontItem = new Item("dagger", -15); }));
         Add("dagger_crouch_recovery", 0.1f, false, With(cAtk, p => { p.FrontHand = new Point(15, 19); p.FrontItem = new Item("dagger", -30); }));
 
+        // abate furtivo (pedido do usuário, 12/11/2026): no lugar da estrela branca, o gato encolhe com as duas adagas
+        // erguidas, dá um bote curto nas costas do guarda e crava as duas de cima para baixo (o quadro do golpe
+        // segura no congelamento), depois puxa as lâminas e volta à guarda. Tocado pelo PlayerVisual ao matar furtivo.
+        var pounce = With(stance, p => { p.TorsoV = "run"; p.HeadDx = 1; });
+        var stab = With(pounce, p =>
+        {
+            p.Px = 10; p.Py = 16; p.HeadDx = 2; p.BackFoot = new Point(5, 20); p.FrontFoot = new Point(15, 20);
+            p.FrontHand = new Point(20, 12); p.FrontItem = new Item("dagger", -70);
+            p.BackHand = new Point(19, 13); p.BackArmInFront = true; p.BackItem = new Item("dagger", -75);
+        });
+        Add("assassinate", 0.05f, false,
+            With(stance, p =>
+            {
+                p.Px = 6; p.Py = 17; p.HeadDy = 1; p.HeadDx = -1; p.BackFoot = new Point(4, 20); p.FrontFoot = new Point(11, 20);
+                p.FrontHand = new Point(8, 5); p.FrontItem = new Item("dagger", 60);
+                p.BackHand = new Point(6, 6); p.BackItem = new Item("dagger", 70);
+            }),
+            With(pounce, p =>
+            {
+                p.Px = 9; p.Py = 14; p.BackGround = false; p.FrontGround = false;
+                p.BackFoot = new Point(6, 18); p.FrontFoot = new Point(12, 19);
+                p.FrontHand = new Point(18, 7); p.FrontItem = new Item("dagger", -60);
+                p.BackHand = new Point(17, 8); p.BackArmInFront = true; p.BackItem = new Item("dagger", -65);
+            }),
+            stab, stab, stab,
+            With(stance, p =>
+            {
+                p.Px = 8; p.FrontHand = new Point(15, 13); p.FrontItem = new Item("dagger", -30);
+                p.BackHand = new Point(13, 13); p.BackArmInFront = true; p.BackItem = new Item("dagger", -40);
+            }),
+            With(stance, p => { p.FrontHand = new Point(14, 14); p.FrontItem = new Item("dagger", -45); }));
+
         // ---------------- marreta (Paladino): corpo + camada da marreta, mesmo canvas e pivot
         Add("hammer1_windup", 0.1f, false,
             With(stance, p => { p.Py = 17; p.FrontHand = new Point(14, 12); p.HammerGrip = new Point(14, 12); p.HammerAngle = 60; }),

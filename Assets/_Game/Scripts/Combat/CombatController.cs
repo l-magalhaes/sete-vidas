@@ -261,13 +261,16 @@ namespace SeteVidas.Combat
         public void Shockwave(float charge01)
         {
             float range = ChargeRules.Range(charge01, weapon.ShockwaveRange);
+            // o tremor cresce com a carga (de 70% a 130% do valor do Inspector)
+            float shakeK = Mathf.Lerp(0.7f, 1.3f, Mathf.Clamp01(charge01));
             Quake(range, ChargeRules.Damage(charge01, weapon.ShockwaveDamage), weapon.KnockdownTime,
-                weapon.ShockwaveNoiseRadius, weapon.ShockwaveShake.x, weapon.ShockwaveShake.y, 0.25f);
+                weapon.ShockwaveNoiseRadius, weapon.ShockwaveShake.x * shakeK, weapon.ShockwaveShake.y * shakeK, 0.25f,
+                0.4f + 0.6f * Mathf.Clamp01(charge01));
             ShockwaveReleased?.Invoke(charge01);
         }
 
         /// <summary>Tremor no chão em volta do gato: só pega quem está de pé no mesmo chão; não quebra parede rachada.</summary>
-        void Quake(float range, int damage, float knockdown, float noiseRadius, float shakePx, float shakeTime, float waveTime)
+        void Quake(float range, int damage, float knockdown, float noiseRadius, float shakePx, float shakeTime, float waveTime, float strength01)
         {
             Vector2 feet = _player.Body.position;
             _overlaps.Clear();
@@ -290,7 +293,7 @@ namespace SeteVidas.Combat
 
             NoiseSystem.Emit(feet, noiseRadius, 1f, gameObject, "terremoto");
             CameraShake.Shake(shakePx, shakeTime);
-            HitSparks.Wave(feet, range, waveTime);
+            QuakeFx.Spawn(feet, range, waveTime, strength01); // rachadura, placas saltando, pedrinhas e a poeira
             Hitstop.Trigger(0.08f);
         }
 
@@ -442,7 +445,7 @@ namespace SeteVidas.Combat
                 LayerMask.GetMask(GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable));
             var platform = under != null ? under.GetComponentInParent<SeteVidas.World.Traps.CrumblingPlatform>() : null;
             if (platform != null && !platform.IsFallen) platform.Fall();
-            Quake(weapon.DropImpactRange, weapon.DropImpactDamage, 0f, weapon.ShockwaveNoiseRadius * 0.6f, 2f, 0.15f, 0.12f);
+            Quake(weapon.DropImpactRange, weapon.DropImpactDamage, 0f, weapon.ShockwaveNoiseRadius * 0.6f, 2f, 0.15f, 0.12f, 0.15f);
             EnterDownRecovery(weapon.DropRecovery);
         }
 

@@ -211,6 +211,27 @@ namespace SeteVidas.EditorTools
 
         // --------------------------------------------------------------- objetos
 
+        /// <summary>Posto de um Templário Zumbi que só aparece depois do tomo (Name, X, Y, Facing, A..B = faixa).</summary>
+        public class ZombiePost
+        {
+            public string Name;
+            public float X, Y, A, B;
+            public int Facing;
+        }
+
+        /// <summary>
+        /// Zumbis extras depois do tomo (pedido do usuário, 12/11/2026), além dos que tomam o lugar de cada templário:
+        /// 2 na passagem dos fundos (depois da parede do cofre do guardião, antes do poço) e 1 lá embaixo, na estrada.
+        /// </summary>
+        public static List<ZombiePost> ZombiePosts()
+        {
+            var z = new List<ZombiePost>();
+            z.Add(new ZombiePost { Name = "Zumbi do cofre do guardião", X = 205f, Y = SealFloor, Facing = -1, A = 202f, B = 208f });
+            z.Add(new ZombiePost { Name = "Zumbi da beira do poço", X = 213f, Y = SealFloor, Facing = 1, A = 209f, B = 216.5f });
+            z.Add(new ZombiePost { Name = "Zumbi da estrada", X = 236f, Y = 0f, Facing = -1, A = 228f, B = 243f });
+            return z;
+        }
+
         public static List<Obj> Objects()
         {
             var o = new List<Obj>();

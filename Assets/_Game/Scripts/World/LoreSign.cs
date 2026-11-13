@@ -32,6 +32,8 @@ namespace SeteVidas.World
         public bool IsRead => SaveManager.Data != null && SaveManager.Data.HasFlag(ReadPrefix + Key);
 
         void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); }
+
+        void Start() => SeteVidas.UI.WorldPrompt.Upgrade(prompt); // o botão do aparelho em uso no lugar de "E: ..."
         void OnDisable() => s_all.Remove(this);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

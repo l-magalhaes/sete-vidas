@@ -72,7 +72,8 @@ namespace SeteVidas.UI
         {
             bool has = SaveManager.HasSaveFile;
             if (continueButton != null) continueButton.interactable = has;
-            if (continueInfo != null) continueInfo.text = has ? SaveSummary.Describe(SaveManager.Data) : "nenhum jogo salvo";
+            // o resumo do save embaixo do Continuar saiu (pedido do usuário, 12/11/2026): some também nas cenas antigas
+            if (continueInfo != null) continueInfo.gameObject.SetActive(false);
             if (optionsLabel != null) optionsLabel.text = "Dicas: " + (TutorialScroll.HintsDisabled ? "desligadas" : "ligadas");
         }
 
