@@ -372,6 +372,9 @@ MonoBehaviour:
     m_Bits: 7168
   probeDepth: 0.06
   sideInset: 0.02
+  platformLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &7733349154204193517
 MonoBehaviour:
   m_ObjectHideFlags: 0

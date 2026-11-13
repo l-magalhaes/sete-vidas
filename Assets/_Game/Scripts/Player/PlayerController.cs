@@ -174,6 +174,15 @@ namespace SeteVidas.Player
             if (grounded && Mathf.Abs(v.x) > 0.01f && _ground.SteepAhead(v.x > 0f ? 1 : -1, settings.ColliderWidth))
                 v.x = 0f;
 
+            // Baixo + pulo em cima de um galho de mão única: desce por ele em vez de pular (Floresta)
+            if (grounded && SeteVidas.World.PlatformRules.WantsDropThrough(_ground.OnPlatformOnly, _timers.CanJump, input.CrouchHeld, input.MoveY)
+                && _ground.DropThroughPlatforms())
+            {
+                _timers.Consume();
+                grounded = false;
+                v.y = Mathf.Min(v.y, -1f); // começa a cair já neste passo
+            }
+
             // Pular (agachado, só se houver espaço para ficar de pé)
             bool jumped = false;
             if (_timers.CanJump && (!IsCrouching || TryStandUp()))

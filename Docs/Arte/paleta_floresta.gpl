@@ -1,0 +1,46 @@
+GIMP Palette
+Name: Sete Vidas - Floresta Silenciosa
+Columns: 8
+#
+200  58  58	Reservadas (jogo) / Armadilha
+ 91  42 110	Reservadas (jogo) / Praga (roxo)
+143 209  79	Reservadas (jogo) / Praga (verde-ácido)
+ 95 211 199	Reservadas (floresta) / Pogo válido (turquesa)
+185 245 236	Reservadas (floresta) / Pogo válido (brilho)
+255 211  77	Reservadas (floresta) / Rachadura do tronco (luz)
+138  98  30	Reservadas (floresta) / Rachadura do tronco (sombra)
+ 69 102  51	Reservadas (jogo) / Matinho (esconderijo)
+ 12  14  32	Céu / Índigo profundo
+ 22  26  56	Céu / Azul-noturno
+ 38  44  88	Céu / Índigo médio
+ 64  74 128	Céu / Horizonte
+226 232 240	Céu / Lua
+150 168 200	Céu / Halo da lua
+ 18  30  30	Vegetação / Verde-escuro (fundo)
+ 30  48  40	Vegetação / Verde-acinzentado escuro
+ 46  72  52	Vegetação / Folha média
+ 74 104  70	Vegetação / Folha clara
+108 134  96	Vegetação / Folha iluminada pelo luar
+ 26  20  18	Troncos / Marrom profundo (contorno)
+ 52  38  30	Troncos / Casca escura
+ 82  62  46	Troncos / Casca média
+118  94  72	Troncos / Casca clara
+ 70  72  78	Troncos / Raiz cinza
+ 60  64  66	Primatas / Concreto escuro
+ 98 104 104	Primatas / Concreto claro
+ 54  80  92	Primatas / Vidro
+ 98  62  44	Primatas / Ferrugem
+ 34  34  38	Primatas / Estrada negra
+ 88 196 232	Magia natural / Azul-claro
+ 52 140 160	Magia natural / Fungo bioluminescente
+200 240 160	Magia natural / Vagalume
+ 48  20  56	Praga / Roxo profundo
+ 10   8  12	Praga / Preto
+ 92 120  40	Praga / Verde doentio
+232 166  64	Refúgios / Âmbar
+255 214 130	Refúgios / Dourado suave
+120 112 100	Ponte / Pedra
+164 154 136	Ponte / Pedra clara
+150 110  64	Ponte nova / Madeira
+196 152  96	Ponte nova / Madeira clara
+176 156 112	Ponte nova / Corda

@@ -6,6 +6,7 @@ namespace SeteVidas.World.Traps
     /// Fileira de espinhos no chão (largura em tiles). Tocar tira 1 hit e o gato volta ao último chão seguro
     /// onde pisou (sem recuo). Se o hit for o último, é morte normal (volta ao santuário).
     /// </summary>
+    [SelectionBase] // clicar no desenho seleciona o objeto inteiro (desenho e colisão andam juntos)
     public class SpikeStrip : TrapBase
     {
         [Tooltip("Largura em tiles (o transform fica no centro da base)")]

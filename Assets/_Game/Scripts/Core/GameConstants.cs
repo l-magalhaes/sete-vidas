@@ -26,11 +26,13 @@ namespace SeteVidas.Core
             public const string Breakable = "Breakable";
             public const string Hazard = "Hazard";
             public const string Interactable = "Interactable";
+            /// <summary>Plataforma de mão única (galhos da Floresta): atravessa por baixo, desce com baixo + pulo.</summary>
+            public const string Platform = "Platform";
 
-            /// <summary>Ordem e índices (8 a 14) usados pelo setup automático.</summary>
+            /// <summary>Ordem e índices (8 a 15) usados pelo setup automático.</summary>
             public static readonly string[] All =
             {
-                Player, Enemy, Ground, Climbable, Breakable, Hazard, Interactable
+                Player, Enemy, Ground, Climbable, Breakable, Hazard, Interactable, Platform
             };
 
             public const int FirstIndex = 8;

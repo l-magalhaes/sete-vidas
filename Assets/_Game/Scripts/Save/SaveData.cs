@@ -31,6 +31,8 @@ namespace SeteVidas.Save
         public const int MaxHealCharges = 3;
         /// <summary>Marcas do mundo: paredes quebradas, missões, diálogos vistos.</summary>
         public List<string> flags = new List<string>();
+        /// <summary>Santuários já visitados, de todas as cenas: os destinos da viagem rápida (Floresta, 13/11/2026).</summary>
+        public List<SanctuaryVisit> visitedSanctuaries = new List<SanctuaryVisit>();
 
         public static SaveData NewGame() => new SaveData();
 
@@ -42,5 +44,16 @@ namespace SeteVidas.Save
         }
 
         public bool IsUnlocked(CharacterClass c) => unlockedClasses.Contains(c.ToString());
+    }
+
+    /// <summary>Um santuário visitado: o que a viagem rápida precisa saber sem carregar a cena dele.</summary>
+    [Serializable]
+    public class SanctuaryVisit
+    {
+        public string id = "";
+        public string name = "";
+        public string scene = "";
+        /// <summary>Zona de viagem ("fortaleza", "floresta"): zonas diferentes só se ligam quando o caminho existe (ponte).</summary>
+        public string zone = "";
     }
 }

@@ -280,6 +280,7 @@ MonoBehaviour:
   wallId: parede
   maxHealth: 8
   requiredType: 1
+  material: 0
   spriteRenderer: {fileID: 2512163454685524733}
   intactSprite: {fileID: 21300000, guid: 787c462f33f2e2f7d28c6be716c3f85c, type: 3}
   crackedSprite: {fileID: 21300000, guid: 9694138d79f415e3e7976e1bac961e89, type: 3}

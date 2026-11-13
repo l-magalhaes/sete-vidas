@@ -534,6 +534,20 @@ namespace SeteVidas.UI
                 Icon = IconSprite(InventoryIcon.Coin, false), Name = "Moedas", NameColor = Gold, Badge = coins.ToString(),
                 Body = InventoryTexts.Coins, Footer = coins + (coins == 1 ? " moeda" : " moedas"),
             });
+
+            // Madeira de Reconstrução: aparece a partir da primeira tábua (Floresta Silenciosa)
+            int wood = SeteVidas.Progression.ReconstructionWood.Count(data);
+            if (wood > 0)
+            {
+                bool built = SeteVidas.Progression.ReconstructionWood.BridgeBuilt(data);
+                _entries.Add(new Entry
+                {
+                    Icon = IconSprite(InventoryIcon.Wood, false), Name = SeteVidas.Progression.ReconstructionWood.DisplayName,
+                    NameColor = Gold, Badge = wood + "/" + SeteVidas.Progression.ReconstructionWood.Total,
+                    Body = built ? InventoryTexts.WoodDone : InventoryTexts.Wood,
+                    Footer = built ? "A ponte está de pé" : SeteVidas.Progression.ReconstructionWood.Label(data),
+                });
+            }
         }
 
         /// <summary>
@@ -1013,20 +1027,25 @@ namespace SeteVidas.UI
         };
 
         public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
+        public const string Wood = "Tábuas firmes, secas, de lei. Escondidas em baús pela floresta. A Tobi reconstrói a ponte com doze delas. E vinte moedas.";
+        public const string WoodDone = "Viraram ponte. Menos uma, que a Tobi guardou no bolso. Taxa de material.";
         public const string HealScroll = "A magia do Koda: segure {curar} para devolver 1 coração. Os lacres voltam a acender no santuário.";
 
         public struct ChapterText { public int Number; public string Title, Scene; }
 
-        /// <summary>Capítulos do Diário (por cena). Por enquanto só o primeiro.</summary>
+        /// <summary>Capítulos do Diário (por cena). Cena terminada em "_" vale como prefixo (Forest_A_Roots, Forest_B_Thorns...).</summary>
         public static readonly ChapterText[] Chapters =
         {
             new ChapterText { Number = 1, Title = "A Cidadela", Scene = "Fortress_MVP" },
+            new ChapterText { Number = 2, Title = "A Floresta Silenciosa", Scene = "Forest_" }, // todas as cenas Forest_*
         };
 
         /// <summary>O capítulo de uma cena (cena desconhecida, como a área de testes: o primeiro).</summary>
         public static int ChapterOf(string scene)
         {
-            foreach (var c in Chapters) if (c.Scene == scene) return c.Number;
+            if (scene == null) return Chapters[0].Number;
+            foreach (var c in Chapters)
+                if (c.Scene == scene || (c.Scene.EndsWith("_") && scene.StartsWith(c.Scene, System.StringComparison.Ordinal))) return c.Number;
             return Chapters[0].Number;
         }
 

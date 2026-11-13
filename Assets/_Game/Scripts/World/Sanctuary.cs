@@ -13,6 +13,7 @@ namespace SeteVidas.World
     /// Santuário felino (checkpoint). Com o gato perto, Interagir (E) descansa: vida cheia, salva o jogo,
     /// vira o ponto de volta ao morrer e os inimigos reaparecem. Encostar sem apertar E não salva.
     /// </summary>
+    [SelectionBase] // clicar no desenho seleciona o objeto inteiro (desenho e colisão andam juntos)
     [RequireComponent(typeof(BoxCollider2D))]
     public class Sanctuary : MonoBehaviour
     {
@@ -24,6 +25,8 @@ namespace SeteVidas.World
         [SerializeField] string displayName = "Santuário";
         [Tooltip("Onde o gato reaparece, relativo ao santuário (tiles)")]
         [SerializeField] Vector2 spawnOffset = Vector2.zero;
+        [Tooltip("Zona da viagem rápida (vazio = pela cena: Forest_* = floresta, o resto = fortaleza)")]
+        [SerializeField] string travelZone = "";
 
         [Header("Visual")]
         [SerializeField] SpriteRenderer spriteRenderer;
@@ -56,6 +59,9 @@ namespace SeteVidas.World
         public Vector2 SandboxPoint => (Vector2)transform.position + sandboxOffset;
 
         public string Id => sanctuaryId;
+        public string DisplayName => displayName;
+        /// <summary>Zona da viagem rápida (ver <see cref="TravelRules"/>).</summary>
+        public string Zone => TravelRules.Zone(gameObject.scene.name, travelZone);
         public Vector2 SpawnPoint => (Vector2)transform.position + spawnOffset;
         /// <summary>É o último santuário onde o gato descansou.</summary>
         public bool IsActiveCheckpoint => Application.isPlaying && SaveManager.Data.lastSanctuaryId == sanctuaryId;
@@ -78,6 +84,7 @@ namespace SeteVidas.World
         {
             var health = other.GetComponentInParent<PlayerHealth>();
             if (health != null) _playerInRange = health;
+            if (health != null) RecordVisit(); // passou por aqui: vira destino da viagem rápida
         }
 
         void OnTriggerExit2D(Collider2D other)
@@ -96,7 +103,7 @@ namespace SeteVidas.World
 
             if (!canRest) return;
             var input = _playerInRange.GetComponent<PlayerInputReader>();
-            if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame) BeginRest(_playerInRange);
+            if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame) Interact(_playerInRange);
         }
 
         Sprite CurrentSprite()
@@ -104,6 +111,28 @@ namespace SeteVidas.World
             if (!IsActiveCheckpoint) return unlitSprite;
             if (litFrames != null && litFrames.Length > 0) return litFrames[(int)(Time.time * litFps) % litFrames.Length];
             return litSprite != null ? litSprite : unlitSprite;
+        }
+
+        /// <summary>Marca este santuário como destino da viagem rápida (vai para o disco no próximo salvamento).</summary>
+        public void RecordVisit()
+        {
+            if (!Application.isPlaying || SaveManager.Data == null) return;
+            TravelRules.RecordVisit(SaveManager.Data, sanctuaryId, displayName, gameObject.scene.name, Zone);
+        }
+
+        /// <summary>
+        /// Apertou E: com outros santuários para onde viajar, abre o menu (descansar ou viajar); senão, descansa direto.
+        /// Envenenado não viaja (Docs/Design/floresta-mecanicas.md §5).
+        /// </summary>
+        public void Interact(PlayerHealth health)
+        {
+            if (health == null || health.IsDead || _resting) return;
+            RecordVisit();
+            var destinations = health.IsPoisoned || SceneTravel.IsTraveling
+                ? new List<SanctuaryVisit>()
+                : TravelRules.Destinations(SaveManager.Data, sanctuaryId, gameObject.scene.name, Zone);
+            if (destinations.Count == 0) { BeginRest(health); return; }
+            SeteVidas.UI.TravelMenu.Open(this, health, destinations);
         }
 
         /// <summary>Começa o descanso com cena (o mesmo que apertar E perto do santuário).</summary>

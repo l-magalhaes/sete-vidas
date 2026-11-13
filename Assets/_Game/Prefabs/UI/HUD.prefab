@@ -1021,6 +1021,8 @@ MonoBehaviour:
   title: {fileID: 4483514075680082350}
   bossTitle: Koda, o Dourado
   trailSpeed: 0.5
+  pixelStyle: 1
+  glintEvery: 3
 --- !u!114 &8475858061822963212
 MonoBehaviour:
   m_ObjectHideFlags: 0

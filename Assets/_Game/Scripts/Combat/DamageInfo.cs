@@ -48,4 +48,14 @@ namespace SeteVidas.Combat
         /// <summary>Já está em combate: não pode ser surpreendido (sem bônus furtivo).</summary>
         bool InCombat { get; }
     }
+
+    /// <summary>
+    /// Alvo que só aceita o quique da estocada para baixo (pogo) em certos momentos (Floresta, Docs/Design/floresta-mecanicas.md §1):
+    /// a Planta Carnívora no recuo, o Galho Seco vulnerável, a Serpente com o bote esticado, a cabeça da Isyathy nas janelas.
+    /// Fora da janela, a estocada acerta (se o alvo tiver vida), mas o gato não quica. Sem esta interface, todo alvo quica.
+    /// </summary>
+    public interface IPogoTarget
+    {
+        bool AcceptsPogo { get; }
+    }
 }

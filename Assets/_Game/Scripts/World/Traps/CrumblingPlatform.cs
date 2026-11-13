@@ -7,6 +7,7 @@ namespace SeteVidas.World.Traps
     /// Plataforma que desmorona: o gato pisa, ela treme um instante e cai; volta depois de alguns segundos.
     /// Nunca conta como "chão seguro" (os espinhos não devolvem o gato para cima dela).
     /// </summary>
+    [SelectionBase] // clicar no desenho seleciona o objeto inteiro (desenho e colisão andam juntos)
     [RequireComponent(typeof(BoxCollider2D))]
     public class CrumblingPlatform : MonoBehaviour
     {
@@ -17,6 +18,8 @@ namespace SeteVidas.World.Traps
         [SerializeField] SpriteRenderer spriteRenderer;
         [SerializeField] Sprite intact;
         [SerializeField] Sprite cracked;
+        [Tooltip("Galho podre da Floresta: o Lion reclama quando quebra embaixo dele (LionBarks)")]
+        [SerializeField] bool isBranch;
 
         BoxCollider2D _solid;
         Vector3 _spriteRest;
@@ -62,6 +65,7 @@ namespace SeteVidas.World.Traps
         public void Fall()
         {
             if (!IsFallen) SeteVidas.Audio.Sfx.Play("plataforma_cai", transform.position);
+            if (!IsFallen && isBranch && PlayerOnTop() && SeteVidas.Player.LionBarks.Active != null) SeteVidas.Player.LionBarks.Active.OnBranchBroke();
             _timer = -1f;
             _fallenAt = Time.time;
             _solid.enabled = false;

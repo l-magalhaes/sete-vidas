@@ -293,6 +293,7 @@ MonoBehaviour:
   sanctuaryId: santuario
   displayName: "Santu\xE1rio"
   spawnOffset: {x: 0, y: 0}
+  travelZone: 
   spriteRenderer: {fileID: 2501365467163358356}
   unlitSprite: {fileID: 21300000, guid: 49badc234749adc9dbfc140186b882b7, type: 3}
   litSprite: {fileID: 21300000, guid: 4b18b5a3774be132ec247bbe1ea36705, type: 3}

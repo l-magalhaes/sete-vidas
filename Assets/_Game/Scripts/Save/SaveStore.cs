@@ -99,6 +99,8 @@ namespace SeteVidas.Save
             data.lastSanctuaryName ??= "";
             data.scene ??= "";
             data.flags ??= new List<string>();
+            data.visitedSanctuaries ??= new List<SanctuaryVisit>();
+            data.visitedSanctuaries.RemoveAll(v => v == null || string.IsNullOrEmpty(v.id) || string.IsNullOrEmpty(v.scene));
         }
     }
 }

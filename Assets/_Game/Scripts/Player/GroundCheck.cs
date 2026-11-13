@@ -1,4 +1,5 @@
 using SeteVidas.Core;
+using SeteVidas.World;
 using UnityEngine;
 
 namespace SeteVidas.Player
@@ -15,6 +16,8 @@ namespace SeteVidas.Player
         [SerializeField] float probeDepth = 0.06f;
         [Tooltip("Recuo lateral da caixa, para não detectar paredes encostadas como chão (tiles)")]
         [SerializeField] float sideInset = 0.02f;
+        [Tooltip("Plataformas de mão única (galhos): só contam como chão com os pés em cima e o gato descendo")]
+        [SerializeField] LayerMask platformLayers;
 
         Rigidbody2D _body;
         float _lastWidth = 0.75f;
@@ -24,6 +27,8 @@ namespace SeteVidas.Player
         const float RayLift = 0.05f;
 
         public bool IsGrounded { get; private set; }
+        /// <summary>Em pé só numa plataforma de mão única (baixo + pulo desce por ela).</summary>
+        public bool OnPlatformOnly { get; private set; }
         public LayerMask SolidLayers => solidLayers;
 
         /// <summary>Normal do chão sob os pés (para cima no chão plano).</summary>
@@ -44,6 +49,7 @@ namespace SeteVidas.Player
             if (solidLayers == 0)
                 solidLayers = LayerMask.GetMask(
                     GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
+            if (platformLayers == 0) platformLayers = LayerMask.GetMask(GameConstants.Layers.Platform);
         }
 
         /// <summary>
@@ -78,6 +84,14 @@ namespace SeteVidas.Player
                     }
                 }
             }
+            OnPlatformOnly = false;
+            if (!touching && StandsOnPlatform(center, size, feet))
+            {
+                touching = true;
+                OnPlatformOnly = true;
+                GroundNormal = Vector2.up;
+                OnSteepSlope = false;
+            }
             IsGrounded = touching;
 
             // Na rampa, a caixa encosta pela quina de cima e o meio dos pés fica no ar
@@ -88,6 +102,61 @@ namespace SeteVidas.Player
                 if (hit.collider != null && SlopeMath.IsSlope(hit.normal))
                     SlopeGap = Mathf.Max(0f, hit.distance - RayLift);
             }
+        }
+
+        // ------------------------------------------------- plataformas de mão única
+
+        readonly Collider2D[] _platformHits = new Collider2D[4];
+        readonly System.Collections.Generic.List<Collider2D> _dropped = new System.Collections.Generic.List<Collider2D>();
+        float _dropUntil = -1f;
+        Collider2D _self;
+
+        /// <summary>Pés em cima de uma plataforma (não atravessando por baixo) e o gato não está subindo.</summary>
+        bool StandsOnPlatform(Vector2 center, Vector2 size, Vector2 feet)
+        {
+            if (platformLayers == 0) return false;
+            RestoreDropped();
+            float vy = _body != null ? _body.linearVelocity.y : 0f;
+            int n = Physics2D.OverlapBoxNonAlloc(center, size, 0f, _platformHits, platformLayers);
+            for (int i = 0; i < n; i++)
+            {
+                var col = _platformHits[i];
+                if (col == null || _dropped.Contains(col)) continue;
+                if (PlatformRules.StandsOn(feet.y, col.bounds.max.y, vy)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Baixo + pulo numa plataforma de mão única: ignora a colisão com as plataformas sob os pés por
+        /// <paramref name="seconds"/> (o gato cai através delas). Devolve se havia alguma.
+        /// </summary>
+        public bool DropThroughPlatforms(float seconds = PlatformRules.DropThroughTime)
+        {
+            if (_self == null) _self = GetComponent<Collider2D>();
+            Vector2 feet = Feet;
+            var center = new Vector2(feet.x, feet.y - probeDepth * 0.5f);
+            var size = new Vector2(_lastWidth - 2f * sideInset, probeDepth + 0.1f);
+            int n = Physics2D.OverlapBoxNonAlloc(center, size, 0f, _platformHits, platformLayers);
+            bool any = false;
+            for (int i = 0; i < n; i++)
+            {
+                var col = _platformHits[i];
+                if (col == null || _dropped.Contains(col)) continue;
+                if (_self != null) Physics2D.IgnoreCollision(_self, col, true);
+                _dropped.Add(col);
+                any = true;
+            }
+            if (any) _dropUntil = Time.time + seconds;
+            return any;
+        }
+
+        void RestoreDropped()
+        {
+            if (_dropped.Count == 0 || Time.time < _dropUntil) return;
+            foreach (var col in _dropped)
+                if (col != null && _self != null) Physics2D.IgnoreCollision(_self, col, false);
+            _dropped.Clear();
         }
 
         /// <summary>

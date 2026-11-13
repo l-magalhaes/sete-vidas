@@ -103,7 +103,7 @@ namespace SeteVidas.EditorTools
             AssetDatabase.Refresh();
         }
 
-        static void ConfigureLayers()
+        internal static void ConfigureLayers()
         {
             var tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
             var layers = tagManager.FindProperty("layers");
@@ -554,9 +554,15 @@ namespace SeteVidas.EditorTools
                 scenes.Add(new EditorBuildSettingsScene(GameConstants.PrologueScenePath, true));
             scenes.Add(new EditorBuildSettingsScene(GameConstants.PlaygroundScenePath, true));
             scenes.Add(new EditorBuildSettingsScene(GameConstants.FortressScenePath, true));
+            // Floresta Silenciosa: uma cena por região, todas ativas (as portas carregam umas às outras)
+            const string forestFolder = "Assets/_Game/Scenes/World/Forest";
+            if (Directory.Exists(Path.GetFullPath(forestFolder)))
+                foreach (var file in Directory.GetFiles(Path.GetFullPath(forestFolder), "*.unity"))
+                    scenes.Add(new EditorBuildSettingsScene(forestFolder + "/" + Path.GetFileName(file), true));
             foreach (var existing in EditorBuildSettings.scenes)
                 if (existing.path != GameConstants.PlaygroundScenePath && existing.path != GameConstants.FortressScenePath &&
-                    existing.path != GameConstants.MainMenuScenePath && existing.path != GameConstants.PrologueScenePath)
+                    existing.path != GameConstants.MainMenuScenePath && existing.path != GameConstants.PrologueScenePath &&
+                    !existing.path.StartsWith(forestFolder + "/"))
                     scenes.Add(new EditorBuildSettingsScene(existing.path, false));
             EditorBuildSettings.scenes = scenes.ToArray();
         }

@@ -9,6 +9,7 @@ namespace SeteVidas.UI
         Rogue, Paladin, Mage, Monk, Bard, Hunter, Druid,
         Climb, Sneak, Backstab, DownStab, DoubleJump, Dash, Anchor,
         Coin, Page, TabAbilities, TabItems, TabDiary,
+        Wood,
     }
 
     /// <summary>Como o quadrado de um slot é desenhado.</summary>
@@ -59,6 +60,7 @@ namespace SeteVidas.UI
                 case InventoryIcon.Page: pal = Paper(g); break;
                 case InventoryIcon.TabAbilities: pal = Paw(g); break;
                 case InventoryIcon.TabItems: pal = Pouch(g); break;
+                case InventoryIcon.Wood: pal = Planks(g); break;
                 default: pal = Book(g); break;
             }
             return Colorize(g, Size, Size, ParsePalette(pal), true);
@@ -310,6 +312,15 @@ namespace SeteVidas.UI
             P(g, 5, 9, 'l'); P(g, 5, 10, 'l'); P(g, 6, 8, 'l');
             R(g, 4, 13, 9, 1, 'B');
             return "b=#a8703a B=#6a4422 l=#d89a50 G=#e0b04a o=#a8702a";
+        }
+
+        /// <summary>Madeira de Reconstrução: duas tábuas empilhadas, com veio e um prego.</summary>
+        static string Planks(char[,] g)
+        {
+            R(g, 2, 9, 12, 3, 'w'); R(g, 2, 11, 12, 1, 'd'); L(g, 4, 10, 8, 10, 'v');
+            R(g, 3, 5, 11, 3, 'l'); R(g, 3, 7, 11, 1, 'w'); L(g, 6, 6, 11, 6, 'w');
+            P(g, 12, 6, 'n'); P(g, 3, 10, 'n');
+            return "w=#965f40 d=#52261e v=#c49860 l=#c49860 n=#c0c6d2";
         }
 
         static string Book(char[,] g)

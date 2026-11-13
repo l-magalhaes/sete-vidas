@@ -95,6 +95,10 @@ namespace SeteVidas.Combat
         public static bool Bounces(bool isDagger, bool hitTarget, bool hitPogoSurface) =>
             isDagger && (hitTarget || hitPogoSurface);
 
+        /// <summary>O alvo acertado deixa quicar agora? Só quem tem <see cref="IPogoTarget"/> pode recusar.</summary>
+        public static bool TargetAllowsBounce(object target) =>
+            !(target is IPogoTarget p) || p.AcceptsPogo;
+
         /// <summary>Caixa da estocada embaixo dos pés.</summary>
         public static Rect StabBox(Vector2 feet, Vector2 size, float below) =>
             new Rect(feet.x - size.x * 0.5f, feet.y - below - size.y * 0.5f, size.x, size.y);

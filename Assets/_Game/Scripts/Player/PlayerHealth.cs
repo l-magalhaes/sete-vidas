@@ -55,14 +55,39 @@ namespace SeteVidas.Player
             HeartsRecovered = SaveManager.Data.heartsRecovered;
             CurrentHits = MaxHits;
 
+            // Veio por uma porta ou viagem (SceneTravel): chega na entrada/santuário, com a vida que tinha
+            if (SceneTravel.TryConsume(out var arrival)) ArriveAt(arrival);
             // Continuar de onde salvou: se o último santuário é desta cena, começa nele
-            if (TryGetSavedSanctuary(out var sanctuary)) _player.Teleport(sanctuary.SpawnPoint);
+            else if (TryGetSavedSanctuary(out var sanctuary)) _player.Teleport(sanctuary.SpawnPoint);
             var safeStart = GetComponent<SafeGroundTracker>();
             if (safeStart != null) safeStart.ResetTo(_player.Body.position);
             Changed?.Invoke();
         }
 
         /// <summary>Sem dano e sem piscar (cenas em que o gato fica de pé parado, ex.: a tela escurecendo no santuário).</summary>
+        /// <summary>Põe o gato no lugar da chegada (entrada ou santuário) e ajusta a vida.</summary>
+        void ArriveAt(in Arrival arrival)
+        {
+            if (SceneTravel.TryResolve(arrival, out Vector2 feet, out int facing))
+            {
+                _player.Teleport(feet);
+                _player.Face(facing);
+            }
+            else Debug.LogWarning($"[Sete Vidas] Chegada \"{arrival.Id}\" não existe nesta cena: o gato fica no início.");
+            CurrentHits = arrival.Hits < 0 ? MaxHits : Mathf.Clamp(arrival.Hits, 1, MaxHits);
+        }
+
+        /// <summary>Troca de sala dentro da mesma cena (chamado pelo <see cref="SceneTravel"/> no escuro).</summary>
+        public void ArriveHere(in Arrival arrival)
+        {
+            _player.Body.linearVelocity = Vector2.zero;
+            ArriveAt(arrival);
+            var safe = GetComponent<SafeGroundTracker>();
+            if (safe != null) safe.ResetTo(_player.Body.position);
+            if (arrival.Kind == ArrivalKind.Sanctuary) { _poison = default; GameEvents.RaiseWorldReset(); }
+            Changed?.Invoke();
+        }
+
         public bool Shielded { get; set; }
 
         float _pogoGraceUntil = -1f;
@@ -209,6 +234,16 @@ namespace SeteVidas.Player
 
             var fader = ScreenFader.Active;
             if (fader != null) yield return fader.FadeTo(1f, s.DeathFadeTime);
+
+            // O último santuário é de outra cena (Floresta: uma cena por região): renasce lá, de vida cheia
+            var data = SaveManager.Data;
+            if (!string.IsNullOrEmpty(data.lastSanctuaryId) && !string.IsNullOrEmpty(data.scene) &&
+                data.scene != gameObject.scene.name && Application.CanStreamedLevelBeLoaded(data.scene))
+            {
+                GameEvents.RaiseWorldReset();
+                SceneTravel.ToSanctuary(data.scene, data.lastSanctuaryId, this, alreadyBlack: true);
+                yield break;
+            }
 
             Respawn();
             yield return null;

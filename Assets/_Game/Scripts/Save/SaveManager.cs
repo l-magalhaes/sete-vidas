@@ -51,7 +51,11 @@ namespace SeteVidas.Save
         static string s_slot;
 
         public static string ActiveSlot => !string.IsNullOrEmpty(s_slot) ? s_slot
-            : SceneManager.GetActiveScene().name == TestScene ? TestSlot : MainSlot;
+            : IsTestScene(SceneManager.GetActiveScene().name) ? TestSlot : MainSlot;
+
+        /// <summary>Cenas de teste usam o save da área de testes (Playground e as cenas Forest_Test_* da F1 da Floresta).</summary>
+        public static bool IsTestScene(string scene) =>
+            scene == TestScene || (scene != null && scene.StartsWith("Forest_Test_", System.StringComparison.Ordinal));
 
         public static string PathForSlot(string slot) => Path.Combine(Application.persistentDataPath, $"save_{slot}.json");
 

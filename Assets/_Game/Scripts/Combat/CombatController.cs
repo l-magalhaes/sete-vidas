@@ -387,9 +387,9 @@ namespace SeteVidas.Combat
                     else
                     {
                         if (grounded) { EndDown(); return; } // tocou o chão sem acertar nada
-                        int hits = DownHits(-1, weapon.Type);
+                        DownHits(-1, weapon.Type, out int bounceHits);
                         bool pogo = PogoSurfaces.Touches(DownAttackRules.StabBox(_player.Body.position, weapon.DownHitbox, weapon.DownHitboxBelow));
-                        if (DownAttackRules.Bounces(true, hits > 0, pogo))
+                        if (DownAttackRules.Bounces(true, bounceHits > 0, pogo))
                         {
                             if (pogo && _health != null) _health.GrantPogoGrace(weapon.PogoGrace);
                             _player.Bounce(_player.Settings.JumpHeight * weapon.PogoHeightFraction);
@@ -416,8 +416,12 @@ namespace SeteVidas.Combat
         }
 
         /// <summary>Acerta quem está na caixa embaixo dos pés. Dano negativo = o dano normal da arma.</summary>
-        int DownHits(int damage, DamageType type)
+        int DownHits(int damage, DamageType type) => DownHits(damage, type, out _);
+
+        /// <summary>Como acima; <paramref name="bounceHits"/> conta só os alvos que deixam quicar agora (<see cref="IPogoTarget"/>).</summary>
+        int DownHits(int damage, DamageType type, out int bounceHits)
         {
+            bounceHits = 0;
             var box = DownAttackRules.StabBox(_player.Body.position, weapon.DownHitbox, weapon.DownHitboxBelow);
             _overlaps.Clear();
             Physics2D.OverlapBox(box.center, box.size, 0f, _filter, _overlaps);
@@ -429,9 +433,11 @@ namespace SeteVidas.Combat
                 if (target == null || !_hitThisSwing.Add(target)) continue;
                 var resolved = weapon.ResolveHit(_player.Body.position, (Component)target, gameObject);
                 var info = new DamageInfo(damage >= 0 ? damage : resolved.Amount, Vector2.down, type, resolved.Angle, gameObject);
+                bool allowsBounce = DownAttackRules.TargetAllowsBounce(target); // antes do golpe: o golpe pode mudar o estado
                 target.TakeDamage(info);
                 Hit?.Invoke(target, info);
                 count++;
+                if (allowsBounce) bounceHits++;
             }
             if (count > 0) Hitstop.Trigger(weapon.HitstopFront);
             return count;

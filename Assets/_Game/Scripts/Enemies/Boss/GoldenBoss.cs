@@ -98,6 +98,8 @@ namespace SeteVidas.Enemies.Boss
         public bool IsFighting => Current != State.Dormant && Current != State.Defeated && Current != State.Companion;
         public bool IsDefeated => Current == State.Defeated || Current == State.Companion;
         public bool InSecondPhase => Health <= MaxHealth * settings.SecondPhaseAt;
+        /// <summary>Fração da vida em que começa a fase furiosa (a marca na barra).</summary>
+        public float SecondPhaseFraction => settings != null ? settings.SecondPhaseAt : 0f;
         public GoldenBossSettings Settings => settings;
         public int FacingDirection => _facing;
         public bool InCombat => true; // guardião sempre alerta: pelas costas vale 1,5×, nunca furtivo

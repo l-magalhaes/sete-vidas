@@ -9,7 +9,12 @@ using UnityEngine;
 namespace SeteVidas.Audio
 {
     /// <summary>Qual música deve tocar (Docs/Audio/plano-musicas.md).</summary>
-    public enum MusicCue { None, Menu, Mountain, Explore, Stealth, Combat, Boss, Curse, Sanctuary }
+    /// <summary>Momentos da trilha. Só acrescente no fim (o número vai para as cenas). Floresta: Docs/Audio/floresta-audio.md.</summary>
+    public enum MusicCue
+    {
+        None, Menu, Mountain, Explore, Stealth, Combat, Boss, Curse, Sanctuary,
+        Road, Ruins, Blight, Nest, Vulpis, Tobi, Spirit,
+    }
 
     /// <summary>Regras puras (EditMode): qual música vence quando várias coisas acontecem juntas.</summary>
     public static class MusicRules
@@ -19,6 +24,8 @@ namespace SeteVidas.Audio
             public bool CurseScene, BossFighting, BossOutro, AnyCombat, InSanctuary, OnMountain;
             /// <summary>O gato está obscurecido na sombra (a silhueta escura): é só aí que toca a música de furtividade.</summary>
             public bool Obscured;
+            /// <summary>Faixa da área onde o gato está (ruínas, praga, ninho; ver <see cref="MusicArea"/>). None = a da fase.</summary>
+            public MusicCue AreaCue;
         }
 
         /// <summary>Prioridade: cena do tomo &gt; chefe &gt; combate &gt; furtividade &gt; santuário &gt; montanha &gt; fase.</summary>
@@ -31,6 +38,7 @@ namespace SeteVidas.Audio
             if (s.Obscured) return MusicCue.Stealth;
             if (s.InSanctuary) return MusicCue.Sanctuary;
             if (s.OnMountain) return MusicCue.Mountain;
+            if (s.AreaCue != MusicCue.None) return s.AreaCue;
             return MusicCue.Explore;
         }
 
@@ -181,6 +189,7 @@ namespace SeteVidas.Audio
             if (health != null)
             {
                 s.OnMountain = mountainArea.Contains(cat);
+                s.AreaCue = MusicArea.CueAt(cat);
                 foreach (var sa in Sanctuary.All)
                     if (sa != null && Vector2.Distance(cat, sa.transform.position) <= sanctuaryRadius) { s.InSanctuary = true; break; }
             }
