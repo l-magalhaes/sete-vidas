@@ -11,11 +11,18 @@ namespace SeteVidas.World
     {
         public const string KeyPrefix = "chave_";
         public const string DoorPrefix = "porta_aberta_";
+        /// <summary>Chave do Templo da Serpente (F4b): abre o Portão do Templo, do Mirante (D4) para o Ninho (E1).</summary>
+        public const string TempleKey = "templo";
+        public const string TempleGate = "portao_templo";
+
+        /// <summary>A chave é a do templo (desenho grande de pedra verde, brilho turquesa).</summary>
+        public static bool IsTempleKey(string keyId) => keyId == TempleKey;
 
         /// <summary>Nomes das chaves para o inventário e o aviso ao pegar.</summary>
         static readonly Dictionary<string, string> s_names = new Dictionary<string, string>
         {
             { "cabana", "Chave da cabana" },
+            { TempleKey, "Chave do Templo da Serpente" },
         };
 
         public static string KeyFlag(string keyId) => KeyPrefix + keyId;
@@ -48,6 +55,7 @@ namespace SeteVidas.World
         public static readonly Dictionary<string, string> DoorOfKey = new Dictionary<string, string>
         {
             { "cabana", "cabana_vulpis" },
+            { TempleKey, TempleGate },
         };
     }
 

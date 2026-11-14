@@ -22,7 +22,7 @@ namespace SeteVidas.EditorTools
     public static class ForestLayout
     {
         /// <summary>Suba quando mudar o graybox (o menu 21 recria as cenas).</summary>
-        public const int Version = 11; // 10: F4, variante infectada distribuída (MarkInfected); 11: sem cacto infectado
+        public const int Version = 16; // 10: F4, infectados; 11: sem cacto infectado; 12: F4b (D5, D6, Portão do Templo); 13: corações temporários; 14: troncos até o teto, melhorias 3; 15: ganchos pela floresta; 16: ganchos nas quinas, vãos de dash no Ninho
 
         public const string Road = "Forest_Road";
         public const string A = "Forest_A_Roots";
@@ -76,6 +76,8 @@ namespace SeteVidas.EditorTools
             public float SpawnX, SpawnY;
             /// <summary>Chegadas da rota principal (vazio = a primeira chegada). A estrada tem duas: a ponte caiu.</summary>
             public string[] Main = new string[0];
+            /// <summary>Só se chega aqui com o Caçador (depois do Portão do Templo): o alcance conta com dash e gancho.</summary>
+            public bool Hunter;
             public readonly List<Room> Rooms = new List<Room>();
             public readonly List<Tile> Shell = new List<Tile>(), Inner = new List<Tile>(), Late = new List<Tile>();
             public readonly List<Obj> Objects = new List<Obj>();
@@ -376,13 +378,49 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------ objetos
         /// <summary>Tronco rachado (1 × 4) na coluna <paramref name="lx"/>.</summary>
-        static void Trunk(int lx, int ly, string id) { O("trunk", "tronco rachado", lx + 0.5f, ly).Id = id; }
+        /// <summary>Tronco rachado (1 × <paramref name="h"/>). Pedido de 14/11/2026: vai até o teto, para não dar para pular por cima.</summary>
+        static void Trunk(int lx, int ly, string id, int h = 4) { var o = O("trunk", "tronco rachado", lx + 0.5f, ly); o.Id = id; o.H = h; }
+
+        // ------------------------------------------------------------ F4b: Vulpis, chaves e ruínas
+        public const string KeyTemple = "templo";          // = KeyRules.TempleKey (runtime)
+        public const string GateTemple = "portao_templo";  // = KeyRules.TempleGate (runtime)
+
+        /// <summary>Parede de pedras de ruínas antigas (1 × 4) na coluna <paramref name="lx"/>: só a marreta quebra.</summary>
+        static void RuinWall(int lx, int ly, string id) { O("ruinwall", "parede de ruínas", lx + 0.5f, ly).Id = id; }
+        /// <summary>Portão trancado (1 × 4) com os pés em <paramref name="ly"/>; abre com a chave <paramref name="key"/>.</summary>
+        static void Gate(float cx, float ly, string key, string door)
+        {
+            var o = O("gate", "Portão do Templo", cx, ly);
+            o.Id = door; o.Text = key;
+        }
+        /// <summary>Baú que guarda uma chave (e não madeira).</summary>
+        static void KeyChest(float cx, float ly, string id, string key, string later)
+        {
+            var o = O("chest", "baú da chave " + key, cx, ly);
+            o.Id = id; o.Text = key; o.Flag = later;
+        }
+        /// <summary>A Vulpis (NPC do vínculo: classe Caçador e +1 coração).</summary>
+        static void Vulpis(float cx, float ly) { O("vulpis", "Vulpis", cx, ly).Facing = -1; }
+        static void Dummy(float cx, float ly, int facing) { O("dummy", "boneco de palha", cx, ly).Facing = facing; }
         /// <summary>Baú de madeira. <paramref name="later"/> = classe que falta para alcançá-lo (o alcance só anota).</summary>
+        /// <summary>
+        /// Baús com coração temporário (pedido do usuário, 14/11/2026): um em cada trecho de dificuldade, o último antes
+        /// do Ninho. Cada um = 2 hits que absorvem dano antes da vida.
+        /// </summary>
+        public static readonly Dictionary<string, int> TempHeartChests = new Dictionary<string, int>
+        {
+            { "W08", 1 }, { "W10", 1 }, { "W13", 1 }, { "W17", 1 }, { "W20", 1 },
+        };
+
         static void Chest(float cx, float ly, string id, int coins = 0, string later = null)
         {
             var o = O("chest", "baú " + id, cx, ly);
             o.Id = id; o.Value = coins; o.Flag = later;
+            int temp;
+            if (TempHeartChests.TryGetValue(id, out temp)) o.C = temp;
         }
+        /// <summary>Baú só com o coração temporário (sem madeira nem moedas). Pedido de 14/11/2026: fundo do poço oeste da D1.</summary>
+        static void HeartChest(float cx, float ly, string id) { Chest(cx, ly, id); R.Objects[R.Objects.Count - 1].B = 1f; }
         static void Coin(float cx, float ly, int n = 1)
         {
             var o = O("coin", "moeda", cx, ly + 0.6f);
@@ -556,6 +594,12 @@ namespace SeteVidas.EditorTools
         /// <summary>Gancho (classe Caçador, no futuro): o caminho de volta pelo alto.</summary>
         static void Hook(float cx, float cy) { O("hook", "gancho (Caçador)", cx, cy); }
         static void Hooks(float y, params float[] xs) { foreach (float x in xs) Hook(x, y); }
+        /// <summary>
+        /// Gancho cravado na quina de um chão (pedido de 14/11/2026: ganchos orgânicos, onde o gato sobe pendurado nele).
+        /// <paramref name="edgeX"/> = a coluna da ponta do chão; <paramref name="top"/> = o topo dele (onde ficam os pés);
+        /// <paramref name="side"/> = -1 na ponta esquerda, 1 na direita. O gancho fica meio tile para fora e meio abaixo.
+        /// </summary>
+        static void LedgeHook(int edgeX, int top, int side) { Hook(side < 0 ? edgeX - 0.6f : edgeX + 1.6f, top - 0.5f); }
 
         // =========================================================== Estrada de Soluki (F3)
 
@@ -651,9 +695,12 @@ namespace SeteVidas.EditorTools
             // A1 Fundo do Vale: onde o gato acorda. Morros, raízes no alto (cogumelo no morro), o primeiro templário
             // zumbi e uma serpente entre as raízes.
             Sala("A1", "Fundo do Vale", 100, -215, 60, 25);
-            Entrance("A1_queda", 27f, 0f, 1);
+            // a queda da ponte cai na raiz das moedas (topo 13) e o teto fica aberto em cima dela: o vale continua para
+            // cima, até a ponte (pedido de 14/11/2026). As pontas do teto ficam (o morcego da direita se pendura nelas).
+            Entrance("A1_queda", 25.5f, 13f, 1);
             Entrance("A1_corda", 3f, 0f, 1);
-            reg.SpawnX = FX(27f); reg.SpawnY = FY(0f);
+            reg.SpawnX = FX(25.5f); reg.SpawnY = FY(13f);
+            DoorN(14, 34, false);
             Sign(9f, 0f, "↑ lá no alto, a ponte");
             Bark("acordou_no_vale", 1.2f, "Ugh. Caí de novo.", "Do alto da ponte até o fundo do vale. E inteiro.", "Seis vidas. Por enquanto.");
             Branch(0, 3, 2);   // a corda (AT4) para a estrada, só com a ponte nova
@@ -670,6 +717,7 @@ namespace SeteVidas.EditorTools
             Infected(49f, 0f, -1, 41f, 56f, false);
             Shadow(42, 0, 4, 4); Bush(44f, 0f);
             Shadow(52, 0, 5, 5);
+            LedgeHook(29, 13, 1); LedgeHook(39, 16, -1);                 // ganchos: as raízes das moedas (do morro, pulando)
             DoorE(0, 3);
 
             // A2 Raízes Gêmeas: S-F1 entre duas raízes; arco de raiz por cima; tutorial da serpente; a raiz pendurada
@@ -693,6 +741,7 @@ namespace SeteVidas.EditorTools
             Entrance("A2_alcapao", 29.5f, Top - 4, -1, AtRavina);
             ExitN(30, 31, C, "C6_alcapao", AtRavina);                // x global 190..191 = o alçapão da C6
             Infected(38f, 0f, -1, 34f, 42f, false);
+            LedgeHook(19, 10, 1);                                        // gancho: o arco de raiz (placa e moedas)
             Shadow(35, 0, 4, 4);
             DoorE(0, 3);
 
@@ -749,6 +798,7 @@ namespace SeteVidas.EditorTools
             Blob(1, 37, 6, 37); Coins(2f, 38f, 3);                   // nicho no alto (topo 38)
             Bat(14f, Top + 0.6f); Bat(22f, Top + 0.6f);
             Sign(2f, 18f, "olhos da Isyathy no fundo (F5)");
+            LedgeHook(20, 29, -1); LedgeHook(6, 38, 1);                  // ganchos: a prateleira (sem o pogo) e o nicho das moedas
             DoorE(0, 3);
             DoorE(36, 39);
 
@@ -767,6 +817,7 @@ namespace SeteVidas.EditorTools
             Saw(32f, 40f, 7f);
             Coins(45f, 8f, 4);
             Crawler(4f, 0f, 1f, 6f);
+            LedgeHook(44, 15, -1);                                       // gancho: o teto do vagão B (W03), do teto do vagão A
 
             // A6 Galhos Baixos: travessia para o leste em 3 alturas; do teto desce o poço do Lago (AT5, abre na C4)
             Sala("A6", "Galhos Baixos", 302, -191, 60, 34);
@@ -794,6 +845,7 @@ namespace SeteVidas.EditorTools
             Branch(9, 17, 3); Branch(14, 20, 4); Branch(23, 20, 3); Branch(30, 21, 4); Branch(38, 20, 4); Branch(45, 19, 4);
             Blade(33.5f, Top + 1f, 9f);
             Coins(15f, 20f, 3);
+            LedgeHook(47, 26, -1);                                       // gancho: o nicho do W04
             // torre de raiz com vinha na face até a saída (topo 18); W04 escondido acima da porta
             G(52, 0, 57, 10); V(52, 1, 52, 10);
             Blob(48, 14, 51, 15);
@@ -859,6 +911,7 @@ namespace SeteVidas.EditorTools
             Blob(2, 30, 8, 31); Chest(5f, 32f, "W06");               // nicho (topo 32)
             Bat(7f, Top + 0.6f); Bat(20f, Top + 0.6f);
             Coins(15f, 13f, 2);
+            LedgeHook(17, 29, -1); LedgeHook(8, 32, 1);                  // ganchos: a saída e o nicho do W06, do alto do tronco
             DoorE(29, 32);
 
             // B3 Jardim Carnívoro: chão de raízes com plantas, serpente e Galho Seco; pela copa (folha, galho, cogumelo)
@@ -880,6 +933,7 @@ namespace SeteVidas.EditorTools
             Plant(38f, Top + 1f, 180f);
             Branch(44, 19, 4); Coins(45f, 19f, 3);
             Bat(20f, Top + 0.6f); Bat(52f, Top + 0.6f);
+            LedgeHook(34, 17, -1);                                       // gancho: a plataforma do W07 (embaixo da planta do teto)
             DoorE(0, 3);
 
             // B4 Torre Enferrujada: destroços de ferro em zigue-zague, cactos e galhos podres; planta na parede.
@@ -902,6 +956,7 @@ namespace SeteVidas.EditorTools
             Lever(AtTorre, 2f, 44f, 0, 1, "soltar o cipó");
             Closed(AtTorre, 0.5f, 0f, "Um cipó enrolado lá no alto da torre.");
             Sanctuary(6f, 0f, "S-F1C", "Pé da Torre");                // o cipó do alto (AT) desce até aqui
+            LedgeHook(11, 36, -1); LedgeHook(4, 44, 1);                  // ganchos: a viga alta e o topo (alavanca do cipó)
             DoorE(0, 3);                                             // para o Desafio (opcional)
             DoorW(44, 47);
 
@@ -929,6 +984,7 @@ namespace SeteVidas.EditorTools
             Roof(30, 17, 15, 14, 15, 17); Bat(32f, 13.4f);
             Roof(46, 19, 17, 16, 17, 19); Bat(48f, 15.4f);
             Coins(25f, 9f, 3); Coins(42f, 10f, 3);
+            LedgeHook(24, 9, -1); LedgeHook(41, 10, -1);                 // ganchos: os galhos das moedas, do chão
             Mushroom(20f, 0f);
             Entrance("B5_oeste", 3f, 0f, 1);
             ExitW(0, C, "C1_leste");
@@ -941,6 +997,7 @@ namespace SeteVidas.EditorTools
             Coins(6f, 1f, 5);
             Mushroom(19f, 1f);
             Blob(10, 13, 16, 13); Coins(11f, 14f, 4);
+            LedgeHook(10, 14, -1);                                       // gancho: as moedas do alto
             return reg;
         }
 
@@ -968,6 +1025,7 @@ namespace SeteVidas.EditorTools
             Shadow(0, 0, 3, 5);
             Branch(48, 4, 4); Branch(41, 6, 4); Branch(32, 8, 4); Branch(27, 9, 4); Rotten(23, 9); Branch(15, 8, 4); Branch(8, 6, 4); Branch(2, 4, 4);
             Bat(29f, Top + 0.6f); Bat(12f, Top + 0.6f);
+            LedgeHook(27, 9, -1); LedgeHook(44, 6, 1);                   // ganchos: fugir do chão para a copa
             Coins(28f, 9f, 3);
             // poço do Musgo: raiz pendurada com o cipó, o buraco no teto em 33..35
             G(36, 6, 37, Top);
@@ -997,6 +1055,7 @@ namespace SeteVidas.EditorTools
             Spikes(20, 0, Right - 19);                               // até a parede
             Crawler(7f, 0f, 2f, 12f);
             Bat(8f, 44.4f); Bat(24f, 30f);
+            LedgeHook(22, 11, -1); LedgeHook(23, 25, 1); LedgeHook(17, 52, 1); // ganchos: o nicho do W09 e a volta para cima
             DoorE(55, 58);
             DoorW(0, 3);
 
@@ -1016,8 +1075,9 @@ namespace SeteVidas.EditorTools
             Sign(22f, 9f, "P-PRIM-03");
             Infected(24f, 18f, 1, 10f, 36f, false); Shadow(8, 18, 4, 5); Plant(40f, 18f);
             Dry(20f, 27f, -1); Shadow(28, 27, 6, 5); Snake(10f, 27f, 1);
-            Trunk(24, 36, "gb_C3_tronco"); Chest(30f, 36f, "W10"); Shadow(33, 36, 5, 4);
+            Trunk(24, 36, "gb_C3_tronco", 7); Chest(30f, 36f, "W10"); Shadow(33, 36, 5, 4);
             Coins(12f, 36f, 3);
+            LedgeHook(36, 9, 1); LedgeHook(36, 27, 1);                   // ganchos: nas bordas dos andares (vãos da escada)
             DoorE(0, 3);
             DoorW(9, 12);
 
@@ -1038,6 +1098,7 @@ namespace SeteVidas.EditorTools
             Snake(40f, 0f, -1);
             Leaf(37.5f, 8f); Branch(30, 10, 3); Branch(42, 11, 4); Leaf(21.5f, 9f); Branch(14, 11, 4); Branch(6, 9, 4);
             Coins(15f, 11f, 3);
+            LedgeHook(22, 9, 1);                                         // gancho: a folha sobre o lago (os galhos das moedas, que ninguém alcançava)
             Bat(36f, Top + 0.6f);
             Shadow(44, 0, 4, 4);
             DoorE(9, 12);
@@ -1065,6 +1126,7 @@ namespace SeteVidas.EditorTools
             Branch(52, 7, 4); Branch(44, 9, 4); Branch(36, 10, 4); Rotten(31, 10); Branch(24, 9, 4); Branch(16, 8, 4); Branch(8, 6, 4);
             Mushroom(63f, 0f);
             Coins(37f, 10f, 3); Coins(17f, 8f, 3);
+            LedgeHook(36, 10, -1); LedgeHook(16, 8, -1);                 // ganchos: os galhos das moedas
             Bat(46f, Top + 0.6f); Bat(20f, Top + 0.6f);
             DoorE(0, 3);
             DoorW(0, 3);
@@ -1082,6 +1144,7 @@ namespace SeteVidas.EditorTools
             VW(1, 25);
             Branch(0, 27, 4);
             Bat(12f, 20f);
+            LedgeHook(22, 18, -1); LedgeHook(15, 30, 1);                 // ganchos: a volta para cima até o pouso
 
             // C6 Ravina: desce-se das Escombros até o fundo (S-F2). No meio, a passagem para a árvore gigante (D1);
             // no chão, o alçapão para a A2 (AT1).
@@ -1098,6 +1161,7 @@ namespace SeteVidas.EditorTools
             VE(5, 30);
             Blob(20, 12, Right, 13);                                 // topo 14
             Sanctuary(6f, 0f, "S-F2", "Ravina");
+            LedgeHook(13, 36, -1); LedgeHook(12, 46, -1); LedgeHook(22, 51, -1); // ganchos: subir a Ravina de volta até a saída
             Entrance("C6_alcapao", 14.5f, 0f, -1);
             DoorS(17, 18);
             ScBlock(AtRavina, 17, -1, 18, -1, "tampa de raízes");
@@ -1132,9 +1196,11 @@ namespace SeteVidas.EditorTools
             Blob(17, 27, 22, 28); Snake(20f, 29f, -1);               // galho largo (topo 29)
             Branch(16, 32, 2);
             for (int y = 3; y <= 15; y += 6) { Branch(1, y, 3); Branch(5, y + 3, 3); }   // lado oeste: flechas desde o chão
+            HeartChest(5.5f, 0f, "W20"); Coins(1.5f, 0f, 3);                         // o fundo do poço oeste (melhorias 3)
             Branch(5, 21, 3); Branch(2, 24, 3); Branch(5, 27, 3);
             for (int y = 30; y <= 48; y += 6) { Branch(0, y, 2); Branch(5, y + 3, 3); }
             Bat(3f, 40f);
+            LedgeHook(15, 51, 1); LedgeHook(20, 54, -1);                 // ganchos: o topo da árvore e a saída
             Branch(16, 36, 2); Branch(20, 40, 3); Branch(16, 44, 2); Branch(21, 48, 3); Branch(17, 51, 2);
             G(20, 53, Right, 53);                                    // saída (topo 54)
             Coins(23f, 41f, 2);
@@ -1149,6 +1215,7 @@ namespace SeteVidas.EditorTools
             Shadow(5, 0, 4, 4); Shadow(26, 0, 4, 4);
             Snake(29.5f, 0f, -1);
             Bush(11f, 0f);
+            LedgeHook(21, 8, -1);                                        // gancho: o galho largo da Vulpis
             DoorE(0, 3);
 
             // D3 Refúgio = Forest_Test_C (desenho do usuário): coordenadas da cena de teste + 6 em x
@@ -1159,12 +1226,12 @@ namespace SeteVidas.EditorTools
             GV(22, 3, 22, 28);                                       // pilar de vinhas
             GV(26, 5, 26, 11); GV(26, 17, 26, 27);
             Branch(23, 12, 4);
-            G(0, 11, 8, 11); Hook(9f, 11.4f);
+            G(0, 11, 8, 11); LedgeHook(8, 12, 1);
             Bat(3.8f, 10.4f, 12f); Bat(6.7f, 10.4f, 12f);
-            G(15, 17, 21, 17); Hook(14.2f, 16.8f); Bat(18.4f, 16.4f);
-            G(0, 23, 9, 23); Hook(10f, 23.2f);
+            G(15, 17, 21, 17); LedgeHook(15, 18, -1); Bat(18.4f, 16.4f);
+            G(0, 23, 9, 23); LedgeHook(9, 24, 1);                    // ganchos nas quinas (melhorias 5)
             Bat(0.7f, 22.4f); Bat(5f, 22.4f);
-            Chest(3.5f, 24f, "W15", 5, "Arqueiro");
+            Chest(3.5f, 24f, "W15", 5, "Caçador");
             Bat(5f, 27.4f); Bat(11f, 27.4f); Bat(16.5f, 27.4f);
             G(0, 28, 21, 28);
             Back(3, 29, 17, 35); G(2, 36, 18, 36);
@@ -1208,8 +1275,44 @@ namespace SeteVidas.EditorTools
             Infected(15f, 0f, 1, 2f, 22f, false);
             Snake(38f, 0f, -1);
             Branch(5, 5, 4); Branch(12, 8, 4); Coins(13f, 8f, 3);
+            LedgeHook(15, 8, 1);                                         // gancho: o galho das moedas
             Entrance("D4_leste", 40f, 0f, -1);
+            // F4b: o Portão do Templo da Serpente tranca a passagem para o Ninho (a chave está nas Ruínas, D6)
+            Gate(41.5f, 0f, KeyTemple, GateTemple);
             ExitE(0, E, "E1_oeste");
+
+            // ---------------------------------------------------------------- F4b (pedido do usuário, 14/11/2026)
+            // D5 Posto da Vulpis: depois da arena do D3 (a salinha do baú W13 abre a parede leste). A Vulpis dá o
+            // vínculo: +1 coração e o Caçador (arco, flecha com corda, dash). Boneco de palha para o arco.
+            Sala("D5", "Posto da Vulpis", 291, -103, 20, 30);
+            DoorW(0, 3);
+            DoorE(0, 3);
+            Vulpis(11f, 0f);
+            Sign(4f, 0f, "Posto da Vulpis");
+            Dummy(15.5f, 0f, -1);
+            O("torch", "fogueira", 8f, 0.6f);
+            Branch(2, 6, 4); Branch(10, 10, 5); Branch(3, 14, 4); Branch(11, 18, 6); // galhos até o alto, de onde ela vigia o ninho
+            Coins(11f, 9f, 2);
+            LedgeHook(14, 10, 1); LedgeHook(16, 18, 1); Coins(12f, 18f, 3); // ganchos: até o galho de onde ela vigia (moedas lá em cima)
+
+            // D6 Ruínas do Templo: torre de pedra dos Primatas engolida pela árvore. Sobe com dash e gancho:
+            // vão de espinhos no chão (dash), gancho para a laje 1, pulo + dash no ar para a laje 2, gancho e dash no
+            // ar para a laje 3, gancho até o nicho. No nicho, o baú da Chave do Templo atrás de uma parede de ruínas
+            // (marreta do Paladino). Voltar é cair: a torre desce até a porta.
+            Sala("D6", "Ruínas do Templo", 310, -103, 24, 30);
+            DoorW(0, 3);
+            Sign(2f, 0f, "ruínas dos Primatas");
+            Spikes(7, 0, 7);                                         // 7 tiles de espinhos no chão: o pulo (4) não vence, o dash sim
+            G(12, 8, 21, 8); Hook(11.4f, 8.5f);                     // laje 1 (topo 9) e o gancho na ponta
+            G(0, 11, 7, 11);                                         // laje 2 (topo 12): pulo + dash no ar
+            LedgeHook(16, 17, -1);                                   // na quina da laje 3 (antes: solto no meio do vazio)
+            G(16, 16, 21, 16);                                       // laje 3 (topo 17): dash no ar do gancho
+            Plant(Right + 0.9f, 3f, 90f);                            // planta na parede leste, de olho em quem pendura
+            Bat(19f, 26.4f);
+            G(0, 22, 8, 22); Hook(9.4f, 22.6f);                      // o nicho (topo 23) e o gancho na quina
+            G(5, 27, 5, 27);                                         // pedra em cima da parede: não dá para passar por cima
+            RuinWall(5, 23, "gb_D6_ruina");
+            KeyChest(2f, 23f, "T01", KeyTemple, "Caçador");
             return reg;
         }
 
@@ -1219,11 +1322,12 @@ namespace SeteVidas.EditorTools
         {
             var reg = Begin(E, "E — Ninho Adormecido", ForestMap, 0x10142aff);
             reg.Main = new[] { "E1_oeste" };
+            reg.Hunter = true;  // depois do Portão do Templo: a chave só sai com dash e gancho
             var d4 = Get(D).FindRoom("D4");
 
             // E1–E4: o caminho até o chefe dormindo. Movimento encadeado (pedido do usuário, 13/11/2026): rampa + pogo,
             // rampa + pulo para grudar na vinha, rampa que cai em outra rampa e pula numa plataforma temporária.
-            // Ganchos por toda parte: com o Caçador, o caminho de volta pelo alto.
+            // Com o Caçador (depois do Portão do Templo): vãos que pedem dash e ganchos nas quinas (melhorias 5, 14/11/2026).
 
             // E1 Sulcos: rampa → pogo nos espinhos → rampa → descida → pulo até a vinha do pilar
             var e1 = Sala("E1", "Sulcos", d4.X + d4.W - 1, d4.Y, 60, 25);
@@ -1234,17 +1338,18 @@ namespace SeteVidas.EditorTools
             Slope(6, 0, 8, 4, true); G(14, 0, 19, 3);                    // rampa 1:2 até o primeiro patamar (topo 4)
             Spikes(20, 0, 6); Sign(18f, 4f, "pogo nos espinhos ↓");     // vão de 6: só quicando
             G(26, 0, 29, 3); Slope(26, 4, 4, 4, true); G(30, 0, 37, 7);  // rampa 1:1 até o segundo (topo 8)
-            Slope(38, 4, 4, 4, false); G(38, 0, 41, 3); G(42, 0, 47, 3); // desce correndo...
+            Slope(38, 4, 4, 4, false); G(38, 0, 41, 3); G(42, 0, 43, 3); // desce correndo...
+            // melhorias 5 (14/11/2026): do fim da descida até a vinha do pilar são 6: só com dash (cair = chão com a planta)
             G(50, 0, 51, 13); V(50, 1, 50, 13); V(51, 1, 51, 13);        // ...e pula para a vinha do pilar
             G(54, 9, 57, 9);                                             // saída (topo 10); o cogumelo fica ao lado, em x 52..53
-            Shadow(15, 4, 4, 4); Shadow(31, 8, 4, 4); Shadow(43, 4, 4, 4); Shadow(54, 10, 4, 4); Shadow(52, 0, 6, 5);
+            Shadow(15, 4, 4, 4); Shadow(31, 8, 4, 4); Shadow(42, 4, 2, 4); Shadow(54, 10, 4, 4); Shadow(52, 0, 6, 5);
             Bush(17f, 4f);
-            Infected(34f, 8f, -1, 30f, 37f, false); Infected(45f, 4f, 1, 42f, 47f, false);
+            Infected(34f, 8f, -1, 30f, 37f, false); Infected(45f, 0f, 1, 44f, 47f, false);
             Snake(15.5f, 4f, -1);                                        // no patamar 1 (plano), de frente para quem sobe a rampa
             Plant(48.5f, 0f);
+            LedgeHook(50, 14, -1);                                       // gancho: o alto do pilar (outra subida)
             Mushroom(52.9f, 0f);
             Sign(10f, 0f, "ossadas");
-            Hooks(16f, 10f, 23f, 34f, 46f, 55f);
             DoorE(10, 13);
 
             // E2 A Raiz que Respira: subida com patamares; rampas que jogam para a vinha; quedas nunca matam.
@@ -1255,16 +1360,16 @@ namespace SeteVidas.EditorTools
             G(10, 14, 16, 14); Slope(13, 15, 3, 3, true); G(16, 15, 16, 17); // patamar 1 com rampa (topo 18)
             Cactus(5.5f, 16f);                                                // pogo até ~23: alcança o galho de 22
             G(12, 29, 18, 29); Slope(15, 30, 3, 3, true); G(18, 30, 18, 32); // patamar 2 com rampa (topo 33)
-            Rotten(21, 34);                                                   // plataforma temporária até a vinha
+            // melhorias 5: sem o galho podre, do patamar 2 até a vinha da direita são 10: pulo + dash
             VE(1, 17); VE(23, 44); Sway(22, 19, 4);                 // galho perto da parede: ponte entre as duas vinhas
             Mushroom(25f, 0f);
+            LedgeHook(13, 44, -1);                                       // gancho: os galhos do alto (saída e alavanca), do patamar 2
             Plant(0.1f, 24f, -90f);
             Branch(5, 22, 4); Branch(8, 25, 3);
             Branch(13, 44, 4); Branch(19, 45, 4); Branch(24, 45, 3);
             Shadow(0, 26, 5, 8); Shadow(11, 15, 2, 4);
             Sign(14f, 30f, "a raiz se mexe (D-NINHO-01)");
             // (sem serpente no patamar 2: pedido do usuário, 14/11/2026)
-            Hook(22f, 10f); Hook(14f, 24f); Hook(18f, 38f); Hook(10f, 46f); Hook(5f, 18f);
             // o vão da vinha da direita (18..22): lá de cima, solta-se o cipó que o fecha; a parede inteira vira subida
             ScVine(AtRaiz, Right + 1, 18, 22);
             ScRolled(AtRaiz, Right + 0.5f, 23f);
@@ -1278,17 +1383,17 @@ namespace SeteVidas.EditorTools
             var e3 = Sala("E3", "Travessia das Escamas", e2.X + e2.W - 1, e2.Y + 45, 60, 34);
             Branch(1, 3, 4); Branch(5, 6, 3);
             G(8, 7, 46, 7); Spikes(18, 8, 6); Spikes(30, 8, 4); Spikes(39, 8, 4);
-            Branch(14, 11, 4); Branch(20, 14, 4); G(25, 16, 28, 16);          // sobe até o alto (topo 17)
+            Branch(11, 11, 3); Branch(19, 14, 3); G(26, 16, 28, 16);          // sobe até o alto (topo 17); vãos de dash (melhorias 5)
             Slope(29, 13, 4, 4, false); G(29, 12, 32, 12);                   // rampa 1 desce de 17 a 13...
             Slope(34, 9, 3, 3, false); G(34, 8, 36, 8);                      // ...cai na rampa 2 (12 a 9)...
             Rotten(39, 11);                                                  // ...e pula na plataforma temporária
             Mushroom(44f, 8f);
-            Trunk(20, 0, "gb_E3_tronco"); Chest(24f, 0f, "W17");
+            LedgeHook(26, 17, -1); LedgeHook(55, 8, -1);                 // ganchos: o alto (do piso de cima) e a saída (por baixo)
+            Trunk(20, 0, "gb_E3_tronco", 7); Chest(24f, 0f, "W17");
             Shadow(28, 0, 10, 5); Infected(36f, 0f, -1, 27f, 44f, false);
             Crawler(12f, 0f, 9f, 18f);
-            Branch(47, 3, 4); Branch(47, 6, 4); G(51, 7, 57, 7);
+            Branch(47, 3, 4); Branch(47, 6, 4); G(55, 7, Right, 7);           // a saída 8 adiante: dash (melhorias 5)
             Sign(10f, 0f, "por baixo: curto e barulhento (+60 de alerta)");
-            Hooks(26f, 12f, 20f, 30f, 40f, 50f); Hook(54f, 14f); Hook(8f, 18f);
             Bat(16f, Top + 0.6f); Bat(42f, Top + 0.6f);
             DoorE(8, 11);
 
@@ -1299,7 +1404,7 @@ namespace SeteVidas.EditorTools
             Sign(16f, 0f, "daqui em diante não há volta");
             Branch(13, 3, 4); Branch(17, 6, 4); G(22, 8, 27, 8);
             Shadow(19, 0, 4, 4);
-            Hooks(12f, 6f, 15f, 24f);
+            LedgeHook(22, 9, -1);                                        // gancho: a saída da clareira
             int musgo = 441 - (e4.X + 1);                             // o poço (x global 441..443)
             DoorS(musgo, musgo + 2);
             ScBlock(AtMusgo, musgo, -1, musgo + 2, -1, "tampa de musgo");
@@ -1329,9 +1434,10 @@ namespace SeteVidas.EditorTools
             Infected(9f, 0f, 1, 3f, 13f, false); Infected(30f, 0f, -1, 17f, 40f, true);
             Shadow(18, 0, 4, 5); Shadow(36, 0, 5, 5);
             Snake(24f, 0f, 1);
-            for (int i = 0; i < 9; i++) Branch(i % 2 == 0 ? 32 : 24, 3 + i * 3, 5);
+            // zigue-zague com vãos de 7 (melhorias 5: dash); a coluna da esquerda fica a 12 da chegada: continua sem volta
+            for (int i = 0; i < 9; i++) Branch(i % 2 == 0 ? 38 : 27, 3 + i * 3, i % 2 == 0 ? 3 : 4);
             Plant(Right + 0.9f, 14f, 90f);
-            G(37, 27, 42, 27);
+            G(41, 27, Right, 27);
             DoorE(28, 31);
 
             // E6 Antessala: a música some; ainda furtividade (sem santuário: a volta é só depois da Isyathy)
@@ -1350,9 +1456,12 @@ namespace SeteVidas.EditorTools
         {
             var reg = Begin(F, "F — Coração da Floresta", ForestMap, 0x181430ff);
             reg.Main = new[] { "F1_oeste" };
+            reg.Hunter = true;
             var e6 = Get(E).FindRoom("E6");
 
             // F1 Coração da Floresta: arena em 3 alturas (a Isyathy e os portões vêm na F8)
+            // F8 (pedido de 14/11/2026): ao entrar, fecha a porta oeste e o buraco do teto (só a arena); morta a Isyathy,
+            // abre o teto (subida G1–G3) e uma passagem de volta para o oeste (E6), que hoje não existe.
             var f1 = Sala("F1", "Coração da Floresta", e6.X + e6.W - 1, e6.Y, 40, 28);
             Entrance("F1_oeste", 3f, 0f, 1);
             reg.SpawnX = FX(3f); reg.SpawnY = FY(0f);
@@ -1370,6 +1479,7 @@ namespace SeteVidas.EditorTools
             Coins(20f, 0f, 4);
             // o cogumelo fica AO LADO da plataforma (antes estava embaixo e o gato batia a cabeça nela)
             Mushroom(31.5f, 0f); Blob(33, 11, 40, 11); Coins(34f, 12f, 4);   // topo 12
+            LedgeHook(5, 10, 1); LedgeHook(33, 12, -1);                  // ganchos: o W19 e as moedas da plataforma
             DoorE(0, 3);
 
             // G2 Coluna dos Primatas: poço de elevador. Sobe-se só pelos cogumelos (esquerda); a direita, que era uma

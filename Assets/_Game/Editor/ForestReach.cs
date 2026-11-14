@@ -21,6 +21,26 @@ namespace SeteVidas.EditorTools
         // Slack: o gato pisa até a meia largura do corpo além da borda, nas duas pontas (0,33 + 0,33) e mais o arredondamento
         // das células: com 0,6 o alcance reprovava pulos que funcionam no jogo (os da Forest_Test_A, testados pelo usuário)
         const float HalfW = 0.33f, BodyH = 1.2f, Slack = 1.6f;
+        // Caçador (HunterRules): dash de 6 tiles em 0,2 s (no chão ou no alto do pulo, sem gravidade), corda de 9 tiles.
+        // Pendurado, os pés ficam 1,25 abaixo do gancho; a mão sai 0,9 acima dos pés.
+        const float DashLen = 6f, DashTime = 0.2f, HookRange = 9f, HangDrop = 1.25f, HandUp = 0.9f;
+
+        /// <summary>Conta com dash e gancho nesta busca (cenas depois do Portão do Templo; e a auditoria dos ganchos).</summary>
+        static bool s_hunter;
+
+        /// <summary>Um gancho visto pela auditoria (<see cref="Report.Hooks"/>).</summary>
+        public class HookInfo
+        {
+            public string Name; public float X, Y;
+            /// <summary>Alcançável com o Caçador a partir das chegadas da cena.</summary>
+            public bool Reachable;
+            /// <summary>Pendurado nele, dá para subir num chão logo ao lado (o gancho está "na borda" de algo).</summary>
+            public bool ClimbsOnto;
+            /// <summary>O chão onde ele sobe (x, y dos pés) e se ele já era alcançável sem o Caçador.</summary>
+            public int LedgeX, LedgeY; public bool LedgeWasReachable;
+            /// <summary>Lugares em pé que só se alcançam com o Caçador e que este gancho alcança direto.</summary>
+            public int NewSpots;
+        }
 
         public class Report
         {
@@ -35,6 +55,10 @@ namespace SeteVidas.EditorTools
             internal Grid Grid;
             /// <summary>Pontos de pogo: x, y, 0 = fora de alcance, 1 = rota principal, 2 = outra chegada.</summary>
             internal List<int[]> Pogo = new List<int[]>();
+            /// <summary>Auditoria dos ganchos (com o Caçador).</summary>
+            public readonly List<HookInfo> Hooks = new List<HookInfo>();
+            /// <summary>Em pé alcançável só com o Caçador (dash/gancho), além do que já se alcança sem ele.</summary>
+            public bool[,] HunterOnly;
         }
 
         public static List<Report> CheckAll()
@@ -146,9 +170,10 @@ namespace SeteVidas.EditorTools
         // ------------------------------------------------------------------ nós
 
         // Nó: em pé (célula x, pés em y), na parede (lado -1/+1), ou ponto de pogo (cacto, espinho, planta, cogumelo).
-        class Node { public int Kind; public int X, Y, Side; public float FX, FY, H; public string Label; }
+        class Node { public int Kind; public int X, Y, Side; public float FX, FY, H, AX, AY; public string Label; }
 
         const int StandK = 0, WallK = 1, PogoK = 2, GoalK = 3; // GoalK: gatilho de saída no ar (buraco do teto/chão)
+        const int HookK = 4;                                   // pendurado num gancho (FX, FY = pés; Label = o gancho)
 
         static bool IsStand(Grid g, int x, int y)
         {
@@ -228,6 +253,53 @@ namespace SeteVidas.EditorTools
             return false;
         }
 
+        /// <summary>
+        /// Com o Caçador: pula (ápice <paramref name="h"/>; 0 = sai andando da borda ou dash no chão), dá o dash de 6 no
+        /// ápice (sem gravidade por 0,2 s) e cai até (tx, ty). Anda no ar antes e depois do dash.
+        /// </summary>
+        static bool ArcDash(Grid g, float x0, float y0, float h, float tx, float ty, int dirLock)
+        {
+            if (ty > y0 + h + 0.001f) return false;
+            float dx = tx - x0, dist = Math.Abs(dx);
+            if (dist < 1.5f) return false;                         // sem dash já dava (ou não dava por outro motivo)
+            if (dirLock != 0 && dx * dirLock < -0.5f) return false;
+            float dir = Math.Sign(dx);
+            float tu = RiseTime(h), tf = FallTime(y0 + h - ty);
+            float dash = Math.Min(DashLen, dist), walk = dist - dash;
+            if (walk > Speed * (tu + tf) + Slack) return false;
+            float walk1 = Math.Min(walk, Speed * tu);
+            const float dt = 0.025f;
+            float T = tu + DashTime + tf;
+            for (float t = dt; t < T - 0.001f; t += dt)
+            {
+                float x, y;
+                if (t < tu) { x = x0 + dir * Math.Min(walk1, Speed * t); y = YAt(y0, h, t); }
+                else if (t < tu + DashTime) { x = x0 + dir * (walk1 + dash * (t - tu) / DashTime); y = y0 + h; }
+                else
+                {
+                    float t3 = t - tu - DashTime;
+                    x = x0 + dir * (walk1 + dash + Math.Min(walk - walk1, Speed * t3));
+                    y = y0 + h - FallDist(t3);
+                }
+                if (!BodyFree(g, x + 0.5f, y)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>A corda passa de (ax, ay) até o gancho em (bx, by) sem bloco no meio (para 0,45 antes dele, como no jogo).</summary>
+        static bool LineFree(Grid g, float ax, float ay, float bx, float by)
+        {
+            float dx = bx - ax, dy = by - ay, len = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (len > HookRange) return false;
+            float stop = Math.Max(0f, len - 0.45f);
+            for (float s = 0f; s <= stop; s += 0.2f)
+            {
+                float k = len > 0f ? s / len : 0f;
+                if (g.S((int)Math.Floor(ax + dx * k), (int)Math.Floor(ay + dy * k))) return false;
+            }
+            return true;
+        }
+
         static bool PathClear(Grid g, float x0, float y0, float h, float tx, float T, bool late)
         {
             float dx = tx - x0, dist = Math.Abs(dx), dir = Math.Sign(dx);
@@ -291,6 +363,15 @@ namespace SeteVidas.EditorTools
                 }
                 if (pogo) nodes.Add(new Node { Kind = PogoK, X = (int)Math.Floor(px + 0.5f), Y = (int)Math.Floor(py), FX = px, FY = py, H = h, Label = o.Name });
             }
+            // ganchos: pendurado, os pés 1,25 abaixo dele
+            s_hookIds = new List<int>();
+            foreach (var o in reg.Objects)
+                if (o.Kind == "hook")
+                {
+                    float fx = o.X - 0.5f, fy = o.Y - HangDrop;
+                    s_hookIds.Add(nodes.Count);
+                    nodes.Add(new Node { Kind = HookK, X = (int)Math.Floor(fx + 0.5f), Y = (int)Math.Floor(fy), FX = fx, FY = fy, AX = o.X, AY = o.Y, Label = o.Name });
+                }
             var goalOf = new Dictionary<ForestLayout.Obj, List<int>>();
             foreach (var o in reg.Objects)
                 if (o.Kind == "exit")
@@ -339,12 +420,47 @@ namespace SeteVidas.EditorTools
                     List<int> gl;
                     if (goalOf.TryGetValue(o, out gl)) foreach (int k in gl) terminal[k] = true;
                 }
+            // cenas depois do Portão do Templo: com dash e gancho
+            s_hunter = reg.Hunter;
+            s_nodes = nodes;
             var reached = Bfs(g, nodes, byCol, standId, wallId, starts, edges, terminal);
             // caminho principal: só a partir da primeira chegada da cena (quem vem andando pela rota da fase)
             var main = new List<int>();
             for (int k = 0; k < starts.Count; k++)
                 if (reg.Main.Length == 0 ? k == 0 : System.Array.IndexOf(reg.Main, startNames[k]) >= 0) main.Add(starts[k]);
             var mainReached = Bfs(g, nodes, byCol, standId, wallId, main, new List<int>[nodes.Count], terminal);
+
+            // auditoria dos ganchos: a mesma cena com o Caçador (os ganchos de A–D são para a volta, com a classe nova)
+            {
+                bool before = s_hunter;
+                s_hunter = true;
+                var hEdges = new List<int>[nodes.Count];
+                var hunterReached = Bfs(g, nodes, byCol, standId, wallId, starts, hEdges, terminal);
+                rep.HunterOnly = new bool[g.W, g.H];
+                for (int i = 0; i < nodes.Count; i++)
+                    if (nodes[i].Kind == StandK && hunterReached[i] && !reached[i]) rep.HunterOnly[nodes[i].X - g.MinX, nodes[i].Y - g.MinY] = true;
+                foreach (int hi in s_hookIds)
+                {
+                    var hn = nodes[hi];
+                    var info = new HookInfo { Name = hn.Label, X = hn.AX, Y = hn.AY, Reachable = hunterReached[hi], LedgeX = int.MinValue };
+                    var outs = hEdges[hi] ?? Neighbors(g, nodes, byCol, standId, wallId, hi);
+                    float bestD = float.MaxValue;
+                    foreach (int j in outs)
+                    {
+                        var t = nodes[j];
+                        if (t.Kind != StandK) continue;
+                        if (!reached[j]) info.NewSpots++;
+                        // subir "onde ele está": um chão logo ao lado do gancho, no máximo 1 abaixo e 2,5 acima dele
+                        float ddx = Math.Abs(t.FX + 0.5f - hn.AX), ddy = t.FY - hn.AY;
+                        if (ddx <= 2.6f && ddy >= -1f && ddy <= 2.5f && ddx < bestD)
+                        {
+                            bestD = ddx; info.ClimbsOnto = true; info.LedgeX = t.X; info.LedgeY = t.Y; info.LedgeWasReachable = reached[j];
+                        }
+                    }
+                    rep.Hooks.Add(info);
+                }
+                s_hunter = before;
+            }
             string mainName = reg.Main.Length > 0 ? string.Join(" e ", reg.Main) : (startNames.Count > 0 ? startNames[0] : "?");
 
             // alvos
@@ -505,8 +621,30 @@ namespace SeteVidas.EditorTools
             {
                 Jumps(g, nodes, byCol, n.FX, n.FY, n.H, 0, true, outs, i);
             }
+            else if (n.Kind == HookK)
+            {
+                // pendurado: pulo cheio ou curto (com dash no alto), ou soltar
+                Jumps(g, nodes, byCol, n.FX, n.FY, JumpH, 0, true, outs, i);
+                Jumps(g, nodes, byCol, n.FX, n.FY, JumpH * 0.6f, 0, true, outs, i);
+                Jumps(g, nodes, byCol, n.FX, n.FY, 0f, 0, true, outs, i);
+            }
+            if (s_hunter && s_hookIds != null && n.Kind != GoalK)
+            {
+                // flecha com corda: de onde está (e, em pé, do alto do pulo) até um gancho a 9, sem bloco no meio
+                float hx = n.FX + 0.5f, hy = n.FY + HandUp;
+                bool canJump = n.Kind == StandK && BodyFree(g, hx, n.FY + JumpH);
+                foreach (int k in s_hookIds)
+                {
+                    if (k == i) continue;
+                    var h = nodes[k];
+                    if (LineFree(g, hx, hy, h.AX, h.AY) || (canJump && LineFree(g, hx, hy + JumpH, h.AX, h.AY))) outs.Add(k);
+                }
+            }
             return outs;
         }
+
+        static List<int> s_hookIds;
+        static List<Node> s_nodes;
 
         /// <summary>Arcos saindo de (x0, y0) com ápice h para todo nó alcançável.</summary>
         static void Jumps(Grid g, List<Node> nodes, Dictionary<int, List<int>> byCol, float x0, float y0, float h, int dirLock, bool grabWalls, List<int> outs, int self)
@@ -523,10 +661,12 @@ namespace SeteVidas.EditorTools
                     var t = nodes[j];
                     if (t.FY > y0 + h + LedgeHands + 0.01f || t.FY < y0 - 60f) continue;
                     bool ok;
+                    if (t.Kind == HookK) continue;   // o gancho se alcança pela corda (Neighbors), não pulando
                     if (t.Kind == WallK)
                     {
                         if (!grabWalls) continue;
                         ok = Arc(g, x0, y0, h, t.FX, t.FY, true, dirLock, maxSide);
+                        if (!ok && s_hunter) ok = ArcDash(g, x0, y0, h, t.FX, t.FY, dirLock);
                     }
                     else if (t.Kind == GoalK)
                     {
@@ -540,6 +680,7 @@ namespace SeteVidas.EditorTools
                     else
                     {
                         ok = t.FY <= y0 + h + 0.001f && Arc(g, x0, y0, h, t.FX, t.FY, false, dirLock, maxSide);
+                        if (!ok && s_hunter && t.Kind == StandK) ok = ArcDash(g, x0, y0, h, t.FX, t.FY, dirLock);
                         // agarrar a borda: chão sólido (não galho) até 1,25 acima do ápice, com o lado de chegada livre
                         if (!ok && t.FY > y0 + h * 0.5f && g.S(t.X, t.Y - 1) && !g.Ow(t.X, t.Y))
                         {
@@ -605,10 +746,41 @@ namespace SeteVidas.EditorTools
                         else if (st == 3) c = '!';
                     }
                     foreach (var p in rep.Pogo) if (p[0] == x && p[1] == y) c = p[2] == 1 ? 'P' : p[2] == 2 ? 'p' : '*';
+                    // h: em pé só com o Caçador; G: gancho (g: gancho que ninguém alcança)
+                    if (g.In(x, y) && rep.HunterOnly != null && rep.HunterOnly[x - g.MinX, y - g.MinY] && c == '.') c = 'h';
+                    foreach (var hk in rep.Hooks) if ((int)Math.Floor(hk.X) == x && (int)Math.Floor(hk.Y) == y) c = hk.Reachable ? 'G' : 'g';
                     sb.Append(c);
                 }
                 sb.AppendLine();
             }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Auditoria dos ganchos (pedido de 14/11/2026): cada gancho precisa ser alcançável, ficar na borda de um chão
+        /// onde o gato sobe pendurado nele e levar a um lugar de verdade. Uma linha por gancho; ✗ = problema.
+        /// </summary>
+        public static string HookAudit()
+        {
+            var sb = new System.Text.StringBuilder();
+            int bad = 0, total = 0;
+            foreach (var reg in ForestLayout.Regions())
+            {
+                var rep = Check(reg);
+                if (rep.Hooks.Count == 0) continue;
+                sb.AppendLine("== " + reg.Scene);
+                foreach (var h in rep.Hooks)
+                {
+                    total++;
+                    var room = reg.Rooms.Find(r => h.X >= r.X && h.X < r.X + r.W && h.Y >= r.Y && h.Y < r.Y + r.H);
+                    string at = room != null ? room.Id + " (" + (h.X - room.X - 1).ToString("0.#") + ", " + (h.Y - room.Y - 1).ToString("0.#") + ")" : h.X + ", " + h.Y;
+                    string why = !h.Reachable ? "ninguém alcança" : !h.ClimbsOnto ? "não sobe em nada ao lado" : "";
+                    string ledge = h.ClimbsOnto ? "sobe em (" + (room != null ? h.LedgeX - room.X - 1 : h.LedgeX) + ", " + (room != null ? h.LedgeY - room.Y - 1 : h.LedgeY) + ")" + (h.LedgeWasReachable ? "" : " [lugar novo]") : "";
+                    if (why != "") bad++;
+                    sb.AppendLine("  " + (why != "" ? "✗ " : "· ") + at + ": " + (why != "" ? why : ledge) + (h.NewSpots > 0 ? "; abre " + h.NewSpots + " lugar(es) novo(s)" : ""));
+                }
+            }
+            sb.AppendLine(bad == 0 ? total + " gancho(s), todos ok." : bad + " de " + total + " gancho(s) com problema.");
             return sb.ToString();
         }
 

@@ -46,6 +46,20 @@ namespace SeteVidas.Player
         [Tooltip("Depois de um pulo ou empurrão, tempo sem colar na rampa (s). Evita que o pulo seja cancelado na subida")]
         [Range(0f, 0.5f)] public float SlopeJumpGrace = 0.15f;
 
+        [Header("Escorregar nas rampas (pedido do usuário, 14/11/2026)")]
+        [Tooltip("Sem empurrar rampa acima, o gato escorrega rampa abaixo, ganhando velocidade")]
+        public bool SlopeSlide = true;
+        [Tooltip("Aceleração do escorregão numa rampa de 90° (tiles/s²); vale a parte da gravidade: × seno da inclinação")]
+        [Min(0f)] public float SlideAcceleration = 45f;
+        [Tooltip("Velocidade máxima escorregando (tiles/s)")]
+        [Min(0f)] public float SlideMaxSpeed = 13f;
+        [Tooltip("Depois do escorregão, a velocidade acima da de andar cai devagar (tiles/s²): no ar")]
+        [Min(0f)] public float SlideMomentumAirDecel = 10f;
+        [Tooltip("...e no chão plano (tiles/s²)")]
+        [Min(0f)] public float SlideMomentumGroundDecel = 28f;
+        [Tooltip("Pedido de 14/11/2026: subir a rampa andando fica mais lento. Fração da velocidade numa rampa de 45° (mais suave: mais perto de 1)")]
+        [Range(0.1f, 1f)] public float UphillSpeedMultiplier = 0.45f;
+
         [Header("Agarrar borda")]
         [Tooltip("Liga/desliga agarrar bordas ao cair segurando a direção da parede")]
         public bool LedgeGrabEnabled = true;

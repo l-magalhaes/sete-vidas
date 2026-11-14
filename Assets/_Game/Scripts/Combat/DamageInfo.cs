@@ -32,6 +32,15 @@ namespace SeteVidas.Combat
     }
 
     /// <summary>
+    /// Reage ao terremoto do Paladino de um jeito próprio (pedido de 14/11/2026: a serpente entocada morre com o tremor,
+    /// mesmo invulnerável aos golpes). O terremoto chama isto no lugar de <see cref="IDamageable.TakeDamage"/>.
+    /// </summary>
+    public interface IQuakeTarget
+    {
+        void OnQuake(in DamageInfo info);
+    }
+
+    /// <summary>
     /// Alvo com o próprio multiplicador de golpe pelas costas (Templário Zumbi: nunca é surpreendido, mas leva
     /// dano dobrado por trás, pedido do usuário de 12/11/2026). Vale no lugar do <see cref="DamageMultipliers.Back"/>.
     /// </summary>

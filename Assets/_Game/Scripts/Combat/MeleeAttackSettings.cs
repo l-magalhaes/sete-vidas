@@ -92,6 +92,10 @@ namespace SeteVidas.Combat
         [Tooltip("Tremor da câmera no impacto (px, s)")]
         public Vector2 ShockwaveShake = new Vector2(3f, 0.25f);
 
+        [Header("Arma à distância (arco do Caçador, F4b)")]
+        [Tooltip("O ataque atira (IRangedAttack no gato) em vez do golpe corpo a corpo. A estocada para baixo continua")]
+        public bool Ranged;
+
         [Header("Movimento e barulho")]
         [Tooltip("Velocidade de andar durante o ataque (1 = normal). Marreta: lenta")]
         [Range(0f, 1f)] public float MoveMultiplierWhileAttacking = 1f;

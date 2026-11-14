@@ -9,7 +9,7 @@ namespace SeteVidas.UI
         Rogue, Paladin, Mage, Monk, Bard, Hunter, Druid,
         Climb, Sneak, Backstab, DownStab, DoubleJump, Dash, Anchor,
         Coin, Page, TabAbilities, TabItems, TabDiary,
-        Wood, Map, Key,
+        Wood, Map, Key, TempleKey,
     }
 
     /// <summary>Como o quadrado de um slot é desenhado.</summary>
@@ -63,6 +63,7 @@ namespace SeteVidas.UI
                 case InventoryIcon.Wood: pal = Planks(g); break;
                 case InventoryIcon.Map: pal = FoldedMap(g); break;
                 case InventoryIcon.Key: pal = KeyShape(g); break;
+                case InventoryIcon.TempleKey: pal = TempleKeyShape(g); break;
                 default: pal = Book(g); break;
             }
             return Colorize(g, Size, Size, ParsePalette(pal), true);
@@ -323,6 +324,15 @@ namespace SeteVidas.UI
             R(g, 7, 7, 7, 2, 'G'); R(g, 11, 9, 1, 2, 'G'); R(g, 13, 9, 1, 3, 'G');
             P(g, 3, 6, 'w'); L(g, 8, 7, 12, 7, 'w');
             return "G=#e0b04a w=#fff4c2";
+        }
+
+        /// <summary>Chave do Templo (F4b): maior, de pedra verde-musgo, com a cabeça de serpente na argola e o olho turquesa.</summary>
+        static string TempleKeyShape(char[,] g)
+        {
+            Disc(g, 4, 9, 4, 'S'); Disc(g, 4, 9, 2, '.');
+            R(g, 8, 8, 7, 3, 'S'); R(g, 11, 5, 2, 3, 'S'); R(g, 14, 5, 1, 4, 'S');
+            P(g, 2, 12, 'e'); P(g, 6, 12, 'd'); L(g, 8, 9, 14, 9, 'd');
+            return "S=#4f7a52 d=#2e4a34 e=#5ce0c8";
         }
 
         /// <summary>Aba Mapa: papel dobrado em três, com uma trilha pontilhada e um X.</summary>

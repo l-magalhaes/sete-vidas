@@ -193,5 +193,60 @@ namespace SeteVidas.UI
                 }
             return px;
         }
+
+        // ---------------------------------------------------------------- coração temporário (fantasminha)
+
+        public const string GhostOutline = "#1f4a4a", GhostBody = "#d8fff6", GhostShine = "#ffffff",
+            GhostShade = "#8fe0cc", GhostEyes = "#16303a", GhostFaded = "#3d6b6699";
+
+        /// <summary>
+        /// Pedido de 14/11/2026: o coração temporário dos baús é um fantasminha. Cabeça em forma de coração (os dois
+        /// lobos), olhos e boquinha, e a barra do lençol ondulada embaixo. Meio: a metade direita fica apagada.
+        /// Letras: o contorno, W corpo, H brilho, S sombra, k olhos/boca.
+        /// </summary>
+        static readonly string[] Ghost =
+        {
+            "................",
+            "...ooo....ooo...",
+            "..oWWWo..oWWWo..",
+            ".oWHWWWooWWWWWo.",
+            ".oWHWWWWWWWWWWo.",
+            ".oWWWWWWWWWWWWo.",
+            ".oWWkkWWWWkkWWo.",
+            ".oWWkkWWWWkkWWo.",
+            ".oWWWWWWWWWWWWo.",
+            ".oWWWWWkkWWWWWo.",
+            ".oWWWWWWWWWWWWo.",
+            ".oSWWWWWWWWWWSo.",
+            ".oSSWWWSSWWWSSo.",
+            ".oSSo.oSSo.oSSo.",
+            "..oo...oo...oo..",
+            "................",
+        };
+
+        /// <summary>O fantasminha do coração temporário (Cheio ou Meio; os outros estados não aparecem).</summary>
+        public static string[,] DrawGhost(HeartLook look)
+        {
+            var px = new string[Size, Size];
+            for (int y = 0; y < Size; y++)
+                for (int x = 0; x < Size; x++)
+                {
+                    char k = Ghost[y][x];
+                    string color;
+                    switch (k)
+                    {
+                        case 'o': color = GhostOutline; break;
+                        case 'W': color = GhostBody; break;
+                        case 'H': color = GhostShine; break;
+                        case 'S': color = GhostShade; break;
+                        case 'k': color = GhostEyes; break;
+                        default: color = ""; break;
+                    }
+                    // meio: o lado direito do corpo some (os olhos ficam)
+                    if (look != HeartLook.Full && x >= Size / 2 && (k == 'W' || k == 'H' || k == 'S')) color = GhostFaded;
+                    px[y, x] = color;
+                }
+            return px;
+        }
     }
 }

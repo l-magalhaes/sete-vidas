@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 060e4751d6948e447a8a081f04ed6db7, type: 3}
+  m_Name: HunterBow
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Combat.MeleeAttackSettings
+  BaseDamage: 2
+  Type: 0
+  BackstabBonus: 1
+  Multipliers:
+    Front: 1
+    Back: 1.5
+    StealthBack: 2.5
+  ComboSteps: 3
+  AirComboSteps: 2
+  Windup: 0.04
+  Active: 0.08
+  Recovery: 0.12
+  FinalRecovery: 0.3
+  FinisherLunge: 2.25
+  FinisherLungeTime: 0.15
+  FinisherDamageMultiplier: 1.5
+  DownAttack: 1
+  DownWindup: 0.05
+  DownActive: 0.3
+  DownRecovery: 0.1
+  DownHitbox: {x: 1.5, y: 0.875}
+  DownHitboxBelow: 0.35
+  PogoHeightFraction: 1.8
+  PogoGrace: 0.25
+  DropGravityMultiplier: 2
+  DropHitDamage: 4
+  DropImpactRange: 1.5
+  DropImpactDamage: 3
+  DropRecovery: 0.3
+  UpAttack: 0
+  UpHitbox: {x: 1.4, y: 1.3}
+  Chargeable: 0
+  ChargeStart: 0.4
+  ChargeFull: 1.2
+  SlamWindup: 0.1
+  SlamRecovery: 0.45
+  ShockwaveRange: {x: 3, y: 5}
+  ShockwaveDamage: {x: 3, y: 5}
+  ShockwaveHeight: 1.2
+  KnockdownTime: 1
+  ShockwaveNoiseRadius: 12
+  ShockwaveShake: {x: 3, y: 0.25}
+  Ranged: 1
+  MoveMultiplierWhileAttacking: 1
+  NoiseMultiplier: 0.5
+  HitboxSize: {x: 1.1, y: 0.9}
+  HitboxForward: 0.5
+  HitstopFront: 0.05
+  HitstopBack: 0.07
+  HitstopStealth: 0.12

@@ -138,7 +138,9 @@ namespace SeteVidas.Combat
             if (heavy && _player != null) _player.LockHorizontalControl(_player.Settings.KnockbackControlLock);
         }
 
-        bool CanAttack => !_player.IsHanging && !_player.IsClimbingLedge && _player.ActiveAbility == null;
+        IRangedAttack _ranged;
+
+        bool CanAttack =>!_player.IsHanging && !_player.IsClimbingLedge && _player.ActiveAbility == null;
 
         void CancelAll()
         {
@@ -175,8 +177,20 @@ namespace SeteVidas.Combat
 
             // no santuário com viagem rápida, o botão de ataque abre o menu de viagem (não golpeia)
             bool attackPressed = input != null && input.AttackPressedThisFrame && !SeteVidas.World.Sanctuary.AttackOpensTravel;
+            // arma à distância (arco do Caçador): o ataque atira na direção do direcional (mira de 15 em 15°, assistida)
+            if (weapon.Ranged)
+            {
+                if (attackPressed && !_sequence.IsAttacking)
+                {
+                    if (input.FirmDirection != 0) _player.Face(input.FirmDirection);
+                    if (_ranged == null) _ranged = GetComponent<IRangedAttack>();
+                    _ranged?.TryFire(input.RawMove);
+                }
+                _player.SpeedMultiplier = 1f;
+                return;
+            }
             // {subir} + ataque: o golpe para cima (um golpe só, no chão ou no ar)
-            bool wantsUp = attackPressed && !_sequence.IsAttacking && weapon.UpAttack &&
+            bool wantsUp =attackPressed && !_sequence.IsAttacking && weapon.UpAttack &&
                            UpAttackRules.WantsUpAttack(input.MoveY, input.CrouchHeld);
             var timings = _sequence.IsAttacking ? CurrentTimings() : (grounded ? weapon.Timings : weapon.AirTimings);
             if (wantsUp) timings.Steps = 1;
@@ -329,7 +343,7 @@ namespace SeteVidas.Combat
                 if (!ChargeRules.InShockwave(feet, range, new Rect(b.min.x, b.min.y, b.size.x, b.size.y))) continue;
                 int side = b.center.x >= feet.x ? 1 : -1;
                 var info = new DamageInfo(Scaled(damage), new Vector2(side, 0f), DamageType.Heavy, AttackAngle.Front, gameObject);
-                target.TakeDamage(info);
+                if (target is IQuakeTarget quakeTarget) quakeTarget.OnQuake(info); else target.TakeDamage(info);
                 if (knockdown > 0f && target is IKnockdown down) down.Knockdown(knockdown);
                 Hit?.Invoke(target, info);
             }

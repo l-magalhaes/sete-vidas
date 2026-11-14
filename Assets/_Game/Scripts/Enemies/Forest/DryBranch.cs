@@ -105,16 +105,22 @@ namespace SeteVidas.Enemies
             return Mathf.Abs(d.x);
         }
 
+        protected override Vector2 EyePosition => (Vector2)transform.position + Vector2.up * height * 0.75f;
+        protected override Vector3 IconOffset => new Vector3(0f, height + 0.4f, 0f);
+
         protected override void Tick(float dt)
         {
             float dist = PlayerDistance(out int side);
+            if (!Aware) dist = -1f; // alerta (14/11/2026): só acorda e ataca depois do "!"
             var sil = Player != null ? Player.GetComponent<SeteVidas.Player.ShadowSilhouette>() : null;
             bool hidden = sil != null && sil.IsSilhouette;
             var before = _state;
             // parado: vira para o gato quando ele está perto (não anda)
             if (_state == BranchState.Awake && dist >= 0f && dist < 6f) _facing = side;
+            else if (_state == BranchState.Awake && Senses.Suspicious) _facing = Senses.LastKnown.x >= transform.position.x ? 1 : -1; // "?": olha para lá
             _state = StepBranch(_state, ref _timer, dt, dist, hidden, IsInfected);
             if (IsInfected && _state == BranchState.Disguised) BlinkEyes();
+            Senses.IconHidden = _state == BranchState.Disguised;
 
             if (_state == BranchState.Windup && before != BranchState.Windup)
                 SeteVidas.Audio.Sfx.Play("zumbi_sente", transform.position, 0.8f, 0.7f); // estalo de madeira (provisório)

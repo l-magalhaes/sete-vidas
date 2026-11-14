@@ -38,6 +38,8 @@ namespace SeteVidas.Enemies
                 wakeRange = BatWakeRangeFor(true, wakeRange);
                 noiseToWake = Mathf.Min(noiseToWake, BatNoiseFor(true));
             }
+            // alerta (14/11/2026): vê em volta e muito mais rápido que os outros
+            Senses.Profile = ForestSenseRules.Bat(wakeRange);
         }
 
         protected override void OnEnable() { base.OnEnable(); NoiseSystem.Emitted += OnNoise; }
@@ -46,7 +48,8 @@ namespace SeteVidas.Enemies
         void OnNoise(NoiseEvent n)
         {
             if (_state != BatState.Sleep || n.Loudness < noiseToWake) return;
-            if (Vector2.Distance(n.Position, transform.position) <= n.Radius) _heard = true;
+            // barulho alto sem parede no meio: acorda na hora (através do teto, só o medidor ouve, abafado)
+            if (Vector2.Distance(n.Position, transform.position) <= n.Radius && !ForestAwareness.Blocked(EyePosition, n.Position + Vector2.up * 0.3f)) { _heard = true; Senses.ForceAware(n.Position); }
         }
 
         /// <summary>Saiu das folhas de um Broto: já acordado e perseguindo, sem poleiro.</summary>
@@ -55,6 +58,7 @@ namespace SeteVidas.Enemies
             _spawned = true;
             _state = BatState.Chase;
             _vel = Vector2.up * 3f;
+            Senses.ForceAware(PlayerHealth.Active != null ? (Vector2)PlayerHealth.Active.transform.position : (Vector2)transform.position);
         }
 
         protected override void Revive()
@@ -108,6 +112,11 @@ namespace SeteVidas.Enemies
             return done;
         }
 
+        // pendurado no teto: o olho fica um pouco abaixo (fora do bloco do teto)
+        protected override Vector2 EyePosition => (Vector2)transform.position + Vector2.down * 0.25f;
+        // embaixo do morcego: em cima, o ícone aparecia por cima do chão da sala de cima
+        protected override Vector3 IconOffset => new Vector3(0f, -1.3f, 0f);
+
         protected override void Tick(float dt)
         {
             var h = Player;
@@ -116,6 +125,7 @@ namespace SeteVidas.Enemies
             float dist = h != null && !h.IsDead ? Vector2.Distance(me, target) : 999f;
             bool crouched = h != null && h.GetComponent<PlayerController>() is var pc && pc != null && pc.IsCrouching;
             bool atPerch = Vector2.Distance(me, _home) < 0.2f;
+            if (_state == BatState.Sleep && !Aware) dist = 999f; // dormindo: só acorda depois do "!"
 
             bool hit = false;
             if (_state == BatState.Chase)

@@ -133,9 +133,9 @@ namespace SeteVidas.Player
             if (!_poison.Active) return;
             if (IsDead || IsCollapsed) { _poison = default; return; }
             bool lethal = _poison.Lethal;
-            if (PoisonRules.Step(ref _poison, Time.deltaTime, CurrentHits, out int damage))
+            if (PoisonRules.Step(ref _poison, Time.deltaTime, CurrentHits + TempHits, out int damage))
             {
-                if (damage > 0) CurrentHits = HealthRules.ApplyDamage(CurrentHits, damage);
+                if (damage > 0) CurrentHits = DamageWithTemp(damage);
                 // tique: mais grave quando o veneno pode matar; fraco e agudo quando segurou no último meio coração
                 if (damage > 0) SeteVidas.Audio.Sfx.Play("veneno_tique", null, 1f, lethal ? 0.85f : 1f);
                 else SeteVidas.Audio.Sfx.Play("veneno_tique", null, 0.5f, 1.15f);
@@ -146,6 +146,34 @@ namespace SeteVidas.Player
             }
         }
 
+        // ------------------------------------------------ corações temporários (14/11/2026)
+
+        /// <summary>Hits temporários agora (baús): absorvem o dano antes da vida; não se curam; somem ao morrer.</summary>
+        public int TempHits => SaveManager.Data != null ? SaveManager.Data.tempHits : 0;
+
+        /// <summary>Ganhou um coração temporário (baú). Retorna os hits que de fato entraram (há limite de vagas).</summary>
+        public int AddTempHits(int hits)
+        {
+            var data = SaveManager.Data;
+            if (data == null || IsDead || hits <= 0) return 0;
+            int before = data.tempHits;
+            data.tempHits = HealthRules.AddTemp(before, hits, HeartsRecovered);
+            Changed?.Invoke();
+            return data.tempHits - before;
+        }
+
+        int DamageWithTemp(int damage)
+        {
+            var data = SaveManager.Data;
+            if (data == null) return HealthRules.ApplyDamage(CurrentHits, damage);
+            int temp = data.tempHits;
+            int hits = HealthRules.ApplyDamage(CurrentHits, ref temp, damage);
+            data.tempHits = temp;
+            return hits;
+        }
+
+        void LoseTemp() { if (SaveManager.Data != null) SaveManager.Data.tempHits = 0; }
+
         // ------------------------------------------------------------- dano
 
         public void TakeDamage(in DamageInfo info)
@@ -153,7 +181,7 @@ namespace SeteVidas.Player
             if (IsDead || IsCollapsed || IsInvulnerable || Shielded || info.Amount <= 0) return;
             var s = _player.Settings;
 
-            CurrentHits = HealthRules.ApplyDamage(CurrentHits, info.Amount);
+            CurrentHits = DamageWithTemp(info.Amount);
             _invulnerableUntil = Time.time + s.InvulnerabilityTime;
 
             float dir = info.Direction.x >= 0f ? 1f : -1f; // para longe do atacante
@@ -186,7 +214,7 @@ namespace SeteVidas.Player
         public void TakeHazardDamage(in DamageInfo info)
         {
             if (IsDead || IsCollapsed || IsInvulnerable || info.Amount <= 0) return;
-            CurrentHits = HealthRules.ApplyDamage(CurrentHits, info.Amount);
+            CurrentHits = DamageWithTemp(info.Amount);
             _invulnerableUntil = Time.time + _player.Settings.InvulnerabilityTime;
             Damaged?.Invoke(info);
             Changed?.Invoke();
@@ -226,6 +254,7 @@ namespace SeteVidas.Player
         {
             IsDead = true;
             _poison = default;
+            LoseTemp(); // morrer leva os corações temporários
             if (_input != null) _input.enabled = false; // sem controle enquanto morre
             Died?.Invoke();
 

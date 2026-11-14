@@ -42,6 +42,25 @@ namespace SeteVidas.Enemies
         public int FacingDirection => _facing;
         public bool InCombat => true; // nunca é surpreendido (são bichos atentos)
 
+        // ------------------------------------------------------------ alerta e detecção (pedido de 14/11/2026)
+
+        /// <summary>Olhos, ouvidos e medidor de suspeita ("?" e "!") deste bicho.</summary>
+        protected ForestAwareness Senses { get; private set; }
+        /// <summary>Como ele percebe o gato (padrão: o da Sentinela).</summary>
+        protected virtual ForestSenseProfile SenseProfile => ForestSenseRules.Default;
+        /// <summary>De onde ele olha.</summary>
+        protected virtual Vector2 EyePosition => (Vector2)transform.position + Vector2.up * 0.8f;
+        /// <summary>Para onde ele olha.</summary>
+        protected virtual Vector2 LookDirection => new Vector2(_facing, 0f);
+        /// <summary>Onde fica o "?"/"!" (local, em cima da cabeça).</summary>
+        protected virtual Vector3 IconOffset => new Vector3(0f, 2.1f, 0f);
+        /// <summary>Detectou o gato: ataca.</summary>
+        public bool Aware => Senses != null && Senses.Aware;
+        /// <summary>Estado do medidor (testes e depuração).</summary>
+        public AlertState AlertState => Senses != null ? Senses.State : AlertState.Patrolling;
+
+        void OnNoise(NoiseEvent n) { if (!IsDead && Senses != null) Senses.Hear(n, EyePosition); }
+
         protected virtual void Awake()
         {
             _home = transform.position;
@@ -49,10 +68,11 @@ namespace SeteVidas.Enemies
             _hp = MaxHealth;
             _facing = startFacing >= 0 ? 1 : -1;
             _colliders = GetComponentsInChildren<Collider2D>(true);
+            Senses = new ForestAwareness(gameObject, SenseProfile, IconOffset);
         }
 
-        protected virtual void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); GameEvents.WorldReset += Revive; }
-        protected virtual void OnDisable() { s_all.Remove(this); GameEvents.WorldReset -= Revive; }
+        protected virtual void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); GameEvents.WorldReset += Revive; NoiseSystem.Emitted += OnNoise; }
+        protected virtual void OnDisable() { s_all.Remove(this); GameEvents.WorldReset -= Revive; NoiseSystem.Emitted -= OnNoise; }
 
         /// <summary>Multiplicador do golpe (o Galho Seco preso leva o dobro nas costas).</summary>
         protected virtual float DamageMultiplier(in DamageInfo info) => 1f;
@@ -73,17 +93,31 @@ namespace SeteVidas.Enemies
             var flash = HitFlash.For(spriteRenderer);
             if (flash != null) { flash.Flash(0.08f); flash.Squash(1, 0.12f); }
             SeteVidas.Audio.Sfx.Play(_hp > 0 ? "zumbi_dano" : "zumbi_morte", transform.position); // provisório (decisão de 13/11/2026)
+            if (Senses != null) Senses.Damaged(info.Source != null ? (Vector2)info.Source.transform.position : (Vector2)transform.position);
             OnHit(info);
             if (_hp <= 0) Die();
         }
 
         protected virtual void OnHit(in DamageInfo info) { }
 
+        /// <summary>Morre na hora, ignorando a vida e a invulnerabilidade (a serpente entocada no terremoto).</summary>
+        protected void KillNow(in DamageInfo info)
+        {
+            if (IsDead) return;
+            _hp = 0;
+            var flash = HitFlash.For(spriteRenderer);
+            if (flash != null) { flash.Flash(0.08f); flash.Squash(1, 0.12f); }
+            SeteVidas.Audio.Sfx.Play("zumbi_morte", transform.position);
+            OnHit(info);
+            Die();
+        }
+
         void Die()
         {
             IsDead = true;
             foreach (var c in _colliders) if (c != null) c.enabled = false;
             _goneAt = Time.time + 0.4f;
+            if (Senses != null) Senses.Kill();
             Vector2 at = (Vector2)transform.position + Vector2.up * 0.8f;
             HitSparks.Burst(at, 10, new Color32(0xc4, 0x98, 0x60, 0xff), new Color32(0x52, 0x26, 0x1e, 0xff), 2f, 6f, 0.5f, 40f, 0.5f);
             OnDied();
@@ -99,6 +133,7 @@ namespace SeteVidas.Enemies
             _hp = MaxHealth;
             _goneAt = -1f;
             transform.position = _home;
+            if (Senses != null) Senses.Reset();
             _facing = startFacing >= 0 ? 1 : -1;
             foreach (var c in _colliders) if (c != null) c.enabled = true;
             if (spriteRenderer != null) spriteRenderer.enabled = true;
@@ -114,6 +149,7 @@ namespace SeteVidas.Enemies
                 if (_goneAt > 0f && Time.time >= _goneAt && spriteRenderer != null) spriteRenderer.enabled = false;
                 return;
             }
+            if (Senses != null) Senses.Step(EyePosition, LookDirection, Time.deltaTime);
             Tick(Time.deltaTime);
             if (spriteRenderer != null) spriteRenderer.flipX = ArtFacesRight ? _facing < 0 : _facing > 0;
         }
@@ -148,9 +184,9 @@ namespace SeteVidas.Enemies
         {
             var h = Player;
             if (h == null || h.IsDead) return false;
-            int before = h.CurrentHits;
+            int before = h.CurrentHits + h.TempHits;
             if (!HurtPlayerIn(box, damage)) return false;
-            if (h.CurrentHits < before && !h.IsDead) h.Poison();
+            if (h.CurrentHits + h.TempHits < before && !h.IsDead) h.Poison();
             return true;
         }
 

@@ -42,7 +42,7 @@ namespace SeteVidas.EditorTools
                 case OneWayPlatform _: return new Vector3(0f, -0.125f, 0f);
                 case BounceMushroom _: return new Vector3(0f, 0.5f, 0f);
                 case WoodChest _: return new Vector3(0f, 0.5f, 0f);
-                case BreakableWall _: return new Vector3(0f, 2f, 0f);
+                case BreakableWall w: return new Vector3(0f, w.GetComponent<BoxCollider2D>().size.y * 0.5f, 0f); // tronco alto: no meio
                 default: return Vector3.zero; // cacto, galho podre
             }
         }

@@ -135,5 +135,36 @@ namespace SeteVidas.Tests
             Assert.IsFalse(R.CloudPoisons(true, cloud, new Vector2(1f, 1f)), "Uma vez por nuvem: não deixa o veneno letal sozinha");
             Assert.IsFalse(R.CloudPoisons(false, cloud, new Vector2(3f, 1f)), "Fora da nuvem");
         }
+
+        // ---------------------------------------------------------------- alerta e detecção (14/11/2026)
+
+        [Test]
+        public void Senses_DefaultIsTheSentinels_BatIsMuchFaster_AndSeesAround()
+        {
+            var d = SeteVidas.Enemies.ForestSenseRules.Default;
+            var bat = SeteVidas.Enemies.ForestSenseRules.Bat(R.BatWakeRange);
+            Assert.AreEqual(8f, d.Range);
+            Assert.AreEqual(35f, d.HalfAngle);
+            Assert.AreEqual(0.8f, d.FillRate);
+            Assert.GreaterOrEqual(bat.FillRate, d.FillRate * 4f, "O morcego vê muito mais rápido");
+            Assert.IsTrue(SeteVidas.Enemies.ForestSenseRules.InCone(Vector2.zero, Vector2.right, new Vector2(-3f, 0f), bat.Range, bat.HalfAngle), "Eco: vê atrás");
+            Assert.IsFalse(SeteVidas.Enemies.ForestSenseRules.InCone(Vector2.zero, Vector2.right, new Vector2(-3f, 0f), d.Range, d.HalfAngle), "Os outros: só na frente");
+            Assert.IsTrue(SeteVidas.Enemies.ForestSenseRules.InCone(Vector2.zero, Vector2.up, new Vector2(0.5f, 4f), d.Range, d.HalfAngle), "A planta na parede olha para onde aponta");
+        }
+
+        [Test]
+        public void Senses_ShadowsAndDistanceSlowTheMeter()
+        {
+            var d = SeteVidas.Enemies.ForestSenseRules.Default;
+            float close = SeteVidas.Enemies.ForestSenseRules.SightFill(d, 2f, 1f, false);
+            float far = SeteVidas.Enemies.ForestSenseRules.SightFill(d, 7f, 1f, false);
+            Assert.Greater(close, far, "Mais perto, enche mais rápido");
+            Assert.AreEqual(0f, SeteVidas.Enemies.ForestSenseRules.SightFill(d, 7f, 0.5f, false), "Na sombra, a 7 tiles não vê (alcance 4)");
+            Assert.Greater(SeteVidas.Enemies.ForestSenseRules.SightFill(d, 4.5f, 0.5f, true), 0f, "Em alerta não perde o gato na sombra");
+            // segundos até o "!" com o gato a 2 tiles, à vista: o morcego bem antes dos outros
+            float batTime = 1f / SeteVidas.Enemies.ForestSenseRules.SightFill(SeteVidas.Enemies.ForestSenseRules.Bat(R.BatWakeRange), 2f, 1f, false);
+            Assert.Less(batTime, 0.25f);
+            Assert.Greater(1f / close, 0.6f);
+        }
     }
 }

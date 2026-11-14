@@ -249,6 +249,8 @@ GameObject:
   - component: {fileID: 7733349154204193517}
   - component: {fileID: 6591250201635064237}
   - component: {fileID: 3085402012075952519}
+  - component: {fileID: 7500667865395563933}
+  - component: {fileID: 7383329847506564286}
   - component: {fileID: 3673377045256065694}
   - component: {fileID: 3499150790131034645}
   - component: {fileID: 6425360654606903979}
@@ -256,6 +258,7 @@ GameObject:
   - component: {fileID: 3502049065231980797}
   - component: {fileID: 3136847245729240846}
   - component: {fileID: 4180873016327107990}
+  - component: {fileID: 7036295373338014480}
   - component: {fileID: 351199450371040120}
   - component: {fileID: 7264019583361947205}
   m_Layer: 8
@@ -418,6 +421,30 @@ MonoBehaviour:
   climbableLayers:
     serializedVersion: 2
     m_Bits: 2048
+--- !u!114 &7500667865395563933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320309356582531918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ce7cbdb15c661b4394cc2d6bfce7073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Abilities.DashAbility
+--- !u!114 &7383329847506564286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320309356582531918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0c715a0f89b26348ba87a842556dc57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Abilities.GrappleAbility
 --- !u!114 &3673377045256065694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,6 +517,7 @@ MonoBehaviour:
   classes:
   - {fileID: 11400000, guid: ce1d558f5e8d59d44807372987893911, type: 2}
   - {fileID: 11400000, guid: 11cc12f574045ba45a200b9ca5899c98, type: 2}
+  - {fileID: 11400000, guid: 61ab02506d892494d871cad0977f3c96, type: 2}
   input: {fileID: 7733349154204193517}
   combat: {fileID: 3673377045256065694}
 --- !u!114 &3136847245729240846
@@ -522,6 +550,22 @@ MonoBehaviour:
   forClass: 1
   combat: {fileID: 3673377045256065694}
   classes: {fileID: 3502049065231980797}
+--- !u!114 &7036295373338014480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6320309356582531918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb0c5474cf10b5d4a8a73fc4aa57839d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Classes.BowAbility
+  forClass: 5
+  combat: {fileID: 3673377045256065694}
+  classes: {fileID: 3502049065231980797}
+  input: {fileID: 0}
 --- !u!114 &351199450371040120
 MonoBehaviour:
   m_ObjectHideFlags: 0

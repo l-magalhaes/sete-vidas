@@ -38,12 +38,28 @@ namespace SeteVidas.World
             if (data == null || KeyRules.HasKey(data, keyId)) return;
             data.SetFlag(KeyRules.KeyFlag(keyId));
             SaveManager.Save();
-            var gold = new Color32(0xff, 0xd3, 0x4d, 0xff);
-            PixelPopup.Spawn(transform.position + Vector3.up * 1.2f, KeyRules.Name(keyId), gold);
-            for (int i = 0; i < 8; i++)
-                HitSparks.Rise((Vector2)transform.position + new Vector2(Random.Range(-0.4f, 0.4f), Random.Range(-0.2f, 0.4f)), gold, Random.Range(1f, 2f), 0.6f);
-            SeteVidas.Audio.Sfx.Play("moeda", transform.position, 1f, 0.8f); // provisório
+            Celebrate(transform.position + Vector3.up * 1.2f, keyId, h.transform);
             gameObject.SetActive(false);
+        }
+
+        public static readonly Color32 Gold = new Color32(0xff, 0xd3, 0x4d, 0xff);
+        public static readonly Color32 Turquoise = new Color32(0x5c, 0xe0, 0xc8, 0xff);
+
+        /// <summary>
+        /// Aviso de chave pega (no chão ou num baú): nome e brilho dourados na da cabana; turquesa, mais forte e com
+        /// fala do Lion na do templo (F4b: as duas chaves se distinguem à primeira vista).
+        /// </summary>
+        public static void Celebrate(Vector3 at, string keyId, Transform cat)
+        {
+            bool temple = KeyRules.IsTempleKey(keyId);
+            Color32 c = temple ? Turquoise : Gold;
+            PixelPopup.Spawn(at, KeyRules.Name(keyId), c);
+            int n = temple ? 16 : 8;
+            for (int i = 0; i < n; i++)
+                HitSparks.Rise((Vector2)at + new Vector2(Random.Range(-0.6f, 0.6f), Random.Range(-1.4f, -0.6f)), c, Random.Range(1f, 2.5f), 0.7f);
+            SeteVidas.Audio.Sfx.Play(temple ? "classe_desbloqueada" : "moeda", at, temple ? 0.8f : 1f, 0.8f); // provisório
+            if (temple && cat != null)
+                SeteVidas.UI.SpeechBubble.Show(cat, "Pesada. E me olhando. Ótimo.", 2.4f);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace SeteVidas.EditorTools
         const string EnvArt = "Assets/_Game/Art/Environments/Placeholder";
         const string ClassesFolder = "Assets/_Game/ScriptableObjects/Classes";
         const string HammerPath = "Assets/_Game/ScriptableObjects/Combat/PaladinHammer.asset";
+        const string BowPath = "Assets/_Game/ScriptableObjects/Combat/HunterBow.asset";
         public const string WallPrefabPath = "Assets/_Game/Prefabs/Interactables/BreakableWall.prefab";
         public const string GoldenPrefabPath = "Assets/_Game/Prefabs/Interactables/Golden.prefab";
 
@@ -41,7 +42,7 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------ classes
 
-        public struct ClassAssets { public ClassDefinition Rogue, Paladin; }
+        public struct ClassAssets { public ClassDefinition Rogue, Paladin, Hunter; }
 
         /// <summary>Cria/atualiza os ClassDefinition e a marreta. Valores já existentes nos assets são preservados.</summary>
         public static ClassAssets CreateClassAssets(MeleeAttackSettings daggers)
@@ -88,8 +89,53 @@ namespace SeteVidas.EditorTools
             EditorUtility.SetDirty(paladin);
 
             AssetDatabase.SaveAssets();
-            return new ClassAssets { Rogue = rogue, Paladin = paladin };
+            var hunter = CreateHunter(daggers);
+            AssetDatabase.SaveAssets();
+            return new ClassAssets { Rogue = rogue, Paladin = paladin, Hunter = hunter };
         }
+
+        /// <summary>
+        /// Caçador (F4b): a "arma" é uma cópia das adagas marcada como à distância (o ataque atira; a estocada para
+        /// baixo e o pogo continuam iguais). Ícone com o arco; arco nas costas por cima do gato.
+        /// </summary>
+        static ClassDefinition CreateHunter(MeleeAttackSettings daggers)
+        {
+            var bow = AssetDatabase.LoadAssetAtPath<MeleeAttackSettings>(BowPath);
+            if (bow == null)
+            {
+                bow = Object.Instantiate(daggers);
+                bow.Ranged = true;
+                bow.UpAttack = false;           // {subir} + ataque vira flecha para cima
+                bow.NoiseMultiplier = 0.5f;
+                AssetDatabase.CreateAsset(bow, BowPath);
+            }
+            var hunter = LoadOrCreateClass("Hunter", CharacterClass.Hunter, "Caçador", new Color32(0x6b, 0x9a, 0x4a, 0xff));
+            hunter.Weapon = bow;
+            hunter.Icon = MakeIcon("icon_class_hunter", new Color32(0x2e, 0x4a, 0x2a, 0xff), Emblem.Bow);
+            var onBack = MakeBowOverlay("chr_cat_hunter_bow_idle", false);
+            hunter.OverlayIdle = onBack;
+            hunter.OverlayWindup = MakeBowOverlay("chr_cat_hunter_bow_aim", true);
+            hunter.OverlayStrike = hunter.OverlayWindup;
+            EditorUtility.SetDirty(hunter);
+            return hunter;
+        }
+
+        /// <summary>Arco por cima do gato (32×28, pivô nos pés, olhando para a direita): nas costas, ou erguido à frente.</summary>
+        static Sprite MakeBowOverlay(string name, bool aiming) =>
+            Draw($"{ClassArt}/{name}.png", 32, 28, set =>
+            {
+                if (!aiming)
+                {
+                    for (int i = 0; i <= 12; i++) set(8 + (int)(System.Math.Abs(i - 6) * 0.4), 6 + i, Wood); // arco nas costas
+                    for (int i = 0; i <= 12; i++) set(10, 6 + i, new Color32(0xf2, 0xee, 0xe0, 0xff));         // corda
+                }
+                else
+                {
+                    for (int i = 0; i <= 12; i++) set(24 - (int)(System.Math.Abs(i - 6) * 0.45), 5 + i, Wood); // arco à frente
+                    for (int x = 16; x <= 27; x++) set(x, 11, new Color32(0xf2, 0xee, 0xe0, 0xff));             // flecha
+                    set(27, 12, Steel); set(28, 11, Steel); set(27, 10, Steel);
+                }
+            });
 
         static ClassDefinition LoadOrCreateClass(string file, CharacterClass c, string displayName, Color color)
         {
@@ -248,7 +294,7 @@ namespace SeteVidas.EditorTools
                 set(x, y, x == x0 || x == x1 || y == y0 || y == y1 ? edge : fill);
         }
 
-        enum Emblem { Daggers, Hammer }
+        enum Emblem { Daggers, Hammer, Bow }
 
         /// <summary>Ícone 16×16: moldura na cor da classe e o emblema claro (adagas cruzadas ou marreta).</summary>
         static Sprite MakeIcon(string name, Color32 background, Emblem emblem) =>
@@ -260,6 +306,14 @@ namespace SeteVidas.EditorTools
                 {
                     for (int i = 3; i <= 12; i++) { set(i, i, light); set(15 - i, i, light); }
                     set(3, 4, Gold); set(4, 3, Gold); set(12, 4, Gold); set(11, 3, Gold); // guardas
+                }
+                else if (emblem == Emblem.Bow)
+                {
+                    // arco (meia-lua à esquerda), corda e flecha armada para a direita
+                    for (int y = 2; y <= 13; y++) { int x = 4 + (int)(System.Math.Abs(y - 7.5) * 0.45); set(x, y, Wood); }
+                    for (int y = 3; y <= 12; y++) set(8, y, light);
+                    for (int x = 4; x <= 13; x++) set(x, 8, light);
+                    set(12, 9, Steel); set(13, 8, Steel); set(12, 7, Steel); // ponta
                 }
                 else
                 {

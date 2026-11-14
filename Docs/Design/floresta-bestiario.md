@@ -118,3 +118,19 @@ Componente `Infected` sobre a mesma IA (+1 de vida em todos). Ajustada aos inimi
 | Cacto Flutuante | tremida de até 0,5 tile; a cada 3 s incha 0,5 s e solta 4 espinhos em cruz (alcance 5, 1 hit). **Não aparece na Floresta** (pedido do usuário, 14/11/2026): fica para outras fases |
 
 Nuvens (Galho Seco e esporos) envenenam **uma vez por nuvem**. Distribuição na fase: `Docs/Floresta/plano-implementacao.md` (F4).
+
+## Alerta e detecção (pedido do usuário, 14/11/2026) [PROPOSTA: números a balancear no playtest]
+
+Os bichos da Floresta (Galho Seco, Planta Carnívora, Serpente, Morcego) usam o mesmo medidor de suspeita da Sentinela (`AlertBrain`) e os mesmos ícones "?" e "!" (`AlertIcon`). Só atacam depois do "!". Código: `ForestAwareness` / `ForestSenseRules`, ligado na base `ForestEnemy`.
+
+| Bicho | Visão | Velocidade | Audição |
+|---|---|---|---|
+| Padrão (Galho Seco, Planta) | 8 tiles, cone de 35° para onde olha (a planta: para onde aponta) | 0,8/s (a Sentinela) | ruídos no raio, soma a força |
+| Serpente (no buraco) | 6 tiles, em volta (vibração) | 0,8/s | igual |
+| Morcego | o alcance de acordar (7; infectado 9), em volta (eco) | **4/s** (5× mais rápido: ~0,15 s de perto) | raio ×1,5, força ×3; barulho acima do limiar acorda na hora |
+
+- A parede bloqueia a visão; a visibilidade do gato (sombra, agachado, folhagem) encurta o alcance como contra a Sentinela. Em alerta, o gato não some de vista (piso de 0,6).
+- Sem ver o gato por 2 s, o "!" vira "?" e o bicho se acalma em ~1,5 s (não saem procurando: são parados).
+- Apanhar = "!" na hora. O Galho Seco disfarçado não mostra o ícone (não entrega o disfarce). Morcegos do Broto já nascem em alerta.
+- Ainda não muda: os bichos continuam sem bônus de golpe surpresa (`InCombat` sempre verdadeiro). Se quiser que o ataque pelas costas de um bicho desatento dê mais dano, é uma linha.
+- Ajuste de 14/11/2026: a parede bloqueia a visão testando nos dois sentidos (o morcego, encostado no teto, enxergava o gato no chão de cima) e **bloqueia o som** (do outro lado do bloco, o bicho não ouve; antes era 30% e o morcego ainda ficava com "?" pelos pousos lá em cima). O "!" do morcego aparece embaixo dele.

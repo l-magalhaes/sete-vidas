@@ -63,7 +63,10 @@ namespace SeteVidas.World
             var data = SaveManager.Data;
             if (!KeyRules.CanOpen(data, doorId, keyId))
             {
-                if (Time.time - _barkAt > 2f) { SpeechBubble.Show(h.transform, "Trancada. Deve ter uma chave por aí.", 2.2f); _barkAt = Time.time; }
+                string locked = KeyRules.IsTempleKey(keyId)
+                    ? "Uma serpente entalhada. E uma fechadura do tamanho da minha cabeça."
+                    : "Trancada. Deve ter uma chave por aí.";
+                if (Time.time - _barkAt > 2f) { SpeechBubble.Show(h.transform, locked, 2.4f); _barkAt = Time.time; }
                 SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.6f, 0.7f); // provisório: maçaneta presa
                 return;
             }
@@ -71,7 +74,7 @@ namespace SeteVidas.World
             SaveManager.Save();
             SetOpen(true);
             SeteVidas.Audio.Sfx.Play("grade_abre", transform.position, 0.8f, 1.2f); // provisório
-            SpeechBubble.Show(h.transform, "Abriu. Com licença, Vulpis.", 2.2f);
+            SpeechBubble.Show(h.transform, KeyRules.IsTempleKey(keyId) ? "O templo abriu. O ninho fica para lá." : "Abriu. Com licença, Vulpis.", 2.2f);
         }
     }
 }

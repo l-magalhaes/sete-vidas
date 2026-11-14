@@ -17,7 +17,7 @@ namespace SeteVidas.Player
         public InputActionAsset Actions => actions;
 
         InputActionMap _map;
-        InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass, _heal;
+        InputAction _move, _jump, _crouch, _attack, _interact, _nextClass, _prevClass, _heal, _dash, _special;
         readonly InputAction[] _classSlots = new InputAction[7];
 
         /// <summary>
@@ -134,6 +134,18 @@ namespace SeteVidas.Player
         public bool PrevClassPressedThisFrame => !GameplayLocked && _prevClass != null && _prevClass.WasPressedThisFrame();
         /// <summary>F (ou gatilho esquerdo): magia de cura do Paladino.</summary>
         public bool HealPressedThisFrame => !GameplayLocked && _heal != null && _heal.WasPressedThisFrame();
+        /// <summary>Shift (ou gatilho direito): dash (Caçador, F4b).</summary>
+        public bool DashPressedThisFrame => !GameplayLocked && _dash != null && _dash.WasPressedThisFrame();
+        /// <summary>Botão direito do mouse (ou Y): flecha com corda, o gancho (Caçador, F4b).</summary>
+        public bool SpecialPressedThisFrame => !GameplayLocked && _special != null && _special.WasPressedThisFrame();
+
+        // ----- roda de classes: leituras que ignoram a trava (a roda trava o jogo enquanto está aberta)
+        /// <summary>R / RB segurado (sem olhar a trava).</summary>
+        public bool NextClassHeldRaw => _nextClass != null && _nextClass.IsPressed();
+        /// <summary>Q / LB segurado (sem olhar a trava).</summary>
+        public bool PrevClassHeldRaw => _prevClass != null && _prevClass.IsPressed();
+        /// <summary>Direcional / analógico agora, sem zona morta nem trava (mira da roda).</summary>
+        public Vector2 RawMove => _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
 
         /// <summary>Tecla de classe apertada neste frame: 1 a 7, ou 0 se nenhuma.</summary>
         public int ClassSlotPressedThisFrame
@@ -164,6 +176,8 @@ namespace SeteVidas.Player
             _nextClass = _map.FindAction("NextClass", throwIfNotFound: false);
             _prevClass = _map.FindAction("PrevClass", throwIfNotFound: false);
             _heal = _map.FindAction("Heal", throwIfNotFound: false);
+            _dash = _map.FindAction("Dash", throwIfNotFound: false);
+            _special = _map.FindAction("Special", throwIfNotFound: false);
             for (int i = 0; i < _classSlots.Length; i++)
                 _classSlots[i] = _map.FindAction($"SelectClass{i + 1}", throwIfNotFound: false);
         }

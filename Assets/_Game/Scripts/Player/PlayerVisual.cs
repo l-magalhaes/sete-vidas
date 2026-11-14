@@ -18,6 +18,8 @@ namespace SeteVidas.Player
         const float Px = 1f / 16f;
 
         [SerializeField] PlayerController controller;
+        SeteVidas.Classes.BowAbility _bow;
+        SeteVidas.Abilities.GrappleAbility _grapple;
         [SerializeField] SpriteRenderer spriteRenderer;
         [SerializeField] WallClimbAbility wallClimb;
         [SerializeField] CombatController combat;
@@ -555,6 +557,13 @@ namespace SeteVidas.Player
             var wj = set.Get("wall_jump");
             if (wj != null && _wallJumpTime < wj.Duration) { ResetIdle(); return Show(wj, _wallJumpTime); }
 
+            // ----- escorregando na rampa: agachado, parado no último quadro
+            if (controller.IsSliding && !controller.IsCrouching)
+            {
+                ResetIdle();
+                return Base(set.Get("crouch"), dt, holdLast: true);
+            }
+
             // ----- agachado
             if (controller.IsCrouching)
             {
@@ -753,6 +762,10 @@ namespace SeteVidas.Player
             bool carry = false;
             int order = spriteRenderer.sortingOrder;
 
+            // o gancho mostra o próprio arco na mão: o das costas some, como no ataque (pedido de 14/11/2026)
+            if (_grapple == null && controller != null) _grapple = controller.GetComponent<SeteVidas.Abilities.GrappleAbility>();
+            if (_grapple != null && _grapple.BowInHand && def != null && def.Class == CharacterClass.Hunter) allowed = false;
+
             if (allowed && def != null)
             {
                 if (frame.overlay != null) s = frame.overlay;                    // arma no golpe (marreta)
@@ -765,6 +778,12 @@ namespace SeteVidas.Player
                 {
                     // classes ainda sem arte própria: camada antiga da ClassDefinition
                     if (attacking) s = combat.IsWindingUp ? def.OverlayWindup : def.OverlayStrike;
+                    // Caçador: o arco aparece erguido logo depois de cada flecha (F4b)
+                    if (s == null && def.Class == CharacterClass.Hunter)
+                    {
+                        if (_bow == null) _bow = controller.GetComponent<SeteVidas.Classes.BowAbility>();
+                        if (_bow != null && _bow.JustShot) s = def.OverlayWindup;
+                    }
                     if (s == null) s = def.OverlayIdle;
                 }
             }
@@ -913,7 +932,7 @@ namespace SeteVidas.Player
                 _climbFrame = (int)(_climbAnimTime * runFps * 0.8f) % climb.Length;
                 return climb[_climbFrame];
             }
-            if (controller.IsCrouching) return crouch;
+            if (controller.IsCrouching || controller.IsSliding) return crouch;
             if (attacking && attack != null) return attack;
             Vector2 v = controller.Velocity;
             if (!controller.IsGrounded) return v.y > 0f ? jump : fall;

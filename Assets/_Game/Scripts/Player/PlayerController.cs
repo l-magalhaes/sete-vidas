@@ -39,6 +39,11 @@ namespace SeteVidas.Player
 
         /// <summary>Agachado. A IA de furtividade (Fase 3) lê esta flag.</summary>
         public bool IsCrouching { get; private set; }
+        /// <summary>Escorregando rampa abaixo (pose agachada e poeira).</summary>
+        public bool IsSliding { get; private set; }
+        bool _slideMomentum;   // saiu do escorregão com velocidade acima da de andar
+        float _slideDust;
+
         /// <summary>Pendurado numa borda.</summary>
         public bool IsHanging { get; private set; }
         /// <summary>Subindo de uma borda para cima dela.</summary>
@@ -126,6 +131,7 @@ namespace SeteVidas.Player
             }
 
             Vector2 v = _body.linearVelocity;
+            IsSliding = false;
 
             _ground.Refresh(settings.ColliderWidth, settings.MaxSlopeAngle);
             // Subindo a rampa o gato tem velocidade para cima e continua no chão; depois de um pulo, não
@@ -163,12 +169,40 @@ namespace SeteVidas.Player
             bool lunging = _lungeLeft > 0f;
             if (lunging) { v.x = LungeVelocity(grounded, dt); _lungeEnded = _lungeLeft <= 0f; }
             else if (_lungeEnded) { v.x = 0f; _lungeEnded = false; } // acabou o avanço: para ali, sem deslizar
+            // Escorregar na rampa (pedido do usuário, 14/11/2026): sem empurrar rampa acima, desce ganhando velocidade
+            else if (_moveLockTimer <= 0f && settings.SlopeSlide && grounded && _ground.OnSlope && !_isJumping &&
+                     SlopeMath.WantsSlide(_ground.GroundNormal, input.MoveX))
+            {
+                v.x = SlopeMath.SlideStep(v.x, _ground.GroundNormal, input.MoveX, dt, settings.SlideAcceleration, settings.SlideMaxSpeed);
+                IsSliding = true;
+                _slideMomentum = true;
+                int down = SlopeMath.DownhillDir(_ground.GroundNormal);
+                if (down != 0) FacingDirection = down;
+                // poeira nos pés, mais densa quanto mais rápido
+                _slideDust -= dt * Mathf.Abs(v.x);
+                if (_slideDust <= 0f)
+                {
+                    _slideDust = 0.5f;
+                    HitSparks.One(_body.position + new Vector2(-down * 0.3f, 0.05f), new Vector2(-down * Random.Range(0.5f, 1.5f), Random.Range(0.5f, 1.5f)),
+                        new Color32(0xa8, 0x98, 0x80, 0xff), 0.3f, 6f);
+                }
+            }
             // Andar (logo depois de um pulo da parede, a entrada não freia o impulso)
             else if (_moveLockTimer <= 0f)
             {
                 float target = MoveInput() * settings.MoveSpeed * SpeedMultiplier * (IsCrouching ? settings.CrouchSpeedMultiplier : 1f);
+                // subindo a rampa: mais devagar (14/11/2026)
+                if (grounded && _ground.OnSlope) target *= SlopeMath.UphillFactor(_ground.GroundNormal, target, settings.UphillSpeedMultiplier);
                 float rate = Mathf.Abs(target) > 0.01f ? settings.Acceleration : settings.Deceleration;
-                v.x = Mathf.MoveTowards(v.x, target, rate * dt);
+                float walk = Mathf.MoveTowards(v.x, target, rate * dt);
+                // embalo do escorregão: acima da velocidade de andar, cai devagar (a rampa "joga" o gato)
+                if (_slideMomentum)
+                {
+                    float decel = grounded ? settings.SlideMomentumGroundDecel : settings.SlideMomentumAirDecel;
+                    walk = SlopeMath.Momentum(v.x, target, decel, dt, walk);
+                    if (Mathf.Abs(walk) <= settings.MoveSpeed + 0.01f) _slideMomentum = false;
+                }
+                v.x = walk;
             }
 
             // Rampa íngreme demais à frente: andando, o gato não tenta subir nela (senão fica pulando no pé dela)
@@ -363,9 +397,13 @@ namespace SeteVidas.Player
             _wasGrounded = false;
         }
 
+        /// <summary>Quicou num pogo (o dash do ar volta, F4b).</summary>
+        public event System.Action Bounced;
+
         /// <summary>Quique da estocada para baixo: sobe <paramref name="height"/> tiles, mantendo o x (melhoria 5).</summary>
         public void Bounce(float height)
         {
+            Bounced?.Invoke();
             var v = _body.linearVelocity;
             v.y = settings.LaunchVelocityFor(height, Time.fixedDeltaTime);
             _body.linearVelocity = v;
@@ -406,6 +444,7 @@ namespace SeteVidas.Player
                 _regrabTimer = settings.LedgeRegrabCooldown;
             }
             _lungeLeft = 0f;
+            _slideMomentum = false;
             InterruptAbility();
             _isJumping = false;
             _timers.Consume();
@@ -424,6 +463,7 @@ namespace SeteVidas.Player
                 _body.bodyType = RigidbodyType2D.Dynamic;
             }
             _lungeLeft = 0f;
+            _slideMomentum = false;
             IsHanging = false;
             InterruptAbility();
             if (IsCrouching && _ground.HasRoomFor(settings.ColliderWidth, settings.StandingHeight))

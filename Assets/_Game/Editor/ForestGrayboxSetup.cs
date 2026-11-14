@@ -306,6 +306,137 @@ namespace SeteVidas.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        // ------------------------------------------------------------ F4b: Vulpis, Portão do Templo, ruínas
+
+        /// <summary>
+        /// A Vulpis (NPC do vínculo, como o Koda na Fortaleza): E fala; a conversa dá a classe Caçador e +1 coração
+        /// (<see cref="CompanionBond"/>). Desenho provisório: raposa de pé com o arco.
+        /// </summary>
+        static void VulpisNpc(Transform parent, ForestLayout.Obj o)
+        {
+            var go = new GameObject(o.Name) { layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Interactable) };
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3(o.X, o.Y, 0f);
+            var box = go.AddComponent<BoxCollider2D>();
+            box.isTrigger = true;
+            box.size = new Vector2(3f, 2.4f);
+            box.offset = new Vector2(0f, 1.2f);
+            var visual = new GameObject("Visual");
+            visual.transform.SetParent(go.transform, false);
+            visual.transform.localPosition = new Vector3(0f, 1f, 0f);
+            var sr = visual.AddComponent<SpriteRenderer>();
+            sr.sprite = Placeholder("vulpis", 24, 32, PaintVulpis);
+            sr.sortingOrder = 3;
+            sr.flipX = o.Facing < 0;
+            var promptGo = new GameObject("Prompt");
+            promptGo.transform.SetParent(go.transform, false);
+            promptGo.transform.localPosition = new Vector3(0f, 2.8f, 0f);
+            var prompt = SeteVidas.Combat.DamagePopup.CreateText(promptGo, "E: falar", new Color32(0xff, 0xe9, 0xa8, 0xff), 30);
+            promptGo.SetActive(false);
+
+            var bond = go.AddComponent<CompanionBond>();
+            var d = DialogueSetup.CreateVulpisDialogues();
+            var so = new SerializedObject(bond);
+            so.FindProperty("grantsClass").enumValueIndex = (int)SeteVidas.Classes.CharacterClass.Hunter;
+            so.FindProperty("bondFlag").stringValue = SeteVidas.Abilities.HunterRules.BondFlag;
+            so.FindProperty("bondDialogue").objectReferenceValue = d.Bond;
+            so.FindProperty("bondFollowUp").objectReferenceValue = d.BondFollowUp;
+            so.FindProperty("unlockDialogue").objectReferenceValue = d.Unlock;
+            so.FindProperty("prompt").objectReferenceValue = prompt;
+            var idle = so.FindProperty("idleDialogues");
+            idle.arraySize = d.Idle.Length;
+            for (int i = 0; i < d.Idle.Length; i++) idle.GetArrayElementAtIndex(i).objectReferenceValue = d.Idle[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>Raposa de pé (24 × 32, olhando para a direita): pelo laranja, peito branco, capa verde, arco nas costas.</summary>
+        static Color32 PaintVulpis(int x, int y)
+        {
+            Color32 clear = new Color32(0, 0, 0, 0), fur = new Color32(0xd8, 0x6a, 0x2a, 0xff), white = new Color32(0xf4, 0xee, 0xdc, 0xff),
+                    dark = new Color32(0x3a, 0x1e, 0x12, 0xff), cape = new Color32(0x3e, 0x5a, 0x3a, 0xff), wood = new Color32(0x96, 0x6e, 0x40, 0xff),
+                    eye = new Color32(0xff, 0xd3, 0x4d, 0xff);
+            // cauda (atrás, à esquerda), com a ponta branca
+            if (y >= 2 && y <= 8 && x >= 1 && x <= 7) { float dx = (x - 4f) / 3.5f, dy = (y - 5f) / 3.5f; if (dx * dx + dy * dy <= 1f) return x <= 2 ? white : fur; }
+            if (x >= 8 && x <= 15 && y <= 1) return dark;                                   // patas
+            if (x >= 8 && x <= 15 && y >= 2 && y <= 17) return x >= 12 && y >= 8 && y <= 15 ? white : (x <= 9 ? cape : fur); // corpo, peito, capa
+            if (x >= 7 && x <= 8 && y >= 6 && y <= 20) return wood;                        // arco nas costas
+            if (y >= 18 && y <= 25 && x >= 9 && x <= 16)                                   // cabeça
+            {
+                if (y == 22 && x == 14) return eye;
+                return fur;
+            }
+            if (y >= 19 && y <= 21 && x >= 17 && x <= 20) return x == 20 && y == 20 ? dark : white; // focinho
+            if ((x == 10 || x == 15) && y >= 26 && y <= 29) return y >= 28 ? dark : fur;   // orelhas
+            return clear;
+        }
+
+        /// <summary>
+        /// Portão do Templo da Serpente (1 × 4, sólido até abrir com a Chave do Templo): pedra verde-musgo com a
+        /// serpente entalhada e o olho turquesa. Bem diferente da porta de madeira da cabana.
+        /// </summary>
+        static void TempleGate(Transform parent, ForestLayout.Obj o)
+        {
+            var go = new GameObject(o.Name) { layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Ground) };
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3(o.X, o.Y, 0f);
+            var box = go.AddComponent<BoxCollider2D>();
+            box.size = new Vector2(1f, 4f);
+            box.offset = new Vector2(0f, 2f);
+            var visual = new GameObject("Visual");
+            visual.transform.SetParent(go.transform, false);
+            visual.transform.localPosition = new Vector3(0f, 2f, 0f);
+            var sr = visual.AddComponent<SpriteRenderer>();
+            var closed = Placeholder("portao_templo_fechado", 16, 64, (x, y) => PaintTempleGate(x, y, false));
+            var open = Placeholder("portao_templo_aberto", 16, 64, (x, y) => PaintTempleGate(x, y, true));
+            sr.sprite = closed;
+            sr.sortingOrder = 2;
+            var promptGo = new GameObject("Prompt");
+            promptGo.transform.SetParent(go.transform, false);
+            promptGo.transform.localPosition = new Vector3(-1.2f, 4.6f, 0f);
+            var prompt = SeteVidas.Combat.DamagePopup.CreateText(promptGo, "E: abrir", new Color32(0x9a, 0xf0, 0xe0, 0xff), 30);
+            promptGo.SetActive(false);
+            var door = go.AddComponent<LockedDoor>();
+            door.Configure(o.Id, o.Text);
+            var so = new SerializedObject(door);
+            so.FindProperty("spriteRenderer").objectReferenceValue = sr;
+            so.FindProperty("closedSprite").objectReferenceValue = closed;
+            so.FindProperty("openSprite").objectReferenceValue = open;
+            so.FindProperty("prompt").objectReferenceValue = prompt;
+            so.FindProperty("reach").floatValue = 2f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static Color32 PaintTempleGate(int x, int y, bool open)
+        {
+            Color32 clear = new Color32(0, 0, 0, 0), stone = new Color32(0x4f, 0x7a, 0x52, 0xff), dark = new Color32(0x2e, 0x4a, 0x34, 0xff),
+                    moss = new Color32(0x6c, 0x96, 0x5a, 0xff), eye = new Color32(0x5c, 0xe0, 0xc8, 0xff);
+            if (open) return (x <= 1 || x >= 14) ? (y % 8 == 0 ? dark : stone) : clear;   // só os batentes
+            if (x == 0 || x == 15 || y == 0 || y == 63) return dark;
+            // a serpente entalhada: corpo em S de baixo para cima, cabeça no alto com o olho turquesa
+            int sx = 8 + (int)(4f * Mathf.Sin(y * 0.18f));
+            if (y < 50 && Mathf.Abs(x - sx) <= 1) return x == sx ? moss : dark;
+            if (y >= 50 && y <= 58 && x >= 4 && x <= 11) return (x == 9 && y == 55) || (x == 10 && y == 55) ? eye : moss;
+            return (x + y * 3) % 11 == 0 ? dark : stone;
+        }
+
+        /// <summary>Parede de pedras de ruínas antigas (1 × 4): a parede rachada da Fortaleza, tingida de musgo. Só a marreta.</summary>
+        static void RuinWall(Transform parent, ForestLayout.Obj o)
+        {
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ClassSetup.WallPrefabPath), parent);
+            go.name = o.Name;
+            go.transform.position = new Vector3(o.X, o.Y, 0f);
+            var wall = go.GetComponent<BreakableWall>();
+            var so = new SerializedObject(wall);
+            so.FindProperty("wallId").stringValue = o.Id;
+            so.FindProperty("material").enumValueIndex = (int)BreakableMaterial.Stone;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            foreach (var sr in go.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                sr.color = new Color(0.72f, 0.9f, 0.72f, 1f); // musgo das ruínas
+                PrefabUtility.RecordPrefabInstancePropertyModifications(sr);
+            }
+        }
+
         /// <summary>Armadilhas de um grupo (o botão do grupo desliga para sempre).</summary>
         static void Group(Transform t, string group)
         {
@@ -430,8 +561,21 @@ namespace SeteVidas.EditorTools
                 case "rotten": ForestTestSetup.RottenBranch(t, o.Name, o.X, o.Y); break;
                 case "mushroom": ForestTestSetup.Mushroom(t, o.Name, o.X, o.Y); break;
                 case "cactus": ForestTestSetup.Cactus(t, o.Name, o.X, o.Y, new Vector2(o.A, o.B), o.C > 0f ? o.C : 3f); break;
-                case "trunk": ForestTestSetup.Trunk(t, o.Name, o.X, o.Y, o.Id); break;
-                case "chest": ForestTestSetup.Chest(t, o.Name, o.X, o.Y, o.Id, wood: true, coins: o.Value); break;
+                case "trunk": ForestTestSetup.Trunk(t, o.Name, o.X, o.Y, o.Id, o.H > 0f ? o.H : 4f); break;
+                case "chest":
+                {
+                    bool hasKey = !string.IsNullOrEmpty(o.Text);
+                    ForestTestSetup.Chest(t, o.Name, o.X, o.Y, o.Id, wood: !hasKey && o.B < 1f, coins: o.Value); // B = 1: só o coração
+                    if (hasKey || o.C > 0)
+                    {
+                        var chest = t.GetChild(t.childCount - 1).GetComponent<WoodChest>();
+                        if (chest != null) { if (hasKey) chest.SetKey(o.Text); chest.SetTempHearts((int)o.C); EditorUtility.SetDirty(chest); }
+                    }
+                    break;
+                }
+                case "vulpis": VulpisNpc(t, o); break;
+                case "gate": TempleGate(t, o); break;
+                case "ruinwall": RuinWall(t, o); break;
                 case "bat":
                     if (o.A > 0f) ForestTestSetup.Bat(t, o.Name, o.X, o.Y, wakeRange: o.A);
                     else ForestTestSetup.Bat(t, o.Name, o.X, o.Y);

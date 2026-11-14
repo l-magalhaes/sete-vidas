@@ -113,6 +113,9 @@ namespace SeteVidas.Enemies
             _spores = ToxicCloud.Spawn(at, Vector2.one * PlantSporeSize, PlantSporeTime);
         }
 
+        protected override Vector2 EyePosition => Mouth;
+        protected override Vector2 LookDirection => Forward;
+
         protected override void Tick(float dt)
         {
             var h = Player;
@@ -121,6 +124,7 @@ namespace SeteVidas.Enemies
             // só vê o que está à frente (não morde para trás da parede ou do chão)
             bool inRange = h != null && !h.IsDead && toCat.magnitude <= reach + restDistance && Vector2.Dot(toCat, Forward) > 0f
                            && Physics2D.Linecast(Mouth, cat, WallMask).collider == null; // não morde através de bloco
+            inRange &= Aware; // alerta (14/11/2026): só dá o bote depois do "!"
             var before = _state;
             _state = StepPlant(_state, ref _timer, dt, inRange, IsInfected);
 

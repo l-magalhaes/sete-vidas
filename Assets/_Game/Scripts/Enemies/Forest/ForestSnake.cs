@@ -14,7 +14,7 @@ namespace SeteVidas.Enemies
     /// O corpo é um filho (<see cref="body"/>) com o colisor dos golpes; ele sai do buraco na direção do gato. Entre o
     /// buraco e a cabeça vão gomos (feitos na hora), para o corpo esticado ser contínuo e voltar deslizando.
     /// </summary>
-    public class ForestSnake : ForestEnemy
+    public class ForestSnake : ForestEnemy, IQuakeTarget
     {
         [SerializeField] Transform body;
         [SerializeField] Sprite hiddenSprite, warnSprite, strikeSprite, crawlSprite;
@@ -38,6 +38,16 @@ namespace SeteVidas.Enemies
         public bool Crawls => crawls;
         public override bool AcceptsPogo => SnakeVulnerable(_state);
         protected override bool Invulnerable => SnakeInvulnerable(_state, crawls);
+
+        /// <summary>
+        /// Terremoto do Paladino (pedido de 14/11/2026): o tremor alcança a serpente dentro do buraco e ela morre na hora.
+        /// Fora do buraco, leva o dano normal do terremoto.
+        /// </summary>
+        public void OnQuake(in DamageInfo info)
+        {
+            if (_state == SnakeState.Hidden || _state == SnakeState.Retreat) KillNow(info);
+            else TakeDamage(info);
+        }
         /// <summary>Os desenhos da serpente olham para a direita (olho na ponta direita).</summary>
         protected override bool ArtFacesRight => true;
 
@@ -148,9 +158,14 @@ namespace SeteVidas.Enemies
             return Mathf.Abs(d.x);
         }
 
+        protected override ForestSenseProfile SenseProfile => ForestSenseRules.Snake;
+        protected override Vector2 EyePosition => Eye;
+        protected override Vector3 IconOffset => new Vector3(0f, 1.6f, 0f);
+
         protected override void Tick(float dt)
         {
             float dist = PlayerDistance(out int side);
+            if (!Aware) dist = -1f; // alerta (14/11/2026): só acorda e ataca depois do "!"
             var sil = Player != null ? Player.GetComponent<SeteVidas.Player.ShadowSilhouette>() : null;
             bool hidden = sil != null && sil.IsSilhouette;
             var before = _state;

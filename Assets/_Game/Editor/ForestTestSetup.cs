@@ -366,6 +366,11 @@ namespace SeteVidas.EditorTools
                 "Vazia.",
                 "Arco na parede, flechas no chão, peles secando...",
                 "Algum caçador mora aqui. E não está em casa.");
+            // depois do vínculo (pedido de 14/11/2026): ele já sabe de quem é
+            bark.GetComponent<SceneBark>().ConfigureAfter(SeteVidas.Abilities.HunterRules.BondFlag,
+                "Arco na parede, flechas no chão, peles secando...",
+                "Deve ser a casa daquela raposa.",
+                "Ela não vai sentir falta de umas moedas. Né?");
             Branch(ctx.Root, "Prateleira", 14f, 3f, 4f);          // 3 do chão (degrau confortável)
             FortressSetup.Coin(ctx.Root, "Moeda da prateleira", new Vector2(16f, 3.6f), coinId, 5);
             End(ctx);
@@ -773,7 +778,9 @@ namespace SeteVidas.EditorTools
             ProgressionSetup.PlaceSanctuary(prefab, parent, id, displayName, x);
         }
 
-        internal static void Trunk(Transform parent, string name, float x, float y, string id)
+        /// <param name="height">Altura em tiles (4 = o prefab). Mais alto: a colisão e o desenho esticam até o teto
+        /// (pedido de 14/11/2026: não dar para pular por cima do tronco).</param>
+        internal static void Trunk(Transform parent, string name, float x, float y, string id, float height = 4f)
         {
             var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ClassSetup.WallPrefabPath), parent);
             go.name = name;
@@ -795,6 +802,21 @@ namespace SeteVidas.EditorTools
             var rsr = rubble != null ? rubble.GetComponent<SpriteRenderer>() : null;
             if (rsr != null) { rsr.sprite = LoadSprite("tronco_lascas"); PrefabUtility.RecordPrefabInstancePropertyModifications(rsr); }
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            if (height > 4.01f)
+            {
+                var box = go.GetComponent<BoxCollider2D>();
+                box.size = new Vector2(box.size.x, height);
+                box.offset = new Vector2(box.offset.x, height * 0.5f);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(box);
+                if (sr != null)
+                {
+                    // o desenho de 16×64 estica na vertical até o teto
+                    sr.transform.localPosition = new Vector3(0f, height * 0.5f, 0f);
+                    sr.transform.localScale = new Vector3(1f, height / 4f, 1f);
+                    PrefabUtility.RecordPrefabInstancePropertyModifications(sr.transform);
+                }
+            }
         }
 
         internal static void Chest(Transform parent, string name, float x, float y, string id, bool wood, int coins)

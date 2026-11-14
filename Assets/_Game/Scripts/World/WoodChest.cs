@@ -22,6 +22,10 @@ namespace SeteVidas.World
         [Tooltip("Guarda uma Madeira de Reconstrução. Desligado = só moedas")]
         [SerializeField] bool containsWood = true;
         [SerializeField, Min(0)] int coins;
+        [Tooltip("Guarda uma chave (id do KeyRules, ex.: \"templo\"). Vazio = sem chave (F4b)")]
+        [SerializeField] string keyId = "";
+        [Tooltip("Corações temporários dentro do baú (cada um = 2 hits que absorvem dano antes da vida)")]
+        [SerializeField, Min(0)] int tempHearts;
 
         [Header("Visual")]
         [SerializeField] SpriteRenderer spriteRenderer;
@@ -41,6 +45,35 @@ namespace SeteVidas.World
 
         public string Id => chestId;
         public bool ContainsWood => containsWood;
+        public string KeyId => keyId;
+
+        /// <summary>Para o setup do editor: o baú guarda uma chave.</summary>
+        public void SetKey(string id) => keyId = id ?? "";
+
+        public int TempHearts => tempHearts;
+
+        /// <summary>Para o setup do editor: o baú guarda corações temporários.</summary>
+        public void SetTempHearts(int n) => tempHearts = Mathf.Max(0, n);
+
+        static readonly Color32 Sap = new Color32(0x8c, 0xff, 0xe6, 0xff);
+
+        /// <summary>Corações temporários: entram nas vagas depois dos recuperados (até 2); o resto se perde.</summary>
+        void GiveTempHearts()
+        {
+            var h = PlayerHealth.Active;
+            Vector3 at = transform.position + Vector3.up * 2.6f;
+            int got = h != null ? h.AddTempHits(tempHearts * SeteVidas.Core.GameConstants.HitsPerHeart) : 0;
+            if (got <= 0)
+            {
+                PixelPopup.Spawn(at, "Sem espaço para mais um coração", Sap);
+                return;
+            }
+            int hearts = (got + 1) / 2;
+            PixelPopup.Spawn(at, hearts > 1 ? "+" + hearts + " corações temporários" : "+1 coração temporário", Sap, PixelIcons.Heart());
+            for (int i = 0; i < 10; i++)
+                HitSparks.Rise((Vector2)at + new Vector2(Random.Range(-0.6f, 0.6f), Random.Range(-1.2f, -0.4f)), Sap, Random.Range(1f, 2.2f), 0.7f);
+            SeteVidas.Audio.Sfx.Play("coracao_pega", transform.position);
+        }
         public bool IsOpen => SaveManager.Data != null && SaveManager.Data.HasFlag(ReconstructionWood.ChestFlag(chestId));
 
         void Start()
@@ -86,7 +119,11 @@ namespace SeteVidas.World
             data.SetFlag(ReconstructionWood.ChestFlag(chestId));
             if (containsWood) data.SetFlag(ReconstructionWood.WoodFlag(chestId));
             if (coins > 0) CoinPurse.Add(coins);
+            bool key = !string.IsNullOrEmpty(keyId);
+            if (key) data.SetFlag(KeyRules.KeyFlag(keyId));
             SaveManager.Save(); // como a parede quebrada: o que foi pego é para sempre
+            if (key) KeyPickup.Celebrate(transform.position + Vector3.up * 1.2f, keyId, _near != null ? _near.transform : null);
+            if (tempHearts > 0) GiveTempHearts();
 
             Refresh();
             SeteVidas.Audio.Sfx.Play("moeda", transform.position); // provisório até o "bau_abre" (Docs/Audio/floresta-audio.md)

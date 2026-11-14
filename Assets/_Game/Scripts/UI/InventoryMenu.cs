@@ -445,6 +445,11 @@ namespace SeteVidas.UI
                 list.Add(new PromptRow.Item(GameAction.PrevClass, "trocar de classe", GameAction.NextClass));
                 list.Add(new PromptRow.Item(GameAction.Heal, "curar (segure)"));
             }
+            if (SeteVidas.Abilities.HunterRules.MovesUnlocked(data))
+            {
+                list.Add(new PromptRow.Item(GameAction.Dash, "dash"));
+                list.Add(new PromptRow.Item(GameAction.Special, "flecha com corda"));
+            }
             list.Add(new PromptRow.Item(GameAction.Inventory, "inventário"));
             list.Add(new PromptRow.Item(GameAction.Map, "mapa"));
             list.Add(new PromptRow.Item(GameAction.Back, "fechar, voltar"));
@@ -524,7 +529,7 @@ namespace SeteVidas.UI
                     Name = def != null ? def.DisplayName : t.Name,
                     NameColor = def != null ? Lighter(def.ThemeColor) : Cream,
                     Sub = t.GivenBy,
-                    Body = t.Weapon + "\n\n\"" + t.Quote + "\"",
+                    Body = t.Weapon + (string.IsNullOrEmpty(t.Spells) || t.Spells == "nenhum" ? "" : "\n\n" + t.Spells) + "\n\n\"" + t.Quote + "\"",
                     Footer = equipped ? "Equipada" : "equipar", FooterAction = equipped ? (GameAction?)null : GameAction.Confirm,
                     Confirm = () => manager != null && manager.TrySwitch(cls),
                 });
@@ -542,7 +547,8 @@ namespace SeteVidas.UI
             for (int i = 0; i < InventoryTexts.Abilities.Length; i++)
             {
                 var a = InventoryTexts.Abilities[i];
-                if (!a.Unlocked) continue;   // as que faltam ficam escondidas por enquanto
+                bool open = a.Unlocked || (a.Hunter && SeteVidas.Abilities.HunterRules.MovesUnlocked(SaveManager.Data));
+                if (!open) continue;   // as que faltam ficam escondidas por enquanto
                 var icon = i < AbilityIcons.Length ? AbilityIcons[i] : InventoryIcon.TabAbilities;
                 _entries.Add(new Entry { Icon = IconSprite(icon, false), Name = a.Name, Body = a.Description, Footer = "Vale em qualquer classe" });
             }
@@ -590,7 +596,8 @@ namespace SeteVidas.UI
             foreach (var key in SeteVidas.World.KeyRules.KeysInPocket(data, SeteVidas.World.KeyRules.DoorOfKey))
                 _entries.Add(new Entry
                 {
-                    Icon = IconSprite(InventoryIcon.Key, false), Name = SeteVidas.World.KeyRules.Name(key), NameColor = Gold,
+                    Icon = IconSprite(SeteVidas.World.KeyRules.IsTempleKey(key) ? InventoryIcon.TempleKey : InventoryIcon.Key, false), Name = SeteVidas.World.KeyRules.Name(key),
+                    NameColor = SeteVidas.World.KeyRules.IsTempleKey(key) ? (Color)SeteVidas.World.KeyPickup.Turquoise : Gold,
                     Body = InventoryTexts.KeyText(key), Footer = "Abre uma porta",
                 });
         }
@@ -653,7 +660,7 @@ namespace SeteVidas.UI
             {
                 bool show = i < states.Length && states[i] != HeartState.Locked;
                 _hearts[i].enabled = show;
-                if (show) { _hearts[i].sprite = HeartsHud.ClassSprite(HeartsHud.HeartClass(i, curseDone), states[i]); shown++; }
+                if (show) { _hearts[i].sprite = HeartsHud.ClassSprite(HeartsHud.HeartClass(i, curseDone, SeteVidas.Save.SaveManager.Data?.unlockedClasses), states[i]); shown++; }
             }
             // os corações ficam centralizados embaixo do gato, 12 px um do outro (2 linhas se não couber)
             const float step = 12f;
@@ -1369,7 +1376,7 @@ namespace SeteVidas.UI
     public static class InventoryTexts
     {
         public struct ClassText { public string Name, GivenBy, Weapon, Spells, Quote; }
-        public struct AbilityText { public string Name, Description; public bool Unlocked; }
+        public struct AbilityText { public string Name, Description; public bool Unlocked; /** Liberada pelo vínculo com a Vulpis (F4b). */ public bool Hunter; }
 
         public static readonly ClassText[] Classes =
         {
@@ -1381,7 +1388,15 @@ namespace SeteVidas.UI
                 Spells = "Cura: devolve 1 coração e corta o veneno; 3 usos, que voltam no santuário.",
                 Quote = "Pesada demais para um gato. Funciona." },
             new ClassText { Name = "Mago" }, new ClassText { Name = "Monge" }, new ClassText { Name = "Bardo" },
-            new ClassText { Name = "Caçador" }, new ClassText { Name = "Druida" },
+            new ClassText { Name = "Caçador", GivenBy = "Vínculo com Vulpis, a arqueira da floresta",
+                Weapon = "Arco. {atacar} atira para onde você aponta: o direcional ou o analógico mira de 15 em 15 graus, da diagonal para baixo até reto para cima (como a besta dos atiradores); sem apontar, reto para a frente. " +
+                         "Mira assistida: a flecha puxa para o inimigo mais perto na sua frente, sem travar. Cada flecha fere menos que meio golpe de adaga; até 2 no ar, até 12 passos de distância. " +
+                         "Silencioso: dá para derrubar morcegos e plantas de longe sem acordar o resto. Crava na parede, mas não quebra pedra nem tronco. " +
+                         "No ar, {agachar} + {atacar}: a estocada das adagas, para quicar.",
+                Spells = "Ensinado pela Vulpis, vale em qualquer classe: {dash} avança 6 passos de uma vez, no chão ou no ar (um por pulo). " +
+                         "{especial}: flecha com corda; mire nos ganchos de ferro e ela puxa você até lá. Pendurado: {pular} ou {dash}.",
+                Quote = "A Vulpis acerta um morcego no escuro. Eu acerto a árvore. Às vezes o morcego." },
+            new ClassText { Name = "Druida" },
         };
 
         public static readonly AbilityText[] Abilities =
@@ -1391,8 +1406,8 @@ namespace SeteVidas.UI
             new AbilityText { Unlocked = true, Name = "Ataque pelas costas", Description = "Por trás: 1,5×. Por trás e sem ser visto: 2,5× (a Sentinela cai de um golpe). Esbarrar nela, nem pensar." },
             new AbilityText { Unlocked = true, Name = "Estocada para baixo", Description = "No ar, {agachar} + {atacar}: crava a adaga embaixo e quica no inimigo, no espinho ou na serra. Dá para emendar." },
             new AbilityText { Unlocked = false, Name = "Pulo duplo" },
-            new AbilityText { Unlocked = false, Name = "Dash" },
-            new AbilityText { Unlocked = false, Name = "Ancoragem" },
+            new AbilityText { Unlocked = false, Hunter = true, Name = "Dash", Description = "{dash}: avança 6 passos de uma vez para o lado apertado (sem direção, para onde olha), no chão ou no ar. No ar, um por pulo: volta ao pisar no chão, agarrar parede ou borda, pegar um gancho ou quicar. Contra a parede, para nela. Não protege de golpe: atravessar um bicho dói. A Vulpis ensinou. Quase sem cair." },
+            new AbilityText { Unlocked = false, Hunter = true, Name = "Flecha com corda", Description = "{especial}: atira a flecha com corda. Mire com o direcional (8 direções; parado, para a frente): ela procura sozinha o gancho de ferro mais perto da mira, até 9 passos, e puxa o gato até lá. Pendurado: {pular} para subir ou {dash} para cruzar o vão; pegar o gancho devolve o dash do ar. Sem gancho na mira, a corda bate e volta." },
         };
 
         public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
@@ -1400,6 +1415,8 @@ namespace SeteVidas.UI
         public const string WoodDone = "Viraram ponte. Menos uma, que a Tobi guardou no bolso. Taxa de material.";
         public static string KeyText(string key) => key == "cabana"
             ? "Chave de ferro com uma pena de flecha amarrada. Abre a cabana no alto da árvore. Ninguém deixa uma chave assim à toa."
+            : key == SeteVidas.World.KeyRules.TempleKey
+            ? "Pedra verde, pesada como um tijolo, com uma serpente enrolada na argola. O olho ainda brilha. Abre o Portão do Templo, no Mirante. A Vulpis jura que não morde."
             : "Uma chave. Para alguma porta por aí.";
         public const string HealScroll = "A magia do Koda: segure {curar} para devolver 1 coração. Os lacres voltam a acender no santuário.";
 

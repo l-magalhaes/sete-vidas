@@ -225,6 +225,10 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
   - Sprites infectados gerados pelo editor (`ForestInfectedArt`, troca de paleta; o turquesa do pogo não muda). Testes: `ForestBestiaryTests` (10).
   - Falta da F4: arte de verdade por inimigo (animações completas), sons próprios, Sentinela Canino com silhueta canina.
 
+### F4b — Vulpis, Caçador e a Chave do Templo (pedido do usuário, 14/11/2026)
+
+**Estado: implementado, falta testar no Unity** (`Docs/Floresta/plano-f4b.md`; roteiro: `Docs/QA/floresta-f4b-plano-de-teste.md`; ficha: `Docs/Design/classe-cacador.md`; rodar os menus 21 e 22). Depois da arena do D3, sala nova com a Vulpis: vínculo (+1 coração, classe **Caçador**: arco, flecha com corda, dash); trecho de plataforma nas Ruínas do Templo (dash + gancho) até o baú da **Chave do Templo**, atrás de uma parede de ruínas; a passagem D4 → E1 vira o **Portão do Templo**, trancado. Chave da cabana e do templo com visuais diferentes. Adianta parte da F6 (Refúgio da Vulpis) e muda a ordem das classes do GDD (Caçador passa a 3º).
+
 ### F5 — Regiões A, B e C (conteúdo)
 
 - **Tileset da floresta**: chão de terra/raiz, galhos plataforma (só topo sólido), troncos, espinhos comuns e espinhos de pogo, folhagem alta (esconderijo), água escura.

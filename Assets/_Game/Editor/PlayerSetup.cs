@@ -276,6 +276,8 @@ namespace SeteVidas.EditorTools
             var reader = root.AddComponent<PlayerInputReader>();
             var controller = root.AddComponent<PlayerController>();
             var climb = root.AddComponent<WallClimbAbility>();
+            root.AddComponent<DashAbility>();    // Caçador (F4b): dash e flecha com corda, em qualquer classe depois do vínculo
+            root.AddComponent<GrappleAbility>();
             var combat = root.AddComponent<CombatController>();
             var stealth = root.AddComponent<StealthController>();
             var health = root.AddComponent<PlayerHealth>();
@@ -283,9 +285,13 @@ namespace SeteVidas.EditorTools
             var classes = root.AddComponent<ClassManager>();
             var daggersAbility = root.AddComponent<MeleeWeaponAbility>();
             var hammerAbility = root.AddComponent<MeleeWeaponAbility>();
+            var bowAbility = root.AddComponent<BowAbility>();
             root.AddComponent<ClassSwitchFeedback>();
             root.AddComponent<HealingSpell>(); // magia de cura do Paladino (F): 3 usos, recarrega no santuário
-            SetArray(classes, "classes", assets.Classes.Rogue, assets.Classes.Paladin);
+            SetArray(classes, "classes", assets.Classes.Rogue, assets.Classes.Paladin, assets.Classes.Hunter);
+            SetEnum(bowAbility, "forClass", (int)CharacterClass.Hunter);
+            SetRef(bowAbility, "combat", combat);
+            SetRef(bowAbility, "classes", classes);
             SetRef(classes, "input", reader);
             SetRef(classes, "combat", combat);
             SetEnum(daggersAbility, "forClass", (int)CharacterClass.Rogue);

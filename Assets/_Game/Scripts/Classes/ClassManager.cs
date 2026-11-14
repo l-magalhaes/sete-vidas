@@ -51,13 +51,40 @@ namespace SeteVidas.Classes
         void Update()
         {
             if (input == null || !input.isActiveAndEnabled) return;
-            if (input.NextClassPressedThisFrame) TryCycle(+1);
-            else if (input.PrevClassPressedThisFrame) TryCycle(-1);
+            if (SeteVidas.UI.ClassWheel.IsOpen) { _holdDir = 0; return; }   // a roda cuida até soltar
+
+            // R/Q (RB/LB): um toque alterna; segurar abre a roda de classes (14/11/2026)
+            if (input.NextClassPressedThisFrame) { _holdDir = 1; _holdTime = 0f; }
+            else if (input.PrevClassPressedThisFrame) { _holdDir = -1; _holdTime = 0f; }
             else
             {
                 int slot = input.ClassSlotPressedThisFrame;
                 if (ClassRules.FromSlot(slot, out var chosen)) TrySwitch(chosen);
             }
+
+            if (_holdDir == 0) return;
+            bool held = _holdDir > 0 ? input.NextClassHeldRaw : input.PrevClassHeldRaw;
+            _holdTime += Time.unscaledDeltaTime;
+            if (!held)
+            {
+                if (_holdTime < ClassRules.WheelHoldTime) TryCycle(_holdDir);
+                _holdDir = 0;
+            }
+            else if (_holdTime >= ClassRules.WheelHoldTime && UnlockedCount() >= 2 && !input.GameplayLocked)
+            {
+                SeteVidas.UI.ClassWheel.Open(this, input, _holdDir);
+                _holdDir = 0;
+            }
+        }
+
+        int _holdDir;
+        float _holdTime;
+
+        int UnlockedCount()
+        {
+            int n = 0;
+            for (int i = 0; i < ClassRules.ClassCount; i++) if (IsAvailable((CharacterClass)i)) n++;
+            return n;
         }
 
         public ClassDefinition Definition(CharacterClass c)

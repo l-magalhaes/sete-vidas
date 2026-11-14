@@ -32,6 +32,42 @@ namespace SeteVidas.Progression
         public static int Heal(int currentHits, int amount, int heartsRecovered) =>
             Math.Min(MaxHits(heartsRecovered), Math.Max(0, currentHits) + Math.Max(0, amount));
 
+
+        // ---------------------------------------------------------------- corações temporários (14/11/2026)
+
+        /// <summary>No máximo 2 corações temporários (4 hits) de uma vez.</summary>
+        public const int MaxTempHits = 4;
+
+        /// <summary>
+        /// Quantos hits temporários cabem: até <see cref="MaxTempHits"/> e só nas vagas do HUD depois dos corações
+        /// recuperados (com 7 corações, não sobra vaga).
+        /// </summary>
+        public static int TempCap(int heartsRecovered) =>
+            Math.Min(MaxTempHits, (GameConstants.MaxHearts - ClampHearts(heartsRecovered)) * GameConstants.HitsPerHeart);
+
+        /// <summary>Ganhou <paramref name="hits"/> temporários (baú): soma até o limite.</summary>
+        public static int AddTemp(int tempHits, int hits, int heartsRecovered) =>
+            Math.Max(0, Math.Min(TempCap(heartsRecovered), Math.Max(0, tempHits) + Math.Max(0, hits)));
+
+        /// <summary>
+        /// Dano com corações temporários: eles absorvem primeiro; o que sobra sai da vida.
+        /// Devolve a vida nova; <paramref name="tempHits"/> fica com o que sobrou dos temporários.
+        /// </summary>
+        public static int ApplyDamage(int currentHits, ref int tempHits, int damage)
+        {
+            damage = Math.Max(0, damage);
+            int absorbed = Math.Min(Math.Max(0, tempHits), damage);
+            tempHits = Math.Max(0, tempHits) - absorbed;
+            return ApplyDamage(currentHits, damage - absorbed);
+        }
+
+        /// <summary>Estado do coração temporário <paramref name="index"/> (0 = o primeiro depois dos recuperados).</summary>
+        public static HeartState TempHeart(int index, int tempHits)
+        {
+            int left = tempHits - index * GameConstants.HitsPerHeart;
+            return left >= 2 ? HeartState.Full : left == 1 ? HeartState.Half : HeartState.Locked;
+        }
+
         /// <summary>Sorteio de drop: <paramref name="roll01"/> entre 0 e 1 (ex.: Random.value). Chance 0,15 = 15%.</summary>
         public static bool RollDrop(float chance, float roll01) => roll01 < chance;
 

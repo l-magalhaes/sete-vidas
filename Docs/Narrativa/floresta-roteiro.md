@@ -129,6 +129,26 @@ GATO (surpreso): ...Os olhos. Era ela.
 VULPIS: O caminho para a ponte passa pelo ninho dela. Ande devagar. Agachado. Ela ouve o que você nem percebe que fez.
 GATO (irônico): Andar sem fazer barulho. Finalmente, uma coisa que eu sei fazer.
 
+### D-VULPIS-VINCULO — No Posto da Vulpis (obrigatório, F4b, D5) [APROVADO: enredo; texto: PROPOSTA]
+Depois da arena do Refúgio. Ela observava o gato desde as raízes; conta da praga na Isyathy e da chave perdida do Templo. Vínculo: classe Caçador e +1 coração. (Asset: `D-VULPIS-VINCULO`, `-b`, `-SISTEMA`.)
+VULPIS: Desde as raízes eu sigo você. Um gato que cai de pontes não passa despercebido.
+GATO (irônico): Seguindo um gato pela floresta. Isso tem nome, sabia?
+VULPIS: Vigiar. Eu vigio esta floresta. E ela está morrendo.
+VULPIS: A praga chegou na Isyathy, a guardiã. Uma serpente mais velha que as árvores.
+VULPIS: Ela dorme enrolada no alto do vale, e a doença dela corre pelas raízes. Cada planta torta, cada bicho de olho verde... é ela.
+GATO: E o caminho para a ponte passa por ela. Claro que passa.
+VULPIS: Passa pelo Templo da Serpente, no Mirante. Fechado. A chave se perdeu há muitos anos, nas ruínas atrás deste posto.
+VULPIS: Eu não posso ir. Se eu tirar os olhos do ninho, ninguém avisa quando ela acordar.
+VULPIS: Mas você pode. Leve isto: meu arco, e uma flecha com corda. Prende em gancho, puxa você até lá.
+VULPIS: E aprenda a avançar como raposa: um salto rápido, rente, que vence o vão que o pulo não vence.
+GATO (irônico): Arco, corda e um curso de raposa. Quanto eu devo?
+VULPIS: Uma floresta viva. E a chave. Vá antes que eu me arrependa.
+SISTEMA: Caçador desbloqueado! +1 coração. / Com o Caçador, {atacar} atira flechas. / Em qualquer classe: {dash} avança e {especial} atira a flecha com corda.
+
+Falas novas em rodízio: 03e (ganchos nas ruínas), 03f (parede de pedra: "força daquele cachorro dourado"), 03a.
+Barks do Lion: portão sem chave "Uma serpente entalhada. E uma fechadura do tamanho da minha cabeça."; chave do templo "Pesada. E me olhando. Ótimo."; portão aberto "O templo abriu. O ninho fica para lá."
+Revisar D-VULPIS-02 (cabana) para não repetir o que a D5 já contou. D-VULPIS-01 (o resgate no D2) fica como o primeiro relance dela (decisão de 14/11/2026).
+
 ### D-VULPIS-03 — Conversas seguintes (opcional, em rodízio)
 - 03a — VULPIS: Não mate a guardiã se puder evitar. Ela não escolheu ficar doente. / GATO: Nem eu. E olha eu aqui.
 - 03b — VULPIS (irônica): Gato, ladrão e amaldiçoado. Você coleciona problemas. / GATO: E madeira, agora.

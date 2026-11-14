@@ -83,6 +83,92 @@ namespace SeteVidas.EditorTools
             return result;
         }
 
+        // ------------------------------------------------------------------ Vulpis (F4b)
+
+        /// <summary>Vulpis: raposa arqueira (voz média, rápida). Retrato provisório 48×48. Criado se faltar.</summary>
+        public static SpeakerProfile VulpisSpeaker()
+        {
+            Directory.CreateDirectory(DataFolder + "/Speakers");
+            Directory.CreateDirectory(PortraitArt);
+            AssetDatabase.Refresh();
+            return Speaker("Vulpis", "Vulpis", SpeakerProfile.ScreenSide.Right, new Color32(0xf0, 0x9a, 0x4a, 0xff), 1.1f, VulpisPortrait());
+        }
+
+        /// <summary>
+        /// Conversas do vínculo com a Vulpis (F4b, Docs/Narrativa/floresta-roteiro.md §D-VULPIS-VINCULO): ela observava
+        /// o gato; a praga chegou na Isyathy e corre pelas raízes; o Templo da Serpente está fechado e a chave se perdeu
+        /// nas ruínas; ela dá o arco, a corda e ensina o dash.
+        /// </summary>
+        public static GoldenDialogues CreateVulpisDialogues()
+        {
+            var (cat, _) = Speakers();
+            var fox = VulpisSpeaker();
+            var result = new GoldenDialogues
+            {
+                Bond = Conversation("D-VULPIS-VINCULO", true, 1,
+                    (fox, "", "Desde as raízes eu sigo você. Um gato que cai de pontes não passa despercebido."),
+                    (cat, "ironico", "Seguindo um gato pela floresta. Isso tem nome, sabia?"),
+                    (fox, "", "Vigiar. Eu vigio esta floresta. E ela está morrendo."),
+                    (fox, "", "A praga chegou na Isyathy, a guardiã. Uma serpente mais velha que as árvores."),
+                    (fox, "", "Ela dorme enrolada no alto do vale, e a doença dela corre pelas raízes. Cada planta torta, cada bicho de olho verde... é ela."),
+                    (cat, "", "E o caminho para a ponte passa por ela. Claro que passa."),
+                    (fox, "", "Passa pelo Templo da Serpente, no Mirante. Fechado. A chave se perdeu há muitos anos, nas ruínas atrás deste posto."),
+                    (fox, "", "Eu não posso ir. Se eu tirar os olhos do ninho, ninguém avisa quando ela acordar.")),
+                BondFollowUp = Conversation("D-VULPIS-VINCULO-b", true, 1,
+                    (fox, "", "Mas você pode. Leve isto: meu arco, e uma flecha com corda. Prende em gancho, puxa você até lá."),
+                    (fox, "", "E aprenda a avançar como raposa: um salto rápido, rente, que vence o vão que o pulo não vence."),
+                    (cat, "ironico", "Arco, corda e um curso de raposa. Quanto eu devo?"),
+                    (fox, "", "Uma floresta viva. E a chave. Vá antes que eu me arrependa.")),
+                Unlock = Conversation("D-VULPIS-VINCULO-SISTEMA", true, 1,
+                    (null, "", "Caçador desbloqueado! +1 coração. Aperte {trocar_classe} para trocar de classe."),
+                    (null, "", "Com o Caçador, {atacar} atira flechas ({subir} + {atacar}: para cima)."),
+                    (null, "", "Em qualquer classe: {dash} avança (no chão e no ar) e {especial} atira a flecha com corda nos ganchos.")),
+                Idle = new[]
+                {
+                    Conversation("D-VULPIS-03e", false, 1,
+                        (fox, "", "As ruínas ficam a leste. Ganchos velhos nas pedras: a corda segura."),
+                        (cat, "ironico", "E se não segurar?"), (fox, "", "Aí você cai. Gatos caem bem, não?")),
+                    Conversation("D-VULPIS-03f", false, 1,
+                        (fox, "", "Parede de pedra antiga não cede a flecha. Precisa de força. Daquele cachorro dourado, talvez.")),
+                    Conversation("D-VULPIS-03a", false, 1,
+                        (fox, "", "Não mate a guardiã se puder evitar. Ela não escolheu ficar doente."),
+                        (cat, "", "Nem eu. E olha eu aqui.")),
+                },
+            };
+            AssetDatabase.SaveAssets();
+            return result;
+        }
+
+        /// <summary>Raposa 48×48 olhando para a esquerda: pelo laranja, focinho e peito brancos, pontas das orelhas escuras, capuz verde de caçadora.</summary>
+        static Sprite VulpisPortrait() => Draw($"{PortraitArt}/portrait_vulpis.png", 48, 48, set =>
+        {
+            var fur = new Color32(0xd8, 0x6a, 0x2a, 0xff);
+            var furLight = new Color32(0xf0, 0x9a, 0x4a, 0xff);
+            var white = new Color32(0xf4, 0xee, 0xdc, 0xff);
+            var dark = new Color32(0x3a, 0x1e, 0x12, 0xff);
+            var outline = new Color32(0x24, 0x12, 0x0a, 0xff);
+            var hood = new Color32(0x3e, 0x5a, 0x3a, 0xff);
+            var hoodEdge = new Color32(0x1e, 0x2e, 0x1c, 0xff);
+            var eye = new Color32(0xff, 0xd3, 0x4d, 0xff);
+
+            Ellipse(set, 24f, 4f, 19f, 9f, hood, hoodEdge);                // ombros com a capa
+            Ellipse(set, 16f, 38f, 4f, 7f, fur, outline);                  // orelha esquerda
+            Ellipse(set, 32f, 38f, 4f, 7f, fur, outline);                  // orelha direita
+            Ellipse(set, 16f, 43f, 2.5f, 2.5f, dark);                      // pontas escuras
+            Ellipse(set, 32f, 43f, 2.5f, 2.5f, dark);
+            Ellipse(set, 25f, 24f, 12f, 12f, fur, outline);                // cabeça
+            Ellipse(set, 27f, 28f, 8f, 5f, furLight);                      // testa clara
+            Ellipse(set, 14f, 18f, 9f, 5f, white, outline);                // focinho comprido (para a esquerda)
+            Ellipse(set, 6f, 19f, 1.5f, 1.5f, dark);                       // nariz
+            for (int x = 8; x <= 16; x++) set(x, 15, outline);             // boca fina
+            Ellipse(set, 25f, 13f, 7f, 3f, white);                         // peito branco
+            foreach (int ex in new[] { 21, 29 })                           // olhos atentos
+            {
+                set(ex, 26, eye); set(ex + 1, 26, eye); set(ex, 25, outline); set(ex + 1, 25, outline);
+            }
+            for (int x = 30; x <= 40; x++) set(x, 6 + (x - 30) / 2, new Color32(0x96, 0x6e, 0x40, 0xff)); // arco nas costas
+        });
+
         /// <summary>O contratante: capivara necromante (fala grave e arrastada). Criado se faltar.</summary>
         public static SpeakerProfile ContractorSpeaker()
         {

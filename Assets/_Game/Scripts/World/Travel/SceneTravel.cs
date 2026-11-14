@@ -66,8 +66,12 @@ namespace SeteVidas.World
         public const float FadeIn = 0.35f;
         /// <summary>Saindo andando: o tempo em que ele anda para fora enquanto a tela escurece.</summary>
         public const float WalkOutTime = 0.4f;
-        /// <summary>Caindo por um buraco: escurece mais devagar (dá para ver a queda).</summary>
-        public const float FallOutTime = 0.6f;
+        /// <summary>Caindo por um buraco: escurece rápido, caindo devagar (melhorias 3: parecia cair num abismo).</summary>
+        public const float FallOutTime = 0.3f;
+        /// <summary>Velocidade máxima de queda enquanto escurece (tiles/s): desce ~2 tiles e some.</summary>
+        public const float FallOutSpeed = 7f;
+        /// <summary>Subindo por um buraco no teto: continua subindo pelo menos a esta velocidade enquanto escurece.</summary>
+        public const float ClimbOutSpeed = 4f;
         /// <summary>Entrando andando: tempo andando sozinho enquanto clareia.</summary>
         public const float WalkInTime = 0.3f;
         /// <summary>Chegada de queda: altura de onde ele despenca (tiles), deitado depois (s).</summary>
@@ -164,15 +168,20 @@ namespace SeteVidas.World
             // ----- saída: anda para fora da tela, ou continua caindo (tropeçando no ar)
             bool walkOut = exitDir.x != 0f && !alreadyBlack;
             bool fallOut = exitDir.y < 0f && !alreadyBlack;
-            var oldVisual = from != null ? from.GetComponentInChildren<PlayerVisual>() : null;
             if (walkOut && input != null) input.SetScriptedMove(Mathf.Sign(exitDir.x));
-            if (fallOut && oldVisual != null) oldVisual.PlayAction("hurt", hold: true);
 
             var fader = ScreenFader.Active;
             float fadeOut = walkOut ? WalkOutTime : fallOut ? FallOutTime : FadeOut;
+            // Melhorias 3 (14/11/2026): fora da porta não há chão, e o gato caía no vazio enquanto escurecia. Agora a
+            // altura fica segura: saindo andando ele não cai; pelo buraco desce devagar; pelo teto continua subindo.
+            var oldPlayer = from != null ? from.GetComponent<PlayerController>() : null;
+            if (!alreadyBlack && oldPlayer != null && exitDir != Vector2.zero)
+            {
+                float minVy = walkOut ? 0f : fallOut ? -FallOutSpeed : ClimbOutSpeed;
+                s_runner.StartCoroutine(HoldHeight(oldPlayer, minVy, fadeOut));
+            }
             if (!alreadyBlack && fader != null) yield return fader.FadeTo(1f, fadeOut);
             if (input != null) input.ClearScriptedMove();
-            if (fallOut && oldVisual != null) oldVisual.StopAction();
 
             if (same)
             {
@@ -232,6 +241,19 @@ namespace SeteVidas.World
             if (health != null) health.Shielded = false;
             if (input != null && input != newInput) input.SetLock(lockOwner, false);
             s_busy = false;
+        }
+
+        /// <summary>Enquanto a tela escurece, a velocidade vertical não fica abaixo de <paramref name="minVy"/>.</summary>
+        static IEnumerator HoldHeight(PlayerController player, float minVy, float duration)
+        {
+            float t = 0f;
+            while (t < duration + 0.1f && player != null && player.Body != null)
+            {
+                var v = player.Body.linearVelocity;
+                if (v.y < minVy) player.Body.linearVelocity = new Vector2(v.x, minVy);
+                yield return new WaitForFixedUpdate();
+                t += Time.fixedDeltaTime;
+            }
         }
 
         /// <summary>

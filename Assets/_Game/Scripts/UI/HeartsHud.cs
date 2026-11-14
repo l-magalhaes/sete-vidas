@@ -36,13 +36,39 @@ namespace SeteVidas.UI
         Image _paladinGlow;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { s_classSprites.Clear(); s_glowSprite = null; s_scroll = s_scrollFaded = s_sealLit = s_sealOut = null; } // Play sem recarregar o domínio
+        static void ResetStatics() { s_classSprites.Clear(); s_glowSprite = null; s_scroll = s_scrollFaded = s_sealLit = s_sealOut = null; s_ghostFull = s_ghostHalf = null; } // Play sem recarregar o domínio
 
         /// <summary>
         /// De que classe é o coração <paramref name="index"/> (regra do usuário): antes da maldição, os 7 são do Ladino;
         /// depois dela, cada coração é o da classe na ordem (o 2º recuperado é o do Paladino, e assim por diante).
         /// </summary>
         public static int HeartClass(int index, bool curseDone) => curseDone ? index : 0;
+
+        /// <summary>
+        /// Como o de cima, mas na ordem em que as classes foram ganhas (F4b: o Caçador é o 3º, antes do Mago):
+        /// o coração <paramref name="index"/> é o da <paramref name="index"/>-ésima classe do save. Depois das ganhas,
+        /// seguem as que faltam, na ordem do enum.
+        /// </summary>
+        public static int HeartClass(int index, bool curseDone, IList<string> unlockOrder)
+        {
+            if (!curseDone) return 0;
+            if (unlockOrder == null) return index;
+            var used = new List<int>();
+            foreach (var name in unlockOrder)
+            {
+                if (!System.Enum.TryParse(name, out SeteVidas.Classes.CharacterClass c) || used.Contains((int)c)) continue;
+                if (used.Count == index) return (int)c;
+                used.Add((int)c);
+            }
+            // corações ainda sem classe ganha: as que faltam, na ordem do enum
+            int k = index - used.Count;
+            for (int i = 0; i < SeteVidas.Classes.ClassRules.ClassCount; i++)
+            {
+                if (used.Contains(i)) continue;
+                if (k-- == 0) return i;
+            }
+            return index;
+        }
 
         /// <summary>A maldição já terminou neste save (com migração dos saves de antes da marca).</summary>
         static bool CurseDone(int heartsRecovered)
@@ -60,6 +86,20 @@ namespace SeteVidas.UI
             var health = PlayerHealth.Active;
             if (data != null && health != null && data.HasFlag(CursedTome.TakenFlag) && health.HeartsRecovered < GameConstants.MaxHearts)
                 data.SetFlag(PlayerHealth.CurseDoneFlag);
+        }
+
+        static Sprite s_ghostFull, s_ghostHalf;
+
+        /// <summary>O coração temporário: um fantasminha (<see cref="ClassHeartPixels.DrawGhost"/>), cheio ou meio.</summary>
+        public static Sprite GhostSprite(HeartState state)
+        {
+            bool full = state == HeartState.Full;
+            var cached = full ? s_ghostFull : s_ghostHalf;
+            if (cached != null) return cached;
+            var s = SpriteFromGrid(ClassHeartPixels.DrawGhost(full ? HeartLook.Full : HeartLook.Half), ClassHeartPixels.Size,
+                full ? "ui_coracao_fantasma" : "ui_coracao_fantasma_meio");
+            if (full) s_ghostFull = s; else s_ghostHalf = s;
+            return s;
         }
 
         void LateUpdate()
@@ -92,7 +132,7 @@ namespace SeteVidas.UI
                 tint.a = fading && loseFade > 0f ? Mathf.Clamp01((_fadeUntil[i] - Time.unscaledTime) / loseFade) : 1f;
                 hearts[i].color = tint;
 
-                Sprite sprite = classHearts ? ClassSprite(HeartClass(i, curseDone), states[i]) : null;
+                Sprite sprite = classHearts ? ClassSprite(HeartClass(i, curseDone, SaveManager.Data?.unlockedClasses), states[i]) : null;
                 if (sprite == null)
                     sprite = states[i] switch
                     {
@@ -101,6 +141,20 @@ namespace SeteVidas.UI
                         HeartState.Empty => empty,
                         _ => locked,
                     };
+                // corações temporários (baús): fantasminhas nas vagas depois dos recuperados, flutuando e meio transparentes
+                float ghostBob = 0f;
+                if (states[i] == HeartState.Locked && !fading)
+                {
+                    var temp = HealthRules.TempHeart(i - health.HeartsRecovered, health.TempHits);
+                    if (i >= health.HeartsRecovered && temp != HeartState.Locked)
+                    {
+                        hearts[i].enabled = true;
+                        sprite = GhostSprite(temp);
+                        float breathe = 0.78f + 0.14f * Mathf.Sin(Time.unscaledTime * 3f + i);
+                        hearts[i].color = new Color(1f, 1f, 1f, breathe);
+                        ghostBob = Mathf.Sin(Time.unscaledTime * 2.5f + i * 1.3f) > 0f ? 1f : 0f; // sobe e desce 1 px
+                    }
+                }
                 if (hearts[i].sprite != sprite) hearts[i].sprite = sprite;
 
                 // recuperou o coração (estava travado): pulsa
@@ -120,7 +174,7 @@ namespace SeteVidas.UI
                 // tremor de 1 px para os lados, em pixels inteiros
                 float shakeLeft = _shakeUntil[i] - Time.unscaledTime;
                 float shake = shakeLeft > 0f ? (((int)(shakeLeft * 40f) & 1) == 0 ? 1f : -1f) : 0f;
-                rt.anchoredPosition = _basePos[i] + new Vector2(-grow.x + shake, grow.y);
+                rt.anchoredPosition = _basePos[i] + new Vector2(-grow.x + shake, grow.y + ghostBob);
             }
             UpdatePaladinGlow(curseDone && classHearts && states.Length > 1 && states[1] != HeartState.Locked);
             UpdateHealCharges(health);
