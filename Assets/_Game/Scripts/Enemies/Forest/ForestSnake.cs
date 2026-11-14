@@ -154,7 +154,7 @@ namespace SeteVidas.Enemies
             var sil = Player != null ? Player.GetComponent<SeteVidas.Player.ShadowSilhouette>() : null;
             bool hidden = sil != null && sil.IsSilhouette;
             var before = _state;
-            _state = StepSnake(_state, ref _timer, dt, dist, hidden);
+            _state = StepSnake(_state, ref _timer, dt, dist, hidden, IsInfected);
 
             if (_state == SnakeState.Warn && before == SnakeState.Hidden)
             {
@@ -171,12 +171,14 @@ namespace SeteVidas.Enemies
             if (_state == SnakeState.Hidden) _room = float.MaxValue; // a que rasteja muda de lugar: mede de novo no próximo bote
             if (crawls && _state == SnakeState.Hidden) Crawl(dt);
 
-            float ext = SnakeExtension(_state, _timer);
+            float ext = SnakeExtension(_state, _timer, IsInfected);
             Pose(ext);
             if (SnakeBites(_state) && body != null)
             {
                 var c = (Vector2)body.position;
-                HurtPlayerIn(new Rect(c.x - 0.6f, c.y - 0.4f, 1.2f, 0.9f));
+                var bite = new Rect(c.x - 0.6f, c.y - 0.4f, 1.2f, 0.9f);
+                // infectada: a mordida envenena (bestiário)
+                if (IsInfected) HurtAndPoisonIn(bite); else HurtPlayerIn(bite);
             }
 
             if (spriteRenderer != null)
@@ -232,7 +234,7 @@ namespace SeteVidas.Enemies
         protected override void OnDrawGizmosSelected()
         {
             Gizmos.color = new Color(0.5f, 0.9f, 0.4f, 0.6f);
-            Gizmos.DrawWireCube(transform.position + Vector3.up * 0.4f, new Vector3(SnakeTrigger * 2f, 1.5f, 0f));
+            Gizmos.DrawWireCube(transform.position + Vector3.up * 0.4f, new Vector3(SnakeTriggerFor(Infected.On(this)) * 2f, 1.5f, 0f));
             if (crawls) Gizmos.DrawLine(new Vector3(minX, transform.position.y, 0f), new Vector3(maxX, transform.position.y, 0f));
         }
 #endif

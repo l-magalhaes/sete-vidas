@@ -213,6 +213,17 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
 - **Arte por inimigo:** parado, andar/voar, aviso (telegraph), ataque, recuo/vulnerável, dano, morte; versão infectada como troca de paleta + detalhes (olhos, rachaduras verdes).
 - **Áudio por inimigo:** idle, alerta, ataque, dano, morte; variante infectada usa os sons do zumbi por enquanto (próprios depois).
 - **Testes:** regras de pogo por estado, percepção (reuso de `PerceptionMath`).
+- **Estado (14/11/2026): variante infectada implementada, falta testar no Unity** (rodar o menu **21**; roteiro: `Docs/QA/floresta-f4-plano-de-teste.md`). A versão básica dos 5 inimigos já vinha da F1/F2 (rev. 4).
+  - **Componente `Infected`** (Enemies/Forest) no mesmo objeto da IA: a IA lê no Awake e troca os números (`ForestEnemyRules.*For(infected)`); o componente cuida do visual (troca cada sprite pelo `*_infectado.png`, tinge de roxo o que é feito na hora, pontinho verde dos olhos). Infectado tem **+1 de vida**.
+  - **Galho Seco**: aviso 0,4 s, preso 0,7 s, olhos piscando no disfarce, **nuvem tóxica** 2 × 2 por 2 s ao morrer (`ToxicCloud`). **Broto** infectado solta morcegos infectados.
+  - **Planta**: alcance 7, aviso 0,45 s, volta 0,5 s, **esporos** (1,5 tile, 1,5 s) a cada golpe, uma nuvem de cada vez.
+  - **Serpente**: bote a 4 tiles, esticada 0,4 s, no buraco 1 s, **mordida envenena** (só se tirou vida). A folhagem continua escondendo.
+  - **Morcego**: acorda a 9/7 do alcance normal e com barulho ≥ 0,2, voa a 5,5 em **zigue-zague**, recua só 0,35 s.
+  - **Cacto**: trajetória tremida (Perlin, até 0,5 tile); a cada 3 s incha 0,5 s e solta **4 espinhos em cruz** (alcance 5, `EnemyBolt` com distância máxima). **Pronto no código, mas fora da Floresta** (pedido do usuário, 14/11/2026): fica para outras fases.
+  - **Nuvem tóxica** envenena uma vez por nuvem (não deixa o veneno letal sozinha).
+  - **Distribuição** (`ForestLayout.InfectionShare`, [PROPOSTA]): A sem infectados; B e C1–C3, 1 em 4; C4–C7 e D, metade (D3, o respiro da Vulpis, 1 em 4); E e F1, todos; G (volta), metade. Cactos sempre normais. `ForestLayout.Version` 11.
+  - Sprites infectados gerados pelo editor (`ForestInfectedArt`, troca de paleta; o turquesa do pogo não muda). Testes: `ForestBestiaryTests` (10).
+  - Falta da F4: arte de verdade por inimigo (animações completas), sons próprios, Sentinela Canino com silhueta canina.
 
 ### F5 — Regiões A, B e C (conteúdo)
 

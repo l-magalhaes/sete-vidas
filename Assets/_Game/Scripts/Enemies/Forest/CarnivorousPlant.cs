@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SeteVidas.Combat;
 using UnityEngine;
 using static SeteVidas.Enemies.ForestEnemyRules;
 
@@ -74,6 +75,8 @@ namespace SeteVidas.Enemies
         {
             base.Awake();
             _aim = Forward;
+            // infectada: o pescoço estica mais (só se o lugar não pediu um alcance próprio)
+            if (IsInfected && Mathf.Approximately(reach, PlantReach)) reach = PlantReachInfected;
             if (neckSprite != null)
                 for (int i = 0; i < 10; i++)
                 {
@@ -100,6 +103,16 @@ namespace SeteVidas.Enemies
             foreach (var n in _neck) if (n != null) n.enabled = false;
         }
 
+        ToxicCloud _spores;
+
+        /// <summary>Infectada: cada golpe solta esporos em volta da cabeça (uma nuvem de cada vez).</summary>
+        protected override void OnHit(in DamageInfo info)
+        {
+            if (!IsInfected || (_spores != null && _spores.IsAlive)) return;
+            Vector2 at = head != null ? (Vector2)head.position : Rest;
+            _spores = ToxicCloud.Spawn(at, Vector2.one * PlantSporeSize, PlantSporeTime);
+        }
+
         protected override void Tick(float dt)
         {
             var h = Player;
@@ -109,7 +122,7 @@ namespace SeteVidas.Enemies
             bool inRange = h != null && !h.IsDead && toCat.magnitude <= reach + restDistance && Vector2.Dot(toCat, Forward) > 0f
                            && Physics2D.Linecast(Mouth, cat, WallMask).collider == null; // não morde através de bloco
             var before = _state;
-            _state = StepPlant(_state, ref _timer, dt, inRange);
+            _state = StepPlant(_state, ref _timer, dt, inRange, IsInfected);
 
             if (_state == PlantState.Windup)
             {
@@ -125,7 +138,7 @@ namespace SeteVidas.Enemies
                 SeteVidas.Audio.Sfx.Play("zumbi_caca", Base, 0.9f, 1.3f); // provisório: o estalo da boca
             }
 
-            float ext = PlantExtension(_state, _timer);
+            float ext = PlantExtension(_state, _timer, IsInfected);
             Vector2 headPos = Vector2.Lerp(Rest, _state == PlantState.Idle || _state == PlantState.Windup ? Rest : _lungeTarget, ext);
             if (_state == PlantState.Windup) headPos += _aim * 0.25f * Mathf.Sin(Time.time * 40f); // tremendo de vontade
             if (head != null) head.position = headPos;

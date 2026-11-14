@@ -29,6 +29,17 @@ namespace SeteVidas.Enemies
 
         public void Configure(float range = BatWakeRange) { maxHealth = BatHealth; wakeRange = range; }
 
+        protected override void Awake()
+        {
+            base.Awake();
+            // infectado: acorda com barulho menor e vê de mais longe (bestiário)
+            if (IsInfected)
+            {
+                wakeRange = BatWakeRangeFor(true, wakeRange);
+                noiseToWake = Mathf.Min(noiseToWake, BatNoiseFor(true));
+            }
+        }
+
         protected override void OnEnable() { base.OnEnable(); NoiseSystem.Emitted += OnNoise; }
         protected override void OnDisable() { base.OnDisable(); NoiseSystem.Emitted -= OnNoise; }
 
@@ -113,7 +124,7 @@ namespace SeteVidas.Enemies
                 hit = HurtPlayerIn(body);
             }
             var before = _state;
-            _state = StepBat(_state, ref _timer, dt, _spawned ? Mathf.Min(dist, BatGiveUpRange) : dist, crouched, _heard, hit, atPerch && !_spawned, wakeRange);
+            _state = StepBat(_state, ref _timer, dt, _spawned ? Mathf.Min(dist, BatGiveUpRange) : dist, crouched, _heard, hit, atPerch && !_spawned, wakeRange, IsInfected);
             _heard = false;
             if (_state == BatState.Wake && before == BatState.Sleep) SeteVidas.Audio.Sfx.Play("zumbi_sente", me, 0.6f, 1.8f); // guincho (provisório)
 
@@ -121,8 +132,15 @@ namespace SeteVidas.Enemies
             switch (_state)
             {
                 case BatState.Chase:
-                    // persegue com um voo ondulado
-                    want = (target - me).normalized * BatSpeed + new Vector2(0f, Mathf.Sin(Time.time * 6f) * 1.2f);
+                    if (IsInfected)
+                    {
+                        // infectado: mais rápido e em zigue-zague (de lado em relação à rota, trocando em degraus)
+                        Vector2 dir = (target - me).normalized;
+                        Vector2 side = new Vector2(-dir.y, dir.x) * BatZigzagSide(Time.time + _home.x * 0.21f);
+                        want = dir * BatSpeedFor(true) + side * BatZigzag;
+                    }
+                    else // persegue com um voo ondulado
+                        want = (target - me).normalized * BatSpeed + new Vector2(0f, Mathf.Sin(Time.time * 6f) * 1.2f);
                     break;
                 case BatState.Recoil:
                     want = (me - target).normalized * BatSpeed * 0.8f + Vector2.up * 1.5f;

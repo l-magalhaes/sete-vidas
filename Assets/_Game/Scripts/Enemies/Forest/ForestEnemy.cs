@@ -9,7 +9,8 @@ namespace SeteVidas.Enemies
     /// <summary>
     /// Base dos inimigos da Floresta (F4, versão básica): vida, dano, piscar ao apanhar, morrer e voltar quando o mundo
     /// reinicia (descansar ou morrer). Fica na layer Enemy com um colisor de gatilho (é o que os golpes do gato procuram).
-    /// Variante infectada: F4 (por enquanto os sons são os do zumbi, decisão de 13/11/2026).
+    /// Variante infectada (F4): o componente <see cref="Infected"/> no mesmo objeto liga <see cref="IsInfected"/>; cada
+    /// inimigo troca os números pelos de <see cref="ForestEnemyRules"/> e ganha +1 de vida. Sons: os do zumbi por enquanto.
     /// </summary>
     [SelectionBase]
     public abstract class ForestEnemy : MonoBehaviour, IDamageable, IPogoTarget, IFacingTarget
@@ -32,6 +33,10 @@ namespace SeteVidas.Enemies
         float _goneAt = -1f;
 
         public bool IsDead { get; private set; }
+        /// <summary>Variante infectada (tem o componente <see cref="Infected"/>).</summary>
+        public bool IsInfected { get; private set; }
+        /// <summary>Vida cheia: a variante infectada aguenta um golpe a mais (bestiário).</summary>
+        public int MaxHealth => maxHealth + (IsInfected ? 1 : 0);
         public int Health => _hp;
         public abstract bool AcceptsPogo { get; }
         public int FacingDirection => _facing;
@@ -40,7 +45,8 @@ namespace SeteVidas.Enemies
         protected virtual void Awake()
         {
             _home = transform.position;
-            _hp = maxHealth;
+            IsInfected = Infected.On(this);
+            _hp = MaxHealth;
             _facing = startFacing >= 0 ? 1 : -1;
             _colliders = GetComponentsInChildren<Collider2D>(true);
         }
@@ -90,7 +96,7 @@ namespace SeteVidas.Enemies
         {
             if (!gameObject.activeInHierarchy) return;
             IsDead = false;
-            _hp = maxHealth;
+            _hp = MaxHealth;
             _goneAt = -1f;
             transform.position = _home;
             _facing = startFacing >= 0 ? 1 : -1;
@@ -131,6 +137,20 @@ namespace SeteVidas.Enemies
             if (!box.Overlaps(new Rect(b.min, b.size))) return false;
             float dir = h.transform.position.x >= transform.position.x ? 1f : -1f;
             h.TakeDamage(new DamageInfo(damage, new Vector2(dir, 0f), DamageType.Normal, AttackAngle.Front, gameObject));
+            return true;
+        }
+
+        /// <summary>
+        /// Como <see cref="HurtPlayerIn"/>, mas envenena se o golpe tirou vida de verdade (fora da invencibilidade):
+        /// a mordida da Serpente infectada. Encostar de novo durante a invencibilidade não envenena outra vez.
+        /// </summary>
+        protected bool HurtAndPoisonIn(Rect box, int damage = 1)
+        {
+            var h = Player;
+            if (h == null || h.IsDead) return false;
+            int before = h.CurrentHits;
+            if (!HurtPlayerIn(box, damage)) return false;
+            if (h.CurrentHits < before && !h.IsDead) h.Poison();
             return true;
         }
 

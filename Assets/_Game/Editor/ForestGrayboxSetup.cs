@@ -399,6 +399,29 @@ namespace SeteVidas.EditorTools
 
         static void Place(Transform t, ForestLayout.Obj o, Dictionary<string, DialogueDefinition> dialogues, Dictionary<string, Component> created)
         {
+            int before = t.childCount;
+            PlaceOne(t, o, dialogues, created);
+            if (!o.Infected) return;
+            // F4: variante infectada. Vale para tudo o que o objeto criou (o Broto cria também o morcego modelo)
+            for (int i = before; i < t.childCount; i++)
+                ForestInfectedArt.Attach(t.GetChild(i).gameObject, InfectedEyes(o.Kind));
+        }
+
+        /// <summary>De onde saem os pontinhos verdes de cada inimigo infectado (a partir do objeto).</summary>
+        static Vector2 InfectedEyes(string kind)
+        {
+            switch (kind)
+            {
+                case "dry":
+                case "sprout": return new Vector2(0f, SeteVidas.Enemies.ForestEnemyRules.BranchHeight - 1.6f);
+                case "plant": return new Vector2(0f, 0.9f);
+                case "snake": return new Vector2(0f, 0.4f);
+                default: return Vector2.zero; // morcego e cacto: do centro
+            }
+        }
+
+        static void PlaceOne(Transform t, ForestLayout.Obj o, Dictionary<string, DialogueDefinition> dialogues, Dictionary<string, Component> created)
+        {
             switch (o.Kind)
             {
                 case "branch": ForestTestSetup.Branch(t, o.Name, o.X, o.Y, o.W); break;

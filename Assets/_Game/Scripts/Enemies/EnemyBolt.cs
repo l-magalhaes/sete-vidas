@@ -21,8 +21,13 @@ namespace SeteVidas.Enemies
         int _wallMask, _playerMask;
         SpriteRenderer _sprite;
 
-        /// <summary>Cria e dispara um virote.</summary>
-        public static EnemyBolt Fire(Sprite sprite, Vector2 from, Vector2 velocity, int damage, GameObject source, int sortingOrder)
+        float _maxDistance, _travelled;
+
+        /// <summary>
+        /// Cria e dispara um virote. <paramref name="maxDistance"/> &gt; 0 = some depois de andar isso (espinhos do Cacto
+        /// infectado, alcance 5); zero = só o tempo de vida.
+        /// </summary>
+        public static EnemyBolt Fire(Sprite sprite, Vector2 from, Vector2 velocity, int damage, GameObject source, int sortingOrder, float maxDistance = 0f)
         {
             var go = new GameObject("Virote");
             go.transform.position = from;
@@ -34,6 +39,7 @@ namespace SeteVidas.Enemies
             bolt._velocity = velocity;
             bolt._damage = damage;
             bolt._source = source;
+            bolt._maxDistance = maxDistance;
             bolt._wallMask = LayerMask.GetMask(GameConstants.Layers.Ground, GameConstants.Layers.Climbable, GameConstants.Layers.Breakable);
             bolt._playerMask = LayerMask.GetMask(GameConstants.Layers.Player);
             go.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg);
@@ -82,6 +88,8 @@ namespace SeteVidas.Enemies
                 return;
             }
             if (_age >= Lifetime) { Destroy(gameObject); return; }
+            _travelled += step.magnitude;
+            if (_maxDistance > 0f && _travelled >= _maxDistance) { Destroy(gameObject); return; }
             transform.position = from + step;
         }
     }

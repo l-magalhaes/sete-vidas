@@ -22,7 +22,7 @@ namespace SeteVidas.EditorTools
     public static class ForestLayout
     {
         /// <summary>Suba quando mudar o graybox (o menu 21 recria as cenas).</summary>
-        public const int Version = 9;
+        public const int Version = 11; // 10: F4, variante infectada distribuída (MarkInfected); 11: sem cacto infectado
 
         public const string Road = "Forest_Road";
         public const string A = "Forest_A_Roots";
@@ -57,6 +57,8 @@ namespace SeteVidas.EditorTools
             public int Facing = 1, Value;
             /// <summary>Atalho: flag do atalho. Baú: classe que falta para alcançá-lo (vazio = alcançável hoje).</summary>
             public string Flag; public bool Opens;
+            /// <summary>Inimigo da Floresta na variante infectada (F4). Marcado por <see cref="MarkInfected"/>.</summary>
+            public bool Infected;
         }
 
         public class Room
@@ -116,7 +118,70 @@ namespace SeteVidas.EditorTools
             list.Add(BuildE());
             list.Add(BuildF());
             foreach (var reg in list) VinesToTheTop(reg);
+            foreach (var reg in list) MarkInfected(reg);
             return list;
+        }
+
+        // ------------------------------------------------------------ variante infectada (F4)
+
+        /// <summary>Inimigos da Floresta que têm variante infectada (os templários zumbis já são da praga).</summary>
+        public static bool HasInfectedVariant(string kind)
+        {
+            return kind == "bat" || kind == "plant" || kind == "snake" || kind == "dry" || kind == "sprout" || kind == "cactus";
+        }
+
+        /// <summary>
+        /// Parte dos inimigos que é infectada em cada trecho (Docs/Design/floresta-bestiario.md: "até metade do Vale,
+        /// 1 infectado para cada 3 normais; do Bosque Morto em diante, metade e metade; no Ninho, só infectados").
+        /// Interpretação (14/11/2026, [PROPOSTA]): estrada e Raízes (A) sem infectados, para o gato aprender o bicho
+        /// normal primeiro; B e C1–C3, 1 em 4; C4–C7 e D, metade (o D3, respiro da Vulpis, 1 em 4); Ninho e Coração (E, F1), todos; a volta
+        /// depois da Isyathy (G), metade. Cactos: todos normais na Floresta (o infectado fica para outras fases).
+        /// </summary>
+        public static float InfectionShare(string scene, string roomId, string kind)
+        {
+            // cacto infectado fica para outras fases (pedido do usuário, 14/11/2026): na Floresta, todos normais
+            if (kind == "cactus") return 0f;
+            if (scene == Road || scene == A || scene == Cabin) return 0f;
+            if (roomId.StartsWith("G")) return 0.5f;
+            if (scene == E || scene == F) return 1f;
+            if (scene == D) return roomId == "D3" ? 0.25f : 0.5f; // o Refúgio (desenho do usuário) é o respiro da Vulpis
+            if (scene == B) return 0.25f;
+            if (scene == C) return roomId == "C1" || roomId == "C2" || roomId == "C3" ? 0.25f : 0.5f;
+            return 0f;
+        }
+
+        /// <summary>
+        /// O <paramref name="index"/>-ésimo inimigo de um trecho com a parte <paramref name="share"/> infectada é
+        /// infectado? Espalha por igual: com 1/4, o 4º, o 8º...; com 1/2, o 2º, o 4º...; com 1, todos.
+        /// </summary>
+        public static bool InfectedAt(int index, float share)
+        {
+            if (share <= 0f) return false;
+            if (share >= 1f) return true;
+            return (int)Math.Floor((index + 1) * share + 1e-4) > (int)Math.Floor(index * share + 1e-4);
+        }
+
+        /// <summary>Sala do objeto (o nome começa com "C4: ...").</summary>
+        static string RoomOf(Obj o)
+        {
+            int i = o.Name == null ? -1 : o.Name.IndexOf(':');
+            return i > 0 ? o.Name.Substring(0, i) : "";
+        }
+
+        /// <summary>Marca os infectados da região, contando cada trecho (mesma parte) na ordem em que os inimigos foram postos.</summary>
+        static void MarkInfected(Region reg)
+        {
+            var counters = new Dictionary<float, int>();
+            foreach (var o in reg.Objects)
+            {
+                if (!HasInfectedVariant(o.Kind)) continue;
+                float share = InfectionShare(reg.Scene, RoomOf(o), o.Kind);
+                int n;
+                counters.TryGetValue(share, out n);
+                o.Infected = InfectedAt(n, share);
+                counters[share] = n + 1;
+                if (o.Infected && o.Name.IndexOf("(infectad", StringComparison.Ordinal) < 0) o.Name += " (infectado)";
+            }
         }
 
         /// <summary>Quantos tiles sólidos acima do fim da vinha ainda são completados (mais que isso é parede de verdade).</summary>

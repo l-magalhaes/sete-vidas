@@ -66,6 +66,25 @@ namespace SeteVidas.Enemies
         protected override void OnDied()
         {
             // derrubado: os morcegos que soltou continuam (já estão no ar)
+            // infectado: vira uma nuvem tóxica no pé do tronco (bestiário)
+            if (IsInfected)
+                ToxicCloud.Spawn((Vector2)transform.position + Vector2.up * (BranchCloudSize * 0.5f),
+                    Vector2.one * BranchCloudSize, BranchCloudTime);
+        }
+
+        bool _eyesWereLit;
+
+        /// <summary>Infectado e disfarçado: os olhos verdes piscam de vez em quando (dá para notar o tronco falso).</summary>
+        void BlinkEyes()
+        {
+            bool lit = BranchEyesLit(Time.time + _home.x * 0.37f); // cada tronco pisca na sua hora
+            if (lit && !_eyesWereLit)
+            {
+                float y = transform.position.y + height - 1.6f;
+                for (int i = -1; i <= 1; i += 2)
+                    HitSparks.One(new Vector2(transform.position.x + i * 0.2f, y), Vector2.zero, Infected.Acid, BranchBlinkOn, 0f);
+            }
+            _eyesWereLit = lit;
         }
 
         protected override float DamageMultiplier(in DamageInfo info)
@@ -94,7 +113,8 @@ namespace SeteVidas.Enemies
             var before = _state;
             // parado: vira para o gato quando ele está perto (não anda)
             if (_state == BranchState.Awake && dist >= 0f && dist < 6f) _facing = side;
-            _state = StepBranch(_state, ref _timer, dt, dist, hidden);
+            _state = StepBranch(_state, ref _timer, dt, dist, hidden, IsInfected);
+            if (IsInfected && _state == BranchState.Disguised) BlinkEyes();
 
             if (_state == BranchState.Windup && before != BranchState.Windup)
                 SeteVidas.Audio.Sfx.Play("zumbi_sente", transform.position, 0.8f, 0.7f); // estalo de madeira (provisório)

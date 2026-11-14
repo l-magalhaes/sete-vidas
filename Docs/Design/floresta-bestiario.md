@@ -104,3 +104,17 @@ Os nomes dos sons seguem o padrão do `Sfx` atual (ver `Docs/Audio/floresta-audi
 | **Morcego Noturno** | **Persegue**: acorda com o gato a 4 tiles (agachado, só a 2) ou com barulho ≥ 0,3; voa atrás dele (4,5 tiles/s, voo ondulado), encosta (1 hit), recua 0,7 s e volta; a mais de 14 tiles desiste e volta ao poleiro. Sem pogo. Vida 2 |
 
 Implementação (versão básica, arte provisória): `ForestEnemy` (base), `DryBranch`, `CarnivorousPlant`, `NightBat`, regras em `ForestEnemyRules`.
+
+## Variante infectada implementada (F4, 14/11/2026) [PROPOSTA: números a balancear no playtest]
+
+Componente `Infected` sobre a mesma IA (+1 de vida em todos). Ajustada aos inimigos como ficaram depois dos ajustes do usuário:
+
+| Inimigo | Infectado |
+|---|---|
+| Galho Seco / Broto | aviso 0,4 s, braço preso 0,7 s, olhos verdes piscando no disfarce; ao morrer, nuvem tóxica 2 × 2 por 2 s. Os morcegos do Broto infectado são infectados |
+| Planta Carnívora | pescoço até **7** tiles, aviso 0,45 s, volta (pogo) 0,5 s; esporos de 1,5 tile por 1,5 s a cada golpe recebido |
+| Serpente | bote a 4 tiles (folhagem ainda esconde), esticada 0,4 s, no buraco 1 s; mordida envenena |
+| Morcego | acorda de 9/7 mais longe e com barulho ≥ 0,2; voa a 5,5 em zigue-zague; recua 0,35 s (investidas seguidas) |
+| Cacto Flutuante | tremida de até 0,5 tile; a cada 3 s incha 0,5 s e solta 4 espinhos em cruz (alcance 5, 1 hit). **Não aparece na Floresta** (pedido do usuário, 14/11/2026): fica para outras fases |
+
+Nuvens (Galho Seco e esporos) envenenam **uma vez por nuvem**. Distribuição na fase: `Docs/Floresta/plano-implementacao.md` (F4).
