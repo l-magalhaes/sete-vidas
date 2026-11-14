@@ -8,7 +8,7 @@ using UnityEngine;
 namespace SeteVidas.Player
 {
     /// <summary>
-    /// Magia de cura, aprendida com o Paladino (Koda): F (ou LT) cura 1 coração. Tem 3 usos, guardados no save, e
+    /// Magia de cura, aprendida com o Paladino (Koda): F (ou LT) cura 1 coração e corta o veneno. Tem 3 usos, guardados no save, e
     /// só recarrega ao descansar num santuário. Vale em qualquer classe depois de desbloqueada.
     /// Uma concentração curta no chão (~0,45 s): tomar dano no meio interrompe sem gastar o uso; com a vida cheia
     /// não gasta. Spec: Docs/Design/magia-cura.md.
@@ -78,7 +78,8 @@ namespace SeteVidas.Player
             if (IsCasting) return "já curando";
             if (Charges <= 0) return "sem usos";
             if (_health.IsDead || _health.IsCollapsed) return "sem condições";
-            if (_health.CurrentHits >= _health.MaxHits) return "vida cheia";
+            // de vida cheia só vale a pena se for para cortar o veneno
+            if (_health.CurrentHits >= _health.MaxHits && !_health.IsPoisoned) return "vida cheia";
             if (_input != null && _input.GameplayLocked) return "controle travado";
             if (_combat != null && _combat.IsAttacking) return "atacando";
             if (_controller != null && (!_controller.IsGrounded || _controller.IsHanging || _controller.IsClimbingLedge)) return "fora do chão";
@@ -108,7 +109,10 @@ namespace SeteVidas.Player
                 yield return null;
             }
 
-            if (!_interrupted && !_health.IsDead && _health.Heal(hitsPerCast))
+            // a cura também corta o veneno (melhorias 14/11/2026)
+            bool cured = !_interrupted && !_health.IsDead && _health.IsPoisoned;
+            if (cured) { _health.CurePoison(); SeteVidas.Audio.Sfx.Play("veneno_passa"); }
+            if (!_interrupted && !_health.IsDead && (_health.Heal(hitsPerCast) | cured))
             {
                 SaveManager.Data.healCharges = Charges - 1;   // vai para o disco no próximo salvamento
                 if (_visual != null) _visual.HealFx(true);

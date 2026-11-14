@@ -80,6 +80,26 @@ namespace SeteVidas.Enemies.Boss
             return true;
         }
 
+        /// <summary>
+        /// O gato está em cima da cabeça (pulando nela ou parado nela)? Pés acima do alto do corpo, até
+        /// <paramref name="maxAbove"/> tiles, e na largura do corpo mais <paramref name="sideMargin"/> de cada lado.
+        /// </summary>
+        public static bool PlayerAbove(float bossX, float bossFeetY, float bodyWidth, float bodyHeight,
+            float playerX, float playerFeetY, float sideMargin = 0.9f, float maxAbove = 8f)
+        {
+            float top = bossFeetY + bodyHeight;
+            if (playerFeetY < top - 0.25f || playerFeetY > top + maxAbove) return false;
+            return Math.Abs(playerX - bossX) <= bodyWidth * 0.5f + sideMargin;
+        }
+
+        /// <summary>
+        /// Repulsa sagrada (anti "quicar na cabeça"): reage quando o gato fica tempo demais em cima, ou depois de
+        /// vários golpes de cima seguidos, respeitando o tempo de recarga.
+        /// </summary>
+        public static bool ShouldRepel(float secondsAbove, float afterAbove, int hitsFromAbove, int afterHits,
+            float sinceLastRepel, float cooldown) =>
+            sinceLastRepel >= cooldown && (secondsAbove >= afterAbove || hitsFromAbove >= afterHits);
+
         static float Center(int slot, float minX, float width) => minX + (slot + 0.5f) * width;
         static int Clamp(int v, int min, int max) => v < min ? min : v > max ? max : v;
     }

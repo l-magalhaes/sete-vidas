@@ -41,11 +41,30 @@ namespace SeteVidas.Player
             (_jump != null && _jump.WasPressedThisFrame()) ||
             (_attack != null && _attack.WasPressedThisFrame());
 
+        bool _scripted;
+        float _scriptedX;
+
+        /// <summary>
+        /// Andar roteirizado (entrar e sair de cena, melhorias 14/11/2026): enquanto ligado, o gato anda para
+        /// <paramref name="x"/> (−1 a 1) mesmo com o controle travado. O resto do controle continua travado.
+        /// </summary>
+        public void SetScriptedMove(float x)
+        {
+            _scripted = true;
+            _scriptedX = Mathf.Clamp(x, -1f, 1f);
+        }
+
+        public void ClearScriptedMove() { _scripted = false; _scriptedX = 0f; }
+
+        /// <summary>Está andando sozinho (testes).</summary>
+        public bool IsScriptedMove => _scripted;
+
         /// <summary>Direção horizontal: -1, 0 ou 1 no teclado; contínua no analógico.</summary>
         public float MoveX
         {
             get
             {
+                if (_scripted) return _scriptedX;
                 if (_move == null || GameplayLocked) return 0f;
                 float x = _move.ReadValue<Vector2>().x;
                 return Mathf.Abs(x) < StickDeadZone ? 0f : x;
@@ -67,6 +86,7 @@ namespace SeteVidas.Player
         {
             get
             {
+                if (_scripted) return _scriptedX > 0.01f ? 1 : _scriptedX < -0.01f ? -1 : 0;
                 if (_facingFrame == Time.frameCount) return _facingIntent;
                 _facingFrame = Time.frameCount;
                 Vector2 v = _move == null || GameplayLocked ? Vector2.zero : _move.ReadValue<Vector2>();

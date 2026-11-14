@@ -35,6 +35,8 @@ namespace SeteVidas.Save
         public List<SanctuaryVisit> visitedSanctuaries = new List<SanctuaryVisit>();
         /// <summary>Salas já vistas, de todas as cenas: o que a aba Mapa desenha (Docs/Design/floresta-mecanicas.md §6).</summary>
         public List<MapRoomRecord> mapRooms = new List<MapRoomRecord>();
+        /// <summary>Pedaços do mapa do mundo já explorados (WorldMapRules.ChunkKey; melhorias 14/11/2026).</summary>
+        public List<int> mapChunks = new List<int>();
 
         public static SaveData NewGame() => new SaveData();
 

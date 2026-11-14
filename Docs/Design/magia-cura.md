@@ -4,7 +4,7 @@
 
 ## Regra
 - **Desbloqueio:** junto com a classe **Paladino**, no vínculo com Koda (D-GOLDEN-01-SISTEMA avisa: "Cura aprendida! Aperte F para recuperar 1 coração. 3 usos; o santuário recarrega.").
-- **Efeito:** cura **1 coração** (2 hits), sem passar do máximo de corações recuperados.
+- **Efeito:** cura **1 coração** (2 hits), sem passar do máximo de corações recuperados, e **corta o veneno** (melhorias 14/11/2026). Envenenado e de vida cheia, a cura também vale (gasta o uso só para tirar o veneno).
 - **Usos:** **3**. Quando acabam, só voltam ao **descansar num santuário** (`Sanctuary.Rest`). Morrer e renascer no santuário **não** recarrega. **[PROPOSTA de ajuste no playtest]**
 - **Classe:** funciona em **qualquer classe** depois de aprendida. É uma magia que o Lion aprendeu com Koda, não um golpe da marreta. **[PROPOSTA]**
 - **Controle:** **F** no teclado, **gatilho esquerdo (LT)** no controle (ação `Heal` em `GameControls`).

@@ -663,11 +663,13 @@ namespace SeteVidas.Player
 
             float duration = phase == "windup" ? weapon.Windup
                            : phase == "active" ? weapon.Active
-                           : step >= weapon.ComboSteps ? weapon.FinalRecovery : weapon.Recovery;
+                           : step >= weapon.ComboSteps || combat.IsUpAttacking ? weapon.FinalRecovery : weapon.Recovery;
 
             string w = WeaponKey();
             SpriteClip clip = null;
-            if (controller.IsCrouching) clip = animationSet.Get(w + "_crouch_" + phase);
+            // golpe para cima: a arte própria quando existir ("dagger_up_windup"...); senão, o 1º golpe do combo
+            if (combat.IsUpAttacking) clip = animationSet.Get(w + "_up_" + phase) ?? animationSet.Get(w + "1_" + phase);
+            if (clip == null && controller.IsCrouching) clip = animationSet.Get(w + "_crouch_" + phase);
             if (clip == null && !grounded) clip = animationSet.Get(w + step + "_air_" + phase) ?? animationSet.Get(w + "1_air_" + phase);
             if (clip == null) clip = animationSet.Get(w + step + "_" + phase) ?? animationSet.Get(w + "1_" + phase);
             return Normalized(clip, _phaseTime / Mathf.Max(0.0001f, duration));
@@ -987,8 +989,24 @@ namespace SeteVidas.Player
                 var box = combat.DownHitbox;
                 slashRenderer.sprite = DownSlashSprite(combat.IsHeavyDrop);
                 slashRenderer.flipX = combat.AttackDirection < 0;
+                slashRenderer.flipY = false;
                 slashRenderer.transform.position = new Vector3(
                     Mathf.Round(box.center.x * 16f) / 16f, Mathf.Round(box.center.y * 16f) / 16f, 0f);
+                return;
+            }
+
+            // golpe para cima: a mesma meia-lua do golpe para baixo, virada, em cima da cabeça
+            if (combat != null && combat.IsUpAttacking)
+            {
+                slashRenderer.enabled = combat.IsHitActive;
+                if (!combat.IsHitActive) return;
+                combat.GetHitbox(out Vector2 upCenter, out _);
+                bool heavy = combat.Weapon != null && combat.Weapon.HeavyDrop;
+                slashRenderer.sprite = DownSlashSprite(heavy);
+                slashRenderer.flipX = combat.AttackDirection < 0;
+                slashRenderer.flipY = true;
+                slashRenderer.transform.position = new Vector3(
+                    Mathf.Round(upCenter.x * 16f) / 16f, Mathf.Round(upCenter.y * 16f) / 16f, 0f);
                 return;
             }
 
@@ -1000,6 +1018,7 @@ namespace SeteVidas.Player
             combat.GetHitbox(out Vector2 center, out _);
             slashRenderer.sprite = sprites[Mathf.Clamp(combat.ComboStep, 0, sprites.Length - 1)];
             slashRenderer.flipX = combat.AttackDirection < 0;
+            slashRenderer.flipY = false;
             // O sprite do efeito tem pivot embaixo (pasta Characters): desce meia altura para centralizar na hitbox
             float half = slashRenderer.sprite != null ? slashRenderer.sprite.bounds.size.y * 0.5f : 0.5f;
             slashRenderer.transform.position = new Vector3(center.x, center.y - half, 0f);

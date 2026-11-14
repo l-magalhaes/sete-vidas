@@ -186,6 +186,18 @@ Cada fase termina com algo **jogável e testável**. Arte e som entram em todas 
   - **Ponte** (`BridgeCollapse`): inteira até o gato pisar nela; então a horda nasce atrás (R3) correndo, a pedra treme e racha; no meio (ou depois de 10 s) o centro desaba, bloco por bloco, e o gato cai. A flag `ponte_caiu` vai para o save e libera o gatilho da queda, que leva à A1 com fade; lá o Lion fala ao acordar. Com a flag, a ponte já aparece caída (dos dois lados, cair leva à A1).
   - Falta da F3: arte de verdade (ponte de pedra, infectados caninos, props da estrada), sons próprios e música de fuga, câmera acompanhando a queda pela copa (hoje: queda + fade), objetivo "Reencontrar a ponte".
 
+### Melhorias gerais (14/11/2026, pedido do usuário, antes da F4)
+
+**Estado: implementado, falta testar no Unity** (roteiro: `Docs/QA/melhorias-gerais-plano-de-teste.md`; rodar antes os menus **13e** e **22**).
+1. **Golpe para cima** em todas as armas ({subir} + ataque), `UpAttackRules`.
+2. **Dano × 1,3 por coração novo** depois da maldição, `HeartDamageRules` ([PROPOSTA]: revisar no playtest).
+3. **Koda: repulsa sagrada** contra ficar quicando na cabeça dele (`BossRules.PlayerAbove`/`ShouldRepel`, estados `RepelWindup`/`RepelActive`).
+4. **Santuário com os dois avisos juntos**: [Interagir] descansar, [Ataque] viagem rápida; o menu lista só os santuários.
+5. **Mapa do mundo estilo Hollow Knight** (Fortaleza + Estrada + Floresta), atalho **M / Exibir**: `WorldMapData`, `WorldMapRules`, `MapExplorer`, `Editor/WorldMapSetup.cs` (menu 22).
+6. **A cura corta o veneno.**
+7. **Atiradores do meio da Fortaleza** em lugares novos e mais atentos (menu 13e, `FortressLayout.Version` 18).
+8. **Transições**: sai e entra andando pelas passagens laterais, cai pelos buracos; chegada de queda (A1_queda) com o gato despencando, deitado e levantando (`TransitionRules`, `RoomEntrance.Style`).
+
 ### F4 — Bestiário da floresta
 
 Ordem pela região em que aparece. Cada um com variante **infectada** via componente modificador (mesma IA, parâmetros e visual diferentes):

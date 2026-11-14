@@ -36,8 +36,10 @@ São o mesmo cérebro e a mesma percepção da Sentinela (`EnemyAI` + `AlertBrai
 | Nome | Posto | Cobre | Como chegar nele |
 |---|---|---|---|
 | Atirador da arquibancada | arquibancada do pátio (topo 7), olhando para a esquerda | a entrada do pátio, o fio e as flechas | vinha atrás da arquibancada (x 55) |
-| Atirador do alojamento | prateleira na galeria da muralha (topo 48) | a sombra B e o fio de alarme | agarrar a borda (5 acima do chão) |
-| Atirador da sacada | sacada do Salão dos Votos (topo 78) | o salão inteiro | da plataforma do salão (3 acima, vão de 3) |
+| Atirador do alojamento | **ponta direita da passarela** (x 166, topo 48), olhando para a esquerda | quem chega do portão da muralha: a passarela e o chão embaixo dela | pela passarela, de caixote em caixote; ou pelo chão, agarrando a borda do lado direito (pelas costas) |
+| Atirador da sacada | **plataforma 1 do salão** (x 182,5, topo 75), olhando para a **direita** | quem sobe a torre do sino e atravessa o salão (sentinelas A e B) | pelo lado do fogo (por trás); ou na recarga |
+
+**Melhorias 14/11/2026:** os dois do meio mudaram de lugar (antes o do salão ficava de costas para quem chegava, e o do alojamento cobria pouco). Rode **Tools > Sete Vidas > 13e** na Fortaleza aberta para mover só eles. A besta também ficou mais atenta: **alcance 13** (vista e tiro, era 11), **meia-abertura 55°** (era 50°), **enche a suspeita 2,5× mais rápido** (na luz entra em combate e mira quase na hora; na sombra, agachado ou escondido continua difícil) e mira até **30° para cima** (era 20°).
 
 ## Ajustes (Inspector)
 Ficam em `ScriptableObjects/Enemies/CrossbowSentinelSettings.asset` (é um `SentinelSettings`, seção "Atirador (besta)"):

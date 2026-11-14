@@ -66,6 +66,12 @@ namespace SeteVidas.Audio
                 case State.Defeated:
                     if (from != State.Dormant) Sfx.Play("koda_derrota", Pos);
                     break;
+                // repulsa sagrada (gato em cima da cabeça): a marreta sobe aguda, a luz estala
+                case State.RepelWindup: Sfx.Play("koda_ergue", Pos, 1f, 1.25f); break;
+                case State.RepelActive:
+                    Sfx.Play("escudo_liga", Pos);
+                    Sfx.Play("koda_impacto", Pos, 0.8f, 1.2f);
+                    break;
             }
             if (from == State.Lightning && to != State.Lightning) Sfx.Play("escudo_desliga", Pos);
         }

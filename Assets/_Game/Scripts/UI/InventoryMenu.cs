@@ -132,7 +132,22 @@ namespace SeteVidas.UI
         {
             var k = Keyboard.current; var p = Gamepad.current;
             return (k != null && (k.tabKey.wasPressedThisFrame || k.iKey.wasPressedThisFrame)) ||
-                   (p != null && (p.startButton.wasPressedThisFrame || p.selectButton.wasPressedThisFrame));
+                   (p != null && p.startButton.wasPressedThisFrame);
+        }
+
+        /// <summary>Atalho do mapa (melhorias 14/11/2026): M ou o botão Exibir abrem o inventário direto no mapa.</summary>
+        static bool MapPressed()
+        {
+            var k = Keyboard.current; var p = Gamepad.current;
+            return (k != null && k.mKey.wasPressedThisFrame) || (p != null && p.selectButton.wasPressedThisFrame);
+        }
+
+        /// <summary>Abre o inventário já na aba <paramref name="page"/>.</summary>
+        public void OpenAt(Page page)
+        {
+            if (IsOpen) { SetPage(page); return; }
+            _page = page;
+            Open();
         }
 
         static bool BackPressed()
@@ -162,6 +177,7 @@ namespace SeteVidas.UI
             _panel.gameObject.SetActive(true);
             _openedAt = Time.unscaledTime;
             _mapRegionChosen = false;
+            _mapCenterSet = false;   // o mapa do mundo abre centrado no gato
             SeteVidas.Audio.Sfx.Play("ui_inv_abre");
             Refresh();
         }
@@ -183,9 +199,18 @@ namespace SeteVidas.UI
             if (!IsOpen)
             {
                 if (TogglePressed()) Open();
+                else if (MapPressed()) OpenAt(Page.Map);
                 return;
             }
             if (TogglePressed() || BackPressed()) { Close(); return; }
+            if (MapPressed())
+            {
+                // no mapa, o atalho fecha (abre e fecha rápido para consultar); nas outras abas, vai para o mapa
+                if (_page == Page.Map) Close();
+                else { SetPage(Page.Map); SeteVidas.Audio.Sfx.Play("ui_aba"); }
+                return;
+            }
+            if (_page == Page.Map && WorldMapMode) PanWorldMap();
 
             var k = Keyboard.current; var p = Gamepad.current;
             int dp = 0, dx = 0, dy = 0;
@@ -216,6 +241,7 @@ namespace SeteVidas.UI
 
             if (dp != 0) { SetPage((Page)(((int)_page + dp + PageCount) % PageCount)); SeteVidas.Audio.Sfx.Play("ui_aba"); }
             else if (dx != 0 || dy != 0) Move(dx, dy);
+            if (confirm && _page == Page.Map && WorldMapMode) { CycleZoom(); return; }
             if (confirm && !Confirm() && SelectedEntry() != null && SelectedEntry().Locked) SeteVidas.Audio.Sfx.Play("ui_negado");
         }
 
@@ -227,7 +253,7 @@ namespace SeteVidas.UI
 
         public void Move(int dx, int dy)
         {
-            if (_page == Page.Map) { CycleRegion(dx != 0 ? dx : dy); return; }
+            if (_page == Page.Map) { if (!WorldMapMode) CycleRegion(dx != 0 ? dx : dy); return; } // o mapa do mundo anda segurando
             if (_page == Page.Controls || _entries.Count == 0) return;   // a aba Controles só mostra a lista
             int i = (int)_page;
             var cells = new int[_entries.Count];
@@ -291,6 +317,9 @@ namespace SeteVidas.UI
             SetGlyph(_keyRight, InputPrompts.Glyph(GameAction.TabRight));
             if (_page == Page.Controls)
                 _help.Set(new PromptRow.Item(GameAction.TabLeft, "abas", GameAction.TabRight), new PromptRow.Item(GameAction.Back, "fechar"));
+            else if (_page == Page.Map && WorldMapMode)
+                _help.Set(new PromptRow.Item(GameAction.Navigate, "mover"), new PromptRow.Item(GameAction.Confirm, "zoom"),
+                          new PromptRow.Item(GameAction.Map, "fechar"));
             else if (_page == Page.Map)
                 _help.Set(new PromptRow.Item(GameAction.Navigate, "região"), new PromptRow.Item(GameAction.Back, "fechar"));
             else if (_page == Page.Classes)
@@ -417,6 +446,7 @@ namespace SeteVidas.UI
                 list.Add(new PromptRow.Item(GameAction.Heal, "curar (segure)"));
             }
             list.Add(new PromptRow.Item(GameAction.Inventory, "inventário"));
+            list.Add(new PromptRow.Item(GameAction.Map, "mapa"));
             list.Add(new PromptRow.Item(GameAction.Back, "fechar, voltar"));
             return list;
         }
@@ -1034,9 +1064,23 @@ namespace SeteVidas.UI
             area.transform.SetParent(_mapRoot, false);
             _mapArea = (RectTransform)area.transform;
             Place(_mapArea, 4f, -17f, MapW - 8f, MapAreaH);
+            area.AddComponent<RectMask2D>();   // o mapa do mundo é maior que o painel: corta nas bordas
+
+            // mapa do mundo (melhorias 14/11/2026): a silhueta inteira numa textura, 1 pixel por tile, com zoom
+            var world = new GameObject("Mapa do mundo", typeof(RectTransform), typeof(RawImage));
+            world.transform.SetParent(_mapArea, false);
+            _worldImage = world.GetComponent<RawImage>();
+            _worldImage.raycastTarget = false;
+            _worldImage.rectTransform.anchorMin = _worldImage.rectTransform.anchorMax = _worldImage.rectTransform.pivot = Vector2.zero;
+            _worldImage.enabled = false;
+            _mapLion = NewImage("Lion no mapa", _mapArea, LionHeadSprite());
+            _mapLion.rectTransform.anchorMin = _mapLion.rectTransform.anchorMax = Vector2.zero;
+            _mapLion.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            _mapLion.SetNativeSize();
+            _mapLion.enabled = false;
             _mapLegend = NewText("Legenda", _mapRoot, 7, TextAnchor.UpperCenter, Faint);
             Place(_mapLegend.rectTransform, 0f, -(ColumnH - 14f), MapW, 10f);
-            _mapLegend.text = "santuário · baú · baú aberto · você";
+            _mapLegend.text = "santuário · baú aberto · você";
             _mapRoot.gameObject.SetActive(false);
         }
 
@@ -1074,6 +1118,9 @@ namespace SeteVidas.UI
             bool on = _page == Page.Map;
             _mapRoot.gameObject.SetActive(on);
             if (!on) return;
+            if (WorldMapMode) { RefreshWorldMap(); return; }
+            if (_worldImage != null) _worldImage.enabled = false;
+            if (_mapLion != null) _mapLion.enabled = false;
 
             _mapUsed = 0;
             _mapCat = null;
@@ -1092,7 +1139,7 @@ namespace SeteVidas.UI
             if (!_mapRegionChosen && hasCat) { int at = regions.IndexOf(catRegion); if (at >= 0) _mapRegion = at; }
             string region = regions[_mapRegion];
             _mapTitle.text = regions.Count > 1 ? "◄  " + region + "  ►" : region;
-            _mapLegend.text = "santuário · baú · baú aberto · você";
+            _mapLegend.text = "santuário · baú aberto · você";
 
             var rooms = SeteVidas.World.MapRules.RoomsIn(data, region);
             var world = SeteVidas.World.MapRules.Bounds(rooms);
@@ -1114,15 +1161,193 @@ namespace SeteVidas.UI
                     if (m.kind == SeteVidas.Save.MapMarker.Sanctuary)
                         MapRect(p - new Vector2(2f, 0f), new Vector2(4f, 4f),
                             SeteVidas.World.MapRules.SanctuaryLit(data, r.scene, m.id) ? MapSanctuary : MapSanctuaryOff);
-                    else if (m.kind == SeteVidas.Save.MapMarker.Chest)
-                        MapRect(p - new Vector2(1.5f, 0f), new Vector2(3f, 3f),
-                            SeteVidas.World.MapRules.ChestOpen(data, m.id) ? MapChestOpen : MapChest);
+                    else if (m.kind == SeteVidas.Save.MapMarker.Chest && SeteVidas.World.MapRules.ChestOpen(data, m.id))
+                        MapRect(p - new Vector2(1.5f, 0f), new Vector2(3f, 3f), MapChest);
                 }
             if (hasCat && catRegion == region) _mapCat = MapRect(P(catPoint.x, catPoint.y) - new Vector2(1.5f, 0f), new Vector2(3f, 3f), MapCat);
             for (int i = _mapUsed; i < _mapPool.Count; i++) _mapPool[i].enabled = false;
         }
 
         bool _mapRegionChosen; // trocou de região com ◄ ►: vale até fechar o inventário (ao abrir, volta à região do gato)
+
+        // ------------------------------------------------------------ mapa do mundo (melhorias 14/11/2026)
+        // Estilo Hollow Knight: a silhueta de todas as áreas ligadas (Fortaleza, Estrada, Floresta), clara onde o gato
+        // já passou e só o contorno apagado onde ainda não passou, com a cabeça do Lion onde ele está.
+
+        RawImage _worldImage;
+        Image _mapLion;
+        Texture2D _worldTex;
+        RectInt _worldBounds;
+        HashSet<int> _worldExplored = new HashSet<int>();
+        int _worldExploredCount = -1;
+        Vector2 _mapCenter;
+        bool _mapCenterSet;
+        int _mapZoom = 2;
+        const int MaxZoom = 3;
+
+        /// <summary>O mapa do mundo foi gerado (menu 22). Sem ele, a aba Mapa usa as salas da região.</summary>
+        static bool WorldMapMode => WorldMapData.Load() != null;
+
+        /// <summary>Zoom atual do mapa do mundo, em pixels por tile (testes).</summary>
+        public int MapZoom => _mapZoom;
+        /// <summary>Centro da vista do mapa do mundo (testes).</summary>
+        public Vector2 MapCenter => _mapCenter;
+
+        void RefreshWorldMap()
+        {
+            var map = WorldMapData.Load();
+            var data = SaveManager.Data;
+            int count = data != null && data.mapChunks != null ? data.mapChunks.Count : 0;
+            if (_worldTex == null || count != _worldExploredCount)
+            {
+                _worldBounds = map.Bounds();
+                _worldExplored = WorldMapRules.ExploredSet(data);
+                var px = WorldMapRules.Paint(map, _worldBounds, _worldExplored);
+                if (_worldTex == null || _worldTex.width != _worldBounds.width || _worldTex.height != _worldBounds.height)
+                {
+                    if (_worldTex != null) { _textures.Remove(_worldTex); Destroy(_worldTex); }
+                    _worldTex = new Texture2D(_worldBounds.width, _worldBounds.height, TextureFormat.RGBA32, false)
+                        { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "ui_mapa_mundo" };
+                    _textures.Add(_worldTex);
+                }
+                _worldTex.SetPixels32(px);
+                _worldTex.Apply(false);
+                _worldImage.texture = _worldTex;
+                _worldExploredCount = count;
+            }
+            bool hasCat = MapExplorer.TryCatOnMap(out Vector2 cat, out var catScene);
+            if (!_mapCenterSet)
+            {
+                _mapCenter = hasCat ? cat : _worldBounds.center;
+                _mapCenterSet = true;
+            }
+            LayoutWorldMap();
+        }
+
+        /// <summary>Põe a textura, os ícones e o Lion no lugar, para o centro e o zoom atuais.</summary>
+        void LayoutWorldMap()
+        {
+            if (_worldImage == null || _worldTex == null) return;
+            var map = WorldMapData.Load();
+            var data = SaveManager.Data;
+            var panel = _mapArea.sizeDelta;
+            float z = _mapZoom;
+            _mapCenter = WorldMapRules.ClampCenter(_mapCenter, _worldBounds, panel, z);
+            Vector2 P(Vector2 m) => panel * 0.5f + (m - _mapCenter) * z;
+
+            var bl = P(new Vector2(_worldBounds.x, _worldBounds.y));
+            _worldImage.enabled = true;
+            _worldImage.rectTransform.anchoredPosition = new Vector2(Mathf.Round(bl.x), Mathf.Round(bl.y));
+            _worldImage.rectTransform.sizeDelta = new Vector2(_worldBounds.width * z, _worldBounds.height * z);
+
+            _mapUsed = 0;
+            float pin = Mathf.Max(2f, z + 1f);
+            foreach (var s in map.scenes)
+            {
+                if (s == null || s.pins == null) continue;
+                foreach (var m in s.pins)
+                {
+                    if (!WorldMapRules.Explored(_worldExplored, Mathf.FloorToInt(m.x), Mathf.FloorToInt(m.y))) continue;
+                    var p = P(new Vector2(m.x, m.y + 0.5f));
+                    if (m.kind == MapMarker.Sanctuary)
+                        MapRect(p - new Vector2(pin, pin) * 0.5f, new Vector2(pin, pin) + Vector2.one,
+                            MapRules.SanctuaryLit(data, s.scene, m.id) ? MapSanctuary : MapSanctuaryOff);
+                    else if (m.kind == MapMarker.Chest && MapRules.ChestOpen(data, m.id))   // o baú só aparece depois de aberto
+                        MapRect(p - new Vector2(pin, pin) * 0.5f, new Vector2(pin, pin), MapChest);
+                }
+            }
+            for (int i = _mapUsed; i < _mapPool.Count; i++) _mapPool[i].enabled = false;
+
+            bool hasCat = MapExplorer.TryCatOnMap(out Vector2 cat, out var catScene);
+            _mapLion.enabled = hasCat;
+            _mapCat = hasCat ? _mapLion : null;
+            if (hasCat)
+            {
+                var c = P(cat + Vector2.up * 0.7f);
+                _mapLion.rectTransform.anchoredPosition = new Vector2(Mathf.Round(c.x), Mathf.Round(c.y));
+                _mapLion.transform.SetAsLastSibling();
+            }
+            var here = hasCat ? catScene : WorldMapRules.SceneAt(map, _mapCenter);
+            _mapTitle.text = here != null && !string.IsNullOrEmpty(here.region) ? here.region : "Mapa";
+            _mapLegend.text = "santuário · baú aberto · Lion: você   zoom ×" + _mapZoom;
+        }
+
+        /// <summary>Segurando o direcional (teclado, D-pad ou analógico), o mapa anda.</summary>
+        void PanWorldMap()
+        {
+            var k = Keyboard.current; var p = Gamepad.current;
+            Vector2 dir = Vector2.zero;
+            if (k != null)
+            {
+                if (k.leftArrowKey.isPressed || k.aKey.isPressed) dir.x -= 1f;
+                if (k.rightArrowKey.isPressed || k.dKey.isPressed) dir.x += 1f;
+                if (k.upArrowKey.isPressed || k.wKey.isPressed) dir.y += 1f;
+                if (k.downArrowKey.isPressed || k.sKey.isPressed) dir.y -= 1f;
+            }
+            if (p != null)
+            {
+                if (p.dpad.left.isPressed) dir.x -= 1f;
+                if (p.dpad.right.isPressed) dir.x += 1f;
+                if (p.dpad.up.isPressed) dir.y += 1f;
+                if (p.dpad.down.isPressed) dir.y -= 1f;
+                var s = p.leftStick.ReadValue();
+                if (s.magnitude > 0.3f) dir += s;
+            }
+            if (dir.sqrMagnitude < 0.01f) return;
+            if (dir.sqrMagnitude > 1f) dir.Normalize();
+            _mapCenter += dir * (110f / _mapZoom) * Time.unscaledDeltaTime;   // ~110 pixels de tela por segundo
+            LayoutWorldMap();
+        }
+
+        void CycleZoom()
+        {
+            _mapZoom = _mapZoom >= MaxZoom ? 1 : _mapZoom + 1;
+            SeteVidas.Audio.Sfx.Play("ui_cursor_inv");
+            LayoutWorldMap();
+        }
+
+        /// <summary>
+        /// A cabeça do Lion no mapa (11×10 px): orelhas pontudas, rosto claro, olhos escuros e contorno escuro, para
+        /// ler em cima de qualquer cor do mapa.
+        /// </summary>
+        Sprite LionHeadSprite()
+        {
+            const int W = 11, H = 10;
+            var fill = new bool[W, H];
+            // rosto: elipse no meio de baixo
+            for (int y = 1; y <= 6; y++)
+                for (int x = 1; x <= 9; x++)
+                {
+                    float dx = (x - 5f) / 4.2f, dy = (y - 3.4f) / 2.9f;
+                    if (dx * dx + dy * dy <= 1f) fill[x, y] = true;
+                }
+            // orelhas
+            foreach (var (x, y) in new[] { (2, 6), (3, 6), (2, 7), (2, 8), (8, 6), (7, 6), (8, 7), (8, 8), (3, 7), (7, 7) })
+                fill[x, y] = true;
+            var px = new Color32[W * H];
+            Color32 face = MapCat, dark = new Color32(0x14, 0x0c, 0x18, 0xff), eye = new Color32(0x2a, 0x1a, 0x10, 0xff),
+                    ear = new Color32(0xf2, 0xc9, 0x6b, 0xff);
+            for (int y = 0; y < H; y++)
+                for (int x = 0; x < W; x++)
+                {
+                    if (fill[x, y]) { px[y * W + x] = y >= 6 && (x <= 3 || x >= 7) ? ear : face; continue; }
+                    bool near = false;
+                    for (int oy = -1; oy <= 1 && !near; oy++)
+                        for (int ox = -1; ox <= 1 && !near; ox++)
+                        {
+                            int nx = x + ox, ny = y + oy;
+                            near = nx >= 0 && ny >= 0 && nx < W && ny < H && fill[nx, ny];
+                        }
+                    if (near) px[y * W + x] = dark;
+                }
+            px[4 * W + 3] = eye; px[4 * W + 7] = eye;   // olhos
+            px[2 * W + 5] = new Color32(0xd9, 0x7a, 0x86, 0xff); // focinho
+            var tex = new Texture2D(W, H, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "ui_mapa_lion" };
+            tex.SetPixels32(px);
+            tex.Apply(false);
+            _textures.Add(tex);
+            return Sprite.Create(tex, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), 100f);
+        }
 
         Text NewText(string name, RectTransform parent, int size, TextAnchor anchor, Color color)
         {
@@ -1149,11 +1374,11 @@ namespace SeteVidas.UI
         public static readonly ClassText[] Classes =
         {
             new ClassText { Name = "Ladino", GivenBy = "A Guilda das Nove Sombras (e a rua)",
-                Weapon = "Adagas. Pelas costas: 1,5×; sem ser visto: 2,5×. O 3º golpe avança. No ar, {agachar} + {atacar}: quique.",
+                Weapon = "Adagas. Pelas costas: 1,5×; sem ser visto: 2,5×. O 3º golpe avança. {subir} + {atacar}: golpe para cima. No ar, {agachar} + {atacar}: quique.",
                 Spells = "nenhum", Quote = "O básico. É o que paga as contas da Luna e da Amora." },
             new ClassText { Name = "Paladino", GivenBy = "Vínculo com Koda, o Dourado",
-                Weapon = "Marreta. Quebra paredes rachadas. Segure {atacar}: terremoto. No ar, {agachar} + {atacar}: queda pesada.",
-                Spells = "Cura: devolve 1 coração; 3 usos, que voltam no santuário.",
+                Weapon = "Marreta. Quebra paredes rachadas. Segure {atacar}: terremoto. {subir} + {atacar}: golpe para cima. No ar, {agachar} + {atacar}: queda pesada.",
+                Spells = "Cura: devolve 1 coração e corta o veneno; 3 usos, que voltam no santuário.",
                 Quote = "Pesada demais para um gato. Funciona." },
             new ClassText { Name = "Mago" }, new ClassText { Name = "Monge" }, new ClassText { Name = "Bardo" },
             new ClassText { Name = "Caçador" }, new ClassText { Name = "Druida" },

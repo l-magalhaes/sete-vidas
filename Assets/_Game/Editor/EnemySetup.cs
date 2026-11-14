@@ -134,6 +134,29 @@ namespace SeteVidas.EditorTools
         /// O atirador: a mesma Sentinela (cérebro, percepção, dano, ataque pelas costas) com a besta. Fica no alto,
         /// vê para baixo, mira com uma linha de aviso, atira virotes e recarrega. Spec: Docs/Design/atirador.md.
         /// </summary>
+        /// <summary>
+        /// Percepção da besta (melhorias 14/11/2026): enxerga mais longe e percebe rápido quem está na luz, e atira
+        /// assim que vê. Na sombra, agachado ou escondido continua difícil de ver (a visibilidade do gato multiplica).
+        /// </summary>
+        static void ApplyCrossbowPerception(SentinelSettings settings)
+        {
+            settings.VisionRange = 13f;
+            settings.VisionHalfAngle = 55f;
+            settings.SightFillRate = 2.5f;
+            settings.ShootRange = 13f;
+            settings.MaxAimUp = 30f;
+        }
+
+        /// <summary>Aplica a percepção nova no asset do atirador que já existe (menu 13e).</summary>
+        public static void TuneCrossbowSettings()
+        {
+            var settings = AssetDatabase.LoadAssetAtPath<SentinelSettings>(CrossbowSettingsPath);
+            if (settings == null) return;
+            ApplyCrossbowPerception(settings);
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+        }
+
         public static GameObject CreateCrossbowSentinelPrefab()
         {
             if (AssetDatabase.LoadAssetAtPath<GameObject>(SentinelPrefabPath) == null) CreateSentinelPrefab();
@@ -145,13 +168,9 @@ namespace SeteVidas.EditorTools
                 settings.MaxHealth = 3;
                 settings.PatrolSpeed = 1.5f;
                 settings.ChaseSpeed = 0f;
-                settings.VisionRange = 11f;
-                settings.VisionHalfAngle = 50f;
                 settings.VisionTiltDown = 30f;
-                settings.SightFillRate = 1f;
                 settings.Ranged = true;
                 settings.HoldPosition = true;
-                settings.ShootRange = 11f;
                 settings.AimTime = 0.9f;
                 settings.AimLockTime = 0.25f;
                 settings.ReloadTime = 1.6f;
@@ -159,8 +178,8 @@ namespace SeteVidas.EditorTools
                 settings.BoltDamage = 1;
                 settings.AttackActive = 0.15f;
                 settings.MaxAimDown = 70f;
-                settings.MaxAimUp = 20f;
                 settings.HeartDropChance = 0.25f;
+                ApplyCrossbowPerception(settings);
                 AssetDatabase.CreateAsset(settings, CrossbowSettingsPath);
                 AssetDatabase.SaveAssets();
             }

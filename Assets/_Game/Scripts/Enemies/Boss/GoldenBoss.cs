@@ -24,7 +24,9 @@ namespace SeteVidas.Enemies.Boss
             LeapWindup, LeapAir, LeapRecover,
             Heal, Stagger,
             LightningCast, Lightning,
-            Defeated, Companion
+            Defeated, Companion,
+            /// <summary>Repulsa sagrada: o gato em cima da cabeça (melhorias 14/11/2026).</summary>
+            RepelWindup, RepelActive
         }
 
         [SerializeField] GoldenBossSettings settings;
@@ -69,6 +71,12 @@ namespace SeteVidas.Enemies.Boss
         string _poseClip;
         float _poseTime, _stateTime, _stateDuration;
         int _combo;               // marretadas seguidas neste combo
+        // repulsa sagrada: o gato em cima da cabeça
+        float _aboveTime;          // tempo seguido com o gato em cima
+        int _hitsFromAbove;        // golpes de cima seguidos
+        float _lastAboveHit = -99f;
+        float _sinceRepel = 999f;
+        bool _repelHit;
         SpriteRenderer _shield;   // bolha dourada dos relâmpagos
         float _shieldFlashUntil, _nextShieldPopup;
         readonly List<LightningStrike> _strikes = new List<LightningStrike>();
@@ -208,11 +216,25 @@ namespace SeteVidas.Enemies.Boss
             float dt = Time.fixedDeltaTime;
             _sinceHeal += dt;
             _sinceLightning += dt;
+            _sinceRepel += dt;
             _timer -= dt;
             _strikes.RemoveAll(s => s == null);
+            TrackPlayerAbove(dt);
+            if (CanRepelNow && BossRules.ShouldRepel(_aboveTime, settings.RepelAfterAbove, _hitsFromAbove,
+                    settings.RepelAfterHitsFromAbove, _sinceRepel, settings.RepelCooldown))
+                StartRepel();
 
             switch (Current)
             {
+                case State.RepelWindup:
+                    FacePlayer();
+                    if (_timer <= 0f) { _repelHit = false; Enter(State.RepelActive, settings.RepelActive); }
+                    break;
+                case State.RepelActive:
+                    if (!_repelHit) _repelHit = HitPlayer(RepelCenter(), settings.RepelHitbox, settings.RepelDamage);
+                    if (_timer <= 0f) { _sinceRepel = 0f; Enter(State.Idle, settings.RepelRecovery); }
+                    break;
+
                 case State.Idle:
                     FacePlayer();
                     if (_timer <= 0f) ChooseMove();
@@ -284,6 +306,59 @@ namespace SeteVidas.Enemies.Boss
                         _timer = settings.LightningTelegraph + settings.LightningStrikeTime + settings.LightningWaveGap;
                     }
                     break;
+            }
+        }
+
+        // ------------------------------------------- repulsa sagrada (anti "quicar na cabeça")
+
+        /// <summary>O gato está em cima da cabeça agora (testes e efeitos).</summary>
+        public bool PlayerIsAbove
+        {
+            get
+            {
+                var p = PlayerHealth.Active;
+                if (p == null || settings == null) return false;
+                Vector2 pos = p.transform.position;
+                return BossRules.PlayerAbove(_body.position.x, _spawn.y, settings.BodySize.x, settings.BodySize.y, pos.x, pos.y);
+            }
+        }
+
+        /// <summary>Golpes de cima seguidos (testes).</summary>
+        public int HitsFromAbove => _hitsFromAbove;
+
+        void TrackPlayerAbove(float dt)
+        {
+            _aboveTime = IsFighting && PlayerIsAbove ? _aboveTime + dt : 0f;
+            // os golpes de cima "esfriam" se o gato sai de cima por um tempo
+            if (_hitsFromAbove > 0 && Time.time - _lastAboveHit > 1.6f) _hitsFromAbove = 0;
+        }
+
+        /// <summary>
+        /// Só reage entre os golpes (parado, andando, preparando ou se recuperando da marretada, depois do salto).
+        /// No meio da cura, do atordoado e dos relâmpagos, não: são as janelas do gato.
+        /// </summary>
+        bool CanRepelNow => Current == State.Idle || Current == State.Walk || Current == State.SwingWindup ||
+                            Current == State.SwingRecover || Current == State.LeapRecover;
+
+        void StartRepel()
+        {
+            _aboveTime = 0f;
+            _hitsFromAbove = 0;
+            Enter(State.RepelWindup, settings.RepelWindup / Speed);
+        }
+
+        /// <summary>Centro da coluna de luz da repulsa: em cima da cabeça.</summary>
+        Vector2 RepelCenter() =>
+            new Vector2(_body.position.x, _spawn.y + settings.BodySize.y - 0.3f + settings.RepelHitbox.y * 0.5f);
+
+        /// <summary>Base e tamanho da coluna da repulsa (efeitos).</summary>
+        public Rect RepelArea
+        {
+            get
+            {
+                if (settings == null) return default;
+                var c = RepelCenter();
+                return new Rect(c - settings.RepelHitbox * 0.5f, settings.RepelHitbox);
             }
         }
 
@@ -401,6 +476,12 @@ namespace SeteVidas.Enemies.Boss
             Health = Mathf.Max(0, Health - info.Amount);
             _blinkUntil = Time.time + 0.15f;
             HitReact(info);
+            // golpe vindo de cima (estocada da adaga, queda da marreta): conta para a repulsa sagrada
+            if (info.Direction.y < -0.5f)
+            {
+                _hitsFromAbove = Time.time - _lastAboveHit <= 1.6f ? _hitsFromAbove + 1 : 1;
+                _lastAboveHit = Time.time;
+            }
 
             if (Health <= 0)
             {
@@ -508,7 +589,7 @@ namespace SeteVidas.Enemies.Boss
                 State.LeapAir => leapAir,
                 State.LeapRecover => swing,
                 State.Heal or State.Stagger => heal,
-                State.LightningCast or State.Lightning => cast,
+                State.LightningCast or State.Lightning or State.RepelWindup or State.RepelActive => cast,
                 State.Defeated => kneel,
                 _ => idle,
             } ?? idle;
@@ -546,6 +627,9 @@ namespace SeteVidas.Enemies.Boss
                 case State.Stagger: key = "stagger"; break;
                 case State.LightningCast: key = "cast"; break;
                 case State.Lightning: key = "lightning"; break;
+                // repulsa: ergue a marreta (como ao chamar os raios) e solta a luz para cima
+                case State.RepelWindup: key = "cast"; break;
+                case State.RepelActive: key = "lightning"; break;
                 case State.Defeated: key = "kneel"; break;
                 case State.Companion: key = "companion"; break;
                 default: key = "idle"; break;

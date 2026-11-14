@@ -13,7 +13,7 @@ namespace SeteVidas.UI
     public enum GameAction
     {
         Move, Up, Crouch, Jump, Attack, Special, Interact, Heal, Dash, NextClass, PrevClass,
-        Inventory, Confirm, Back, TabLeft, TabRight, Navigate, Skip,
+        Inventory, Confirm, Back, TabLeft, TabRight, Navigate, Skip, Map,
     }
 
     /// <summary>
@@ -116,6 +116,7 @@ namespace SeteVidas.UI
             { GameAction.TabRight, new[] { "<Keyboard>/e", "<Gamepad>/rightShoulder" } },
             { GameAction.Navigate, new[] { "<Keyboard>/arrows", "<Gamepad>/dpad" } },
             { GameAction.Skip, new[] { "<Keyboard>/escape", "<Gamepad>/start" } },
+            { GameAction.Map, new[] { "<Keyboard>/m", "<Gamepad>/select" } },
         };
 
         static readonly Dictionary<GameAction, string> s_actionNames = new Dictionary<GameAction, string>

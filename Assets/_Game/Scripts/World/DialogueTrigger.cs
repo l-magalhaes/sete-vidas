@@ -32,6 +32,13 @@ namespace SeteVidas.World
         /// <summary>É uma passagem para outra cena (fim da Fortaleza → Estrada de Soluki).</summary>
         public bool IsPassage => !string.IsNullOrEmpty(loadSceneAfter) && !string.IsNullOrEmpty(loadEntranceAfter);
 
+        /// <summary>Passagem: o gato sai andando para o lado em que olha (melhorias 14/11/2026).</summary>
+        static Vector2 WalkOut(PlayerHealth player)
+        {
+            var c = player != null ? player.GetComponent<PlayerController>() : null;
+            return new Vector2(c != null ? c.FacingDirection : 1, 0f);
+        }
+
         void OnTriggerEnter2D(Collider2D other)
         {
             var player = other.GetComponentInParent<PlayerHealth>();
@@ -48,7 +55,7 @@ namespace SeteVidas.World
             {
                 // passagem: a conversa já foi vista (ou não há conversa): segue direto
                 if (!IsPassage || SceneTravel.IsTraveling) return false;
-                SceneTravel.ToEntrance(loadSceneAfter, loadEntranceAfter, player);
+                SceneTravel.ToEntrance(loadSceneAfter, loadEntranceAfter, player, WalkOut(player));
                 return true;
             }
             if (!string.IsNullOrEmpty(requiresFlag) && !data.HasFlag(requiresFlag)) return false;
@@ -64,7 +71,7 @@ namespace SeteVidas.World
             return runner.Play(dialogue, player.GetComponent<PlayerInputReader>(), () =>
             {
                 _playing = false;
-                if (IsPassage) { if (player != null && !SceneTravel.IsTraveling) SceneTravel.ToEntrance(loadSceneAfter, loadEntranceAfter, player); }
+                if (IsPassage) { if (player != null && !SceneTravel.IsTraveling) SceneTravel.ToEntrance(loadSceneAfter, loadEntranceAfter, player, WalkOut(player)); }
                 else if (!string.IsNullOrEmpty(loadSceneAfter)) SceneManager.LoadScene(loadSceneAfter);
             });
         }

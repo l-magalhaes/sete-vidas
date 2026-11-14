@@ -105,7 +105,7 @@ O `StealthController` já emite passos (0,15), aterrissagem (0,4) e golpe (0,3).
 
 ## 5. Viagem rápida [APROVADO]
 
-- Em qualquer santuário: **Descansar** (como hoje) ou **Viajar**.
+- Em qualquer santuário aparecem **dois avisos juntos** (melhorias 14/11/2026): **[Interagir] descansar** (E / B) e **[Ataque] viagem rápida** (clique / X). Descansar vai direto; a viagem abre a lista dos santuários. O aviso da viagem só aparece com outro santuário visitado e ligado a este, e sem veneno. Ali o botão de ataque não golpeia.
 - Lista dos santuários já visitados (flag `santuario_visto_<id>`), agrupados por região, com o nome e o ícone no mapa.
 - Viajar: fade de 0,5 s, carrega a cena, o gato aparece **em pé no santuário de destino**. Descansar no destino é separado (não é automático).
 - **Bloqueios:** durante luta de chefe, com arena fechada, durante cutscene e com veneno ativo.
@@ -113,6 +113,16 @@ O `StealthController` já emite passos (0,15), aterrissagem (0,4) e golpe (0,3).
 
 ## 6. Tela de mapa (aba nova do inventário)
 
+**Mapa do mundo (melhorias 14/11/2026, estilo Hollow Knight).** Substitui a grade abaixo quando o menu **22. Mapa do mundo: gerar silhuetas** já rodou:
+- Uma folha só com **todas as áreas ligadas**: a Fortaleza à esquerda, a Estrada de Soluki e a Floresta à direita, cada uma no lugar dela (a borda da Fortaleza encosta no começo da Estrada).
+- A forma vem do tilemap `Ground` de cada cena (`Editor/WorldMapSetup.cs` → `Resources/WorldMap.asset`): na Floresta, o ar dentro das salas; na Fortaleza, o ar dentro das salas de `FortressLayout.MapRooms()` (montanha, queda, pátio, muralhas, galeria, chaminés, salão, câmara, poço, cofres, portão). Plataformas e saliências soltas no meio da sala somem (`WorldMapRules.FillIslands`), e a torre de escalada e o poço dos fundos são desenhados como salas inteiras, para o mapa ficar uniforme.
+- **Onde o gato passou:** miolo escuro e borda clara, na cor do lugar (pedra azulada, areia, verde). **Onde ainda não passou, nada aparece.** Entrar numa sala revela a sala inteira: na Floresta, cada sala; na Fortaleza, cada sala do `FortressLayout.MapRooms()` (a queda do penhasco, as muralhas da hera...). Além disso, revela 8×8 tiles em volta do gato. Fica no save (`SaveData.mapChunks`).
+- **Floresta legível:** no jogo as salas encostam umas nas outras (o anel); no mapa cada sala é uma peça com contorno próprio, **afastada das vizinhas** (o centro fica 25% mais longe da origem, `WorldMapSetup.Spread`), e portas e passagens viram **traços de ligação**. Raízes e blocos soltos no meio da sala não aparecem.
+- Ícones: **cabeça do Lion** piscando onde ele está, santuários (aceso/apagado) dos trechos explorados e **baús só depois de abertos**.
+- **Atalho rápido:** **M** no teclado ou **Exibir** no controle abre o inventário direto no mapa; o mesmo botão fecha. No mapa: direcional **anda** (segurando), **Enter/A** troca o **zoom** (1×, 2×, 3×). Abre centrado no gato.
+- Depois de mudar uma cena (inclusive à mão na Fortaleza), rode o menu 22 de novo.
+
+Grade antiga (fica como reserva enquanto o mapa do mundo não foi gerado):
 - Grade com as salas da região atual. Cada sala é um retângulo no tamanho da sala, revelado ao entrar (`sala_vista_<id>`).
 - Ícones: santuário (visitado), baú fechado (sala visitada com baú ainda fechado), baú aberto, gato (posição atual), atalho aberto.
 - Trocar de região com as setas. Regiões nunca visitadas não aparecem.

@@ -9,8 +9,9 @@ using UnityEngine.UI;
 namespace SeteVidas.UI
 {
     /// <summary>
-    /// Menu do santuário com viagem rápida (Docs/Design/floresta-mecanicas.md §5): "Descansar" ou um dos santuários
-    /// visitados e ligados a este. Pausa o jogo enquanto está aberto, no mesmo visual do inventário.
+    /// Menu da viagem rápida (Docs/Design/floresta-mecanicas.md §5): os santuários visitados e ligados a este.
+    /// Abre pelo botão de ataque no santuário; descansar tem o próprio botão (melhorias 14/11/2026).
+    /// Pausa o jogo enquanto está aberto, no mesmo visual do inventário.
     /// </summary>
     public class TravelMenu : MonoBehaviour
     {
@@ -39,7 +40,7 @@ namespace SeteVidas.UI
         float _savedScale = 1f;
         int _openedFrame;
 
-        /// <summary>Abre o menu no santuário <paramref name="from"/>. Opção 0 = descansar; as outras, viajar.</summary>
+        /// <summary>Abre o menu no santuário <paramref name="from"/>: cada opção é um santuário para onde viajar.</summary>
         public static void Open(Sanctuary from, PlayerHealth player, List<SanctuaryVisit> destinations)
         {
             if (s_instance == null)
@@ -88,13 +89,13 @@ namespace SeteVidas.UI
             _rows.Clear();
             if (_help != null) Destroy(_help.gameObject);
 
-            int count = 1 + _destinations.Count;
+            int count = Mathf.Max(1, _destinations.Count);
             float h = Pad * 2f + 14f + count * RowH + 14f;
             _window.sizeDelta = new Vector2(W, h);
 
             var title = NewText("Título", _window, 8, TextAnchor.UpperCenter, Gold);
             Place(title.rectTransform, 0f, -Pad, W, 12f);
-            title.text = from != null && !string.IsNullOrEmpty(from.DisplayName) ? from.DisplayName : "Santuário";
+            title.text = "Viagem rápida";
             _rows.Add(title);
 
             for (int i = 0; i < count; i++)
@@ -124,7 +125,7 @@ namespace SeteVidas.UI
             {
                 int option = i - 1;
                 bool sel = option == _cursor;
-                string label = option == 0 ? "Descansar" : "Viajar: " + NameOf(_destinations[option - 1]);
+                string label = option < _destinations.Count ? NameOf(_destinations[option]) : "nenhum santuário";
                 _rows[i].text = (sel ? "> " : "  ") + label;
                 _rows[i].color = sel ? Gold : Cream;
             }
@@ -162,8 +163,8 @@ namespace SeteVidas.UI
                 back |= p.buttonEast.wasPressedThisFrame;
             }
 
-            int count = 1 + _destinations.Count;
-            if (dy != 0)
+            int count = _destinations.Count;
+            if (dy != 0 && count > 0)
             {
                 _cursor = (_cursor + dy + count) % count;
                 SeteVidas.Audio.Sfx.Play("ui_cursor_inv");
@@ -172,11 +173,11 @@ namespace SeteVidas.UI
             if (back) { SeteVidas.Audio.Sfx.Play("ui_inv_fecha"); Close(); return; }
             if (!ok) return;
 
-            var from = _from; var player = _player;
+            var player = _player;
             int choice = _cursor;
             Close();
-            if (choice == 0) { if (from != null) from.BeginRest(player); return; }
-            var dest = _destinations[choice - 1];
+            if (choice < 0 || choice >= _destinations.Count) return;
+            var dest = _destinations[choice];
             SeteVidas.Audio.Sfx.Play("santuario_descansa");
             SceneTravel.ToSanctuary(dest.scene, dest.id, player);
         }

@@ -18,6 +18,8 @@ O Ladino é rápido e fraco de frente, mas letal pelas costas. O jogador deve **
 8. **Dano:** `Dano base × multiplicador`, arredondado, nunca menor que 1. Com base 2: comum **2**, costas **3**, furtivo **5**.
 9. **Impacto:** *hitstop* (o jogo congela por um instante) mais longo quanto mais forte o golpe; o alvo recua um pouco e pisca.
 10. **Tipo de dano:** adagas causam dano `Normal`. A parede rachada (Fase 5) só aceita `Heavy` (marreta).
+11. **Ataque para cima (melhorias 14/11/2026, todas as armas):** **{subir} + ataque**, no chão ou no ar. Um golpe só (sem combo, sem carga), com a caixa em cima da cabeça: adagas 1,4 × 1,3 tiles, marreta 1,9 × 1,6 (`MeleeAttackSettings.UpAttack` / `UpHitbox`). O efeito é a meia-lua do golpe para baixo, virada. Bom contra morcegos, cactos e inimigos em plataformas acima.
+12. **Dano pelos corações (melhorias 14/11/2026):** cada coração recuperado **depois da maldição** multiplica o dano de todos os golpes por **1,3** (2 corações = 1,3×; 3 = 1,69×; 4 = 2,2×...). Arredonda (0,5 para cima), nunca menos que 1. Antes da maldição, com os 7 corações do Ladino, não há bônus (`HeartDamageRules`). Ex.: adaga 2 → **3** com 2 corações. **[PROPOSTA: revisar no playtest; com 7 corações dá 4,8×]**
 
 ## Parâmetros tunáveis
 | Parâmetro | Valor inicial | Unidade | Faixa de teste | Onde vive |

@@ -39,6 +39,26 @@ namespace SeteVidas.Combat
 
         public bool IsAttacking => _sequence.IsAttacking || _charging || _slam != Slam.None || _down != Down.None;
         public bool IsHitActive => _sequence.IsHitActive;
+        /// <summary>O golpe atual é o ataque para cima ({subir} + ataque).</summary>
+        public bool IsUpAttacking => _up && _sequence.IsAttacking;
+        bool _up;
+
+        /// <summary>
+        /// Multiplicador do dano pelos corações recuperados depois da maldição (1,3× por coração novo; ver
+        /// <see cref="HeartDamageRules"/>).
+        /// </summary>
+        public float DamageMultiplier
+        {
+            get
+            {
+                var data = SeteVidas.Save.SaveManager.Data;
+                bool curse = data != null && data.HasFlag(PlayerHealth.CurseDoneFlag);
+                int hearts = _health != null ? _health.HeartsRecovered : 1;
+                return (float)HeartDamageRules.Multiplier(hearts, curse);
+            }
+        }
+
+        int Scaled(int damage) => HeartDamageRules.Apply(damage, DamageMultiplier);
         public int ComboStep => _sequence.Step;
         /// <summary>Lado do golpe atual, travado no início do golpe.</summary>
         public int AttackDirection { get; private set; } = 1;
@@ -124,6 +144,7 @@ namespace SeteVidas.Combat
         {
             EndDown();
             _sequence.Cancel();
+            _up = false;
             _charging = false;
             _slam = Slam.None;
             _pressHeld = false;
@@ -152,8 +173,14 @@ namespace SeteVidas.Combat
             }
             if (_charging) { StepCharge(dt, grounded); return; }
 
+            // no santuário com viagem rápida, o botão de ataque abre o menu de viagem (não golpeia)
+            bool attackPressed = input != null && input.AttackPressedThisFrame && !SeteVidas.World.Sanctuary.AttackOpensTravel;
+            // {subir} + ataque: o golpe para cima (um golpe só, no chão ou no ar)
+            bool wantsUp = attackPressed && !_sequence.IsAttacking && weapon.UpAttack &&
+                           UpAttackRules.WantsUpAttack(input.MoveY, input.CrouchHeld);
             var timings = _sequence.IsAttacking ? CurrentTimings() : (grounded ? weapon.Timings : weapon.AirTimings);
-            if (input != null && input.AttackPressedThisFrame)
+            if (wantsUp) timings.Steps = 1;
+            if (attackPressed)
             {
                 bool wasIdle = !_sequence.IsAttacking;
                 // virou o analógico e atacou no mesmo instante: o golpe sai para o lado novo
@@ -162,7 +189,8 @@ namespace SeteVidas.Combat
                 {
                     AttackDirection = _player.FacingDirection;
                     _comboSteps = timings.Steps;
-                    _pressHeld = true;
+                    _up = wantsUp;
+                    _pressHeld = !wantsUp;   // o golpe para cima não carrega o terremoto
                     _holdTime = 0f;
                 }
             }
@@ -191,6 +219,7 @@ namespace SeteVidas.Combat
             int stepBefore = _sequence.Step;
             _sequence.Tick(seqDt, timings);
             if (_sequence.Step != stepBefore) AttackDirection = _player.FacingDirection; // o golpe seguinte pode virar
+            if (!_sequence.IsAttacking) _up = false;
 
             if (_sequence.SwingId != _lastSwingId)
             {
@@ -212,6 +241,20 @@ namespace SeteVidas.Combat
             var t = weapon.Timings;
             t.Steps = _comboSteps > 0 ? _comboSteps : t.Steps;
             return t;
+        }
+
+        /// <summary>Começa o golpe para cima sem o controle (testes). Só fora de outro golpe e com a arma que o tem.</summary>
+        public bool TryUpAttack()
+        {
+            if (!enabled || weapon == null || !weapon.UpAttack || IsAttacking || !CanAttack) return false;
+            var t = weapon.Timings;
+            t.Steps = 1;
+            if (!_sequence.Press(t)) return false;
+            AttackDirection = _player.FacingDirection;
+            _comboSteps = 1;
+            _up = true;
+            _pressHeld = false;
+            return true;
         }
 
         // ------------------------------------------------------- terremoto
@@ -285,7 +328,7 @@ namespace SeteVidas.Combat
                 var b = col.bounds;
                 if (!ChargeRules.InShockwave(feet, range, new Rect(b.min.x, b.min.y, b.size.x, b.size.y))) continue;
                 int side = b.center.x >= feet.x ? 1 : -1;
-                var info = new DamageInfo(damage, new Vector2(side, 0f), DamageType.Heavy, AttackAngle.Front, gameObject);
+                var info = new DamageInfo(Scaled(damage), new Vector2(side, 0f), DamageType.Heavy, AttackAngle.Front, gameObject);
                 target.TakeDamage(info);
                 if (knockdown > 0f && target is IKnockdown down) down.Knockdown(knockdown);
                 Hit?.Invoke(target, info);
@@ -432,7 +475,7 @@ namespace SeteVidas.Combat
                 var target = col.GetComponentInParent<IDamageable>();
                 if (target == null || !_hitThisSwing.Add(target)) continue;
                 var resolved = weapon.ResolveHit(_player.Body.position, (Component)target, gameObject);
-                var info = new DamageInfo(damage >= 0 ? damage : resolved.Amount, Vector2.down, type, resolved.Angle, gameObject);
+                var info = new DamageInfo(Scaled(damage >= 0 ? damage : resolved.Amount), Vector2.down, type, resolved.Angle, gameObject);
                 bool allowsBounce = DownAttackRules.TargetAllowsBounce(target); // antes do golpe: o golpe pode mudar o estado
                 target.TakeDamage(info);
                 Hit?.Invoke(target, info);
@@ -463,6 +506,13 @@ namespace SeteVidas.Combat
             Vector2 feet = _player != null && _player.Body != null ? _player.Body.position : (Vector2)transform.position;
             float height = _player != null ? _player.CurrentHeight : 1.375f;
             float halfWidth = _player != null && _player.Settings != null ? _player.Settings.ColliderWidth * 0.5f : 0.375f;
+            if (_up)
+            {
+                var box = UpAttackRules.Box(feet, height, AttackDirection, weapon.UpHitbox);
+                center = box.center;
+                size = box.size;
+                return;
+            }
             size = weapon.HitboxSize;
             center = new Vector2(feet.x + AttackDirection * (halfWidth + weapon.HitboxForward),
                                  feet.y + height * 0.5f);
@@ -483,9 +533,8 @@ namespace SeteVidas.Combat
                 if (target == null || !_hitThisSwing.Add(target)) continue;
 
                 var info = weapon.ResolveHit(_player.Body.position, (Component)target, gameObject);
-                if (finisher)
-                    info = new DamageInfo(ComboRules.FinisherDamage(info.Amount, weapon.FinisherDamageMultiplier),
-                        info.Direction, info.Type, info.Angle, info.Source);
+                int amount = finisher ? ComboRules.FinisherDamage(info.Amount, weapon.FinisherDamageMultiplier) : info.Amount;
+                info = new DamageInfo(Scaled(amount), info.Direction, info.Type, info.Angle, info.Source);
                 target.TakeDamage(info);
                 Hit?.Invoke(target, info);
                 stop = Mathf.Max(stop, weapon.HitstopFor(info.Angle) * (finisher ? 1.5f : 1f));

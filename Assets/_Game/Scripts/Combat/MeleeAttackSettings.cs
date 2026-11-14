@@ -59,6 +59,12 @@ namespace SeteVidas.Combat
         [Min(0)] public int DropImpactDamage = 3;
         [Min(0f)] public float DropRecovery = 0.3f;
 
+        [Header("Ataque para cima: {subir} + ataque (melhorias 14/11/2026)")]
+        [Tooltip("Com cima segurado, o ataque vira um golpe só, em cima da cabeça (no chão ou no ar)")]
+        public bool UpAttack = true;
+        [Tooltip("Caixa do golpe para cima (tiles), com a base no alto da cabeça")]
+        public Vector2 UpHitbox = new Vector2(1.4f, 1.3f);
+
         /// <summary>A queda pesada é da arma de dano pesado (marreta); as outras quicam.</summary>
         public bool HeavyDrop => Type == DamageType.Heavy;
 

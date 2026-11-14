@@ -82,6 +82,23 @@ namespace SeteVidas.Enemies.Boss
                     _nextMote = 0f;
                     _nextRing = 0f;
                     break;
+                case State.RepelWindup:
+                    _nextMote = 0f;
+                    break;
+                case State.RepelActive:
+                {
+                    // a luz sobe da cabeça numa coluna: anéis e faíscas por toda a altura onde o gato quicava
+                    var area = _boss.RepelArea;
+                    var head = new Vector2(area.center.x, area.yMin + 0.2f);
+                    PixelRing.Spawn(head, 4, 28, 0.3f, Glow, 2);
+                    PixelRing.Spawn(head, 2, 18, 0.25f, Gold, 1, 0.06f);
+                    for (int i = 0; i < 14; i++)
+                        HitSparks.Rise(new Vector2(area.center.x + Random.Range(-area.width * 0.4f, area.width * 0.4f),
+                                area.yMin + Random.Range(0f, area.height * 0.8f)),
+                            i % 2 == 0 ? (Color)Glow : Gold, Random.Range(3f, 6f), Random.Range(0.25f, 0.45f));
+                    CameraShake.Shake(2f, 0.15f);
+                    break;
+                }
             }
             if (next != State.LeapAir && _marker != null) _marker.enabled = false;
         }
@@ -96,6 +113,17 @@ namespace SeteVidas.Enemies.Boss
             var state = _boss.Current;
             Vector2 feet = _boss.Feet;
             var size = _boss.Settings != null ? _boss.Settings.BodySize : new Vector2(1.4f, 2f);
+            if (state == State.RepelWindup)
+            {
+                // aviso da repulsa: brilho dourado subindo do alto da cabeça
+                _nextMote -= dt;
+                if (_nextMote <= 0f)
+                {
+                    _nextMote = 0.04f;
+                    var p = feet + new Vector2(Random.Range(-size.x * 0.6f, size.x * 0.6f), size.y + Random.Range(-0.2f, 0.3f));
+                    HitSparks.Rise(p, Random.value < 0.5f ? (Color)Glow : Gold, Random.Range(2f, 3.5f), Random.Range(0.3f, 0.5f));
+                }
+            }
             if (state == State.Heal)
             {
                 _nextMote -= dt;

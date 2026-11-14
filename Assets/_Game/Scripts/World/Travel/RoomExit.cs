@@ -38,7 +38,12 @@ namespace SeteVidas.World
             var health = other.GetComponentInParent<PlayerHealth>();
             if (health == null || health.IsDead || SceneTravel.IsTraveling) return;
             if (!string.IsNullOrEmpty(requiredFlag) && (SaveManager.Data == null || !SaveManager.Data.HasFlag(requiredFlag))) return;
-            SceneTravel.ToEntrance(targetScene, targetEntrance, health);
+            // sai andando pela passagem lateral, ou continua caindo pelo buraco (melhorias 14/11/2026)
+            var b = GetComponent<BoxCollider2D>().bounds;
+            var player = health.GetComponent<PlayerController>();
+            int facing = player != null ? player.FacingDirection : 1;
+            var dir = TransitionRules.ExitDirection(new Rect(b.min, b.size), health.transform.position, facing);
+            SceneTravel.ToEntrance(targetScene, targetEntrance, health, dir);
         }
 
 #if UNITY_EDITOR

@@ -1,0 +1,888 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68d767f4210269a49a94e42ec54d5696, type: 3}
+  m_Name: WorldMap
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.WorldMapData
+  scenes:
+  - scene: Fortress_MVP
+    region: Cidadela do Sol Eterno
+    offsetX: -256
+    offsetY: 0
+    x0: -266
+    y0: -2
+    w: 261
+    h: 112
+    bits: AAAAAACABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+P8b///////////8PAAAAAAAAAAAAAAAAwP///38AAMD/x/j///////////8BAAAAAAAAAAAAAAAA+P///w8AAPj/H////////////z8AAAAAAAAAAAAAAAAA/////wEAAP///////////////wcAAAAAAAAAAAAAAADg////PwAA4P///////////////wAAAAAAAAAAAAAAAAB8////BwAA/P//////////////HwAAAAAAAAAAAAAAAIDv////AACA////////////////AwAAAAAAAAAAAAAAAPD9//8fAADw//////////////9/AAAAAAAAAAAAAAAAAL7///8DAAD+//////////////8PAAAAAAAAAAAAAAAAwPf//38AAMD///////////////8BAAAAAAAAAAAAAAAA+P7//w8AAPgBAAAAAAAAAMAf/H8AAAAAAAAAAAAAAAAA3////wEAAD8AAAAAAAAAAPiD/w8AAAAAAAAAAAAAAADg+///PwAA4AcAAAAAAAAAAH/w/wEAAAAAAAAAAAAAAAB8////BwAA/AAAAAAAAAAA4A/+PwAAAAAAAAAAAAAAAIAPAAAAAACAHwAAAAAAAAAA/MH/BwAAAAAAAAAAAAAAAPABAAAAAADwAwAAAAAAAACAP/j/fwAAAAAAAAAAAAAAAP4/AAAAAAB+AAAAAAAAAADwB///HwAAAAAAAAAAAAAAwP8HAAAAAMAPAAAAAAAAAAD+4P//AwAAAAAAAAAAAAAA+P8AAAAAAPgBAAAAAAAAAMAf/P9/AAAAAAAAAAAAAAAA/x8AAAAAAD8AAAAAAAAAAPiD//8PAAAAAAAAAAAAAADgAwAAAAAA4AcAAAAAAAAAAADw//8BAAAAAAAAAAAAAAB8AAAAAAAA/AAAAAAAAAAAAAD+/z8AAAAAAAAAAAAAAIAPAAAAAACAHwAAAAAAAAAAAMD//wcAAAAAAAAAAAAAAPABAAAAAADwAwAAAAAAAAAAAACA/wAAAAAAAAAAAAAAAD4AAAAAAAB+AAAAAAAAAAAAAADwHwAAAAAAAAAAAAAAwAcAAAAAAMAPAAAAAAAAAAAAAAD+AwAAAAAAAAAAAAAA+AAAAAAAAPgBAAAAAAAAAAAAAMB/AAAAAAAAAAAAAAAAHwAAAAAAAD8AAAAAAAAAAAAAAPgPAAAAAAAAAAAAAADgAwAAAAAA4AcAAAAAAAAAAAAAAP8BAAAAAAAAAAAAAAB8AAAAAAAA/AAAAAAAAAAAAAAA4P8fAAAAAAAAAAAAAIAPAAAAAACAHwAAAAAAAAAAAAAA/P8HAAAAAAAAAAAAAPABAAAAAADwAwAAAAAAAAAAAACA//8AAAAAAAAAAAAAAD4AAAAAAAB+AAAAAAAAAAAAAADw/x8AAAAAAAAAAAAAwAcAAAAAAMAPAAAAAAAAAAAAAAD+/wMAAAAAAAAAAAAA+AAAAAAAAPgBAAAAAAAAAAAAAMD/fwAAAAAAAAAAAAAAHwAAAAAAAD8AAAAAAAAAAAAAAPj/DwAAAAAAAAAAAADgAwAAAAAA4AcAAAAAAAAAAAAAAP//AQAAAAAAAAAAAAB8AAAAAAAA/AAAAAAAAAAAAAAAAOA/AAAAAAAAAAAAAIAPAAAAAACAHwAAAAAAAAAAAAAAAPwHAAAAAAAAAAAAAPABAAAAAADwAwAAAAAAAAAAAAAAgP8AAAAAAAAAAAAAAD4AAAAAAAB+AAAAAAAAAAAAAAAA8B8AAAAAAAAAAAAAwAcAAAAAAMAPAAAAAAAAAAAAAAAA/gMAAAAAAAAAAAAA+AAAAAAAAPgBAAAAAAAAAAAAAADAfwAAAAAAAAAAAAAAHwAAAAAAAD8AAAAAAAAAAAAAAAD4/////////////z/g/wMAAAAA4AcAAAAAAAAAAAAAAAD//////////////wf8fwAAAAAA/AAAAAAAAAAAAAAAAOD//////////////4D/DwAAAACAHwAAAAAAAAAAAAAAAPz/////////////H/D/AQAAAADwAwAAAAAAAAAAAAAAgP//////////////Az4AAAAAAAB+AAAAAAAAAAAAAAAA8P////////////9/wAcAAAAAAMAPAAAAAAAAAAAAAAAA/v////////////8P+AAAAAAAAPgBAAAAAAAAAAAAAADA//////////////8BHwAAAAAAAD8AAAAAAAAAAAAAAAD4/////////////z/gAwAAAAAA4AcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA98AAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8IEPAAAAAACAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPvABAAAAAADwAwAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAz4AAAAAAAB+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4wAcAAAAAAMAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+AAAAAAAAPgBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOABHwAAAAAAAD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADzgAwAAAP7//wcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA98AAAA+P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8IEPAAAA////HwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPvABAADg////AwAAAAAAAAAAAAAAAAAAAAAAAAAAAACABz4AAAD8//9/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwwAcAAID///8PAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAe+AAAAPD///8BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADHwAAAP7//z8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHjgAwAAwP///wcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA98AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4IEPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgBAAAAAAAAPPABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8AAAAAAACABz4AAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////////3/8HAAAAAAAAAAAAAAAAAAAAAAAAAADg////////////+/8AAAAAAAAAAAAAAAAAAAAAAAAAAAD8//////////9//x8AAAAAAAAAAAAAAAAAAAAAAAAAAID////////////v/wMAAAAAAAAAAAAAAAAAAAAAAAAAAPD///////////99AAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7//////////78PAAAAAAAAAAAAAAAAAAAAAAAAAAAAwP////////////cBAAAAAAAAAAAAAAAAAAAAAAAAAAAA+P///////////z4AAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////////3wcAAAAAAAAAAAAAAAAAAAAAAAAAAADg////////////+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAAAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAAAAAAAAAADgAwAAAAAAAAAAAAAAAAAAAAAAAAAAAPgAAAAAAAAAAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAIAPAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AMAAAAAAAAAAPABAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAAAAAAAwAcAAAAAAAAAAAAAAAAAAAAAAAAAAADgAQAAAAAAAAAA+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAIAHAAAAAAAAAADgAwAAAAAAAAAAAAAAAAAAAAAAAAAAAPgAAAAAAAAAAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAIAPAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AMAAAAAAAAAAPABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAACABwAAAAAAAAAAwAcAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAAAAAAAAA+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAAAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAAAAAAAAAADgAwAAAAAAAAAAAAAAAAAAAAAAAAAAAHgAAAAAAAAAAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAA4P////////////8PAAAAAAAAAAAAAAAAAAAAAAAAAAAA/P////////////8BAAAAAAAAAAAAAAAAAAAAAAAAAACA/////////////z8AAAAAAAAAAAAAAAAAAAAAAAAAAADw/////////////wcAAAAAAAAAAAAAAAAAAAAAAAAAAAD++f////P7//3//wAAAAAAAAAAAAAAAAAAAAAAAAAAAMA/////f34AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPjn////DwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/8////AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4J////8/AAAAAAAAAAAA
+    pins:
+    - kind: santuario
+      id: fortaleza_muralha
+      x: -117
+      y: 43
+    - kind: santuario
+      id: fortaleza_camara
+      x: -119
+      y: 101
+    wholeRoom: 0
+    reveals:
+    - x: -266
+      y: 60
+      width: 23
+      height: 9
+    - x: -243
+      y: 9
+      width: 6
+      height: 60
+    - x: -243
+      y: -2
+      width: 99
+      height: 12
+    - x: -168
+      y: 0
+      width: 7
+      height: 20
+    - x: -156
+      y: 10
+      width: 20
+      height: 13
+    - x: -144
+      y: 15
+      width: 16
+      height: 22
+    - x: -136
+      y: 29
+      width: 16
+      height: 23
+    - x: -120
+      y: 43
+      width: 75
+      height: 9
+    - x: -49
+      y: 52
+      width: 5
+      height: 20
+    - x: -116
+      y: 70
+      width: 77
+      height: 12
+    - x: -117
+      y: 82
+      width: 5
+      height: 19
+    - x: -120
+      y: 101
+      width: 87
+      height: 9
+    - x: -38
+      y: 0
+      width: 5
+      height: 101
+    - x: -33
+      y: 72
+      width: 8
+      height: 4
+    - x: -33
+      y: 43
+      width: 8
+      height: 4
+    - x: -33
+      y: 15
+      width: 8
+      height: 4
+    - x: -33
+      y: 0
+      width: 28
+      height: 13
+  - scene: Forest_Road
+    region: Estrada de Soluki
+    offsetX: 4
+    offsetY: 2
+    x0: 4
+    y0: 2
+    w: 30
+    h: 15
+    bits: //+P////4////////////v//n////+f////5//9//v//n////+f////5//9//v//n////+f///8B
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_Road
+    region: Estrada de Soluki
+    offsetX: 13
+    offsetY: 3
+    x0: 42
+    y0: 3
+    w: 45
+    h: 23
+    bits: /////////////////////////////+////////z/////n///////8/////9//v/////P///////5/////z///////+f///////z/////n///////8/////9//v/////P///////5/////z///////+f///////z/////n///////Aw==
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_Road
+    region: Estrada de Soluki
+    offsetX: 22
+    offsetY: 2
+    x0: 95
+    y0: 2
+    w: 30
+    h: 15
+    bits: /////////////////////v//n////+f////5//9//v//n////+f////5//9//v//n////+f///8B
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_Road
+    region: Estrada de Soluki
+    offsetX: 33
+    offsetY: 2
+    x0: 135
+    y0: 1
+    w: 60
+    h: 16
+    bits: AAD+//8HAPD//////////////////////////////////////+////////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9/
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_Road
+    region: Estrada de Soluki
+    offsetX: 44
+    offsetY: 2
+    x0: 205
+    y0: 1
+    w: 29
+    h: 16
+    bits: AADg4f///////////////////f//v/////f////+///f////+///f////+/////9//+/////9////w==
+    pins:
+    - kind: santuario
+      id: S-F5
+      x: 212
+      y: 2
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_A_Roots
+    region: Floresta Silenciosa
+    offsetX: 32
+    offsetY: -51
+    x0: 133
+    y0: -265
+    w: 59
+    h: 23
+    bits: /w/+/wD/////+f8P/v////////n/////////////////////v//////////9////////7////////3//////////+////////9///////////v////////f///////+///////////3////////v////////f//////////7////////3//////////+////////9////////7///////////f///////w8=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_A_Roots
+    region: Floresta Silenciosa
+    offsetX: 45
+    offsetY: -51
+    x0: 204
+    y0: -265
+    w: 45
+    h: 24
+    bits: H/7w////wx/+/////Of//////////+////+f//z////zn////3/+8////89//v////nP////P//5////5z///////Of///+f//z////zn////3/+8////89//v////nP////P//5////5z///////Of///+f//z////zn////3/+AwAAAAwA
+    pins:
+    - kind: santuario
+      id: S-F1
+      x: 216.5
+      y: -265
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_A_Roots
+    region: Floresta Silenciosa
+    offsetX: 60
+    offsetY: -48
+    x0: 263
+    y0: -262
+    w: 71
+    h: 40
+    bits: /8///v/v//+//+d////3///f//+////7///v///f///9///n/w/g/v/+///z//9//3/////5//+//7/////8///f/9///3/+///v/+///z/////3//f//5/////7//v//8/////9//3//+f////+//7///P//3//f/////n//7//v/////z//9//3///f/7//+//7///P/////f/9/8PgP////v/+///3/////3//f//7/////7//v//9///f/9/////+///v/+//////P//3//f//9//v//7//v//8/////9//3//+f////+//7///P/////f/9///n/////v/+///z//9//3/////5//+//7/////8///f/9///3/+//8P8O///z/////3//f//5/////7fwD//8/////9/////+f////+//////P//3////////n//7////////z/////////fw==
+    pins:
+    - kind: bau
+      id: W01
+      x: 284
+      y: -262
+    - kind: bau
+      id: W02
+      x: 294
+      y: -229
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_A_Roots
+    region: Floresta Silenciosa
+    offsetX: 72
+    offsetY: -48
+    x0: 345
+    y0: -262
+    w: 30
+    h: 43
+    bits: wB/Av/MH8O//A/77/8H//v/4n/8//uf////5//9//v//n////+f////5//9//v//n////+f////5//9//v//H/D///f////9//9/////3////+f////5//9//v//n////+f////5//9//v8fgP///+f////5//9//v//n////+f////5//9//v//v////+/////7/////v//n////+f///8B
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_A_Roots
+    region: Floresta Silenciosa
+    offsetX: 83
+    offsetY: -51
+    x0: 385
+    y0: -265
+    w: 59
+    h: 23
+    bits: /wAAwAAYgP8HAAAGwAD8PwAA8P/////////////v////////f//////////7////////3//////////+////////9////////7///////////f///////+////////9///////////v////////f//////////7////////3////////v//////////9////////7////////3//////////+////////x8=
+    pins:
+    - kind: bau
+      id: W03
+      x: 435
+      y: -250
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_A_Roots
+    region: Floresta Silenciosa
+    offsetX: 83
+    offsetY: -44
+    x0: 385
+    y0: -234
+    w: 60
+    h: 33
+    bits: /oH/////H+B//P////8B/v//////H+D///////8B/v//////H+D///////8B/v//////H+D///////8B/v//////H+D///////8B/v//////HwD4//////9///////////f///////9///////////f///////9//v///////+f///////8B/v///////+///////////v///////+///////////v///////+f///f///9//v8//v///+f//+P///9//v8f/P///+f//8H///9//v8f/P///+f//8H///9//v8f/P///+f//8H///9/DgAAAAAAAAA=
+    pins:
+    - kind: bau
+      id: W04
+      x: 436
+      y: -208
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 100
+    offsetY: -40
+    x0: 461
+    y0: -212
+    w: 77
+    h: 28
+    bits: ////////////7/////////////3//////////7/////////////n/////////////P////////8PgP////////////P//////////3/+///////////P////////////+f//////////P////////////+f////////////8//////////+f////////////8/////////////7//////////x8AAPz////////7//////////9/////////////5/////////////z//////////x+A///////////z//////////9//v//////////z/////////////n//////////z////////////8H
+    pins:
+    - kind: santuario
+      id: S-F1B
+      x: 476
+      y: -212
+    - kind: bau
+      id: W05
+      x: 465
+      y: -194
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 113
+    offsetY: -34
+    x0: 550
+    y0: -191
+    w: 30
+    h: 38
+    bits: ////3/////f////9//9//v//n////+f////5//9//v//n3/+/+ef///55/9//vn/n3/+/+eP///54/9//vj/nz/+/+eP///54/9//vj/nz/+/+eP///54/9//vj/n////+f////5//9//v8DgP///+/////7/////v//v////+f////5//9//v//n////wc=
+    pins:
+    - kind: bau
+      id: W06
+      x: 556
+      y: -159
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 124
+    offsetY: -29
+    x0: 590
+    y0: -157
+    w: 60
+    h: 23
+    bits: f+AB/gD84f8PH+A/8D////mH/wP/////f/h/+P///v///4f//+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////wc=
+    pins:
+    - kind: bau
+      id: W07
+      x: 629
+      y: -140
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 134
+    offsetY: -26
+    x0: 659
+    y0: -154
+    w: 20
+    h: 48
+    bits: /z/8/8P/f/z///7/5/9//v/n/3/+/+f/f/7/5/9//v/n/3/+/+f/f/7/5/9//v/n/3/+/+f/f/7/5/9//v/n/3/+/+f/f/7/5/9//v/n/3/+/+f/f/4P4P8A/v/n/3/+/+f/f/7/5/9//v/n/3////f/f///9/9/
+    pins:
+    - kind: santuario
+      id: S-F1C
+      x: 666
+      y: -154
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 140
+    offsetY: -26
+    x0: 684
+    y0: -154
+    w: 29
+    h: 48
+    bits: ///////////////////v/////f//v/////f////+///f////+///f////+/////9//+/////9/////7//9/////7//9/////7/////3//7/////3/////v//3/////v//3/////v/////f//v/////f////+///f////+///f////+/////9//+/////9/////7//9/////7//9/////7/////3//7/////3////
+    pins:
+    - kind: bau
+      id: W08
+      x: 690
+      y: -110
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 124
+    offsetY: -18
+    x0: 590
+    y0: -102
+    w: 60
+    h: 23
+    bits: D//////////5/////////////////////////////v///////+f///////9//v///////+///////////v///////+///////////v///////+f///////9//v///////+f///////9//v////3//+d///+P//9//uP///j//ec//v8H/49//sH/f/D/+Ocf/P8H/wd//sH/f/B/8Ocf/P8H/wd//sH/f/B/8Ac=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_B_Thorns
+    region: Floresta Silenciosa
+    offsetX: 134
+    offsetY: -18
+    x0: 659
+    y0: -96
+    w: 24
+    h: 17
+    bits: /////////////////v///v///v///v///v///v///v///v///v///v///v///v///v//
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 109
+    offsetY: -18
+    x0: 516
+    y0: -102
+    w: 60
+    h: 24
+    bits: //////8f+P///////8f//////////////////////v///////+f///////9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///+f/////+f9//v///5///wcAAADAAQAA
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 98
+    offsetY: -27
+    x0: 476
+    y0: -166
+    w: 30
+    h: 60
+    bits: ////3/////f////9//9//v//n////+f////5//9//v//n////+f//wf4//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////wfw///5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f//wf4/////v//v////+/////7//9/
+    pins:
+    - kind: bau
+      id: W09
+      x: 502
+      y: -155
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 89
+    offsetY: -29
+    x0: 423
+    y0: -168
+    w: 45
+    h: 43
+    bits: /v/////f///////7/////3///////+////////z/////n///////8/////9/AAAAAMDv///////9/////7////////f///////z/////n///////8/////9//v/////PDwAAAAD4/////z///////+f///////z/////n///////8/////9//v/////P//////8BAAAAAD///////+f///////z/////n///////8/////9//v/////P///////5/////z8/AAAAAOD///////z/////n///////8/////9//v/////P///////5/////z8=
+    pins:
+    - kind: bau
+      id: W10
+      x: 454
+      y: -132
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 76
+    offsetY: -32
+    x0: 351
+    y0: -172
+    w: 60
+    h: 24
+    bits: AAAAcAAAAJD/4H///38A/w/+////B/D/8f///38A////////B+D//////38A/v//////B+D//////38A/v//////B+D//////38A/v///////+///////////v///////+///////////v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9/
+    pins:
+    - kind: santuario
+      id: S-F1D
+      x: 406
+      y: -162
+    - kind: bau
+      id: W11
+      x: 365
+      y: -168
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 76
+    offsetY: -37
+    x0: 379
+    y0: -195
+    w: 3
+    h: 19
+    bits: /////////wE=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 60
+    offsetY: -32
+    x0: 261
+    y0: -172
+    w: 75
+    h: 24
+    bits: AAAAAIAHAAAA+P///4H//wc+4P///w/8/z/wx////3/g//+B//////8D/////3/////////////5///////////P//////////9//v//////////8///////////n/////////////z//////////+f//////////z/////////////5///////////P//////////9//v//////////8///////////n/////////////z//////////+f//////////z/////////////5///////////P//////////9/
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 61
+    offsetY: -39
+    x0: 292
+    y0: -211
+    w: 28
+    h: 33
+    bits: //////////////////////////////////////////////////////////////////////////////////8D/////////////////////////////////////////////////////////////////wAeAAA=
+    pins:
+    - kind: bau
+      id: W12
+      x: 317
+      y: -211
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_C_Shadows
+    region: Floresta Silenciosa
+    offsetX: 47
+    offsetY: -41
+    x0: 219
+    y0: -232
+    w: 30
+    h: 56
+    bits: AAAMgP///+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n///D+T//wH4//9//v//n////+f////5//9//v//n/////f////9//9/////3////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//8B/v//v////+/////7////
+    pins:
+    - kind: santuario
+      id: S-F2
+      x: 226
+      y: -231
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_D_Refuge
+    region: Floresta Silenciosa
+    offsetX: 40
+    offsetY: -35
+    x0: 184
+    y0: -204
+    w: 29
+    h: 58
+    bits: /wD//x/g//8D/P9/gP//D/D//gH+3z/A//sH+H//AP/vH+D//QP8v3+A//cP8P/+Af7fP8D/+wf4f/8A/+8f4P/9A/y/f4D/9w/w//4B/t8/wP/7B/h//wD/7x/g//0D/L9/gP/3D/D//gH+3z/A//sH+H//AP/vH+D//QP8v3+A//cP8P/+Af7fP8D/+wf4f/8A/+8f4P/9A/y/f4D/9w/w//4B/t8/wP/7B/h//wD/7x/g//0D/L/////3/////v8fwP//////////////////Aw==
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_D_Refuge
+    region: Floresta Silenciosa
+    offsetX: 47
+    offsetY: -27
+    x0: 219
+    y0: -142
+    w: 34
+    h: 15
+    bits: ///////////////////////+////+f///+f///+f////f/7////5////5////5////9//v////n////n////Hw==
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_D_Refuge
+    region: Floresta Silenciosa
+    offsetX: 62
+    offsetY: -24
+    x0: 267
+    y0: -139
+    w: 86
+    h: 43
+    bits: //////8H/APw/////////wH/APz///////9/wD8A///////9////D8D///7/f/////8P/P+////f+fH//wP//+///3d+/P//wB8A+P//nR//////BwD+/3/nx/////8BgP//3/kBgP//fwDg//93fgDg//8fAADw/50fAPj//wcA/v9/DwAAAAAAAID//9//////////7///9//////////7///9//////////7/f/////////+//z/A+f/////3/+///3f+//////3/+///nf////9////+/3/n/////9//v///3/n/////9//v//93/v/////9/wPg/53/////f////v9/BwAAAAAAAID//9/5////////7///d/7////////7//+d////////BwAAAP////////+//////////////+//////////////+//////////////+//////8PAPD/v////////////f/v/////////3////v/////////3////v/////////3/7////////////3/7/////////9////7/////////9////7/////////9/+////////////9/w8AAAAAAAAAfAAAAA==
+    pins:
+    - kind: santuario
+      id: S-F3
+      x: 337.5
+      y: -139
+    - kind: bau
+      id: W15
+      x: 271.5
+      y: -115
+    - kind: bau
+      id: W13
+      x: 346
+      y: -126
+    - kind: bau
+      id: W14
+      x: 350.5
+      y: -111
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_D_Refuge
+    region: Floresta Silenciosa
+    offsetX: 66
+    offsetY: -16
+    x0: 307
+    y0: -89
+    w: 44
+    h: 16
+    bits: AAAAfADw//////////////////////////////////9////////3/////3////////f/////f///////9/////9////////3/////3////////f/////fw==
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 78
+    offsetY: -15
+    x0: 362
+    y0: -87
+    w: 60
+    h: 23
+    bits: /3/gBwAA5vf/B34AAGB+/3/gBwAA5vf/B34AAGB+/v//f4D/5+f///8H+H9+/v//f4D/5+f///8H+H9+/v//////5+f//////38G/v//////5+///////3/+/v//////5+///////3/+/v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////wc=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 90
+    offsetY: -9
+    x0: 433
+    y0: -71
+    w: 30
+    h: 49
+    bits: wf//3/n///f////9//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+f////5//9//v//n////+/////7/////v//Pw==
+    pins:
+    - kind: santuario
+      id: S-F3B
+      x: 447
+      y: -71
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 100
+    offsetY: 0
+    x0: 472
+    y0: -17
+    w: 60
+    h: 32
+    bits: //////////f///////9///////////f///////9//v///////+f///////9//v///////+cfAAAAAPAA/v///8f//+///////////v///////+///////////v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9//v///////+f///////9/
+    pins:
+    - kind: bau
+      id: W17
+      x: 497
+      y: -17
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 112
+    offsetY: 0
+    x0: 543
+    y0: -10
+    w: 30
+    h: 15
+    bits: ABwAwP////f////9//9/////n////+f////5//9//v//n///H+D////7/////v//v////+////8B
+    pins:
+    - kind: santuario
+      id: S-F4
+      x: 549
+      y: -9
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 111
+    offsetY: -9
+    x0: 552
+    y0: -70
+    w: 3
+    h: 52
+    bits: /////////////////////////w8=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 121
+    offsetY: 2
+    x0: 581
+    y0: -7
+    w: 45
+    h: 32
+    bits: /v/////P///////5/////z///////+f///////z/////n///////8/////9/AAD////v///////9/////7////////f///////z/////n///////8/////9//v/////P///////5/////z///////+f///////z/////n///////8/////9//v/////P///////5/////z//////H+D///////3/////v///////9///////
+    pins:
+    - kind: bau
+      id: W18
+      x: 587
+      y: -7
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_E_Nest
+    region: Floresta Silenciosa
+    offsetX: 130
+    offsetY: 7
+    x0: 634
+    y0: 26
+    w: 30
+    h: 15
+    bits: /////////////////////v//n////+f////5//9//v//n////+f////5//9//v//n////+f///8B
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_F_Heart
+    region: Floresta Silenciosa
+    offsetX: 138
+    offsetY: 8
+    x0: 672
+    y0: 27
+    w: 38
+    h: 27
+    bits: ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////DwDgAQAA
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_F_Heart
+    region: Floresta Silenciosa
+    offsetX: 139
+    offsetY: 14
+    x0: 673
+    y0: 59
+    w: 44
+    h: 24
+    bits: AAAeAADw//////////////////////////////////9////////3/////3////////f/////f8D/////9/////9////////3/////3////////f/////f///////9/////9////////3/////3////////f/////f///////9/////9/
+    pins:
+    - kind: bau
+      id: W19
+      x: 675.5
+      y: 70
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_F_Heart
+    region: Floresta Silenciosa
+    offsetX: 147
+    offsetY: 18
+    x0: 724
+    y0: 64
+    w: 19
+    h: 50
+    bits: ////////////7wFwD4B7ANwD4B4A9wC4AcA9AO4BcA+AewDcA+AeAPcAuAfAPQDiAXAMgHsA3APgHgDwAIAHADwA4AEADwB4AMADAAYA8ACABwA8AOABAA8AeADAAwAeAPAAgAcAPACAAQAPAHgAwP///v8H8AA=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  - scene: Forest_F_Heart
+    region: Floresta Silenciosa
+    offsetX: 147
+    offsetY: 30
+    x0: 720
+    y0: 125
+    w: 28
+    h: 51
+    bits: AOAB8P///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wD8AAA=
+    pins: []
+    wholeRoom: 1
+    reveals: []
+  links:
+  - ax: 32.5
+    ay: 4.5
+    bx: 42.5
+    by: 5.5
+  - ax: 85.5
+    ay: 5.5
+    bx: 95.5
+    by: 4.5
+  - ax: 123.5
+    ay: 4.5
+    bx: 135.5
+    by: 4.5
+  - ax: 193.5
+    ay: 4.5
+    bx: 205.5
+    by: 4.5
+  - ax: 190.5
+    ay: -262.5
+    bx: 204.5
+    by: -262.5
+  - ax: 247.5
+    ay: -262.5
+    bx: 263.5
+    by: -259.5
+  - ax: 235.5
+    ay: -241.5
+    bx: 237.5
+    by: -231.5
+  - ax: 332.5
+    ay: -241.5
+    bx: 345.5
+    by: -241.5
+  - ax: 373.5
+    ay: -259.5
+    bx: 385.5
+    by: -262.5
+  - ax: 373.5
+    ay: -223.5
+    bx: 385.5
+    by: -219.5
+  - ax: 443.5
+    ay: -213.5
+    bx: 461.5
+    by: -209.5
+  - ax: 386.5
+    ay: -201.5
+    bx: 379.5
+    by: -194.5
+  - ax: 536.5
+    ay: -194.5
+    bx: 550.5
+    by: -188.5
+  - ax: 578.5
+    ay: -159.5
+    bx: 590.5
+    by: -154.5
+  - ax: 648.5
+    ay: -154.5
+    bx: 659.5
+    by: -151.5
+  - ax: 677.5
+    ay: -151.5
+    bx: 684.5
+    by: -151.5
+  - ax: 659.5
+    ay: -107.5
+    bx: 649.5
+    by: -99.5
+  - ax: 648.5
+    ay: -93.5
+    bx: 659.5
+    by: -93.5
+  - ax: 590.5
+    ay: -99.5
+    bx: 575.5
+    by: -99.5
+  - ax: 516.5
+    ay: -99.5
+    bx: 505.5
+    by: -108.5
+  - ax: 550.5
+    ay: -78.5
+    bx: 552.5
+    by: -69.5
+  - ax: 476.5
+    ay: -163.5
+    bx: 467.5
+    by: -165.5
+  - ax: 423.5
+    ay: -156.5
+    bx: 410.5
+    by: -159.5
+  - ax: 379.5
+    ay: -170.5
+    bx: 379.5
+    by: -176.5
+  - ax: 351.5
+    ay: -168.5
+    bx: 335.5
+    by: -168.5
+  - ax: 300.5
+    ay: -170.5
+    bx: 301.5
+    by: -178.5
+  - ax: 261.5
+    ay: -168.5
+    bx: 248.5
+    by: -177.5
+  - ax: 219.5
+    ay: -207.5
+    bx: 212.5
+    by: -201.5
+  - ax: 211.5
+    ay: -147.5
+    bx: 219.5
+    by: -139.5
+  - ax: 251.5
+    ay: -139.5
+    bx: 267.5
+    by: -136.5
+  - ax: 329.5
+    ay: -96.5
+    bx: 333.5
+    by: -88.5
+  - ax: 349.5
+    ay: -85.5
+    bx: 362.5
+    by: -84.5
+  - ax: 420.5
+    ay: -74.5
+    bx: 433.5
+    by: -68.5
+  - ax: 461.5
+    ay: -23.5
+    bx: 472.5
+    by: -14.5
+  - ax: 530.5
+    ay: -6.5
+    bx: 543.5
+    by: -6.5
+  - ax: 553.5
+    ay: -8.5
+    bx: 552.5
+    by: -18.5
+  - ax: 571.5
+    ay: 2.5
+    bx: 581.5
+    by: 4.5
+  - ax: 624.5
+    ay: 23.5
+    bx: 634.5
+    by: 28.5
+  - ax: 663.5
+    ay: 28.5
+    bx: 672.5
+    by: 29.5
+  - ax: 689.5
+    ay: 53.5
+    bx: 690.5
+    by: 59.5
+  - ax: 715.5
+    ay: 62.5
+    bx: 724.5
+    by: 66.5
+  - ax: 733.5
+    ay: 113.5
+    bx: 733.5
+    by: 125.5
+  - ax: -11
+    ay: 2
+    bx: 9
+    by: 2.05
+  - ax: 100.5
+    ay: 6
+    bx: 136
+    by: -264.95
+  - ax: 165
+    ay: -1
+    bx: 160
+    by: -264.95
+  - ax: 228
+    ay: 0
+    bx: 729
+    by: 170.05

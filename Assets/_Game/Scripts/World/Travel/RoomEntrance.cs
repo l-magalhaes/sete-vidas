@@ -16,7 +16,15 @@ namespace SeteVidas.World
         [Tooltip("Para onde o gato olha ao chegar: 1 = direita, -1 = esquerda")]
         [SerializeField] int facing = 1;
 
+        /// <summary>Como o gato chega (melhorias 14/11/2026).</summary>
+        public enum Style { Auto, Normal, Fall }
+        [Tooltip("Auto: cai do alto se o id tem \"queda\" (ex.: A1_queda); senão entra andando (passagem lateral) ou de pé. " +
+                 "Fall: despenca do alto, bate no chão, fica deitado e levanta")]
+        [SerializeField] Style arrival = Style.Auto;
+
         public string Id => entranceId;
+        /// <summary>Chega despencando do alto (a queda da ponte).</summary>
+        public bool FallsIn => arrival == Style.Fall || (arrival == Style.Auto && entranceId != null && entranceId.Contains("queda"));
         public int FacingDirection => facing >= 0 ? 1 : -1;
         public Vector2 SpawnPoint => transform.position;
 

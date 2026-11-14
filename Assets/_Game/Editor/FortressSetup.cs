@@ -760,6 +760,43 @@ namespace SeteVidas.EditorTools
             Debug.Log("[Sete Vidas] Fortaleza: o fim agora leva à Estrada de Soluki (Forest_Road). Gere as cenas da Floresta no menu 21 se ainda não gerou.");
         }
 
+        /// <summary>
+        /// Melhorias 14/11/2026: põe os atiradores do meio da fase (alojamento e salão) no lugar e no lado novos do
+        /// FortressLayout, sem recriar a fase (os ajustes feitos à mão continuam). Também atualiza a percepção da besta.
+        /// </summary>
+        [MenuItem("Tools/Sete Vidas/13e. Fortaleza: atiradores do meio (sem recriar a fase)", priority = 53)]
+        public static void PatchMiddleArchers()
+        {
+            var scene = SceneManager.GetActiveScene();
+            if (scene.path != GameConstants.FortressScenePath)
+            {
+                EditorUtility.DisplayDialog("Sete Vidas", "Abra a cena da Fortaleza (Scenes/World/Fortress_MVP) antes.", "Ok");
+                return;
+            }
+            EnemySetup.TuneCrossbowSettings();
+            int moved = 0;
+            foreach (var o in FortressLayout.Objects())
+            {
+                if (o.Kind != "archer" || (o.Name != "Atirador do alojamento" && o.Name != "Atirador da sacada")) continue;
+                var go = GameObject.Find(o.Name);
+                if (go == null) { Debug.LogWarning("[Sete Vidas] Não achei \"" + o.Name + "\" na cena."); continue; }
+                Undo.RecordObject(go.transform, "Atiradores do meio");
+                go.transform.position = new Vector3(o.X, o.Y, go.transform.position.z);
+                var ai = go.GetComponent<EnemyAI>();
+                if (ai != null)
+                {
+                    var so = new SerializedObject(ai);
+                    so.FindProperty("startFacing").intValue = o.Facing;
+                    so.ApplyModifiedProperties();
+                }
+                moved++;
+            }
+            EditorPrefs.SetInt(BuiltVersionKey, FortressLayout.Version); // não pergunta de novo por esta versão
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log($"[Sete Vidas] Fortaleza: {moved} atiradores no lugar novo (passarela do alojamento e plataforma do salão).");
+        }
+
         const string AetherionArt ="Assets/_Game/Art/Environments/Backgrounds/Ext/Aetherion/";
 
         /// <summary>

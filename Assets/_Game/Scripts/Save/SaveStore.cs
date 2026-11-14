@@ -104,6 +104,7 @@ namespace SeteVidas.Save
             data.mapRooms ??= new List<MapRoomRecord>();
             data.mapRooms.RemoveAll(r => r == null || string.IsNullOrEmpty(r.id) || string.IsNullOrEmpty(r.scene));
             foreach (var r in data.mapRooms) r.markers ??= new List<MapMarker>();
+            data.mapChunks ??= new List<int>();
         }
     }
 }

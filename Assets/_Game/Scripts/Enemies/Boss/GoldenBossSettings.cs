@@ -71,6 +71,23 @@ namespace SeteVidas.Enemies.Boss
         [Tooltip("Escudo sagrado: invulnerável (de qualquer ângulo) enquanto chama e lança os relâmpagos")]
         public bool ShieldDuringLightning = true;
 
+        [Header("Repulsa sagrada: o gato em cima da cabeça (melhorias 14/11/2026)")]
+        [Tooltip("Tempo seguido com o gato em cima da cabeça até ele reagir (s)")]
+        [Min(0f)] public float RepelAfterAbove = 0.6f;
+        [Tooltip("Golpes de cima (estocada, queda pesada) seguidos que fazem ele reagir na hora")]
+        [Min(1)] public int RepelAfterHitsFromAbove = 2;
+        [Tooltip("Aviso: brilho dourado subindo da cabeça e a marreta erguida (s)")]
+        [Min(0.1f)] public float RepelWindup = 0.35f;
+        [Min(0.05f)] public float RepelActive = 0.2f;
+        [Tooltip("Parado depois da repulsa (s): janela para bater nele de frente")]
+        [Min(0f)] public float RepelRecovery = 0.45f;
+        [Tooltip("Tempo mínimo entre duas repulsas (s)")]
+        [Min(0f)] public float RepelCooldown = 1.2f;
+        [Tooltip("Coluna de luz em cima da cabeça (largura × altura, tiles): pega o gato em qualquer altura do quique")]
+        public Vector2 RepelHitbox = new Vector2(3.4f, 8f);
+        [Tooltip("Dano da repulsa (hits)")]
+        [Min(0)] public int RepelDamage = 1;
+
         [Header("Dano no gato (hits; 1 coração = 2 hits)")]
         [Tooltip("Marretada de perto: meio coração")]
         [Min(0)] public int SwingDamage = 1;

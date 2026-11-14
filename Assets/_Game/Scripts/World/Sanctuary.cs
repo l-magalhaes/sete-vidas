@@ -53,6 +53,29 @@ namespace SeteVidas.World
 
         PlayerHealth _playerInRange;
         bool _resting;
+        // viagem rápida (melhorias 14/11/2026): os dois avisos juntos, [Interagir] descansar e [Ataque] viagem rápida
+        SeteVidas.UI.WorldPrompt _travelPrompt;
+        List<SanctuaryVisit> _destinations = new List<SanctuaryVisit>();
+        float _nextDestinationCheck;
+        bool _travelReady;
+
+        static Sanctuary s_travelHere;
+
+        /// <summary>
+        /// O gato está num santuário com viagem rápida: o botão de ataque abre o menu de viagem em vez de golpear
+        /// (o <see cref="SeteVidas.Combat.CombatController"/> consulta isto).
+        /// </summary>
+        public static bool AttackOpensTravel => s_travelHere != null && s_travelHere._travelReady;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() // Play sem recarregar o domínio
+        {
+            s_all.Clear();
+            s_travelHere = null;
+        }
+
+        /// <summary>O aviso "viagem rápida" está aparecendo (testes).</summary>
+        public bool TravelAvailable => _travelReady;
 
         /// <summary>A sequência de descanso (fade, cochilo, levantar) está tocando.</summary>
         public bool IsResting => _resting;
@@ -68,8 +91,27 @@ namespace SeteVidas.World
 
         void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); }
 
-        void Start() => SeteVidas.UI.WorldPrompt.Upgrade(prompt); // o botão do aparelho em uso no lugar de "E: ..."
-        void OnDisable() => s_all.Remove(this);
+        void Start()
+        {
+            if (prompt != null)
+            {
+                // segundo aviso, logo acima do de descansar: [botão de ataque] viagem rápida
+                var copy = Instantiate(prompt.gameObject, prompt.transform.parent);
+                copy.name = "Aviso: viagem rápida";
+                copy.transform.localPosition = prompt.transform.localPosition + Vector3.up * 0.75f;
+                var text = copy.GetComponent<TextMesh>();
+                text.text = "X: viagem rápida";
+                _travelPrompt = SeteVidas.UI.WorldPrompt.Upgrade(text, SeteVidas.UI.GameAction.Attack);
+                copy.SetActive(false);
+            }
+            SeteVidas.UI.WorldPrompt.Upgrade(prompt); // o botão do aparelho em uso no lugar de "E: ..."
+        }
+
+        void OnDisable()
+        {
+            s_all.Remove(this);
+            if (s_travelHere == this) s_travelHere = null;
+        }
 
         public static IReadOnlyList<Sanctuary> All => s_all;
 
@@ -85,6 +127,7 @@ namespace SeteVidas.World
             var health = other.GetComponentInParent<PlayerHealth>();
             if (health != null) _playerInRange = health;
             if (health != null) RecordVisit(); // passou por aqui: vira destino da viagem rápida
+            _nextDestinationCheck = 0f;        // confere os destinos na hora
         }
 
         void OnTriggerExit2D(Collider2D other)
@@ -95,15 +138,31 @@ namespace SeteVidas.World
 
         void Update()
         {
-            bool canRest = _playerInRange != null && !_playerInRange.IsDead && !_resting;
+            bool canRest = _playerInRange != null && !_playerInRange.IsDead && !_resting
+                           && !SeteVidas.UI.TravelMenu.IsOpen && !SceneTravel.IsTraveling;
             if (prompt != null) prompt.gameObject.SetActive(canRest);
             if (spriteRenderer != null) spriteRenderer.sprite = CurrentSprite();
             // a borda da frente some quando o gato sai da caixinha
             if (sandboxFront != null && sandboxFront.enabled && !_resting && !CatInSandbox()) sandboxFront.enabled = false;
 
+            // viagem rápida: só com outro santuário visitado e ligado a este, e sem veneno
+            if (canRest && Time.time >= _nextDestinationCheck)
+            {
+                _nextDestinationCheck = Time.time + 0.5f;
+                _destinations = _playerInRange.IsPoisoned
+                    ? new List<SanctuaryVisit>()
+                    : TravelRules.Destinations(SaveManager.Data, sanctuaryId, gameObject.scene.name, Zone);
+            }
+            _travelReady = canRest && _destinations.Count > 0 && !_playerInRange.IsPoisoned;
+            if (_travelPrompt != null) _travelPrompt.gameObject.SetActive(_travelReady);
+            if (_travelReady) s_travelHere = this;
+            else if (s_travelHere == this) s_travelHere = null;
+
             if (!canRest) return;
             var input = _playerInRange.GetComponent<PlayerInputReader>();
-            if (input != null && input.isActiveAndEnabled && input.InteractPressedThisFrame) Interact(_playerInRange);
+            if (input == null || !input.isActiveAndEnabled) return;
+            if (input.InteractPressedThisFrame) Interact(_playerInRange);
+            else if (_travelReady && input.AttackPressedThisFrame) OpenTravel(_playerInRange);
         }
 
         Sprite CurrentSprite()
@@ -121,18 +180,28 @@ namespace SeteVidas.World
         }
 
         /// <summary>
-        /// Apertou E: com outros santuários para onde viajar, abre o menu (descansar ou viajar); senão, descansa direto.
-        /// Envenenado não viaja (Docs/Design/floresta-mecanicas.md §5).
+        /// Apertou Interagir (E / B): descansa direto. A viagem rápida tem o próprio botão (<see cref="OpenTravel"/>),
+        /// os dois avisos aparecem juntos (melhorias 14/11/2026).
         /// </summary>
         public void Interact(PlayerHealth health)
         {
             if (health == null || health.IsDead || _resting) return;
             RecordVisit();
-            var destinations = health.IsPoisoned || SceneTravel.IsTraveling
-                ? new List<SanctuaryVisit>()
-                : TravelRules.Destinations(SaveManager.Data, sanctuaryId, gameObject.scene.name, Zone);
-            if (destinations.Count == 0) { BeginRest(health); return; }
+            BeginRest(health);
+        }
+
+        /// <summary>
+        /// Apertou o botão de ataque (X / clique) no santuário: abre a lista dos santuários para onde viajar.
+        /// Envenenado não viaja (Docs/Design/floresta-mecanicas.md §5). Retorna se abriu.
+        /// </summary>
+        public bool OpenTravel(PlayerHealth health)
+        {
+            if (health == null || health.IsDead || _resting || health.IsPoisoned || SceneTravel.IsTraveling) return false;
+            RecordVisit();
+            var destinations = TravelRules.Destinations(SaveManager.Data, sanctuaryId, gameObject.scene.name, Zone);
+            if (destinations.Count == 0) return false;
             SeteVidas.UI.TravelMenu.Open(this, health, destinations);
+            return true;
         }
 
         /// <summary>Começa o descanso com cena (o mesmo que apertar E perto do santuário).</summary>

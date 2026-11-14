@@ -103,4 +103,53 @@ namespace SeteVidas.Combat
         public static Rect StabBox(Vector2 feet, Vector2 size, float below) =>
             new Rect(feet.x - size.x * 0.5f, feet.y - below - size.y * 0.5f, size.x, size.y);
     }
+
+    /// <summary>
+    /// Ataque para cima (melhorias 14/11/2026): {subir} + ataque, no chão ou no ar, em todas as armas. Um golpe só
+    /// (sem combo), com a caixa em cima da cabeça. Regras puras (EditMode).
+    /// </summary>
+    public static class UpAttackRules
+    {
+        /// <summary>Quanto o direcional precisa apontar para cima.</summary>
+        public const float Threshold = 0.5f;
+
+        /// <summary>Cima segurado (e não baixo/agachar): o ataque vira o golpe para cima.</summary>
+        public static bool WantsUpAttack(float moveY, bool crouchHeld) => !crouchHeld && moveY > Threshold;
+
+        /// <summary>
+        /// Caixa do golpe para cima: centrada no gato (um pouco à frente), com a base
+        /// <paramref name="overlap"/> abaixo do alto da cabeça.
+        /// </summary>
+        public static Rect Box(Vector2 feet, float height, int facing, Vector2 size, float overlap = 0.2f)
+        {
+            float cx = feet.x + facing * 0.15f;
+            float y0 = feet.y + height - overlap;
+            return new Rect(cx - size.x * 0.5f, y0, size.x, size.y);
+        }
+    }
+
+    /// <summary>
+    /// Dano que cresce com os corações (melhorias 14/11/2026): cada coração recuperado depois da maldição multiplica
+    /// o dano base por 1,3 (2 corações = 1,3×; 3 = 1,69×...). Antes da maldição o gato tem os 7 corações do Ladino e
+    /// não ganha nada (senão a Fortaleza inteira ficaria fácil). Regras puras (EditMode).
+    /// </summary>
+    public static class HeartDamageRules
+    {
+        public const double PerHeart = 1.3;
+
+        /// <summary>Multiplicador do dano para os corações recuperados.</summary>
+        public static double Multiplier(int heartsRecovered, bool curseDone)
+        {
+            if (!curseDone || heartsRecovered <= 1) return 1.0;
+            return System.Math.Pow(PerHeart, heartsRecovered - 1);
+        }
+
+        /// <summary>Dano × multiplicador, arredondado (0,5 para cima), nunca menor que 1 (dano 0 continua 0).</summary>
+        public static int Apply(int damage, double multiplier)
+        {
+            if (damage <= 0) return 0;
+            if (multiplier <= 1.0) return damage;
+            return System.Math.Max(1, (int)System.Math.Round(damage * multiplier, System.MidpointRounding.AwayFromZero));
+        }
+    }
 }

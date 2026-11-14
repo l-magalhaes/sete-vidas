@@ -19,10 +19,10 @@ MonoBehaviour:
   PatrolPause: 1.5
   SearchLookInterval: 1
   GravityScale: 4
-  VisionRange: 11
-  VisionHalfAngle: 50
+  VisionRange: 13
+  VisionHalfAngle: 55
   EyeHeight: 1.3
-  SightFillRate: 1
+  SightFillRate: 2.5
   CombatVisibilityFloor: 0.6
   HearingMultiplier: 1
   SuspiciousThreshold: 0.25
@@ -33,6 +33,12 @@ MonoBehaviour:
   SuspiciousTime: 1.2
   LoseSightTime: 2
   SearchTime: 3
+  HuntSearchTime: 8
+  HuntSpeed: 4
+  HuntLead: 3
+  HuntSweep: 3
+  HuntLookInterval: 0.8
+  HuntTurnDelay: 0.25
   AttackRange: 1.3
   AttackWindup: 0.45
   AttackActive: 0.15
@@ -42,15 +48,50 @@ MonoBehaviour:
   AttackHitboxForward: 0.6
   Ranged: 1
   HoldPosition: 1
-  ShootRange: 11
+  ShootRange: 13
   AimTime: 0.9
   AimLockTime: 0.25
   ReloadTime: 1.6
   BoltSpeed: 12
   BoltDamage: 1
   MaxAimDown: 70
-  MaxAimUp: 20
+  MaxAimUp: 30
   VisionTiltDown: 30
   DeathDuration: 0.6
   HeartDropChance: 0.25
+  Reactions:
+    Light:
+      Knockback: 3
+      Lift: 0
+      Flash: 0.05
+      Stun: 0.2
+      SquashPx: 1
+      Sparks: 3
+      Dust: 0
+      ShakePx: 0
+      ShakeTime: 0
+    Strong:
+      Knockback: 5
+      Lift: 0
+      Flash: 0.1
+      Stun: 0.3
+      SquashPx: 1
+      Sparks: 5
+      Dust: 0
+      ShakePx: 0
+      ShakeTime: 0
+    Heavy:
+      Knockback: 7
+      Lift: 1.5
+      Flash: 0.1
+      Stun: 0.45
+      SquashPx: 2
+      Sparks: 5
+      Dust: 1
+      ShakePx: 2
+      ShakeTime: 0.15
+    LightInterruptBefore: 0.5
+    KnockbackScale: 1
   BodySize: {x: 0.75, y: 1.6}
+  SolidBody: 1
+  BumpCooldown: 0.5

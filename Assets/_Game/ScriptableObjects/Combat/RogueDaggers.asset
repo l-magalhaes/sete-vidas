@@ -24,6 +24,8 @@ MonoBehaviour:
   Active: 0.08
   Recovery: 0.12
   FinalRecovery: 0.3
+  UpAttack: 1
+  UpHitbox: {x: 1.4, y: 1.3}
   HitboxSize: {x: 1.1, y: 0.9}
   HitboxForward: 0.5
   HitstopFront: 0.05

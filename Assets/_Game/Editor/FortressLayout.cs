@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 17; // 17: o fim leva à Estrada de Soluki (Floresta F3); 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
+        public const int Version = 18; // 18: atiradores do meio reposicionados (13e); 17: o fim leva à Estrada de Soluki (Floresta F3); 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
 
         public enum Map { Ground, Climbable, Background }
 
@@ -181,6 +181,44 @@ namespace SeteVidas.EditorTools
             return t;
         }
 
+        // ------------------------------------------------------------ salas do mapa
+
+        /// <summary>Uma sala do mapa do mundo (tiles, inclusivo). <c>Whole</c>: a sala inteira é espaço (colunas e saliências por dentro não aparecem).</summary>
+        public class MapRoomRect { public string Name; public int X0, Y0, X1, Y1; public bool Whole; }
+
+        /// <summary>
+        /// As salas da Fortaleza no mapa do mundo (estilo Hollow Knight; menu 22, <c>WorldMapSetup</c>). O espaço de
+        /// cada sala é o ar dentro dela; plataformas soltas no meio somem (a sala fica inteira). Ao ar livre, a sala vai
+        /// só até ~9 tiles acima do chão, para o céu não entrar no mapa.
+        /// </summary>
+        public static List<MapRoomRect> MapRooms()
+        {
+            var r = new List<MapRoomRect>();
+            M(r, "alto da montanha", -10, CliffTop, 12, CliffTop + 8);
+            M(r, "queda do penhasco", 13, 9, 18, CliffTop + 8);
+            M(r, "trilha e pátio", 13, -2, 111, 9);
+            M(r, "torre de escalada", 88, 0, 94, 19, true);   // as colunas não cortam o pátio no mapa
+            M(r, "muralha 1", 100, 10, 119, 22);
+            M(r, "muralha 2", 112, 15, 127, 36);
+            M(r, "muralha 3", 120, 29, 135, 51);
+            M(r, "galeria da muralha", 136, WallWalk, 210, 51);
+            M(r, "chaminé do sino", 207, 52, 211, BellHall - 1);
+            M(r, "salão e galeria das armadilhas", 140, BellHall - 2, 216, 81);
+            M(r, "chaminé do selo", 139, 82, 143, SealFloor - 1);
+            M(r, "câmara do selo", 136, SealFloor, 222, 109);
+            M(r, "poço dos fundos", 218, 0, 222, SealFloor - 1, true);   // sem o zigue-zague das saliências
+            M(r, "cofre 72", 223, BellHall, 230, BellHall + 3);
+            M(r, "cofre 43", 223, WallWalk, 230, WallWalk + 3);
+            M(r, "cofre 15", 223, 15, 230, 18);
+            M(r, "portão dos fundos e estrada", 223, 0, 250, 12);
+            return r;
+        }
+
+        static void M(List<MapRoomRect> r, string name, int x0, int y0, int x1, int y1, bool whole = false)
+        {
+            r.Add(new MapRoomRect { Name = name, X0 = x0, Y0 = y0, X1 = x1, Y1 = y1, Whole = whole });
+        }
+
         // ---------------------------------------------------------------- rampas
 
         /// <summary>Rampas do mapa (relevo natural; Etapa 2 do plano de cenário). Andáveis: 1:1 e 1:2.</summary>
@@ -304,7 +342,9 @@ namespace SeteVidas.EditorTools
             // alarme da galeria (pedido do usuário: sininhos no lugar do fio esticado; os fios ficam só nas armadilhas de
             // flecha). Mesmo alcance do fio antigo: 16 tiles chamam as sentinelas. Agachado passa por baixo
             Add(o, "noisy", "Sininhos de alarme da galeria", 179f, WallWalk, a: 16f, text: "sininhos");
-            Add(o, "archer", "Atirador do alojamento", 183f, 48f, facing: -1);
+            // melhorias 14/11/2026: na ponta direita da passarela, olhando para quem chega do portão (cobre a passarela
+            // e o chão embaixo dela). Caixotes da passarela e a sombra A escondem; por baixo e pelas costas, a borda (5).
+            Add(o, "archer", "Atirador do alojamento", 166.2f, 48f, facing: -1);
             Add(o, "sentinel", "Sentinela do alojamento", 190f, WallWalk, facing: -1, a: 185f, b: 195f);
             Add(o, "sentinel", "Guarda da torre do sino", 201.5f, WallWalk, facing: 1, a: 200f, b: 203f);
             // a armadilha guarda o pé da subida (a moeda em cima da placa é a isca); o meio da galeria é o alojamento
@@ -325,7 +365,9 @@ namespace SeteVidas.EditorTools
             Add(o, "sentinel", "Sentinela do salão C", 179.5f, BellHall, facing: -1, a: 176f, b: 183f);
             Add(o, "coin", "Moeda (plataforma do salão)", 191.5f, 75.6f, id: "fort_salao", value: 1);
             Add(o, "noisy", "Cacos do vitral", 186.5f, BellHall, w: 2f, text: "cacos");   // embaixo do vitral rachado: pule por cima
-            Add(o, "archer", "Atirador da sacada", 201f, 78f, facing: -1);
+            // melhorias 14/11/2026: saiu da sacada (ficava de costas para quem sobe a torre do sino) para a plataforma 1,
+            // olhando para a direita: vê o gato chegar ao salão e cobre as sentinelas A e B. Por trás, pelo lado do fogo.
+            Add(o, "archer", "Atirador da sacada", 182.5f, 75f, facing: 1);
             // (a placa "cuidado: armadilhas" saiu: as armadilhas já se veem, melhoria 9)
             Add(o, "noisy", "Cacos da lamparina", 175.5f, BellHall, w: 1f, text: "cacos");
             for (int i = 0; i < 6; i++)
