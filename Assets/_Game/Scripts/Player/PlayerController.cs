@@ -500,10 +500,17 @@ namespace SeteVidas.Player
 
             // Só agarra a borda para a qual o jogador está empurrando
             int dir = input.MoveX > 0.01f ? 1 : input.MoveX < -0.01f ? -1 : 0;
-            if (dir == 0) return;
-
-            if (!_ground.TryFindLedge(dir, settings.ColliderWidth, settings.LedgeHandHeight,
-                    settings.LedgeGrabWindow, settings.StandingHeight, out Vector2 corner))
+            Vector2 corner;
+            if (dir == 0)
+            {
+                // soltou a direção no meio do pulo: a ponta de galho à frente ainda pega (borda de bloco, não)
+                dir = FacingDirection;
+                if (!_ground.TryFindPlatformLedge(dir, settings.ColliderWidth, settings.LedgeHandHeight,
+                        settings.LedgeGrabWindow, settings.StandingHeight, out corner))
+                    return;
+            }
+            else if (!_ground.TryFindLedge(dir, settings.ColliderWidth, settings.LedgeHandHeight,
+                    settings.LedgeGrabWindow, settings.StandingHeight, out corner))
                 return;
 
             IsHanging = true;

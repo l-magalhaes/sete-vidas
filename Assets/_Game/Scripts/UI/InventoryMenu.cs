@@ -550,9 +550,9 @@ namespace SeteVidas.UI
                 _entries.Add(new Entry
                 {
                     Icon = IconSprite(InventoryIcon.Wood, false), Name = SeteVidas.Progression.ReconstructionWood.DisplayName,
-                    NameColor = Gold, Badge = wood + "/" + SeteVidas.Progression.ReconstructionWood.Total,
+                    NameColor = Gold, Badge = wood + "/" + SeteVidas.Progression.ReconstructionWood.InForest,
                     Body = built ? InventoryTexts.WoodDone : InventoryTexts.Wood,
-                    Footer = built ? "A ponte está de pé" : SeteVidas.Progression.ReconstructionWood.Label(data),
+                    Footer = built ? "A ponte está de pé" : SeteVidas.Progression.ReconstructionWood.BridgeHint(data),
                 });
             }
 
@@ -1171,7 +1171,7 @@ namespace SeteVidas.UI
         };
 
         public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
-        public const string Wood = "Tábuas firmes, secas, de lei. Escondidas em baús pela floresta. A Tobi reconstrói a ponte com doze delas. E vinte moedas.";
+        public const string Wood = "Tábuas de lei, cortadas por mão experiente: corte reto, secas na sombra, escolhidas a dedo. Madeira de quem constrói, não de quem queima. Alguém as guardou em baús pela floresta. A Tobi reconstrói a ponte com doze delas. E vinte moedas.";
         public const string WoodDone = "Viraram ponte. Menos uma, que a Tobi guardou no bolso. Taxa de material.";
         public static string KeyText(string key) => key == "cabana"
             ? "Chave de ferro com uma pena de flecha amarrada. Abre a cabana no alto da árvore. Ninguém deixa uma chave assim à toa."

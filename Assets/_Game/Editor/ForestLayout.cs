@@ -22,7 +22,7 @@ namespace SeteVidas.EditorTools
     public static class ForestLayout
     {
         /// <summary>Suba quando mudar o graybox (o menu 21 recria as cenas).</summary>
-        public const int Version = 5;
+        public const int Version = 9;
 
         public const string Road = "Forest_Road";
         public const string A = "Forest_A_Roots";
@@ -1171,13 +1171,13 @@ namespace SeteVidas.EditorTools
             G(26, 0, 29, 3); Slope(26, 4, 4, 4, true); G(30, 0, 37, 7);  // rampa 1:1 até o segundo (topo 8)
             Slope(38, 4, 4, 4, false); G(38, 0, 41, 3); G(42, 0, 47, 3); // desce correndo...
             G(50, 0, 51, 13); V(50, 1, 50, 13); V(51, 1, 51, 13);        // ...e pula para a vinha do pilar
-            G(52, 9, 57, 9);                                             // saída (topo 10)
-            Shadow(15, 4, 4, 4); Shadow(31, 8, 4, 4); Shadow(43, 4, 4, 4); Shadow(53, 10, 4, 4); Shadow(52, 0, 6, 5);
+            G(54, 9, 57, 9);                                             // saída (topo 10); o cogumelo fica ao lado, em x 52..53
+            Shadow(15, 4, 4, 4); Shadow(31, 8, 4, 4); Shadow(43, 4, 4, 4); Shadow(54, 10, 4, 4); Shadow(52, 0, 6, 5);
             Bush(17f, 4f);
             Infected(34f, 8f, -1, 30f, 37f, false); Infected(45f, 4f, 1, 42f, 47f, false);
-            Snake(11f, 0f, 1);
+            Snake(15.5f, 4f, -1);                                        // no patamar 1 (plano), de frente para quem sobe a rampa
             Plant(48.5f, 0f);
-            Mushroom(53.5f, 0f);
+            Mushroom(52.9f, 0f);
             Sign(10f, 0f, "ossadas");
             Hooks(16f, 10f, 23f, 34f, 46f, 55f);
             DoorE(10, 13);
@@ -1188,17 +1188,17 @@ namespace SeteVidas.EditorTools
             Terrain(0, 1, 1, 2, 2, 1);
             Blob(5, 3, 9, 4); Branch(1, 8, 4);
             G(10, 14, 16, 14); Slope(13, 15, 3, 3, true); G(16, 15, 16, 17); // patamar 1 com rampa (topo 18)
-            Cactus(5.5f, 13f);
+            Cactus(5.5f, 16f);                                                // pogo até ~23: alcança o galho de 22
             G(12, 29, 18, 29); Slope(15, 30, 3, 3, true); G(18, 30, 18, 32); // patamar 2 com rampa (topo 33)
             Rotten(21, 34);                                                   // plataforma temporária até a vinha
-            VE(1, 17); VE(23, 44); Sway(20, 19, 4);
+            VE(1, 17); VE(23, 44); Sway(22, 19, 4);                 // galho perto da parede: ponte entre as duas vinhas
             Mushroom(25f, 0f);
             Plant(0.1f, 24f, -90f);
             Branch(5, 22, 4); Branch(8, 25, 3);
             Branch(13, 44, 4); Branch(19, 45, 4); Branch(24, 45, 3);
             Shadow(0, 26, 5, 8); Shadow(11, 15, 2, 4);
             Sign(14f, 30f, "a raiz se mexe (D-NINHO-01)");
-            Snake(16f, 33f, -1);
+            // (sem serpente no patamar 2: pedido do usuário, 14/11/2026)
             Hook(22f, 10f); Hook(14f, 24f); Hook(18f, 38f); Hook(10f, 46f); Hook(5f, 18f);
             // o vão da vinha da direita (18..22): lá de cima, solta-se o cipó que o fecha; a parede inteira vira subida
             ScVine(AtRaiz, Right + 1, 18, 22);
@@ -1302,20 +1302,25 @@ namespace SeteVidas.EditorTools
             var g1 = Sala("G1", "Clareira do Espírito", f1.X, f1.Y + f1.H - 1, 45, 25);
             Branch(3, 4, 4); Branch(7, 7, 3); G(0, 9, 5, 9); Chest(2.5f, 10f, "W19", 5);
             Sign(26f, 0f, "o espírito da Isyathy (F8)");
-            Coins(30f, 0f, 4);
-            Mushroom(38f, 0f); Blob(33, 12, 40, 12); Coins(34f, 13f, 4);
+            Coins(20f, 0f, 4);
+            // o cogumelo fica AO LADO da plataforma (antes estava embaixo e o gato batia a cabeça nela)
+            Mushroom(31.5f, 0f); Blob(33, 11, 40, 11); Coins(34f, 12f, 4);   // topo 12
             DoorE(0, 3);
 
-            // G2 Coluna dos Primatas: poço de elevador; cogumelos à esquerda, chaminé à direita
+            // G2 Coluna dos Primatas: poço de elevador. Sobe-se só pelos cogumelos (esquerda); a direita, que era uma
+            // segunda subida igual (vinhas), virou um poço de cactos com moedas num nicho, fechado por cima (14/11/2026)
             var g2 = Sala("G2", "Coluna dos Primatas", g1.X + g1.W - 1, g1.Y, 20, 51);
             G(4, 4, 14, 46);                                            // a coluna (topo 47)
-            Mushroom(2f, 0f);
-            G(0, 10, 1, 10); Mushroom(1f, 11f);
-            G(2, 21, 3, 21); Mushroom(3f, 22f);
-            G(0, 32, 1, 32); Mushroom(1f, 33f);
-            G(2, 44, 3, 44);
-            V(14, 4, 14, 46); VE(1, 46);
-            Bat(16f, 30f);
+            // cogumelos em zigue-zague: nenhum fica embaixo do patamar seguinte (o gato batia a cabeça)
+            Mushroom(1f, 0f);
+            G(2, 10, 3, 10); Mushroom(3f, 11f);
+            G(0, 21, 1, 21); Mushroom(1f, 22f);
+            G(2, 32, 3, 32); Mushroom(3f, 33f);
+            G(0, 44, 1, 44);
+            Cactus(15.5f, 2.5f); Cactus(15.5f, 8.5f, 0f, 0.5f); Cactus(15.5f, 14f);  // pogo em fila (5,5 entre eles)
+            G(16, 19, 17, 19); Coin(16.5f, 20f, 3); Coin(17.5f, 21f, 3);         // nicho (topo 20): moedas de 3
+            G(15, 24, 17, 46);                                                 // fechado acima do nicho
+            Bat(2.5f, 27f);                                                    // o morcego passa para os cogumelos
             Sign(8f, 47f, "P-PRIM-05");
             DoorN(8, 11);
 

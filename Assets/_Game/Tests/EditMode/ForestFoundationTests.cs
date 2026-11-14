@@ -55,20 +55,23 @@ namespace SeteVidas.Tests
         }
 
         [Test]
-        public void Wood_CountsFlags_AndCapsAtTwelve()
+        public void Wood_CountsAllFlags_BridgeNeedsTwelve()
         {
             Assert.AreEqual(0, ReconstructionWood.Count(SaveData.NewGame()));
             Assert.AreEqual(8, ReconstructionWood.Count(WithWood(8)));
-            Assert.AreEqual(12, ReconstructionWood.Count(WithWood(14)), "Nunca passa de 12");
+            Assert.AreEqual(14, ReconstructionWood.Count(WithWood(14)), "Conta todas: a floresta tem 18");
             Assert.AreEqual(4, ReconstructionWood.Missing(WithWood(8)));
+            Assert.AreEqual(0, ReconstructionWood.Missing(WithWood(14)), "Sobrando não falta nada");
             Assert.AreEqual(0, ReconstructionWood.Count(null));
         }
 
         [Test]
         public void Wood_LabelsMatchTheDesign()
         {
-            Assert.AreEqual("Madeira de Reconstrução: 8/12", ReconstructionWood.Label(WithWood(8)));
-            Assert.AreEqual("Madeira de Reconstrução (3/12)", ReconstructionWood.PickupText(3));
+            Assert.AreEqual("Madeira de Reconstrução: 8/18", ReconstructionWood.Label(WithWood(8)));
+            Assert.AreEqual("A ponte precisa de 12 (faltam 4)", ReconstructionWood.BridgeHint(WithWood(8)));
+            Assert.AreEqual("Já dá para a ponte (12)", ReconstructionWood.BridgeHint(WithWood(13)));
+            Assert.AreEqual("+1 Madeira de Reconstrução", ReconstructionWood.PickupText); // sem contador: a conta fica no inventário
         }
 
         [Test]

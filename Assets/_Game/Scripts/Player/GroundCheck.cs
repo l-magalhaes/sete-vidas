@@ -226,7 +226,7 @@ namespace SeteVidas.Player
 
             // 1) Parede à frente, logo abaixo da altura das patas
             var wall = Physics2D.Raycast(new Vector2(feet.x, handY - window), forward, halfWidth + 0.15f, solidLayers);
-            if (wall.collider == null) return false;
+            if (wall.collider == null) return TryFindPlatformLedgeAt(dir, width, handY, window, standingHeight, out corner);
 
             // 2) Topo da borda: raio para baixo, começando acima das patas. Se começar dentro do sólido,
             //    a parede continua para cima e não há quina aqui.
@@ -242,6 +242,61 @@ namespace SeteVidas.Player
 
             corner = new Vector2(wall.point.x, top.point.y);
             return true;
+        }
+
+        readonly Collider2D[] _ledgeHits = new Collider2D[4];
+
+        /// <summary>
+        /// Ponta de um galho de mão única (pedido do usuário, 13/11/2026: pendurar nas plataformas pequenas também).
+        /// A ponta do galho que fica de frente para o gato, com o topo na altura das patas; o gato precisa estar ao lado
+        /// dela (não embaixo do galho) e caber em pé em cima. Galhos que se mexem (corpo não estático) ficam de fora.
+        /// </summary>
+        public bool TryFindPlatformLedge(int dir, float width, float handHeight, float window, float standingHeight, out Vector2 corner)
+            => TryFindPlatformLedgeAt(dir, width, Feet.y + handHeight, window, standingHeight, out corner);
+
+        /// <summary>Até onde, à frente do corpo, a ponta do galho ainda é agarrada (tiles).</summary>
+        public const float PlatformReach = 0.7f;
+        /// <summary>Folga a mais na altura das patas para os galhos (tiles).</summary>
+        public const float PlatformExtraWindow = 0.15f;
+
+        bool TryFindPlatformLedgeAt(int dir, float width, float handY, float window, float standingHeight, out Vector2 corner)
+        {
+            corner = default;
+            if (platformLayers == 0) return false;
+            Vector2 feet = Feet;
+            float halfWidth = width * 0.5f;
+            float front = feet.x + dir * halfWidth;
+            // o galho não tem lado sólido: o gato que vem pulando já entrou embaixo da ponta quando as patas chegam
+            // ao topo. Vale até o corpo inteiro debaixo da ponta (o gato volta para o lado dela ao se pendurar).
+            // À frente: o gato no ar não encosta numa parede que o segure ao lado da ponta, então o momento em que as
+            // patas passam pelo topo raramente pega o corpo colado nela. Aceita até PlatformReach e puxa o gato para lá.
+            float reach = PlatformReach, overlap = width;
+            // queda rápida: entre um passo e o próximo as patas descem isto; a janela cobre o caminho inteiro
+            float fell = _body != null ? Mathf.Max(0f, -_body.linearVelocity.y) * Time.fixedDeltaTime : 0f;
+            window += PlatformExtraWindow;
+            float low = handY - window - fell, high = handY + window + fell;
+            var center = new Vector2(front + dir * (reach - overlap) * 0.5f, (low + high) * 0.5f);
+            var size = new Vector2(reach + overlap, high - low);
+            int n = Physics2D.OverlapBoxNonAlloc(center, size, 0f, _ledgeHits, platformLayers);
+            for (int i = 0; i < n; i++)
+            {
+                var col = _ledgeHits[i];
+                if (col == null || _dropped.Contains(col)) continue;
+                var rb = col.attachedRigidbody;
+                if (rb != null && rb.bodyType != RigidbodyType2D.Static) continue;
+                var b = col.bounds;
+                float top = b.max.y;
+                if (top < low || top > high) continue;
+                float edge = dir > 0 ? b.min.x : b.max.x;           // a ponta virada para o gato
+                float gap = (edge - front) * dir;                    // + = à frente; - = o gato já entrou embaixo
+                if (gap > reach || gap < -overlap) continue;
+                var standCenter = new Vector2(edge + dir * (halfWidth + 0.05f), top + 0.02f + standingHeight * 0.5f);
+                var standSize = new Vector2(width - 2f * sideInset, standingHeight - 0.04f);
+                if (Physics2D.OverlapBox(standCenter, standSize, 0f, solidLayers) != null) continue;
+                corner = new Vector2(edge, top);
+                return true;
+            }
+            return false;
         }
 
 #if UNITY_EDITOR

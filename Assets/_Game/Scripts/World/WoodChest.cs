@@ -97,7 +97,7 @@ namespace SeteVidas.World
             for (int i = 0; i < 6; i++)
                 HitSparks.Rise(top + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.4f, 0.1f)), wood, Random.Range(1f, 2f), Random.Range(0.4f, 0.7f));
             if (containsWood)
-                PixelPopup.Spawn(transform.position + Vector3.up * 2f, ReconstructionWood.PickupText(ReconstructionWood.Count(data)), wood);
+                PixelPopup.Spawn(transform.position + Vector3.up * 2f, ReconstructionWood.PickupText, wood);
 
             if (firstWood && firstWoodDialogue != null && DialogueRunner.Active != null)
                 DialogueRunner.Active.Play(firstWoodDialogue, input);

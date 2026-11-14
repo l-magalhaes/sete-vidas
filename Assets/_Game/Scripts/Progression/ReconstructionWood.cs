@@ -9,7 +9,10 @@ namespace SeteVidas.Progression
     /// </summary>
     public static class ReconstructionWood
     {
+        /// <summary>Tábuas que a Tobi pede para a ponte.</summary>
         public const int Total = 12;
+        /// <summary>Tábuas espalhadas pela floresta (baús W01–W19, sem o W16): mais que as 12 da ponte, de propósito.</summary>
+        public const int InForest = 18;
         public const int BridgePrice = 20;
         public const string WoodPrefix = "madeira_";
         public const string ChestPrefix = "bau_";
@@ -19,23 +22,33 @@ namespace SeteVidas.Progression
         public static string WoodFlag(string chestId) => WoodPrefix + chestId;
         public static string ChestFlag(string chestId) => ChestPrefix + chestId;
 
-        /// <summary>Tábuas coletadas (nunca passa de <see cref="Total"/>).</summary>
+        /// <summary>Tábuas coletadas (todas: pode passar das 12 da ponte, até as 18 da floresta).</summary>
         public static int Count(SaveData data)
         {
             if (data == null || data.flags == null) return 0;
             int n = 0;
             foreach (var f in data.flags)
                 if (f != null && f.StartsWith(WoodPrefix, System.StringComparison.Ordinal)) n++;
-            return n > Total ? Total : n;
+            return n;
         }
 
-        public static int Missing(SaveData data) => Total - Count(data);
+        /// <summary>Quantas faltam para a ponte (0 quando já dá).</summary>
+        public static int Missing(SaveData data) => System.Math.Max(0, Total - Count(data));
 
-        /// <summary>"Madeira de Reconstrução: 8/12".</summary>
-        public static string Label(SaveData data) => DisplayName + ": " + Count(data) + "/" + Total;
+        /// <summary>"Madeira de Reconstrução: 8/18" (o inventário: quantas da floresta já foram achadas).</summary>
+        public static string Label(SaveData data) => DisplayName + ": " + Count(data) + "/" + InForest;
 
-        /// <summary>"Madeira de Reconstrução (8/12)": o aviso ao pegar.</summary>
-        public static string PickupText(int count) => DisplayName + " (" + count + "/" + Total + ")";
+        /// <summary>Rodapé do inventário: quanto falta para a ponte.</summary>
+        public static string BridgeHint(SaveData data)
+        {
+            int missing = Missing(data);
+            return missing > 0 ? "A ponte precisa de " + Total + " (faltam " + missing + ")" : "Já dá para a ponte (" + Total + ")";
+        }
+
+        /// <summary>
+        /// O aviso ao pegar: só o nome, sem contador (pedido do usuário, 13/11/2026: a conta fica no inventário).
+        /// </summary>
+        public const string PickupText = "+1 " + DisplayName;
 
         public static bool BridgeBuilt(SaveData data) => data != null && data.HasFlag(BridgeFlag);
 
