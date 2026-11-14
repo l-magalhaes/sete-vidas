@@ -36,6 +36,40 @@ namespace SeteVidas.Enemies
         Vector2 Forward => transform.up;
         Vector2 Rest => Base + Forward * restDistance;
 
+        /// <summary>Um pouco à frente da base, fora do bloco onde a planta está presa (os testes de parede saem daqui).</summary>
+        const float MouthOffset = 0.5f;
+        /// <summary>Raio da cabeça para não encostar o desenho no bloco (a cabeça tem 1,5 tile).</summary>
+        const float HeadRadius = 0.45f;
+        Vector2 Mouth => Base + Forward * MouthOffset;
+
+        static int s_wallMask;
+        static int WallMask
+        {
+            get
+            {
+                if (s_wallMask == 0)
+                    s_wallMask = LayerMask.GetMask(SeteVidas.Core.GameConstants.Layers.Ground,
+                        SeteVidas.Core.GameConstants.Layers.Climbable, SeteVidas.Core.GameConstants.Layers.Breakable);
+                return s_wallMask;
+            }
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => s_wallMask = 0; // Play sem recarregar o domínio
+
+        /// <summary>
+        /// Até onde (a partir da base) a cabeça vai na direção <paramref name="dir"/> sem entrar num bloco, no máximo
+        /// <paramref name="want"/>.
+        /// </summary>
+        float ClearDistance(Vector2 dir, float want)
+        {
+            float travel = Mathf.Max(0f, want - MouthOffset);
+            if (travel <= 0f) return want;
+            var hit = Physics2D.CircleCast(Mouth, HeadRadius, dir, travel, WallMask);
+            if (hit.collider == null) return want;
+            return MouthOffset + hit.distance;
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -72,7 +106,8 @@ namespace SeteVidas.Enemies
             Vector2 cat = h != null ? (Vector2)h.transform.position + Vector2.up * 0.7f : Rest;
             Vector2 toCat = cat - Base;
             // só vê o que está à frente (não morde para trás da parede ou do chão)
-            bool inRange = h != null && !h.IsDead && toCat.magnitude <= reach + restDistance && Vector2.Dot(toCat, Forward) > 0f;
+            bool inRange = h != null && !h.IsDead && toCat.magnitude <= reach + restDistance && Vector2.Dot(toCat, Forward) > 0f
+                           && Physics2D.Linecast(Mouth, cat, WallMask).collider == null; // não morde através de bloco
             var before = _state;
             _state = StepPlant(_state, ref _timer, dt, inRange);
 
@@ -84,8 +119,9 @@ namespace SeteVidas.Enemies
             if (_state == PlantState.Lunge && before == PlantState.Windup)
             {
                 // trava o alvo no começo do bote: dá para desviar
+                // e para no primeiro bloco do caminho: a cabeça não atravessa chão, parede nem teto
                 float d = Mathf.Min(reach, toCat.magnitude);
-                _lungeTarget = Base + _aim * Mathf.Max(restDistance, d);
+                _lungeTarget = Base + _aim * Mathf.Max(restDistance, ClearDistance(_aim, d));
                 SeteVidas.Audio.Sfx.Play("zumbi_caca", Base, 0.9f, 1.3f); // provisório: o estalo da boca
             }
 

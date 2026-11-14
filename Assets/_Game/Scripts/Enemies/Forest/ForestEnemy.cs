@@ -51,9 +51,17 @@ namespace SeteVidas.Enemies
         /// <summary>Multiplicador do golpe (o Galho Seco preso leva o dobro nas costas).</summary>
         protected virtual float DamageMultiplier(in DamageInfo info) => 1f;
 
+        /// <summary>Não leva dano agora (a Serpente dentro do buraco).</summary>
+        protected virtual bool Invulnerable => false;
+
         public void TakeDamage(in DamageInfo info)
         {
             if (IsDead || info.Amount <= 0) return;
+            if (Invulnerable)
+            {
+                SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.5f, 1.2f);
+                return;
+            }
             int dmg = Mathf.Max(1, Mathf.RoundToInt(info.Amount * DamageMultiplier(info)));
             _hp = Mathf.Max(0, _hp - dmg);
             var flash = HitFlash.For(spriteRenderer);
@@ -101,8 +109,11 @@ namespace SeteVidas.Enemies
                 return;
             }
             Tick(Time.deltaTime);
-            if (spriteRenderer != null) spriteRenderer.flipX = _facing > 0;
+            if (spriteRenderer != null) spriteRenderer.flipX = ArtFacesRight ? _facing < 0 : _facing > 0;
         }
+
+        /// <summary>O desenho olha para a direita (a Serpente); os outros olham para a esquerda.</summary>
+        protected virtual bool ArtFacesRight => false;
 
         protected abstract void Tick(float dt);
 

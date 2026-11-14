@@ -169,7 +169,7 @@ namespace SeteVidas.EditorTools
             d["D-FIM"] = DialogueSetup.Conversation("D-FIM", true, 2,
                 (null, "", "Você deixa a Cidadela sem o tomo. Com uma moeda de ouro e um juramento."),
                 (cat, "", "Uma moeda. Seis vidas. Vou cobrar o troco com juros, capivara."),
-                (null, "", "Fim da demonstração. Obrigado por jogar!"));
+                (null, "", "A estrada para Miaravéu segue para o leste, pela Ponte do Último Marco."));
             AssetDatabase.SaveAssets();
             return d;
         }
@@ -205,17 +205,34 @@ namespace SeteVidas.EditorTools
             });
         }
 
-        static void Place(Transform t, FortressLayout.Obj o, Dictionary<string, DialogueDefinition> dialogues, Dictionary<string, Component> created)
+        internal static void Place(Transform t, FortressLayout.Obj o, Dictionary<string, DialogueDefinition> dialogues, Dictionary<string, Component> created)
         {
             var at = new Vector2(o.X, o.Y);
             Component made = null;
             switch (o.Kind)
             {
                 case "trigger":
+                {
                     dialogues.TryGetValue(o.Id, out var dialogue);
-                    Trigger(t, o.Name, at, new Vector2(o.W, o.H), dialogue, onceFlag: o.Link,
-                        loadScene: o.Text == "menu" ? Path.GetFileNameWithoutExtension(GameConstants.MainMenuScenePath) : "");
+                    // Text: "menu" = volta para a tela inicial; "Cena:entrada" = passagem para outra cena (fim da fase)
+                    string scene = "", entrance = "";
+                    if (o.Text == "menu") scene = Path.GetFileNameWithoutExtension(GameConstants.MainMenuScenePath);
+                    else if (!string.IsNullOrEmpty(o.Text) && o.Text.Contains(":"))
+                    {
+                        scene = o.Text.Substring(0, o.Text.IndexOf(':'));
+                        entrance = o.Text.Substring(o.Text.IndexOf(':') + 1);
+                    }
+                    Trigger(t, o.Name, at, new Vector2(o.W, o.H), dialogue, onceFlag: o.Link, loadScene: scene, loadEntrance: entrance);
                     break;
+                }
+                case "entrance":
+                {
+                    var go = new GameObject(o.Name);
+                    go.transform.SetParent(t, false);
+                    go.transform.position = at;
+                    go.AddComponent<RoomEntrance>().Configure(o.Id, o.Facing);
+                    break;
+                }
                 case "sign":
                     TrapsSetup.Sign(t, o.X, o.Y, o.Text);
                     break;
@@ -425,7 +442,7 @@ namespace SeteVidas.EditorTools
         }
 
         static void Trigger(Transform parent, string name, Vector2 center, Vector2 size, DialogueDefinition dialogue,
-            string onceFlag = "", string requiresFlag = "", string loadScene = "")
+            string onceFlag = "", string requiresFlag = "", string loadScene = "", string loadEntrance = "")
         {
             var go = new GameObject("Conversa: " + name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             go.transform.SetParent(parent, false);
@@ -439,6 +456,7 @@ namespace SeteVidas.EditorTools
             so.FindProperty("onceFlag").stringValue = onceFlag;
             so.FindProperty("requiresFlag").stringValue = requiresFlag;
             so.FindProperty("loadSceneAfter").stringValue = loadScene;
+            so.FindProperty("loadEntranceAfter").stringValue = loadEntrance;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -506,6 +524,8 @@ namespace SeteVidas.EditorTools
         /// <summary>Escuridão da entrada: gradiente de 3 tiles sobre a parede de rocha do começo, preto à esquerda.</summary>
         public const float EntryFogStart = -13f, EntryFogEnd = -10f;
         const float FogBottom = -20f, FogTop = 110f, FogBeyond = 40f;
+        /// <summary>O vão da saída: chão em y 0, 6 de altura (o gatilho D-FIM tem 4).</summary>
+        const float ExitPassageY = -0.5f, ExitPassageH = 7f;
 
         /// <summary>
         /// Melhoria 8: névoa escura pontilhada na frente de tudo (ordem 25) nas duas pontas da fase, para a câmera nunca
@@ -555,23 +575,57 @@ namespace SeteVidas.EditorTools
 
         static void BuildEdgeFog(Scene scene)
         {
-            var root = new GameObject("Escuridão das pontas");
+            var root = new GameObject("Pontas da fase");
             SceneManager.MoveGameObjectToScene(root, scene);
-            var exit = EnvLibrary.Get("fg_nevoa_saida");
             var entry = EnvLibrary.Get("fg_nevoa_entrada");
             var solid = EnvLibrary.Get("fg_nevoa_preto");
-            Sprite exitSprite = First(exit), entrySprite = First(entry), solidSprite = First(solid);
-            if (exitSprite == null || entrySprite == null || solidSprite == null)
+            Sprite entrySprite = First(entry), solidSprite = First(solid);
+            if (entrySprite == null || solidSprite == null)
             {
                 Debug.LogError("[Sete Vidas] Falta a névoa das pontas (fg_nevoa_*). Rode Tools/EnvironmentSprites/gerar.ps1");
                 return;
             }
             float h = FogTop - FogBottom, cy = (FogTop + FogBottom) * 0.5f;
-            FogStrip(root.transform, "Saída: gradiente", exitSprite, ExitFogStart, ExitFogEnd, cy, h);
-            FogStrip(root.transform, "Saída: preto", solidSprite, ExitFogEnd, ExitFogEnd + FogBeyond, cy, h);
+            // saída (pedidos do usuário, 13/11/2026): a passagem para a Estrada de Soluki. Um brilho suave só no vão (o chão
+            // da saída fica em y 0) e, depois da abertura, o escuro que esconde o fim do mapa, como na referência dele
+            PassageLight.Horizontal(root.transform, "Saída: luz", ExitFogEnd - 5f, ExitFogEnd, ExitPassageY + ExitPassageH * 0.5f, ExitPassageH, PassageLight.Gold, brightRight: true, beyond: 1f);
+            FogStrip(root.transform, "Saída: preto", solidSprite, ExitFogEnd + 1f, ExitFogEnd + 1f + FogBeyond, cy, h);
+            CameraEnd(scene, root.transform);
             FogStrip(root.transform, "Entrada: gradiente", entrySprite, EntryFogStart, EntryFogEnd, cy, h);
             FogStrip(root.transform, "Entrada: preto", solidSprite, EntryFogStart - FogBeyond, EntryFogStart, cy, h);
         }
+
+        /// <summary>
+        /// A fase acaba na passagem (pedido do usuário, 13/11/2026: "não deveria ver a faixa preta"): a câmera para com a
+        /// borda direita da tela no fim do brilho da saída (x <see cref="CameraRightEdge"/>). Confiner 2D do Cinemachine
+        /// num retângulo (gatilho na layer Ignore Raycast: não interage com nada). Só a direita é limitada.
+        /// </summary>
+        static void CameraEnd(Scene scene, Transform parent)
+        {
+            Unity.Cinemachine.CinemachineCamera cm = null;
+            foreach (var r in scene.GetRootGameObjects())
+            {
+                cm = r.GetComponentInChildren<Unity.Cinemachine.CinemachineCamera>(true);
+                if (cm != null) break;
+            }
+            if (cm == null) { Debug.LogWarning("[Sete Vidas] Fortaleza: sem a câmera do Cinemachine, a fase não tem limite à direita"); return; }
+
+            var go = new GameObject("Limite da câmera (fim da fase)") { layer = 2 }; // Ignore Raycast
+            go.transform.SetParent(parent, false);
+            var box = go.AddComponent<PolygonCollider2D>();
+            box.isTrigger = true;
+            const float left = -200f, bottom = -60f, top = 260f;
+            box.SetPath(0, new[] { new Vector2(left, bottom), new Vector2(CameraRightEdge, bottom), new Vector2(CameraRightEdge, top), new Vector2(left, top) });
+
+            var confiner = cm.GetComponent<Unity.Cinemachine.CinemachineConfiner2D>();
+            if (confiner == null) confiner = cm.gameObject.AddComponent<Unity.Cinemachine.CinemachineConfiner2D>();
+            confiner.BoundingShape2D = box;
+            confiner.InvalidateBoundingShapeCache();
+            EditorUtility.SetDirty(confiner);
+        }
+
+        /// <summary>Borda direita da tela no fim da fase: o fim do brilho da saída (o escuro fica fora da tela).</summary>
+        public const float CameraRightEdge = ExitFogEnd + 1f;
 
         static Sprite First(SeteVidas.World.Scenery.EnvAssetDefinition def) =>
             def == null ? null : def.variants.Length > 0 ? def.variants[0] : def.frames.Length > 0 ? def.frames[0] : null;
@@ -613,9 +667,9 @@ namespace SeteVidas.EditorTools
             }
         }
 
-        const string ZombieSettingsPath = "Assets/_Game/ScriptableObjects/Enemies/ZombieSettings.asset";
-        const string ZombieAnimationsPath = "Assets/_Game/ScriptableObjects/Enemies/ZombieTemplarAnimationSet.asset";
-        const string NoFrictionPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
+        internal const string ZombieSettingsPath = "Assets/_Game/ScriptableObjects/Enemies/ZombieSettings.asset";
+        internal const string ZombieAnimationsPath = "Assets/_Game/ScriptableObjects/Enemies/ZombieTemplarAnimationSet.asset";
+        internal const string NoFrictionPath = "Assets/_Game/Settings/Physics/PlayerNoFriction.physicsMaterial2D";
         const string OutbreakName = "Zumbis (depois do tomo)";
 
         /// <summary>
@@ -660,6 +714,50 @@ namespace SeteVidas.EditorTools
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Debug.Log("[Sete Vidas] Zumbis da Fortaleza prontos: os templários viram zumbis quando o tomo é pego.");
+        }
+
+        /// <summary>
+        /// Floresta F3: troca só o fim da fase na Fortaleza aberta, sem recriar o resto (os ajustes feitos à mão
+        /// continuam): a luz no lugar do escuro da saída, a passagem para a Estrada de Soluki (Forest_Road, R1) depois
+        /// do D-FIM, o texto novo do D-FIM e a chegada de quem volta da estrada.
+        /// </summary>
+        [MenuItem("Tools/Sete Vidas/13d. Fortaleza: saída para a Estrada (sem recriar a fase)", priority = 52)]
+        public static void PatchExitToRoad()
+        {
+            var scene = SceneManager.GetActiveScene();
+            if (scene.path != GameConstants.FortressScenePath)
+            {
+                EditorUtility.DisplayDialog("Sete Vidas", "Abra a cena da Fortaleza (Scenes/World/Fortress_MVP) antes.", "Ok");
+                return;
+            }
+            var dialogues = CreateDialogues();   // regrava o D-FIM com o texto novo
+            Transform parent = null;
+            foreach (var o in FortressLayout.Objects())
+            {
+                if (o.Kind == "trigger" && o.Name == "Saída da fortaleza")
+                {
+                    var old = GameObject.Find("Conversa: " + o.Name);
+                    if (old != null) { parent = old.transform.parent; Object.DestroyImmediate(old); }
+                    if (parent == null) parent = new GameObject("Saída (F3)").transform;
+                    Place(parent, o, dialogues, new Dictionary<string, Component>());
+                }
+                else if (o.Kind == "entrance" && RoomEntrance.Find(o.Id) == null)
+                {
+                    if (parent == null) parent = new GameObject("Saída (F3)").transform;
+                    Place(parent, o, dialogues, new Dictionary<string, Component>());
+                }
+            }
+            foreach (var name in new[] { "Escuridão das pontas", "Pontas da fase" })
+            {
+                var fog = GameObject.Find(name);
+                if (fog != null) Object.DestroyImmediate(fog);
+            }
+            BuildEdgeFog(scene);
+            SeteVidasSetup.RegisterScenesInBuild();
+            EditorPrefs.SetInt(BuiltVersionKey, FortressLayout.Version); // não pergunta de novo por esta versão
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[Sete Vidas] Fortaleza: o fim agora leva à Estrada de Soluki (Forest_Road). Gere as cenas da Floresta no menu 21 se ainda não gerou.");
         }
 
         const string AetherionArt ="Assets/_Game/Art/Environments/Backgrounds/Ext/Aetherion/";

@@ -7,6 +7,91 @@
 > Status: **[PROPOSTA]**; vira graybox na F2.
 > Métricas (`metricas.md`): pulo 4 (degraus de até 3), vão de até 4, agarrar borda 5, chaminé de pulo de parede com 3 de largura, escalada 4 tiles/s. **Pogo 7,2** (folga 6).
 
+## 00. Rev. 4 — a repaginada (pedidos do usuário de 13/11/2026) [PROPOSTA]
+
+Substitui as partes da Rev. 3 que conflitam com ela (posições, atalhos, inimigos). Fonte de verdade: `ForestLayout.cs` (versão 2).
+Prévia: `Tools/LevelPreview/checar_floresta.ps1` gera também **`floresta_mapa.png`** (o anel inteiro). Para depurar uma sala:
+`Tools/LevelPreview/sala_ascii.ps1 <cena> <sala>` (texto com o alcance tile a tile).
+
+**A forma: um anel, não uma escada.** Posições escritas à mão, sem sobreposição (o alcance confere):
+
+| Faixa | Salas | Direção |
+|---|---|---|
+| Fundo (y ≈ −215) | A1 → A2 → A3 → A4 (A5 opcional embaixo) → A6 | leste |
+| Lado leste | B1 → B2 → B3 → B4 (B7 opcional) → B5 (B6 opcional) | subindo |
+| Meio (y ≈ −140 a −60) | C1 → C2 (desce) → C3 → C4 → C5 (C7 opcional embaixo) → C6 (Ravina, desce até o fundo) | oeste |
+| Árvore e alto | D1 (sobe) → D2 → D3 → D4 → E1 … E6 → F1 → G1 → G2 → G3 | leste, subindo |
+
+A C passa por cima da A e da B, e a E passa por cima da C. Por isso os atalhos são passagens de verdade.
+A subida total caiu de ~670 para ~290 tiles. A estrada e o mapa da floresta são regiões de mapa separadas e não precisam bater em coordenadas.
+
+**As cenas de teste viraram salas da fase**, com o desenho do usuário inteiro (coordenadas da cena de teste + 6 em x):
+
+| Cena de teste | Sala da fase | O que mudou |
+|---|---|---|
+| `Forest_Test_A` | **A3 O Primeiro Tronco** | porta à esquerda (vem da A2); saiu o santuário S-T1 (a A2, ao lado, tem o S-F1) |
+| `Forest_Test_B` | **B1 Pé do Bosque** | o S-T2 virou **S-F1B**; a "porta interna" (teleporte do chão ao patamar) virou um **cipó que se solta do patamar** |
+| `Forest_Test_C` | **D3 Refúgio** | o S-T3 virou **S-F3**; a cabana agora é a cena `Forest_D_Cabin`; a saída por cima leva à D4 |
+
+As cenas `Forest_Test_*` continuam existindo (menu 20) como bancada de testes.
+
+**Atalhos de verdade (estilo Dark Souls).** Nada de porta que teletransporta. Cada atalho abre do lado mais adiantado e grava a flag no save; os dois lados olham a mesma flag:
+
+| Flag | Abre em | Leva a | Como |
+|---|---|---|---|
+| `atalho_ravina` | C6 Ravina (fundo, S-F2) | A2 Raízes Gêmeas (S-F1) | alçapão de raízes no chão; o cipó desce pela raiz pendurada da A2 |
+| `atalho_lago` | C4 Caverna do Lago | A6 Galhos Baixos | alçapão no chão do lago → poço estreito (C4p) → cipó na parede da A6 |
+| `atalho_musgo` | E4 Clareira do Musgo (S-F4) | C1 Entrada do Vale | alçapão → poço comprido (E4p) → cipó na raiz pendurada da C1 |
+| `atalho_torre` | B4 Torre (topo) | o pé da torre | cipó solto do alto, a parede inteira vira subida |
+| `atalho_patamar` | B1 (patamar) | o chão da B1 | tampa + cipó na parede (era a porta interna da cena de teste) |
+| `atalho_raiz` | E2 (topo) | o vão da vinha da E2 | o cipó fecha o vão; a E2 vira subida rápida |
+| `ponte_reconstruida` | R3 ↔ A1 | corda | (F9, sem mudança) |
+
+Do lado fechado, o gato vê o cipó enrolado lá no alto (ou a tampa) e comenta se apertar E. O componente é o `ShortcutLink`, que também serve para portão de tranca de um lado só.
+
+**Inimigos da floresta (pedido do usuário):**
+- Sem templários vivos e sem alarmes: a praga infectou a Ordem. As patrulhas são **templários zumbis** (o zumbi da Fortaleza, de espada ou de escudo).
+- Saíram os fios de alarme, as lanças, o fogo e o lançador de flechas.
+- A **Serpente da Floresta** é nova: buraco, chocalho, bote de 3 tiles, esticada = pogo/ponto fraco, e uma variação que rasteja.
+- Plantas carnívoras no chão, nas paredes e no teto.
+- Totais: 25 serpentes, 26 plantas, 26 templários zumbis, 38 morcegos, 8 Galhos Secos e 4 Brotos. Também 27 cogumelos, 25 cactos e 43 sombras.
+
+**Plataformas orgânicas:** terreno com morros e raízes (`Terrain`), massas de raiz com cantos arredondados (`Blob`) e raízes penduradas do teto (`Roof`), no lugar das escadas de galho alternadas. As vinhas vêm em trechos que não se ligam: entre um e outro, o pogo no cacto (B2, B4). Os espinhos ficam longe das portas e com vão para quicar.
+
+**Regras que o alcance passou a conferir:**
+- A planta não conta mais como pogo (só aceita na volta do bote). Era por isso que a plataforma do baú da B3 parecia alcançável.
+- Vinha fora da parede vira chão sólido no jogo e pode tampar porta.
+- Salas não podem se sobrepor.
+- A folga de pulo considera o gato pisando na ponta do corpo além da borda, como nos pulos da `Forest_Test_A` testados pelo usuário.
+
+**Baús de madeira:** W01–W19, mais que as 12 madeiras do Tobi. O W15 (D3) só se alcança com o Arqueiro, como na cena de teste.
+
+**Santuários:** S-F1 (A2), **S-F1B** (B1), **S-F1C** (B4, pé da Torre), **S-F1D** (C4, patamar da chegada), S-F2 (C6), S-F3 (D3), **S-F3B** (E2, pé da subida), S-F4 (E4) e S-F5 (R5). S-F1C, S-F1D e S-F3B entraram em 13/11/2026 (pedido do usuário: santuários muito espaçados), cada um no fim de um atalho.
+
+## 0. Rev. 3 — o que o graybox (F2) mudou [SUBSTITUÍDO EM PARTE PELA REV. 4]
+
+O graybox está em `Assets/_Game/Editor/ForestLayout.cs` (fonte de verdade das salas; este documento guarda as intenções).
+Prévia e alcance: `Tools/LevelPreview/checar_floresta.ps1` → `SeteVidasDocs/Referencias/floresta/floresta_<cena>.png`.
+
+- **Tamanhos ajustados** para fechar as métricas: A3 30 × 30, A4 30 × 51 (3 telas, não 4), B6 25 × 25, E4 30 × 16, F1 40 × 28, E1–E3 redesenhadas. A subida real vai de y −220 (A1) a ~450 (topo da G3), uns 670 tiles: **três vezes** os 220 da rev. 2 (as salas verticais da tabela §7, empilhadas, já somavam isso). Cortar ou não é decisão do **playtest de escala**.
+- **Buracos no teto** entre salas da mesma cena levam um galho de mão única no chão de cima (pula-se por baixo; baixo + pulo desce).
+- **Atalhos (pedido do usuário):** cada um **abre do lado mais adiantado** ("E: descer…") e, aberto, funciona nos dois sentidos; do outro lado, antes disso: "Não abre deste lado".
+
+  | Atalho | Abre em | Leva a | Como |
+  |---|---|---|---|
+  | AT1 | B5 Copa Baixa | A6 Galhos Baixos | cipó |
+  | AT2 | D4 Mirante | C6 Ravina | cipó |
+  | AT3 | G2 Coluna dos Primatas | D3 Refúgio | porta |
+  | AT4 | R3 ↔ A1 | corda | só com `ponte_reconstruida` |
+  | AT5 | C2 Raízes Caídas (topo) | B3 Jardim Carnívoro | raiz |
+  | AT6 | C5 Estrada Negra (fim) | C1 Entrada do Vale | túnel |
+  | AT7 | E4 Clareira do Musgo | E1 Sulcos | trilha (o retorno rápido antes do trecho sem volta) |
+  | AT8 | A6 Galhos Baixos (saída) | A2 Raízes Gêmeas | raiz |
+
+- **Antes do chefe dormindo (E1–E3), movimento encadeado (pedido do usuário):** E1 rampa 1:2 → vão de espinhos só com pogo → rampa 1:1 → descida correndo → pulo até a vinha do pilar; E2 rampas nos patamares jogam para o galho que balança e para a vinha, com um galho podre (plataforma temporária); E3 por cima: sobe até o alto, rampa 1 desce e cai na rampa 2, que lança para um galho podre sobre os espinhos. **20 ganchos** nas três salas e na E4: com o Caçador, o caminho contrário pelo alto.
+- **Sem volta a partir da E5 (pedido do usuário):** da E4 o gato cai no focinho da E5, alto demais para voltar; E5 → E6 → F1 é furtividade contínua, e a F1 não tem saída para o oeste. Por isso o **S-F4 foi para a E4** (último santuário antes do trecho); morrer no trecho volta para a E4.
+- **Furtividade em todas as regiões (pedido do usuário):** 60 sombras, 29 patrulhas (placeholders) e armadilhas (espinhos, serras, lâminas, fios de alarme, lanças, fogo, lançador de flechas) distribuídas pelas salas.
+
 ## 1. A forma da floresta: uma subida do fundo do vale até o outro lado da ponte
 
 ```

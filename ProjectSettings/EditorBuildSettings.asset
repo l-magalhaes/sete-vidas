@@ -16,19 +16,43 @@ EditorBuildSettings:
     guid: 667f718e31c240349a626028df383f5e
   - enabled: 1
     path: Assets/_Game/Scenes/World/Fortress_MVP.unity
-    guid: f027cb4df0f25fe4bbd59756107467ac
+    guid: 8d8914613dc42354e969cc2a7196bc2a
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_A_Roots.unity
+    guid: 9595e7b7af32ac442b97cdce7dddea33
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_B_Thorns.unity
+    guid: 3fa38741f2a823c4f8e9a1a58cd79205
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_C_Shadows.unity
+    guid: 95e248dadf520224a9af11962625776e
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_D_Cabin.unity
+    guid: cf0c70f892c536a4f8036d80c550b061
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_D_Refuge.unity
+    guid: 31947a501587fcc47b22e706912bb25a
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_E_Nest.unity
+    guid: 665a88788ddda98478c31f903316e815
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_F_Heart.unity
+    guid: 16b2b27e0ad3bd4458c05b90ff90633a
+  - enabled: 1
+    path: Assets/_Game/Scenes/World/Forest/Forest_Road.unity
+    guid: 4bc08b7678129fa418b8a4274f67d0ff
   - enabled: 1
     path: Assets/_Game/Scenes/World/Forest/Forest_Test_A.unity
-    guid: 0bb4c42487c804d469114a05c56cdf0a
+    guid: 42333d6b14e46754a8373f5dce30ae7d
   - enabled: 1
     path: Assets/_Game/Scenes/World/Forest/Forest_Test_B.unity
-    guid: 6ebca692cacaf2347ae184d2aaa9fbb6
+    guid: d67f3383e11f8334d85ca87382274c0e
   - enabled: 1
     path: Assets/_Game/Scenes/World/Forest/Forest_Test_C.unity
-    guid: 6be4066921fa1914cba8410f75e266d2
+    guid: 6366f072b34a94e40a487a64653a80fd
   - enabled: 1
     path: Assets/_Game/Scenes/World/Forest/Forest_Test_Cabin.unity
-    guid: 673ca5a2f02e79a479679197686f8687
+    guid: 008ca2537221db94da7be7da831e9ec9
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02

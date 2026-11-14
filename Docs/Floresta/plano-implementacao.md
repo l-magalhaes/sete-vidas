@@ -156,6 +156,20 @@ Cada fase termina com algo **jogável e testável**. Arte e som entram em todas 
 - **Playtest de escala**: cronometrar rota crítica e coleta completa; cortar ou densificar trechos que violem a regra de "2 telas sem decisão".
 - Teste de alcance: todas as madeiras alcançáveis só com Ladino + Paladino.
 - **Pronto quando:** a floresta inteira é atravessável em graybox no tempo-alvo e sem softlock.
+- **Estado (13/11/2026): graybox gerado, falta o playtest no Unity** (menu **21. Floresta F2: graybox (7 cenas)**; roteiro em `Docs/QA/floresta-f2-plano-de-teste.md`).
+  - O mapa é **dado**: `Assets/_Game/Editor/ForestLayout.cs` (como o `FortressLayout`). As cenas `Forest_Road` e `Forest_A_Roots` … `Forest_F_Heart` são recriadas pelo menu: **ajuste o mapa no código, não na cena**.
+  - Coordenadas globais (uma cena por região, todas no mesmo sistema): a aba Mapa junta as regiões sem deslocamento.
+  - **Alcance conferido sem o Unity** (`ForestReach`, física aproximada do gato): os 12 baús, todas as saídas e atalhos, nenhum softlock, também só pela rota principal de cada cena. Rodar: `Tools/LevelPreview/checar_floresta.ps1` (gera um PNG por cena com o alcance pintado em `SeteVidasDocs/Referencias/floresta/`) ou o menu **21b**.
+  - Pedidos do usuário aplicados: **muitas sombras, patrulhas e armadilhas** (60 sombras, 29 patrulhas, espinhos, serras, lâminas, fios de alarme, lanças, fogo, lançador); **atalhos que voltam para salas anteriores** (AT1–AT8, abertos do lado mais adiantado); **salas de movimento antes do chefe dormindo** (E1–E3: rampa + pogo, rampa + vinha, rampa que cai em outra rampa e pula na plataforma temporária, 20 ganchos para o caminho de volta com o Caçador); **sem volta da E5 até a Isyathy**.
+  - Placeholders: Sentinela no lugar do Sentinela Infectado e da Serpente; Planta Carnívora nos "buracos de serpente". Estrada (R1–R5) só em esboço (a F3 faz de verdade).
+  - Testes: `ForestGrayboxTests` (save do graybox, lado fechado do atalho).
+- **Rev. 4 (13/11/2026, repaginada pedida pelo usuário): gerada, falta o playtest no Unity** (roteiro: `Docs/QA/floresta-rev4-plano-de-teste.md`; detalhes: `Docs/Level/floresta-mapa.md` §00).
+  - **Mapa em anel** com posições à mão: as salas de depois passam por cima das de antes. Subida total de ~290 tiles (era ~670).
+  - **Forest_Test_A/B/C dentro da fase**, com o desenho do usuário inteiro: A3, B1 e D3. A cabana virou a cena `Forest_D_Cabin`, e o S-T2 virou o **S-F1B**.
+  - **Atalhos de verdade** (`ShortcutLink`): cipó que se solta, alçapão de raízes e poço. Ficaram 6, mais a corda da ponte.
+  - **Inimigos da floresta:** templários zumbis (`ZombieSquad`) no lugar das sentinelas, **Serpente** nova (`ForestSnake`, do buraco ou rastejando), mais plantas e morcegos. Saíram os alarmes e as armadilhas dos templários.
+  - **Salas orgânicas:** terreno, raízes e trechos de vinha alternados com pogo, mais cogumelos.
+  - **Alcance mais exigente:** a planta não conta como pogo, vinha fora da parede é acusada e o mapa não pode ter salas sobrepostas.
 
 ### F3 — Abertura: Estrada de Soluki e colapso da ponte
 
@@ -165,6 +179,12 @@ Cada fase termina com algo **jogável e testável**. Arte e som entram em todas 
 - **Arte:** ponte canina de **pedra** (intacta, rachando, blocos caindo, destruída), sentinelas infectados.
 - **Áudio:** pedra rachando e desabando, horda gemendo, música de fuga.
 - **Narrativa:** falas curtas do Lion; objetivo novo "Reencontrar a ponte".
+- **Estado (13/11/2026): primeira parte implementada, falta testar no Unity** (roteiro: `Docs/QA/floresta-f3-plano-de-teste.md`).
+  - **Ligação Fortaleza → Estrada:** o gatilho do fim (`D-FIM`) passou a levar à `Forest_Road` (chegada `R1_oeste`) com a vida e o save, sem voltar ao menu. A conversa toca uma vez (`fortaleza_fim_visto`); depois é só passagem. A R1 volta para a Fortaleza (chegada `fortaleza_estrada`). `DialogueTrigger.loadEntranceAfter`; `FortressLayout.Version` 17; menu **13d** troca só a saída na cena aberta (sem recriar a fase).
+  - **Luz de passagem** (pedido do usuário): toda saída para outra cena tem um clarão pontilhado na frente de tudo (`PassageLight`), dourado na Fortaleza e na estrada, verde-claro na Floresta; portas de atalho têm um clarão atrás. O **escuro do fim da Fortaleza virou luz** (o da entrada, no penhasco, continua).
+  - **Infectados** (`ZombieSquad`, Templário Zumbi da Fortaleza como base): de espada e de **escudo** (`ZombieAI.GiveShield`, `ZombieRules.ShieldBlocks`: bloqueia golpe comum de frente; passa pelas costas ou com a marreta). R1 com posto abandonado e tochas; R2 com o de escudo embaixo da torre caída.
+  - **Ponte** (`BridgeCollapse`): inteira até o gato pisar nela; então a horda nasce atrás (R3) correndo, a pedra treme e racha; no meio (ou depois de 10 s) o centro desaba, bloco por bloco, e o gato cai. A flag `ponte_caiu` vai para o save e libera o gatilho da queda, que leva à A1 com fade; lá o Lion fala ao acordar. Com a flag, a ponte já aparece caída (dos dois lados, cair leva à A1).
+  - Falta da F3: arte de verdade (ponte de pedra, infectados caninos, props da estrada), sons próprios e música de fuga, câmera acompanhando a queda pela copa (hoje: queda + fade), objetivo "Reencontrar a ponte".
 
 ### F4 — Bestiário da floresta
 
@@ -296,6 +316,15 @@ Tileset da floresta; galhos plataforma; espinhos comuns vs. de pogo; tronco rach
 | 13/11/2026 | Floresta bem vertical, com muitas plataformas (sensação de Silksong), misturando trechos horizontais e verticais, **sempre subindo** até o outro lado da ponte | [APROVADA] |
 | 13/11/2026 | Lion espantado com a praga se espalhando; sarcástico por cair de novo | [APROVADA] |
 | 13/11/2026 | Uma cena Unity por região | [PROPOSTA] |
+| 13/11/2026 | O fim da Fortaleza leva direto à Estrada de Soluki (sem voltar ao menu); a 3ª fala do D-FIM troca "Fim da demonstração" por "A estrada para Miaravéu segue para o leste, pela Ponte do Último Marco." | Ligação: [APROVADA]; texto: [PROPOSTA] |
+| 13/11/2026 | Toda passagem para outra cena ou cenário tem uma luz na saída; o escuro do fim da Fortaleza vira luz | [APROVADA] (pedido do usuário) |
+| 13/11/2026 | Atalhos para salas anteriores: cada um **abre do lado mais adiantado** e depois funciona nos dois sentidos | [APROVADA] (pedido do usuário) |
+| 13/11/2026 | Atalhos são **passagens de verdade, estilo Dark Souls** (cipó que se solta, alçapão, portão), nunca portas que teletransportam. Para isso a floresta virou um **anel** (as salas de depois passam por cima das de antes) | [APROVADA] (pedido do usuário); o anel: [PROPOSTA] |
+| 13/11/2026 | Na floresta não há templários vivos nem alarmes: a praga infectou a Ordem, e as patrulhas são **templários zumbis** | [APROVADA] (pedido do usuário) |
+| 13/11/2026 | Plataformas orgânicas e com desafio (terreno, raízes, inimigos da floresta como **serpentes pequenas** e plantas carnívoras), vinhas misturadas ao pogo e mais cogumelos | [APROVADA] (pedido do usuário) |
+| 13/11/2026 | `Forest_Test_A/B/C` entram na fase como **A3, B1 e D3**, com o desenho do usuário; o S-T2 vira o **S-F1B** e o S-T1 sai (a A2, ao lado, tem o S-F1) | Entrar na fase: [APROVADA] (pedido do usuário); lugares e santuários: [PROPOSTA] |
+| 13/11/2026 | Salas antes do chefe dormindo (E1–E3) com rampas, pogo, vinhas e plataformas temporárias, e **vários ganchos** para o caminho de volta com o Caçador | [APROVADA] (pedido do usuário) |
+| 13/11/2026 | Chegando à sala do chefe dormindo (E5), **não há volta**: a furtividade vai até a arena. S-F4 passa da Antessala (E6) para a Clareira do Musgo (E4), antes do trecho sem volta | Sem volta: [APROVADA]; S-F4 na E4: [PROPOSTA] |
 
 ### Ainda em aberto
 1. Arco futuro da Vulpis.

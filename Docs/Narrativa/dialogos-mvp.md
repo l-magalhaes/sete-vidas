@@ -114,10 +114,11 @@ SISTEMA (D-GOLDEN-01-SISTEMA): Paladino desbloqueado! Aperte 2 (ou Q/R) para tro
 - 02b (rev. 3) — KODA: Onde aquela capivara for, a praga vai atrás. Vamos alcançá-la. / GATO (irônico): E devolver a moeda. Enfiada onde ela não gosta.
 - 02c — KODA: Força não substitui cuidado. Volte inteiro, ladrãozinho. / GATO (irônico): Inteiro é o que eu menos estou.
 
-## D-FIM — Saída da Cidadela (fim da demonstração; rev. 2)
+## D-FIM — Saída da Cidadela (fim da fase 1; rev. 3, 13/11/2026)
+Toca uma vez (flag `fortaleza_fim_visto`); depois o gato segue para a Estrada de Soluki (`Forest_Road`), com o mesmo save. [PROPOSTA: texto da 3ª fala]
 SISTEMA: Você deixa a Cidadela sem o tomo. Com uma moeda de ouro e um juramento.
 GATO: Uma moeda. Seis vidas. Vou cobrar o troco com juros, capivara.
-SISTEMA: Fim da demonstração. Obrigado por jogar!
+SISTEMA: A estrada para Miaravéu segue para o leste, pela Ponte do Último Marco.
 
 ## Ficha de voz (resumo)
 | Personagem | Voz | Nunca diria |

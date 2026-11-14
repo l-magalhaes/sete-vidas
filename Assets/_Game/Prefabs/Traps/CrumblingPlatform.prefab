@@ -97,6 +97,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 5753917913765596969}
   intact: {fileID: 21300000, guid: 8c34ba42b33801a41bb2903025538169, type: 3}
   cracked: {fileID: 21300000, guid: 84b7bf1d3ec7d9c42a7f51a605d9c3f1, type: 3}
+  isBranch: 0
 --- !u!1 &6288973884547638138
 GameObject:
   m_ObjectHideFlags: 0

@@ -161,6 +161,9 @@ namespace SeteVidas.Enemies.Zombie
             Notice(n.Position.x);
         }
 
+        /// <summary>Fica sabendo onde o gato está (a horda da ponte já nasce correndo atrás dele).</summary>
+        public void Alert(float x) { if (!IsDead) Notice(x); }
+
         void Notice(float x)
         {
             _lostTimer = 0f;
@@ -281,9 +284,44 @@ namespace SeteVidas.Enemies.Zombie
 
         // -------------------------------------------------------------- dano
 
+        // ------------------------------------------------------------ escudo (Infectado de escudo, Floresta F3)
+
+        SpriteRenderer _shield;
+
+        public bool HasShield => _shield != null;
+
+        /// <summary>Dá um escudo (desenho na frente do corpo): bloqueia golpes comuns de frente (<see cref="ZombieRules.ShieldBlocks"/>).</summary>
+        public void GiveShield(Sprite sprite)
+        {
+            if (_shield != null) return;
+            var go = new GameObject("Escudo");
+            go.transform.SetParent(spriteRenderer != null ? spriteRenderer.transform : transform, false);
+            _shield = go.AddComponent<SpriteRenderer>();
+            _shield.sprite = sprite;
+            _shield.sortingOrder = 5;
+            PlaceShield();
+        }
+
+        void PlaceShield()
+        {
+            if (_shield == null || settings == null) return;
+            _shield.transform.localPosition = new Vector3(_facing * settings.BodySize.x * 0.55f, settings.BodySize.y * 0.45f, 0f);
+            _shield.flipX = _facing < 0;
+            _shield.enabled = !IsDead;
+        }
+
         public void TakeDamage(in DamageInfo info)
         {
             if (IsDead || info.Amount <= 0 || settings == null) return;
+            if (ZombieRules.ShieldBlocks(HasShield, info.Type, info.Angle))
+            {
+                // bloqueou: faísca, "tink", e agora sabe onde o gato está
+                Sfx.Play("adaga_tink", _body.position + Vector2.up, 0.8f, 0.9f);
+                var flashShield = HitFlash.For(_shield);
+                if (flashShield != null) flashShield.Flash(0.08f);
+                if (info.Source != null) Notice(info.Source.transform.position.x);
+                return;
+            }
             _health = Mathf.Max(0, _health - info.Amount);
             _hurtTime = 0f;
             _blinkUntil = Time.time + 0.15f;
@@ -349,6 +387,7 @@ namespace SeteVidas.Enemies.Zombie
             CurrentClipName = clip.name;
             if (frame != null && frame.sprite != null) spriteRenderer.sprite = frame.sprite;
             spriteRenderer.flipX = _facing < 0;
+            PlaceShield();
 
             if (IsDead)
             {

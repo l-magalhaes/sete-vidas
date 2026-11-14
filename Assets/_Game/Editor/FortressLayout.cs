@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 16; // 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
+        public const int Version = 17; // 17: o fim leva à Estrada de Soluki (Floresta F3); 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
 
         public enum Map { Ground, Climbable, Background }
 
@@ -374,7 +374,9 @@ namespace SeteVidas.EditorTools
             Vault(o, 15, "fortaleza_cofre_15", "fort_cofre15", "D-PLACA-09", "Lista dos guardiões");
             Add(o, "wall", "Portão dos fundos", 223.5f, 0f, id: "fortaleza_portao_fundos");
             // (a placa "estrada para Miaravéu" virou uma placa de seta para a direita, no FortressDressing, melhoria 9)
-            Add(o, "trigger", "Saída da fortaleza", 245f, 2f, w: 4f, h: 4f, id: "D-FIM", text: "menu");
+            // fim da fase 1: a conversa (uma vez) e a passagem para a Estrada de Soluki (Floresta F3), com o mesmo save
+            Add(o, "trigger", "Saída da fortaleza", 245f, 2f, w: 4f, h: 4f, id: "D-FIM", text: "Forest_Road:R1_oeste", link: "fortaleza_fim_visto");
+            Add(o, "entrance", "Chegada da estrada (volta da Floresta)", 240f, 0f, facing: -1, id: "fortaleza_estrada");
             Hints(o);
             return o;
         }
@@ -389,9 +391,9 @@ namespace SeteVidas.EditorTools
             // 1) Montanha: andar e o salto de fé
             H(o, "andar", "ande até a beira", 2.5f, CliffTop, 5f, 4f, "andar:acao");
             H(o, "salto", "corra e pule no abismo", 8f, CliffTop, 6f, 4f, "pular:acao");
-            // 2) Trilha: ler as placas, as folhas secas e o fosso de espinhos
+            // 2) Trilha: ler as placas e o fosso de espinhos
             H(o, "ler", "leia as placas", 23.8f, 0f, 3f, 4f, "interagir:acao");
-            H(o, "folhas", "folhas secas: passe agachado", 32.5f, 0f, 3f, 4f, "agachar:acao");
+            // (a dica das folhas secas saiu: pedido do usuário, 13/11/2026, não há folhas para passar ali)
             H(o, "espinhos", "pule por cima dos espinhos", 36.5f, 0f, 2f, 4f, "pular:ler");
             // 3) Pátio: as flechas, atacar nos bonecos, o guarda e o esconderijo no feno
             H(o, "agachar", "agache: as flechas passam", 46.5f, 0f, 6f, 4f, "agachar:acao");

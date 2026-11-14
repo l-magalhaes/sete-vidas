@@ -344,17 +344,20 @@ namespace SeteVidas.EditorTools
         // ------------------------------------------------------------ interior: a cabana da Vulpis
 
         /// <summary>Residência (pedido do usuário): cena pequena, entra e sai pela mesma porta.</summary>
-        static void BuildCabin()
+        static void BuildCabin() => BuildCabin(SceneCabin, SceneC, "TESTE_W05", "teste_cabana_moeda");
+
+        /// <summary>A cabana em qualquer cena (a da fase: Forest_D_Cabin, que volta para o Refúgio).</summary>
+        internal static void BuildCabin(string scene, string outsideScene, string chestId, string coinId)
         {
-            var ctx = Begin(SceneCabin, new Vector2(2f, 0.1f), new Color32(0x2a, 0x1c, 0x14, 0xff));
+            var ctx = Begin(scene, new Vector2(2f, 0.1f), new Color32(0x2a, 0x1c, 0x14, 0xff));
             var g = ctx.Ground;
             Fill(g, -2, -3, 20, -1);           // chão de tábuas
             Fill(g, -2, 0, -1, 10);            // paredes
             Fill(g, 19, 0, 20, 10);
             Fill(g, -2, 9, 20, 10);            // teto (a sala tem 8 de altura)
             Entrance(ctx.Root, "Entrada", new Vector2(1.5f, 0.05f), "entrada", 1);
-            Residence(ctx.Root, "Porta (sair)", 0.5f, 0f, SceneC, "cabana_vulpis", "sair", "", "");
-            Chest(ctx.Root, "Baú W05 (cabana)", 12f, 0f, "TESTE_W05", wood: true, coins: 0);
+            Residence(ctx.Root, "Porta (sair)", 0.5f, 0f, outsideScene, "cabana_vulpis", "sair", "", "");
+            Chest(ctx.Root, "Baú " + chestId + " (cabana)", 12f, 0f, chestId, wood: true, coins: 0);
             TrapsSetup.Sign(ctx.Root, 8f, 2.2f, "Cabana da Vulpis");
             // o Lion comenta ao entrar (uma vez): a cabana está vazia e é de um caçador (pedido do usuário)
             var bark = new GameObject("Fala ao entrar");
@@ -364,7 +367,7 @@ namespace SeteVidas.EditorTools
                 "Arco na parede, flechas no chão, peles secando...",
                 "Algum caçador mora aqui. E não está em casa.");
             Branch(ctx.Root, "Prateleira", 14f, 3f, 4f);          // 3 do chão (degrau confortável)
-            FortressSetup.Coin(ctx.Root, "Moeda da prateleira", new Vector2(16f, 3.6f), "teste_cabana_moeda", 5);
+            FortressSetup.Coin(ctx.Root, "Moeda da prateleira", new Vector2(16f, 3.6f), coinId, 5);
             End(ctx);
         }
 
@@ -389,7 +392,7 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Portão de barras (1 × 4 tiles) com os pés em <paramref name="y"/>; começa aberto.</summary>
-        static ArenaGate Gate(Transform parent, string name, float x, float y)
+        internal static ArenaGate Gate(Transform parent, string name, float x, float y)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Ground) };
             go.transform.SetParent(parent, false);
@@ -407,7 +410,7 @@ namespace SeteVidas.EditorTools
             return gate;
         }
 
-        static void KeyItem(Transform parent, string name, float x, float y, string keyId)
+        internal static void KeyItem(Transform parent, string name, float x, float y, string keyId)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             go.transform.SetParent(parent, false);
@@ -458,9 +461,9 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------ montagem da cena
 
-        struct Ctx { public Scene Scene; public Transform Root; public Tilemap Ground; public Tilemap Vines; public Tilemap Back; public Tile Tile; }
+        internal struct Ctx { public Scene Scene; public Transform Root; public Tilemap Ground; public Tilemap Vines; public Tilemap Back; public Tile Tile; }
 
-        static Ctx Begin(string name, Vector2 spawn, Color32 sky)
+        internal static Ctx Begin(string name, Vector2 spawn, Color32 sky)
         {
             string path = $"{Folder}/{name}.unity";
             var scene = SeteVidasSetup.NewSceneFromTemplate(path);
@@ -490,7 +493,7 @@ namespace SeteVidas.EditorTools
             return new Ctx { Scene = scene, Root = root.transform, Ground = ground, Vines = vines, Back = back, Tile = tiles.Ground };
         }
 
-        static void End(Ctx ctx)
+        internal static void End(Ctx ctx)
         {
             SeteVidasSetup.BuildTileColliders(ctx.Scene);
             PlayerSetup.PlaceInScene(ctx.Scene); // gato + câmera no PlayerSpawn; salva a cena
@@ -528,7 +531,7 @@ namespace SeteVidas.EditorTools
         static Tile s_tile, s_vineTile, s_backTile;
 
         /// <summary>Pinta tiles: no tilemap "Climbable" vai a vinha (escalável); nos outros, o chão provisório.</summary>
-        static void Fill(Tilemap map, int x0, int y0, int x1, int y1)
+        internal static void Fill(Tilemap map, int x0, int y0, int x1, int y1)
         {
             if (s_tile == null || s_vineTile == null || s_backTile == null)
             {
@@ -564,7 +567,7 @@ namespace SeteVidas.EditorTools
         /// Galho Seco parado e alto (5,5 tiles: não dá para passar por cima) com os pés em <paramref name="y"/>.
         /// <paramref name="sprout"/> = Broto: solta morcegos das folhas (leva um morcego modelo desligado).
         /// </summary>
-        static SeteVidas.Enemies.DryBranch DryBranchEnemy(Transform parent, string name, float x, float y, int facing, bool sprout = false)
+        internal static SeteVidas.Enemies.DryBranch DryBranchEnemy(Transform parent, string name, float x, float y, int facing, bool sprout = false)
         {
             float h = SeteVidas.Enemies.ForestEnemyRules.BranchHeight;
             string kind = sprout ? "broto" : "galho_alto";
@@ -589,7 +592,7 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Morcego Noturno pendurado em (x, y) (o poleiro). Acorda e persegue.</summary>
-        static SeteVidas.Enemies.NightBat Bat(Transform parent, string name, float x, float y, bool sleeping = true, float wakeRange = SeteVidas.Enemies.ForestEnemyRules.BatWakeRange)
+        internal static SeteVidas.Enemies.NightBat Bat(Transform parent, string name, float x, float y, bool sleeping = true, float wakeRange = SeteVidas.Enemies.ForestEnemyRules.BatWakeRange)
         {
             var sr = EnemyRoot(parent, name, x, y, new Vector2(0.9f, 0.8f), Vector2.zero, "morcego_dormindo", out var go);
             var e = go.AddComponent<SeteVidas.Enemies.NightBat>();
@@ -607,7 +610,7 @@ namespace SeteVidas.EditorTools
         /// Planta Carnívora com a base em (x, y). <paramref name="angle"/>: 0 = no chão; 90 = na parede, virada para a
         /// esquerda; -90 = para a direita. A cabeça é um filho com o colisor; o pescoço estica até 6 tiles.
         /// </summary>
-        static void Plant(Transform parent, string name, float x, float y, float angle)
+        internal static void Plant(Transform parent, string name, float x, float y, float angle)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Enemy) };
             go.transform.SetParent(parent, false);
@@ -644,10 +647,10 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Grupo das armadilhas de baixo da C (o botão azul desliga todas).</summary>
-        const string TrapGroupC = "teste_C_baixo";
+        internal const string TrapGroupC = "teste_C_baixo";
 
         /// <summary>Lâmina pendular com o pivô no teto em (x, y); <paramref name="phase"/> põe vizinhas fora de compasso.</summary>
-        static void Blade(Transform parent, string name, float x, float y, float length, float phase)
+        internal static void Blade(Transform parent, string name, float x, float y, float length, float phase, string group = TrapGroupC)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Hazard) };
             go.transform.SetParent(parent, false);
@@ -672,32 +675,32 @@ namespace SeteVidas.EditorTools
             so.FindProperty("arm").objectReferenceValue = arm.transform;
             so.FindProperty("returnToSafeGround").boolValue = false;
             so.ApplyModifiedPropertiesWithoutUndo();
-            go.AddComponent<SeteVidas.World.Traps.TrapGroupMember>().Configure(TrapGroupC);
+            if (!string.IsNullOrEmpty(group)) go.AddComponent<SeteVidas.World.Traps.TrapGroupMember>().Configure(group);
         }
 
         /// <summary>Espinhos no chão (y 0) que o botão do grupo desliga.</summary>
-        static void Spikes(Transform parent, float x, int width)
+        internal static void Spikes(Transform parent, float x, int width, string group = TrapGroupC)
         {
             TrapsSetup.Spikes(parent, x, width);
             var spikes = parent.GetChild(parent.childCount - 1);
-            spikes.gameObject.AddComponent<SeteVidas.World.Traps.TrapGroupMember>().Configure(TrapGroupC);
+            if (!string.IsNullOrEmpty(group)) spikes.gameObject.AddComponent<SeteVidas.World.Traps.TrapGroupMember>().Configure(group);
         }
 
         /// <summary>
         /// Serra que corre de <paramref name="a"/> a <paramref name="b"/> na altura <paramref name="y"/> (o botão do grupo
         /// desliga). Com <paramref name="vertical"/>, sobe e desce de a a b (Y) na coluna x = <paramref name="y"/>.
         /// </summary>
-        static void Saw(Transform parent, string name, float a, float b, float y, bool vertical = false)
+        internal static void Saw(Transform parent, string name, float a, float b, float y, bool vertical = false, string group = TrapGroupC)
         {
             var at = vertical ? new Vector2(y, a) : new Vector2(a, y);
             var saw = TrapsSetup.Instance<SeteVidas.World.Traps.SawBlade>(parent, "SawBlade", name, at);
             saw.Configure(a, b, vertical);
             PrefabUtility.RecordPrefabInstancePropertyModifications(saw);
-            saw.gameObject.AddComponent<SeteVidas.World.Traps.TrapGroupMember>().Configure(TrapGroupC);
+            if (!string.IsNullOrEmpty(group)) saw.gameObject.AddComponent<SeteVidas.World.Traps.TrapGroupMember>().Configure(group);
         }
 
         /// <summary>Botão azul no chão: desliga para sempre as armadilhas do grupo.</summary>
-        static void Switch(Transform parent, string name, float x, float y, string group)
+        internal static void Switch(Transform parent, string name, float x, float y, string group)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -718,7 +721,7 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Gancho (classe Arqueiro, futuro) na ponta de uma parede.</summary>
-        static void Hook(Transform parent, string name, float x, float y)
+        internal static void Hook(Transform parent, string name, float x, float y)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -735,7 +738,7 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Porta de residência (2 × 3 tiles) com os pés em <paramref name="y"/>.</summary>
-        static void Residence(Transform parent, string name, float x, float y, string scene, string entrance, string verb, string doorId, string keyId)
+        internal static void Residence(Transform parent, string name, float x, float y, string scene, string entrance, string verb, string doorId, string keyId)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -770,7 +773,7 @@ namespace SeteVidas.EditorTools
             ProgressionSetup.PlaceSanctuary(prefab, parent, id, displayName, x);
         }
 
-        static void Trunk(Transform parent, string name, float x, float y, string id)
+        internal static void Trunk(Transform parent, string name, float x, float y, string id)
         {
             var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ClassSetup.WallPrefabPath), parent);
             go.name = name;
@@ -794,7 +797,7 @@ namespace SeteVidas.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void Chest(Transform parent, string name, float x, float y, string id, bool wood, int coins)
+        internal static void Chest(Transform parent, string name, float x, float y, string id, bool wood, int coins)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             go.transform.SetParent(parent, false);
@@ -827,7 +830,7 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Galho de mão única: <paramref name="x"/> é a ponta esquerda; o topo fica em <paramref name="y"/>.</summary>
-        static void Branch(Transform parent, string name, float x, float y, float width)
+        internal static void Branch(Transform parent, string name, float x, float y, float width)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -840,7 +843,7 @@ namespace SeteVidas.EditorTools
             Visual(go.transform, "galho", new Vector2(width, 0.375f), new Vector3(0f, -0.125f, 0f), 1);
         }
 
-        static void Swaying(Transform parent, string name, float x, float y, float width)
+        internal static void Swaying(Transform parent, string name, float x, float y, float width)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -854,7 +857,7 @@ namespace SeteVidas.EditorTools
             go.AddComponent<SwayingBranch>();
         }
 
-        static void Leaf(Transform parent, string name, float x, float y)
+        internal static void Leaf(Transform parent, string name, float x, float y)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -868,7 +871,7 @@ namespace SeteVidas.EditorTools
             go.AddComponent<SinkingLeaf>();
         }
 
-        static void Mushroom(Transform parent, string name, float x, float y)
+        internal static void Mushroom(Transform parent, string name, float x, float y)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Ground) };
             go.transform.SetParent(parent, false);
@@ -883,7 +886,7 @@ namespace SeteVidas.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static void RottenBranch(Transform parent, string name, float x, float y)
+        internal static void RottenBranch(Transform parent, string name, float x, float y)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Ground) };
             go.transform.SetParent(parent, false);
@@ -905,12 +908,12 @@ namespace SeteVidas.EditorTools
         const string MapRegion = "Floresta de teste";
         static readonly Vector2 MapOffsetB = new Vector2(73f, 18f);
 
-        static void Room(Transform parent, string id, string label, Vector2 center, Vector2 size, Vector2 offset)
+        internal static void Room(Transform parent, string id, string label, Vector2 center, Vector2 size, Vector2 offset, string region = MapRegion)
         {
             var go = new GameObject("Sala " + id + " (" + label + ")");
             go.transform.SetParent(parent, false);
             go.transform.position = center;
-            go.AddComponent<MapRoom>().Configure(id, MapRegion, size, offset);
+            go.AddComponent<MapRoom>().Configure(id, region, size, offset);
         }
 
         /// <summary>
@@ -935,7 +938,7 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Cacto Flutuante (bola de espinhos, ponto de pogo). <paramref name="travel"/> = vaivém a partir dali.</summary>
-        static void Cactus(Transform parent, string name, float x, float y, Vector2 travel, float period)
+        internal static void Cactus(Transform parent, string name, float x, float y, Vector2 travel, float period)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Hazard) };
             go.transform.SetParent(parent, false);
@@ -953,7 +956,7 @@ namespace SeteVidas.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        static SpriteRenderer Visual(Transform parent, string sprite, Vector2 size, Vector3 local, int order)
+        internal static SpriteRenderer Visual(Transform parent, string sprite, Vector2 size, Vector3 local, int order)
         {
             var go = new GameObject("Visual");
             go.transform.SetParent(parent, false);
@@ -966,17 +969,17 @@ namespace SeteVidas.EditorTools
             return sr;
         }
 
-        static void Exit(Transform parent, string name, Vector2 center, Vector2 size, string scene, string entrance)
+        internal static void Exit(Transform parent, string name, Vector2 center, Vector2 size, string scene, string entrance, string flag = "")
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             go.transform.SetParent(parent, false);
             go.transform.position = center;
             var box = go.AddComponent<BoxCollider2D>();
             box.size = size;
-            go.AddComponent<RoomExit>().Configure(scene, entrance);
+            go.AddComponent<RoomExit>().Configure(scene, entrance, flag);
         }
 
-        static void Entrance(Transform parent, string name, Vector2 feet, string id, int facing)
+        internal static void Entrance(Transform parent, string name, Vector2 feet, string id, int facing)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -986,7 +989,7 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------ arte provisória
 
-        static Sprite LoadSprite(string name) => AssetDatabase.LoadAssetAtPath<Sprite>($"{ArtFolder}/{name}.png");
+        internal static Sprite LoadSprite(string name) => AssetDatabase.LoadAssetAtPath<Sprite>($"{ArtFolder}/{name}.png");
 
         static readonly Color32 Clear = new Color32(0, 0, 0, 0);
         static readonly Color32 BarkDark = new Color32(0x34, 0x26, 0x1e, 0xff);
@@ -1008,7 +1011,7 @@ namespace SeteVidas.EditorTools
         static readonly Color32 Outline = new Color32(0x1a, 0x14, 0x12, 0xff);
 
         /// <summary>Desenha os sprites provisórios (só se ainda não existem: dá para trocar pela arte de verdade no mesmo nome).</summary>
-        static void EnsureSprites()
+        internal static void EnsureSprites()
         {
             Directory.CreateDirectory(ArtFolder);
             Make("galho", 16, 6, (x, y) => y <= 2 ? (y == 0 ? BarkDark : (x % 5 == 0 ? BarkDark : Bark)) :

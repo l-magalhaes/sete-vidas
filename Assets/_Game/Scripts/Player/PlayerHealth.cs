@@ -211,7 +211,7 @@ namespace SeteVidas.Player
             if (_input != null) _input.SetLock(this, false);
         }
 
-        /// <summary>Vida cheia (descansar no santuário).</summary>
+        /// <summary>Vida cheia (descansar no santuário). A magia de cura é recarregada à parte (<see cref="HealingSpell.Refill"/>).</summary>
         public void RestoreFull()
         {
             if (IsDead) return;
@@ -236,6 +236,10 @@ namespace SeteVidas.Player
             if (fader != null) yield return fader.FadeTo(1f, s.DeathFadeTime);
 
             // O último santuário é de outra cena (Floresta: uma cena por região): renasce lá, de vida cheia
+            // renasce como quem descansou: a magia de cura volta aos 3 usos (pedido do usuário, 13/11/2026)
+            var heal = GetComponent<HealingSpell>();
+            if (heal != null) heal.Refill();
+
             var data = SaveManager.Data;
             if (!string.IsNullOrEmpty(data.lastSanctuaryId) && !string.IsNullOrEmpty(data.scene) &&
                 data.scene != gameObject.scene.name && Application.CanStreamedLevelBeLoaded(data.scene))

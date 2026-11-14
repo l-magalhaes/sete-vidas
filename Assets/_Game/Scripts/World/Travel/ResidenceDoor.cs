@@ -26,6 +26,11 @@ namespace SeteVidas.World
         [SerializeField] string doorId = "";
         [Tooltip("Vazio = sem tranca")]
         [SerializeField] string keyId = "";
+        [Header("Atalho (opcional, Floresta F2)")]
+        [Tooltip("Usar esta porta grava esta flag: é o lado que ABRE o atalho")]
+        [SerializeField] string opensFlag = "";
+        [Tooltip("Só funciona com esta flag no save: o lado fechado, até abrir pelo outro")]
+        [SerializeField] string requiredFlag = "";
         [Header("Visual")]
         [SerializeField] SpriteRenderer spriteRenderer;
         [SerializeField] Sprite lockedSprite;
@@ -47,6 +52,20 @@ namespace SeteVidas.World
             doorId = door;
             keyId = key;
         }
+
+        /// <summary>Atalho: <paramref name="opens"/> = flag gravada ao usar; <paramref name="requires"/> = flag exigida (lado fechado).</summary>
+        public void ConfigureShortcut(string opens, string requires)
+        {
+            opensFlag = opens ?? "";
+            requiredFlag = requires ?? "";
+        }
+
+        /// <summary>Lado fechado de um atalho que ainda não foi aberto pelo outro lado.</summary>
+        public bool ClosedFromThisSide => !ShortcutOpen(SaveManager.Data, requiredFlag);
+
+        /// <summary>Regra pura (EditMode): sem flag exigida, sempre abre; com flag, só depois de aberta pelo outro lado.</summary>
+        public static bool ShortcutOpen(SaveData data, string requiredFlag) =>
+            string.IsNullOrEmpty(requiredFlag) || (data != null && data.HasFlag(requiredFlag));
 
         void Start()
         {
@@ -75,6 +94,17 @@ namespace SeteVidas.World
             if (input == null || !input.isActiveAndEnabled || !input.InteractPressedThisFrame) return;
 
             var data = SaveManager.Data;
+            if (ClosedFromThisSide)
+            {
+                if (Time.time - _barkAt > 2f) { SpeechBubble.Show(h.transform, "Não abre deste lado.", 2.2f); _barkAt = Time.time; }
+                SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.6f, 0.7f); // provisório
+                return;
+            }
+            if (!string.IsNullOrEmpty(opensFlag) && data != null && !data.HasFlag(opensFlag))
+            {
+                data.SetFlag(opensFlag); // atalho aberto: o outro lado passa a funcionar
+                SaveManager.Save();
+            }
             if (Locked)
             {
                 if (!KeyRules.HasKey(data, keyId))

@@ -16,6 +16,8 @@ namespace SeteVidas.World
 
         void Start()
         {
+            // nunca no save do jogo (o graybox da F2 também tem este preparador; ver ForestGrayboxSave)
+            if (SaveManager.ActiveSlot == SaveManager.MainSlot) return;
             var data = SaveManager.Data;
             var health = PlayerHealth.Active;
             if (data == null || health == null) return;

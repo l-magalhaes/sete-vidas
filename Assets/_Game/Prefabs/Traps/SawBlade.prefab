@@ -141,6 +141,7 @@ MonoBehaviour:
   returnToSafeGround: 0
   fromX: 0
   toX: 0
+  vertical: 0
   speed: 4
   pause: 0.4
   radius: 0.55

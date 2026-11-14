@@ -134,6 +134,77 @@ namespace SeteVidas.Enemies
             return (Vector2)(Quaternion.Euler(0f, 0f, a) * forward.normalized);
         }
 
+        // ---------------------------------------------------------------- Serpente da Floresta (bote do buraco)
+
+        public enum SnakeState { Hidden, Warn, Strike, Stretched, Retreat }
+
+        /// <summary>Distância (tiles) em que o gato em pé, na frente, provoca o bote.</summary>
+        public const float SnakeTrigger = 3f;
+        public const float SnakeWarn = 0.4f;
+        public const float SnakeStrike = 0.12f;
+        public const float SnakeStretched = 0.6f;
+        public const float SnakeRetreat = 1.5f;
+        /// <summary>Quanto dura o corpo voltando para o buraco, no começo do recuo (s).</summary>
+        public const float SnakeRetract = 0.35f;
+        public const float SnakeLunge = 3f;
+        public const int SnakeHealth = 3;
+        /// <summary>Velocidade da serpente que rasteja (tiles/s) entre os botes.</summary>
+        public const float SnakeCrawlSpeed = 1.6f;
+
+        /// <summary>
+        /// Próximo estado da Serpente (Docs/Design/floresta-bestiario.md): escondida até o gato chegar a 3 tiles sem estar
+        /// escondido na folhagem; chocalho (0,4 s), bote de 3 tiles, fica esticada 0,6 s (pogo e ponto fraco) e volta para
+        /// o buraco por 1,5 s (invulnerável). <paramref name="playerDist"/> negativo = longe ou em outra altura.
+        /// </summary>
+        public static SnakeState StepSnake(SnakeState s, ref float timer, float dt, float playerDist, bool playerHidden)
+        {
+            switch (s)
+            {
+                case SnakeState.Hidden:
+                    if (playerDist < 0f || playerDist > SnakeTrigger || playerHidden) return SnakeState.Hidden;
+                    timer = SnakeWarn;
+                    return SnakeState.Warn;
+                case SnakeState.Warn:
+                    timer -= dt;
+                    if (timer > 0f) return SnakeState.Warn;
+                    timer = SnakeStrike;
+                    return SnakeState.Strike;
+                case SnakeState.Strike:
+                    timer -= dt;
+                    if (timer > 0f) return SnakeState.Strike;
+                    timer = SnakeStretched;
+                    return SnakeState.Stretched;
+                case SnakeState.Stretched:
+                    timer -= dt;
+                    if (timer > 0f) return SnakeState.Stretched;
+                    timer = SnakeRetreat;
+                    return SnakeState.Retreat;
+                default:
+                    timer -= dt;
+                    return timer > 0f ? SnakeState.Retreat : SnakeState.Hidden;
+            }
+        }
+
+        /// <summary>Quanto o corpo saiu do buraco (0 = escondida, 1 = bote inteiro, 3 tiles).</summary>
+        public static float SnakeExtension(SnakeState s, float timer)
+        {
+            switch (s)
+            {
+                case SnakeState.Strike: return 1f - Mathf.Clamp01(timer / SnakeStrike);
+                case SnakeState.Stretched: return 1f;
+                // volta deslizando para o buraco (antes sumia de uma vez e reaparecia no buraco)
+                case SnakeState.Retreat: return 1f - Mathf.Clamp01((SnakeRetreat - timer) / SnakeRetract);
+                default: return 0f;
+            }
+        }
+
+        /// <summary>Morde durante o bote e esticada; aceita pogo e leva dano só esticada.</summary>
+        public static bool SnakeBites(SnakeState s) => s == SnakeState.Strike || s == SnakeState.Stretched;
+        public static bool SnakeVulnerable(SnakeState s) => s == SnakeState.Stretched;
+        /// <summary>No buraco (escondida ou voltando) não leva dano; a que rasteja leva dano fora do bote também.</summary>
+        public static bool SnakeInvulnerable(SnakeState s, bool crawls) =>
+            s == SnakeState.Retreat || (!crawls && s == SnakeState.Hidden);
+
         // ---------------------------------------------------------------- Morcego Noturno (persegue)
 
         public enum BatState { Sleep, Wake, Chase, Recoil, Return }

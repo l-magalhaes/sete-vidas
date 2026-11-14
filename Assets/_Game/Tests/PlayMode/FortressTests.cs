@@ -163,25 +163,46 @@ namespace SeteVidas.Tests
             Assert.AreEqual("mus_fortaleza_base", director.CurrentClip.name);
         }
 
-        /// <summary>Melhoria 8: escuridão nas duas pontas, na frente de tudo; o fim do mapa (x 251) fica no preto.</summary>
+        /// <summary>
+        /// Melhoria 8: as duas pontas cobertas, na frente de tudo. Entrada no escuro; na saída (a passagem para a
+        /// Estrada de Soluki), um brilho suave só no vão e o escuro depois dela, que esconde o fim do mapa (x 251).
+        /// </summary>
         [UnityTest]
         public IEnumerator EdgeFog_CoversBothEndsOfTheMap()
         {
             yield return Load();
-            var fog = GameObject.Find("Escuridão das pontas");
-            Assert.IsNotNull(fog, "Sem a escuridão das pontas. Rode Tools > Sete Vidas > 13");
+            var fog = GameObject.Find("Pontas da fase");
+            Assert.IsNotNull(fog, "Sem as pontas da fase. Rode Tools > Sete Vidas > 13");
             var renderers = fog.GetComponentsInChildren<SpriteRenderer>();
-            Assert.AreEqual(4, renderers.Length, "Gradiente e preto na saída e na entrada");
-            bool wallHidden = false, startHidden = false;
+            Assert.AreEqual(4, renderers.Length, "Luz e preto na saída; gradiente e preto na entrada");
+            bool wallHidden = false, startHidden = false, softLight = false;
             foreach (var r in renderers)
             {
                 Assert.IsNotNull(r.sprite, r.name);
                 Assert.AreEqual(25, r.sortingOrder, $"{r.name}: na frente de tudo");
-                if (r.name.Contains("preto") && r.bounds.min.x <= 247.01f && r.bounds.max.x > 251f) wallHidden = true;
+                if (r.name.Contains("Saída: preto") && r.bounds.min.x <= 248.01f && r.bounds.max.x > 251f) wallHidden = true;
+                // minimalista (pedido do usuário): a luz fica só no vão da passagem, não é uma faixa da altura do mapa
+                if (r.name.Contains("Saída: luz") && r.bounds.size.y <= 8f && r.bounds.max.x >= 247f && r.color.a > 0f) softLight = true;
                 if (r.name.Contains("preto") && r.bounds.max.x >= -13.01f && r.bounds.min.x < -18f) startHidden = true;
             }
-            Assert.IsTrue(wallHidden, "A parede do fim (x 251) fica no preto");
+            Assert.IsTrue(softLight, "Brilho suave só no vão da saída");
+            Assert.IsTrue(wallHidden, "A parede do fim (x 251) fica escondida no escuro depois da passagem");
             Assert.IsTrue(startHidden, "A rocha do começo (x -18) fica no preto");
+        }
+
+        /// <summary>A fase acaba na passagem (pedido do usuário): a câmera não mostra nada depois do brilho da saída.</summary>
+        [UnityTest]
+        public IEnumerator Camera_StopsAtTheExitPassage()
+        {
+            yield return Load();
+            var limit = GameObject.Find("Limite da câmera (fim da fase)");
+            Assert.IsNotNull(limit, "Sem limite de câmera. Rode Tools > Sete Vidas > 13d");
+            bool confined = false;   // o confiner do Cinemachine (sem referenciar o pacote nos testes)
+            foreach (var b in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+                if (b.GetType().Name == "CinemachineConfiner2D") confined = true;
+            Assert.IsTrue(confined, "A câmera do Cinemachine tem o Confiner 2D");
+            Assert.AreEqual(248f, limit.GetComponent<Collider2D>().bounds.max.x, 0.01f,   // = FortressSetup.CameraRightEdge (editor)
+                "A borda direita da tela para no fim da passagem (o escuro fica fora)");
         }
 
         /// <summary>Melhoria 2: caindo forte na lagoa (como no salto de fé), nasce o respingo grande, só na água.</summary>
@@ -506,6 +527,8 @@ namespace SeteVidas.Tests
             var exit = GameObject.Find("Conversa: Saída da fortaleza");
             Assert.IsNotNull(exit);
             Assert.Greater(exit.transform.position.x, gate.transform.position.x, "A saída fica atrás do portão");
+            Assert.IsTrue(exit.GetComponent<DialogueTrigger>().IsPassage, "O fim da fase 1 leva à Estrada de Soluki (Forest_Road), não ao menu");
+            Assert.IsNotNull(RoomEntrance.Find("fortaleza_estrada"), "Chegada de quem volta da estrada (Forest_Road → Fortaleza)");
         }
 
         [UnityTest]

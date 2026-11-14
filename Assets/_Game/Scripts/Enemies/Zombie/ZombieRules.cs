@@ -44,5 +44,12 @@ namespace SeteVidas.Enemies.Zombie
             if (Math.Abs(d) <= deadZone) return 0;
             return d > 0f ? 1 : -1;
         }
+
+        /// <summary>
+        /// Infectado de escudo (Floresta F3, plano §F3): o escudo segura golpes comuns de frente. Passa pelas costas
+        /// (ensina a chegar por trás) ou com a marreta do Paladino (golpe pesado quebra a guarda).
+        /// </summary>
+        public static bool ShieldBlocks(bool hasShield, SeteVidas.Combat.DamageType type, SeteVidas.Combat.AttackAngle angle) =>
+            hasShield && type != SeteVidas.Combat.DamageType.Heavy && angle == SeteVidas.Combat.AttackAngle.Front;
     }
 }
