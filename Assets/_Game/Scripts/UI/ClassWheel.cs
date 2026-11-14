@@ -11,7 +11,7 @@ namespace SeteVidas.UI
     /// Roda de troca rápida de classe (pedido do usuário, 14/11/2026; referência: roda de armas). Segurar a troca de
     /// classe (R / RB, ou Q / LB) abre a roda com o tempo em câmera lenta; o direcional, o analógico ou o mouse
     /// apontam a fatia; soltar o botão troca. As 7 fatias são as classes na ordem (Ladino em cima, sentido horário);
-    /// as que faltam aparecem escuras com "?". No meio: o nome da classe apontada e "n / total".
+    /// as que faltam aparecem só como fatia escura, sem ícone nem nome. No meio: o nome da classe apontada e "n / total".
     /// Montada na hora (sem prefab), uma por cena.
     /// </summary>
     public class ClassWheel : MonoBehaviour
@@ -144,8 +144,9 @@ namespace SeteVidas.UI
                     : hover ? Color.Lerp(theme, Color.white, 0.25f)
                     : current ? Color.Lerp(SegmentColor, CurrentEdge, 0.25f) : SegmentColor;
                 _segments[i].rectTransform.localScale = Vector3.one * (hover ? 1.06f : 1f);
-                _icons[i].sprite = WheelIcons.For(c, !open);
-                _icons[i].color = open ? Color.white : new Color(1f, 1f, 1f, 0.6f);
+                // só as classes que o gato tem mostram o ícone; as outras ficam só a fatia escura (pedido de 14/11/2026)
+                _icons[i].enabled = open;
+                if (open) _icons[i].sprite = WheelIcons.For(c, false);
                 _labels[i].text = open ? (def != null ? def.DisplayName : c.ToString()) : "";
                 _labels[i].color = hover ? Color.white : new Color(0.85f, 0.83f, 0.78f, 1f);
             }
