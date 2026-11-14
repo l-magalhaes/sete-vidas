@@ -164,33 +164,50 @@ namespace SeteVidas.Tests
         }
 
         /// <summary>
-        /// Melhoria 8: as duas pontas cobertas, na frente de tudo. Entrada no escuro; na saída (a passagem para a
-        /// Estrada de Soluki), um brilho suave só no vão e o escuro depois dela, que esconde o fim do mapa (x 251).
+        /// Melhoria 8 (revista em 14/11/2026, pedido do usuário: "ainda aparece a tela preta no fim da fase"): a entrada
+        /// fica no escuro; na saída não há mais luz solta nem faixa preta: a estrada continua (o mapa vai até x 290) e a
+        /// passagem tem o marco da trilha com a lanterna.
         /// </summary>
         [UnityTest]
-        public IEnumerator EdgeFog_CoversBothEndsOfTheMap()
+        public IEnumerator EdgeFog_EntryDark_ExitIsARoadWithAMarker()
         {
             yield return Load();
             var fog = GameObject.Find("Pontas da fase");
             Assert.IsNotNull(fog, "Sem as pontas da fase. Rode Tools > Sete Vidas > 13");
-            var renderers = fog.GetComponentsInChildren<SpriteRenderer>();
-            Assert.AreEqual(4, renderers.Length, "Luz e preto na saída; gradiente e preto na entrada");
-            bool wallHidden = false, startHidden = false, softLight = false;
-            foreach (var r in renderers)
+            bool startHidden = false, marker = false;
+            foreach (var r in fog.GetComponentsInChildren<SpriteRenderer>())
             {
                 Assert.IsNotNull(r.sprite, r.name);
-                Assert.AreEqual(25, r.sortingOrder, $"{r.name}: na frente de tudo");
-                if (r.name.Contains("Saída: preto") && r.bounds.min.x <= 248.01f && r.bounds.max.x > 251f) wallHidden = true;
-                // minimalista (pedido do usuário): a luz fica só no vão da passagem, não é uma faixa da altura do mapa
-                if (r.name.Contains("Saída: luz") && r.bounds.size.y <= 8f && r.bounds.max.x >= 247f && r.color.a > 0f) softLight = true;
+                Assert.IsFalse(r.name.Contains("Saída: preto"), "Sem a faixa preta na saída");
                 if (r.name.Contains("preto") && r.bounds.max.x >= -13.01f && r.bounds.min.x < -18f) startHidden = true;
+                if (r.name.Contains("marco da trilha") && r.bounds.min.x < 247f) marker = true;
             }
-            Assert.IsTrue(softLight, "Brilho suave só no vão da saída");
-            Assert.IsTrue(wallHidden, "A parede do fim (x 251) fica escondida no escuro depois da passagem");
             Assert.IsTrue(startHidden, "A rocha do começo (x -18) fica no preto");
+            Assert.IsTrue(marker, "O marco da trilha na passagem do fim");
         }
 
-        /// <summary>A fase acaba na passagem (pedido do usuário): a câmera não mostra nada depois do brilho da saída.</summary>
+        /// <summary>
+        /// Os cofres atrás das paredes rachadas não aparecem antes de quebrar (pedido do usuário, 14/11/2026): a
+        /// cobertura (SecretCovers, ao carregar a cena) tapa o vão do cofre 15 e a moeda dele com a pedra da parede.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator Vaults_AreHiddenBehindTheCrackedWall()
+        {
+            yield return Load();
+            yield return null;
+            SecretCover vault = null;
+            var coin = new Vector2(225.5f, 15.6f);   // "Moeda do cofre 15 (1)" (FortressLayout.Vault)
+            foreach (var c in Object.FindObjectsByType<SecretCover>(FindObjectsSortMode.None))
+                if (c.Side == 0 && c.Wall != null && c.Wall.GetComponent<Collider2D>().bounds.Contains(new Vector3(223.5f, 16f, 0f))) vault = c;
+            Assert.IsNotNull(vault, "Sem cobertura atrás da parede rachada do cofre 15");
+            Assert.IsFalse(vault.Revealed, "Coberto até a parede quebrar ou o gato entrar");
+            bool tiled = false;
+            foreach (var map in Object.FindObjectsByType<Tilemap>(FindObjectsSortMode.None))
+                if (map.name.StartsWith("Cobertura") && map.HasTile(new Vector3Int(Mathf.FloorToInt(coin.x), Mathf.FloorToInt(coin.y), 0))) tiled = true;
+            Assert.IsTrue(tiled, "A moeda do cofre fica embaixo da cobertura");
+        }
+
+        /// <summary>A câmera para um pouco depois da passagem do fim, ainda dentro da estrada (que vai até x 290).</summary>
         [UnityTest]
         public IEnumerator Camera_StopsAtTheExitPassage()
         {
@@ -201,10 +218,9 @@ namespace SeteVidas.Tests
             foreach (var b in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
                 if (b.GetType().Name == "CinemachineConfiner2D") confined = true;
             Assert.IsTrue(confined, "A câmera do Cinemachine tem o Confiner 2D");
-            Assert.AreEqual(248f, limit.GetComponent<Collider2D>().bounds.max.x, 0.01f,   // = FortressSetup.CameraRightEdge (editor)
-                "A borda direita da tela para no fim da passagem (o escuro fica fora)");
+            Assert.AreEqual(262f, limit.GetComponent<Collider2D>().bounds.max.x, 0.01f,   // = FortressSetup.CameraRightEdge (editor)
+                "A borda direita da tela para na estrada, antes da rocha do fim do mapa (x 287)");
         }
-
         /// <summary>Melhoria 2: caindo forte na lagoa (como no salto de fé), nasce o respingo grande, só na água.</summary>
         [UnityTest]
         public IEnumerator Lake_StrongFall_MakesBigSplash()

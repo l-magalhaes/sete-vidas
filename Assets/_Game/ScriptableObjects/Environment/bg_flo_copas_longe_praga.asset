@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_flo_copas_longe_praga
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/Flo/manifest.json
+  entry:
+    id: bg_flo_copas_longe_praga
+    nome: Copas distantes (praga)
+    regiao: flo
+    categoria: plx
+    funcao: decorativo
+    material: silhueta
+    epoca: praga
+    tamanho_px: c003000040010000i
+    sprites:
+    - bg_flo_copas_longe_praga.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: bg_longe
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0.04
+      - 0.02
+      ancora:
+      - 0
+      - 0
+      repete: 1
+      preencher_abaixo: '#160f1c'
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "As copas arroxeadas perto do Cora\xE7\xE3o."
+    tags:
+    - fundo
+    - floresta
+    - praga
+    - f5
+  variants:
+  - {fileID: 21300000, guid: 34e68f3a4b31b631ca6ec95138c0f9dd, type: 3}
+  frames: []

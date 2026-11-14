@@ -103,8 +103,8 @@ namespace SeteVidas.EditorTools
             var z = new List<Zone>();
             Z(z, "A", -20f, 26f, 30f, 130f);     // alto da montanha e a primeira metade da queda
             Z(z, "V", 8f, -6f, 217f, 62f);       // lagoa, trilha, pátio, muralhas e galeria (troca só na queda do penhasco)
-            Z(z, "H", 183f, 95f, 262f, 130f);    // depois da porta do tomo (já é noite)
-            Z(z, "H", 215f, -6f, 262f, 99f);     // o poço dos fundos e a estrada
+            Z(z, "H", 183f, 95f, 300f, 130f);    // depois da porta do tomo (já é noite)
+            Z(z, "H", 215f, -6f, 300f, 99f);     // o poço dos fundos e a estrada (que continua depois da saída)
             Z(z, "G", 133f, 95f, 185f, 130f);    // a câmara do selo
             Z(z, "F", 133f, 58f, 217f, 97f);     // salão, armadilhas, torres
             return z;

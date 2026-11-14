@@ -60,6 +60,7 @@ namespace SeteVidas.EditorTools
                 hammer.BaseDamage = 4;
                 hammer.Type = DamageType.Heavy;
                 hammer.BackstabBonus = false;
+                hammer.UnawareBonus = false;
                 hammer.ComboSteps = 1;
                 hammer.Windup = 0.35f;
                 hammer.Active = 0.12f;

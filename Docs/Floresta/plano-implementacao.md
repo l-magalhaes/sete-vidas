@@ -238,6 +238,13 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
 - **Corrupção progressiva**: densidade de infectados e vegetação enegrecida cresce em direção ao Coração.
 - **Áudio:** ambiências viva, ruínas e corrompida; músicas de exploração da floresta e das ruínas.
 - **Narrativa:** placas/entradas de diário sobre os Primatas (sugerir, não explicar).
+- **Estado (14/11/2026): parte 1 (cenário) implementada, falta testar no Unity** (rodar `Tools/EnvironmentSprites/gerar.ps1` e o menu **21**; roteiro: `Docs/QA/floresta-f5-plano-de-teste.md`). Vale para as 7 cenas, não só A–C.
+  - **Tileset** (`ForestAutotile`, runtime, C# 5): solo, praga e concreto dos Primatas, com faixas musgo/terra/transição/rocha, **troncos** nas colunas finas, vinha (casca + hera de escalar), rampas 1:1 e 1:2, paredes do fundo. Material e praga por sala em `Editor/Scenery/ForestTerrain.cs` (concreto: A5, B4, C3, C5, G2; praga: C7, E, F1; praga chegando: C4–C6, D, G).
+  - **Massa da floresta** fora das salas (tilemap sem colisão): as salas viram clareiras na mata; as aberturas da casca abrem um corredor. Na estrada, só embaixo.
+  - **Fundo** (`ForestBackgrounds`): céu com lua, copas, árvores com fachos de luar, troncos próximos com névoa; versão praga no Ninho e no Coração.
+  - **Detalhes e mundo vivo** (`ForestPainter`): samambaias que curvam, fungos azuis e brotos da praga que pulsam, raízes e vergalhão no teto; vaga-lumes, folhas e poeira da praga por sala.
+  - Arte: `Tools/EnvironmentSprites/ForestSpriteGen.cs`. Prévia e conferência sem o Unity: `Tools/LevelPreview/ver_floresta.ps1` e `conferir_arte_floresta.ps1`. Testes: `ForestSceneryTests` (6).
+  - **Falta da F5:** parte 2, ruínas com objetos e segredos, placas e diário dos Primatas; parte 3, ambiências e músicas (floresta, ruínas). Tetos da estrada soltos no céu (fica para a arte da estrada, F3).
 
 ### F6 — Refúgio da Vulpis
 

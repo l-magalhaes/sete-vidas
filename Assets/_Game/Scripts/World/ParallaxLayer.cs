@@ -15,6 +15,8 @@ namespace SeteVidas.World
         [SerializeField] Vector2 anchor;
         [Tooltip("Largura do sprite em unidades para repetir (0 = não repete)")]
         [SerializeField, Min(0f)] float wrapWidth;
+        [Tooltip("Deriva horizontal contínua (tiles por segundo; névoa e nuvens). Só com repetição. 0 = parada")]
+        [SerializeField] float drift;
 
         Transform _camera;
 
@@ -22,6 +24,8 @@ namespace SeteVidas.World
         {
             factor = newFactor; anchor = newAnchor; wrapWidth = newWrapWidth;
         }
+
+        public void SetDrift(float tilesPerSecond) => drift = tilesPerSecond;
 
         void LateUpdate()
         {
@@ -33,6 +37,7 @@ namespace SeteVidas.World
             }
             Vector2 c = _camera.position;
             Vector2 p = anchor + (c - anchor) * (Vector2.one - factor);
+            if (wrapWidth > 0f && drift != 0f) p.x += Mathf.Repeat(drift * Time.time, wrapWidth); // anda pixel a pixel
             if (wrapWidth > 0f) p.x = c.x + Mathf.Repeat(p.x - c.x + wrapWidth * 0.5f, wrapWidth) - wrapWidth * 0.5f;
             const float px = 1f / 16f;
             transform.position = new Vector3(Mathf.Round(p.x / px) * px, Mathf.Round(p.y / px) * px, transform.position.z);

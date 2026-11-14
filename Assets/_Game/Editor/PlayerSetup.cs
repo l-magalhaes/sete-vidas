@@ -74,7 +74,7 @@ namespace SeteVidas.EditorTools
             {
                 Movement = LoadOrCreate(SettingsPath, () => ScriptableObject.CreateInstance<PlayerMovementSettings>()),
                 Climb = LoadOrCreate(ClimbSettingsPath, () => ScriptableObject.CreateInstance<WallClimbSettings>()),
-                Daggers = LoadOrCreate(DaggersPath, () => ScriptableObject.CreateInstance<MeleeAttackSettings>()),
+                Daggers = LoadOrCreate(DaggersPath, () => { var d = ScriptableObject.CreateInstance<MeleeAttackSettings>(); d.UnawareBonus = true; return d; }), // adagas: bônus no inimigo desatento
                 Stealth = LoadOrCreate(StealthPath, () => ScriptableObject.CreateInstance<StealthSettings>()),
                 Material = LoadOrCreate(MaterialPath, () => new PhysicsMaterial2D("PlayerNoFriction") { friction = 0f, bounciness = 0f }),
                 Controls = controls,

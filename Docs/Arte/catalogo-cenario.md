@@ -2,7 +2,20 @@
 
 > Gerado por `Tools/EnvironmentSprites/gerar_catalogo.ps1` a partir dos `manifest.json`. **Não edite à mão**: mude o manifesto e rode o script de novo. Como usar a biblioteca: `guia-de-assets.md`.
 
-**150 assets** em 22 manifestos.
+**160 assets** em 23 manifestos.
+
+## Backgrounds/Flo
+
+| | id | nome | função | camada | variações | regra de uso |
+|---|---|---|---|---|---|---|
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_ceu_noite.png) | `bg_flo_ceu_noite` | Céu da Floresta Silenciosa | decorativo | ceu | 1 · paralaxe 0/0 | Degradê índigo, lua no alto à esquerda (a luz de toda a Floresta vem dela), halo e estrelas. Gerado por Tools/EnvironmentSprites/ForestSpriteGen.cs (F5). |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_ceu_praga.png) | `bg_flo_ceu_praga` | Céu da Floresta com o véu da praga | decorativo | ceu | 1 · paralaxe 0/0 | O mesmo céu com um véu roxo subindo de baixo: Ninho e Coração. Gerado por ForestSpriteGen (F5). |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_copas_longe.png) | `bg_flo_copas_longe` | Copas distantes | decorativo | bg_longe | 1 · paralaxe 0,04/0,02 | Silhueta contínua das copas (#121e1e) com árvores emergentes; 960 px sem costura. A âncora vertical de cada cena vem do ForestBackgrounds. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_copas_longe_praga.png) | `bg_flo_copas_longe_praga` | Copas distantes (praga) | decorativo | bg_longe | 1 · paralaxe 0,04/0,02 | As copas arroxeadas perto do Coração. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_arvores_medio.png) | `bg_flo_arvores_medio` | Árvores médias com fachos de luar | decorativo | bg_medio | 1 · paralaxe 0,12/0,03 | Troncos escuros (#1a1412) com luar na borda esquerda, folhagem pendurada (#1e3028) e fachos de luar diagonais (alfa ~0,13). |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_arvores_medio_praga.png) | `bg_flo_arvores_medio_praga` | Árvores médias (praga) | decorativo | bg_medio | 1 · paralaxe 0,12/0,03 | Troncos arroxeados com veias, folhagem morta. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_troncos_perto.png) | `bg_flo_troncos_perto` | Troncos próximos e névoa | decorativo | bg_perto | 1 · paralaxe 0,28/0,05 | Poucos troncos grossos com musgo e raízes, uma coluna de concreto dos Primatas tomada pela mata e névoa rasteira na base. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Flo/bg_flo_troncos_perto_praga.png) | `bg_flo_troncos_perto_praga` | Troncos próximos (praga) | decorativo | bg_perto | 1 · paralaxe 0,28/0,05 | Troncos com veias roxas e uma névoa verde-ácida fraca. |
 
 ## Backgrounds/Interior
 
@@ -26,6 +39,8 @@
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Sky/bg_ceu_ultimo_raio.png) | `bg_ceu_ultimo_raio` | CÃ©u do Ãºltimo raio | decorativo | ceu | 1 · paralaxe 0/0 | No topo: o sol inteiro e os raios dourados (o Sol Eterno). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A Ã¢ncora de cada conjunto vem do FortressBackgrounds. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Sky/bg_ceu_noite.png) | `bg_ceu_noite` | CÃ©u da noite | decorativo | ceu | 1 · paralaxe 0/0 | Depois da maldiÃ§Ã£o: lua crescente Ã  esquerda, estrelas e um vÃ©u roxo fraco (a praga solta). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A Ã¢ncora de cada conjunto vem do FortressBackgrounds. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_cordilheira_a.png) | `bg_ext_cordilheira_a` | Cordilheira com a Cidadela pequena | decorativo | bg_longe | 1 · paralaxe 0,06/0,15 | 960 px, emenda sem costura; acontecimentos: cachoeira distante, torre em ruÃ­na, a Cidadela Ã  direita. Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A Ã¢ncora de cada conjunto vem do FortressBackgrounds. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_aetherion.png) | `bg_ext_aetherion` | Aetherion, a torre dos magos (ao longe) | narrativo | bg_longe | 1 · paralaxe 0,06/0,15 | Marco distante e área final do jogo (Lore Oficial §IV): torre altíssima com o topo quebrado, o Observatório e os Jardins Suspensos, atrás da cordilheira. A corrupção (coroa de nuvens roxas girando, janelas verde-ácido, relâmpagos lilás, corvos e fiapos) é tocada pelo AetherionFx com os quadros de Ext/Aetherion. Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs. |
+| ![](../../Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_aetherion_noite.png) | `bg_ext_aetherion_noite` | Aetherion de noite | narrativo | bg_longe | 1 · paralaxe 0,06/0,15 | A torre de noite (borda da lua à esquerda); sem o sol, a corrupção aparece mais (AetherionFx no modo noite). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_cordilheira.png) | `bg_ext_cordilheira` | Cordilheira (sem a Cidadela) | decorativo | bg_longe | 1 · paralaxe 0,06/0,15 | Vista de dentro da Cidadela: o horizonte baixa conforme o gato sobe. Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A Ã¢ncora de cada conjunto vem do FortressBackgrounds. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_cordilheira_noite.png) | `bg_ext_cordilheira_noite` | Cordilheira de noite | decorativo | bg_longe | 1 · paralaxe 0,06/0,15 | Borda iluminada pela lua (esquerda). Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A Ã¢ncora de cada conjunto vem do FortressBackgrounds. |
 | ![](../../Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_floresta_vale.png) | `bg_ext_floresta_vale` | Floresta do vale | decorativo | bg_medio | 1 · paralaxe 0,2/0,3 | Bosques de 3â€“7 Ã¡rvores com clareiras, a trilha serpenteando atÃ© o castelo e um lago numa clareira. Gerado por Tools/EnvironmentSprites/BackgroundSpriteGen.cs (Etapa 6). A Ã¢ncora de cada conjunto vem do FortressBackgrounds. |

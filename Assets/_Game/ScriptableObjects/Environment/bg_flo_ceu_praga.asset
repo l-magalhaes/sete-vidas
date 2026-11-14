@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_flo_ceu_praga
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/Flo/manifest.json
+  entry:
+    id: bg_flo_ceu_praga
+    nome: "C\xE9u da Floresta com o v\xE9u da praga"
+    regiao: flo
+    categoria: plx
+    funcao: decorativo
+    material: silhueta
+    epoca: praga
+    tamanho_px: e00100000e010000i
+    sprites:
+    - bg_flo_ceu_praga.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: ceu
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0
+      - 0
+      ancora:
+      - 0
+      - 0
+      repete: 0
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: esquerda
+      valor_max: 0.25
+      conjuntos: []
+    leitura: "O mesmo c\xE9u com um v\xE9u roxo subindo de baixo: Ninho e Cora\xE7\xE3o. Gerado por ForestSpriteGen (F5)."
+    tags:
+    - fundo
+    - floresta
+    - praga
+    - f5
+  variants:
+  - {fileID: 21300000, guid: 3fc4950a4199e1cac125c49d9ebf774e, type: 3}
+  frames: []

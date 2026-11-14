@@ -15,6 +15,9 @@ MonoBehaviour:
   BaseDamage: 2
   Type: 0
   BackstabBonus: 1
+  UnawareBonus: 1
+  UnawareFront: 1.75
+  UnawareBackBoost: 1.2
   Multipliers:
     Front: 1
     Back: 1.5

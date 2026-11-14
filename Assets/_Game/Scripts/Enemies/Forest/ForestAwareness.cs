@@ -44,6 +44,16 @@ namespace SeteVidas.Enemies
             Range = 6f, HalfAngle = 180f, FillRate = 0.8f, Hearing = 1f, HearGain = 1f,
         };
 
+        /// <summary>
+        /// Planta Carnívora (pedido do usuário, 14/11/2026: "detectar mais fácil"): sente em volta (não tem um lado para
+        /// olhar), até 9 tiles, e enche a suspeita 3,5× mais rápido que a Sentinela. A parede ainda bloqueia, e a sombra
+        /// ainda ajuda o gato, só que bem menos.
+        /// </summary>
+        public static ForestSenseProfile Plant => new ForestSenseProfile
+        {
+            Range = 9f, HalfAngle = 180f, FillRate = 2.8f, Hearing = 1.5f, HearGain = 2f,
+        };
+
         /// <summary>Visibilidade mínima do gato para quem já está em alerta (não some de vista no escuro).</summary>
         public const float CombatVisibilityFloor = 0.6f;
 

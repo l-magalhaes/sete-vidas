@@ -113,6 +113,8 @@ namespace SeteVidas.Player
             {
                 // o rastro do golpe e o clarão branco ficam como estão
                 if (r.name == "Slash" || r.name == "Clarão") continue;
+                // a fala do Lion fica legível na sombra (pedido do usuário, 14/11/2026)
+                if (r.GetComponentInParent<SeteVidas.UI.SpeechBubble>(true) != null) continue;
                 if (!_instances.TryGetValue(r, out var instance) || instance == null)
                 {
                     instance = new Material(mat) { name = mat.name + " (" + r.name + ")" };

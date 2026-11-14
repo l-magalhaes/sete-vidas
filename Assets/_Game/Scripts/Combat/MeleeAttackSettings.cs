@@ -15,6 +15,12 @@ namespace SeteVidas.Combat
         [Tooltip("Aplica os multiplicadores de costas/furtivo. O GDD §5.2 dá esse bônus ao Ladino")]
         public bool BackstabBonus = true;
         public DamageMultipliers Multipliers = DamageMultipliers.Default;
+        [Tooltip("Golpe em inimigo DESATENTO (ainda não está em combate) vale mais (pedido do usuário, 14/11/2026: o primeiro golpe das adagas). Só nas adagas")]
+        public bool UnawareBonus;
+        [Tooltip("De frente, num inimigo desatento: multiplica o dano")]
+        [Min(1f)] public float UnawareFront = 1.75f;
+        [Tooltip("Pelas costas, num inimigo desatento (o golpe furtivo): multiplica o furtivo de novo")]
+        [Min(1f)] public float UnawareBackBoost = 1.2f;
 
         [Header("Tempos (s)")]
         [Range(1, 4)] public int ComboSteps = 3;
@@ -145,6 +151,12 @@ namespace SeteVidas.Combat
 
             var multipliers = Multipliers;
             if (angle == AttackAngle.Back && target.TryGetComponent(out IBackDamageMultiplier custom)) multipliers.Back = custom.BackMultiplier;
+            // adagas no inimigo desatento: de frente também vale mais, e o furtivo pelas costas vale ainda mais
+            if (UnawareBonus && BackstabBonus && target.TryGetComponent(out IFacingTarget unaware) && !unaware.InCombat)
+            {
+                multipliers.Front *= UnawareFront;
+                multipliers.StealthBack *= UnawareBackBoost;
+            }
             int amount = DamageCalculator.Apply(BaseDamage, angle, multipliers);
             Vector2 dir = ((Vector2)target.transform.position - attackerPosition);
             dir = dir.sqrMagnitude > 1e-6f ? dir.normalized : Vector2.right;

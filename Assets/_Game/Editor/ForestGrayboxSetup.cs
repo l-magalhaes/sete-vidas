@@ -35,6 +35,8 @@ namespace SeteVidas.EditorTools
             TrapsSetup.CreatePrefabs();
             Directory.CreateDirectory(Folder);
             ForestTestSetup.EnsureSprites();
+            EnvLibrary.ImportAll();          // F5: fundos da floresta (Backgrounds/Flo/manifest.json)
+            ForestPainter.ResetCaches();
 
             var reports = ForestReach.CheckAll();
             string text = ForestReach.Format(reports, false);
@@ -85,6 +87,7 @@ namespace SeteVidas.EditorTools
             var infected = new List<SeteVidas.Enemies.Zombie.ZombieSquad.Post>();
             var horde = new List<SeteVidas.Enemies.Zombie.ZombieSquad.Post>();
             var bridges = new List<ForestLayout.Obj>();
+            var debris = new List<ForestLayout.Obj>();
             var shortcuts = new Dictionary<string, List<ForestLayout.Obj>>();
             var arenas = new List<ForestLayout.Obj>();
             var arenaGates = new Dictionary<string, List<ArenaGate>>();
@@ -107,6 +110,7 @@ namespace SeteVidas.EditorTools
                         horde.Add(new SeteVidas.Enemies.Zombie.ZombieSquad.Post { name = o.Name, at = new Vector2(o.X, o.Y + 0.05f), facing = 1, minX = o.X, maxX = o.X });
                         break;
                     case "bridge": bridges.Add(o); break;
+                    case "debris": debris.Add(o); break;
                     case "sc_lever": case "sc_vine": case "sc_block": case "sc_rolled":
                         if (!shortcuts.TryGetValue(o.Flag, out var list)) shortcuts[o.Flag] = list = new List<ForestLayout.Obj>();
                         list.Add(o);
@@ -139,6 +143,14 @@ namespace SeteVidas.EditorTools
             if (infected.Count > 0) Squad(ctx.Root, reg.Scene == ForestLayout.Road ? "Infectados" : "Templários zumbis", infected, true);
             if (horde.Count > 0) hordeSquad = Squad(ctx.Root, "Horda da ponte", horde, false);
             foreach (var b in bridges) Bridge(ctx.Root, b, hordeSquad);
+            if (debris.Count > 0)
+            {
+                // os destroços da ponte no fundo do vale: atrás do gato, caem juntos na primeira vez (DebrisFall)
+                var pile = new GameObject("Destroços da ponte").transform;
+                pile.SetParent(ctx.Root, false);
+                foreach (var d in debris) Prop(pile, d.Name, d.Text, d.X, d.Y, -4, false);
+                pile.gameObject.AddComponent<DebrisFall>();
+            }
             foreach (var kv in shortcuts) Shortcut(ctx.Root, kv.Key, kv.Value);
             foreach (var a in arenas)
             {
@@ -151,6 +163,10 @@ namespace SeteVidas.EditorTools
                 if (waves.TryGetValue(a.Id, out var w2)) arena.SetWaves(w2.ToArray());
                 EditorUtility.SetDirty(arena);
             }
+            // F5: cenário da floresta (tiles, massa, rampas, detalhes, fundo, mundo vivo)
+            var art = ForestPainter.Paint(ctx, reg);
+            int secrets = SecretCovers.Build(ctx.Root, ctx.Ground);   // o que há atrás dos troncos rachados
+            Debug.Log($"[Sete Vidas] {reg.Label}: {art.Tiles} tiles, {art.Mass} de massa, {art.Details} detalhes, {art.Emitters} emissores, {art.Shadows} sombras ({art.Trees} com árvore), {secrets} segredo(s) escondido(s).");
             ForestTestSetup.End(ctx);
         }
 
@@ -229,7 +245,21 @@ namespace SeteVidas.EditorTools
                 promptGo.transform.localPosition = new Vector3(0f, 2.4f, 0f);
                 prompt = SeteVidas.Combat.DamagePopup.CreateText(promptGo, "E: " + opener.Text, new Color32(0xff, 0xe9, 0xa8, 0xff), 30);
                 promptGo.SetActive(false);
-                PassageLight.Glow(root.transform, "Clarão do atalho", opener.X, opener.Y - 1f, Tint);
+                // no lugar do clarão (pedido do usuário, 14/11/2026): o objeto da ação, antes e depois
+                if (opener.Text != null && opener.Text.Contains("cipó"))
+                {
+                    var rope = parts.Find(p => p.Kind == "sc_vine");
+                    bool left = rope != null && rope.X < opener.X;                       // o cipó desce à esquerda
+                    closed.Add(ShortcutProp(root.transform, "Estaca com o nó", "atalho_estaca", opener.X, opener.Y, left, true));
+                    open.Add(ShortcutProp(root.transform, "Estaca com o cipó solto", "atalho_estaca_solta", opener.X, opener.Y, left, false));
+                }
+                else
+                {
+                    closed.Add(ShortcutProp(root.transform, "Argola do alçapão", "alcapao_argola", opener.X, opener.Y, false, true));
+                    var lidPart = parts.Find(p => p.Kind == "sc_block");
+                    if (lidPart != null)   // a tampa em pé na dobradiça, do lado esquerdo do buraco
+                        open.Add(ShortcutProp(root.transform, "Alçapão aberto", "alcapao_aberto", lidPart.X - 0.5f, lidPart.Y + lidPart.H, false, false));
+                }
             }
             var link = root.AddComponent<ShortcutLink>();
             link.Configure(flag, opener != null, opener != null ? new Vector2(opener.A, opener.B) : Vector2.up, closed.ToArray(), open.ToArray(),
@@ -480,12 +510,79 @@ namespace SeteVidas.EditorTools
                 body.bodyType = RigidbodyType2D.Kinematic;
                 body.interpolation = RigidbodyInterpolation2D.Interpolate;
                 go.AddComponent<BoxCollider2D>().size = new Vector2(2f, 1f);
-                var sr = go.AddComponent<SpriteRenderer>();
-                sr.sprite = stone;
+                // a arte do bloco (ForestPropGen): parapeito, tabuleiro e o pedaço do arco; o topo do tabuleiro = a colisão
+                var visual = new GameObject("Visual");
+                visual.transform.SetParent(go.transform, false);
+                visual.transform.localPosition = new Vector3(0f, -0.25f, 0f);
+                var sr = visual.AddComponent<SpriteRenderer>();
+                sr.sprite = ForestTestSetup.LoadSprite($"ponte_pedra_{n}_{i}") ?? stone;
                 sr.sortingOrder = 1;
                 blocks.Add(body);
             }
             root.AddComponent<BridgeCollapse>().Configure(blocks.ToArray(), o.A, o.B, hordeSquad);
+        }
+
+        static readonly Color32 FireTint = new Color32(0xff, 0xa8, 0x48, 0xff);
+
+        /// <summary>Enfeite com os pés em (x, feetY), na ordem dada.</summary>
+        static SpriteRenderer Prop(Transform parent, string name, string sprite, float x, float feetY, int order, bool flip)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = ForestTestSetup.LoadSprite(sprite);
+            sr.sortingOrder = order;
+            sr.flipX = flip;
+            if (sr.sprite == null) Debug.LogError($"[Sete Vidas] Floresta: falta {sprite}.png (rode Tools/EnvironmentSprites/gerar.ps1).");
+            go.transform.position = new Vector3(x, feetY + (sr.sprite != null ? sr.sprite.bounds.extents.y : 0.5f), 0f);
+            return sr;
+        }
+
+        /// <summary>Halo liso e quente em volta de uma chama (sem pontilhado), atrás do gato.</summary>
+        static void Halo(Transform parent, Vector3 at, float scale, Color32 tint, byte alpha)
+        {
+            var go = new GameObject("Luz");
+            go.transform.SetParent(parent, false);
+            go.transform.position = at;
+            go.transform.localScale = new Vector3(scale, scale, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = ForestTestSetup.LoadSprite("luz_quente");
+            sr.color = new Color32(tint.r, tint.g, tint.b, alpha);
+            sr.sortingOrder = -2;
+        }
+
+        /// <summary>Tocha de poste ou fogueira (chama em 3 quadros, fora de sincronia) com o seu halo: a luz tem dono.</summary>
+        static void Fire(Transform parent, string name, float x, float feetY, bool campfire)
+        {
+            string baseName = campfire ? "fogueira_" : "tocha_poste_";
+            var sr = Prop(parent, name, baseName + "0", x, feetY, 1, false);
+            var frames = new Sprite[3];
+            for (int i = 0; i < 3; i++) frames[i] = ForestTestSetup.LoadSprite(baseName + i);
+            sr.gameObject.AddComponent<SpriteLoop>().Configure(frames, 0.22f, Mathf.Repeat(x * 0.37f, 0.66f));   // chama calma
+            Halo(parent, new Vector3(x, feetY + (campfire ? 0.9f : 2.2f), 0f), campfire ? 1.4f : 1f, FireTint, 255);
+        }
+
+        /// <summary>Marco da trilha numa saída: poste, placa-seta para fora (<paramref name="flip"/> = para a esquerda) e a lanterna acesa.</summary>
+        static void TrailMarker(Transform parent, string name, float x, float feetY, bool flip)
+        {
+            var sr = Prop(parent, name, "marco_trilha", x, feetY, 1, flip);
+            Halo(parent, new Vector3(x + (flip ? -0.4f : 0.4f), feetY + 2.4f, 0f), 0.8f, FireTint, 220);
+        }
+
+        /// <summary>Desenho de um atalho (ForestObjectGen) com os pés em (x, feetY); some/aparece pelo ShortcutLink.</summary>
+        static GameObject ShortcutProp(Transform parent, string name, string sprite, float x, float feetY, bool flip, bool active)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = ForestTestSetup.LoadSprite(sprite);
+            sr.flipX = flip;
+            sr.sortingOrder = 2;   // por cima do chão e da tampa, atrás do gato
+            float half = sr.sprite != null ? sr.sprite.bounds.extents.y : 0.5f;
+            if (sr.sprite == null) Debug.LogError($"[Sete Vidas] Floresta: falta {sprite}.png (rode Tools/EnvironmentSprites/gerar.ps1).");
+            go.transform.position = new Vector3(x, feetY + half, 0f);
+            go.SetActive(active);
+            return go;
         }
 
         static Sprite Placeholder(string name, int w, int h, System.Func<int, int, Color32> paint)
@@ -518,12 +615,22 @@ namespace SeteVidas.EditorTools
             string name = o.Name + " (luz)";
             switch (o.Facing)
             {
-                case 1:  PassageLight.Horizontal(t, name, o.X - 5.5f, o.X - 0.5f, o.Y, o.H + 2f, Tint, brightRight: true); break;
-                case -1: PassageLight.Horizontal(t, name, o.X + 0.5f, o.X + 5.5f, o.Y, o.H + 2f, Tint, brightRight: false); break;
-                case 2:  PassageLight.Vertical(t, name, o.X, o.W + 1f, o.Y - 3.5f, o.Y + 1.5f, Tint, brightUp: true); break;
-                case -2: PassageLight.Vertical(t, name, o.X, o.W + 1f, o.Y + 1f, o.Y + 5f, Tint, brightUp: false); break;
+                // saídas laterais (pedido do usuário, 14/11/2026: "luzes sem assets reais"): o marco da trilha, com a
+                // lanterna acesa (a luz agora tem dono) e a placa apontando para fora
+                case 1:  TrailMarker(t, o.Name + " (marco)", o.X - 3.5f, o.Y - o.H * 0.5f, false); break;
+                case -1: TrailMarker(t, o.Name + " (marco)", o.X + 3.5f, o.Y - o.H * 0.5f, true); break;
+                // saídas verticais (pedido do usuário, 14/11/2026): a luz fica DENTRO do poço (mais forte lá no fundo, vindo
+                // da outra área) e só a ponta fraca entra na sala; o poço tem parede de fundo e vinhas (ForestPainter)
+                case 2:  PassageLight.Vertical(t, name, o.X, o.W, o.Y + 0.25f, o.Y + 8f, Tint, brightUp: true); break;
+                case -2: PassageLight.Vertical(t, name, o.X, o.W, o.Y - 7f, o.Y + 3f, Tint, brightUp: false); break;
                 default:
-                    if (o.W <= 3f) PassageLight.Glow(t, name, o.X, o.Y - o.H * 0.5f, Tint);
+                    // gatilho pequeno no meio da sala (a corda da ponte nova): a estaca com a corda descendo, sem clarão
+                    if (o.W <= 3f)
+                    {
+                        var rope = Prop(t, o.Name + " (corda)", "atalho_estaca_solta", o.X, o.Y - o.H * 0.5f, 2, false);
+                        // só aparece quando a passagem funciona (a corda da ponte nova)
+                        if (!string.IsNullOrEmpty(o.Link)) rope.gameObject.AddComponent<FlagVisible>().Configure(o.Link);
+                    }
                     break;
             }
         }
@@ -608,7 +715,10 @@ namespace SeteVidas.EditorTools
                 case "key": ForestTestSetup.KeyItem(t, o.Name, o.X, o.Y, o.Id); break;
                 case "residence": ForestTestSetup.Residence(t, o.Name, o.X, o.Y, o.Text, "entrada", o.Link, o.Flag, o.Id); break;
                 case "hook": ForestTestSetup.Hook(t, o.Name, o.X, o.Y); break;
-                case "torch": PassageLight.Glow(t, o.Name, o.X, o.Y, new Color32(0xff, 0xa8, 0x48, 0xff)); break;
+                case "torch": Fire(t, o.Name, o.X, o.Y, o.Name.Contains("fogueira")); break;
+                case "templeprop": Prop(t, o.Name, o.Text, o.X, o.Y, o.Value, false); break;
+                case "cabinfacade":ForestTestSetup.CabinFacade(t, o.X, o.Y); break;
+                case "outpost":Prop(t, o.Name, "posto_abandonado", o.X, o.Y, 1, false); break;
                 case "bark":
                 {
                     var go = new GameObject(o.Name);

@@ -132,6 +132,8 @@ namespace SeteVidas.EditorTools
             FortressLife.Build(root.transform, dressing.transform);   // Etapa 7: vento, partículas, bichos, pulsos
             BuildScenery(scene);
             BuildZombieOutbreak(scene);
+            int secrets = SecretCovers.Build(root.transform, maps[FortressLayout.Map.Ground]);   // cofres atrás das paredes rachadas
+            Debug.Log($"[Sete Vidas] Fortaleza: {secrets} segredo(s) escondido(s) atrás de paredes quebráveis.");
 
             SeteVidasSetup.BuildTileColliders(scene);
             PlayerSetup.PlaceInScene(scene); // gato + câmera no PlayerSpawn; salva a cena
@@ -510,6 +512,8 @@ namespace SeteVidas.EditorTools
                 "interagir" => HintKey.Interact,
                 "classe" => HintKey.NextClass,
                 "curar" => HintKey.Heal,
+                "dash" => HintKey.Dash,
+                "especial" => HintKey.Special,   // flecha com corda do Caçador
                 _ => HintKey.None,
             };
             var dismiss = parts.Length > 1 && parts[1] == "cobertura" ? HintDismiss.Cover
@@ -588,8 +592,10 @@ namespace SeteVidas.EditorTools
             float h = FogTop - FogBottom, cy = (FogTop + FogBottom) * 0.5f;
             // saída (pedidos do usuário, 13/11/2026): a passagem para a Estrada de Soluki. Um brilho suave só no vão (o chão
             // da saída fica em y 0) e, depois da abertura, o escuro que esconde o fim do mapa, como na referência dele
-            PassageLight.Horizontal(root.transform, "Saída: luz", ExitFogEnd - 5f, ExitFogEnd, ExitPassageY + ExitPassageH * 0.5f, ExitPassageH, PassageLight.Gold, brightRight: true, beyond: 1f);
-            FogStrip(root.transform, "Saída: preto", solidSprite, ExitFogEnd + 1f, ExitFogEnd + 1f + FogBeyond, cy, h);
+            // (14/11/2026, pedido do usuário: "ainda aparece a tela preta no fim da fase") sem luz solta nem faixa preta:
+            // a estrada continua depois da saída (o mapa vai até x 290) e a passagem tem o marco da trilha com a lanterna
+            // acesa, o mesmo das saídas da Floresta (as duas fases parecem ligadas)
+            ExitMarker(root.transform);
             CameraEnd(scene, root.transform);
             FogStrip(root.transform, "Entrada: gradiente", entrySprite, EntryFogStart, EntryFogEnd, cy, h);
             FogStrip(root.transform, "Entrada: preto", solidSprite, EntryFogStart - FogBeyond, EntryFogStart, cy, h);
@@ -625,7 +631,30 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Borda direita da tela no fim da fase: o fim do brilho da saída (o escuro fica fora da tela).</summary>
-        public const float CameraRightEdge = ExitFogEnd + 1f;
+        public const float CameraRightEdge = 262f;   // a estrada aparece um pouco além do gatilho do fim (x 243–247)
+
+        /// <summary>Marco da trilha (arte da Floresta, ForestPropGen) na passagem do fim, com a luz da lanterna.</summary>
+        static void ExitMarker(Transform parent)
+        {
+            var sprite = ForestTestSetup.LoadSprite("marco_trilha");
+            if (sprite == null) { Debug.LogWarning("[Sete Vidas] Falta marco_trilha.png (rode Tools/EnvironmentSprites/gerar.ps1)"); return; }
+            var go = new GameObject("Saída: marco da trilha");
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3(ExitFogStart + 0.5f, sprite.bounds.extents.y, 0f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.sortingOrder = 1;
+            var halo = ForestTestSetup.LoadSprite("luz_quente");
+            if (halo == null) return;
+            var light = new GameObject("Saída: luz da lanterna");
+            light.transform.SetParent(parent, false);
+            light.transform.position = new Vector3(ExitFogStart + 0.9f, 2.4f, 0f);
+            light.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+            var lr = light.AddComponent<SpriteRenderer>();
+            lr.sprite = halo;
+            lr.color = new Color32(0xff, 0xa8, 0x48, 0xdc);
+            lr.sortingOrder = -2;
+        }
 
         static Sprite First(SeteVidas.World.Scenery.EnvAssetDefinition def) =>
             def == null ? null : def.variants.Length > 0 ? def.variants[0] : def.frames.Length > 0 ? def.frames[0] : null;

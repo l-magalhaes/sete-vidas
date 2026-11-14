@@ -266,6 +266,7 @@ namespace SeteVidas.EditorTools
             Fill(ctx.Back, -3, 29, 11, 35);    // fachada da casa (atrás do gato)
             Fill(g, -4, 36, 12, 36);           // telhado
             Residence(ctx.Root, "Cabana da Vulpis (porta)", 6f, 29f, SceneCabin, "entrada", "entrar", "cabana_vulpis", "cabana");
+            CabinFacade(ctx.Root, 6f, 29f);
             Entrance(ctx.Root, "Chegada (da cabana)", new Vector2(8f, 29.05f), "cabana_vulpis", 1);
             TrapsSetup.Sign(ctx.Root, 3f, 33.6f, "Cabana da Vulpis");
 
@@ -373,6 +374,7 @@ namespace SeteVidas.EditorTools
                 "Ela não vai sentir falta de umas moedas. Né?");
             Branch(ctx.Root, "Prateleira", 14f, 3f, 4f);          // 3 do chão (degrau confortável)
             FortressSetup.Coin(ctx.Root, "Moeda da prateleira", new Vector2(16f, 3.6f), coinId, 5);
+            ForestPainter.DressCabin(ctx, 0, 0, 18, 8);   // tábuas, telhado e os móveis da caçadora
             End(ctx);
         }
 
@@ -742,6 +744,31 @@ namespace SeteVidas.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        /// <summary>
+        /// A casa da Vulpis por fora (pedido do usuário, 14/11/2026: cabana de toras como a da referência): a fachada
+        /// (15 × 7 tiles, atrás da porta) e o telhado de telhas com a chaminé (17 tiles, por cima da plataforma do telhado,
+        /// que continua sendo a colisão). <paramref name="doorX"/> = x da porta; <paramref name="feetY"/> = chão.
+        /// Arte: Tools/EnvironmentSprites/gerar.ps1 (ForestPropGen).
+        /// </summary>
+        internal static void CabinFacade(Transform parent, float doorX, float feetY)
+        {
+            float cx = doorX - 1.5f;   // a porta fica 1,5 tile à direita do meio da casa
+            var root = new GameObject("Casa da Vulpis (arte)").transform;
+            root.SetParent(parent, false);
+            void Part(string sprite, float bottom, int order)
+            {
+                var go = new GameObject(sprite);
+                go.transform.SetParent(root, false);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = LoadSprite(sprite);
+                sr.sortingOrder = order;
+                if (sr.sprite == null) { Debug.LogError($"[Sete Vidas] Falta {sprite}.png (rode Tools/EnvironmentSprites/gerar.ps1)."); return; }
+                go.transform.position = new Vector3(cx, bottom + sr.sprite.bounds.extents.y, 0f);
+            }
+            Part("cabana_fachada", feetY, -2);       // atrás da porta (-1) e do gato
+            Part("cabana_telhado", feetY + 5f, 1);   // na frente do chão (0): cobre a plataforma do telhado
+        }
+
         /// <summary>Porta de residência (2 × 3 tiles) com os pés em <paramref name="y"/>.</summary>
         internal static void Residence(Transform parent, string name, float x, float y, string scene, string entrance, string verb, string doorId, string keyId)
         {
@@ -809,13 +836,17 @@ namespace SeteVidas.EditorTools
                 box.size = new Vector2(box.size.x, height);
                 box.offset = new Vector2(box.offset.x, height * 0.5f);
                 PrefabUtility.RecordPrefabInstancePropertyModifications(box);
-                if (sr != null)
-                {
-                    // o desenho de 16×64 estica na vertical até o teto
-                    sr.transform.localPosition = new Vector3(0f, height * 0.5f, 0f);
-                    sr.transform.localScale = new Vector3(1f, height / 4f, 1f);
-                    PrefabUtility.RecordPrefabInstancePropertyModifications(sr.transform);
-                }
+            }
+            if (sr != null)
+            {
+                // o desenho de 16×64 (ForestPropGen) repete o meio até o teto, pixel a pixel (antes esticava): as raízes
+                // ficam no pé (10 px de borda no fatiado)
+                sr.drawMode = SpriteDrawMode.Tiled;
+                sr.size = new Vector2(1f, height);
+                sr.transform.localPosition = new Vector3(0f, height * 0.5f, 0f);
+                sr.transform.localScale = Vector3.one;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(sr);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(sr.transform);
             }
         }
 
@@ -862,8 +893,14 @@ namespace SeteVidas.EditorTools
             box.offset = new Vector2(0f, -0.125f);
             go.AddComponent<PlatformEffector2D>();
             go.AddComponent<OneWayPlatform>().Configure();
-            Visual(go.transform, "galho", new Vector2(width, 0.375f), new Vector3(0f, -0.125f, 0f), 1);
+            Visual(go.transform, "galho", new Vector2(width, PlatformArtHeight), new Vector3(0f, PlatformArtOffset, 0f), 1);
         }
+
+        /// <summary>
+        /// Desenho das plataformas (F5, ForestObjectGen): 12 px de altura. Galho e folha: a linha de pisar fica 2 px abaixo
+        /// do alto do desenho; o galho podre pisa no alto do desenho.
+        /// </summary>
+        internal const float PlatformArtHeight = 0.75f, PlatformArtOffset = -0.25f, RottenArtOffset = -0.125f;
 
         internal static void Swaying(Transform parent, string name, float x, float y, float width)
         {
@@ -875,7 +912,7 @@ namespace SeteVidas.EditorTools
             box.offset = new Vector2(0f, -0.125f);
             go.AddComponent<PlatformEffector2D>();
             go.AddComponent<OneWayPlatform>().Configure();
-            Visual(go.transform, "galho", new Vector2(width, 0.375f), new Vector3(0f, -0.125f, 0f), 1);
+            Visual(go.transform, "galho", new Vector2(width, PlatformArtHeight), new Vector3(0f, PlatformArtOffset, 0f), 1);
             go.AddComponent<SwayingBranch>();
         }
 
@@ -889,7 +926,7 @@ namespace SeteVidas.EditorTools
             box.offset = new Vector2(0f, -0.125f);
             go.AddComponent<PlatformEffector2D>();
             go.AddComponent<OneWayPlatform>().Configure();
-            Visual(go.transform, "folha_larga", new Vector2(3f, 0.375f), new Vector3(0f, -0.125f, 0f), 1);
+            Visual(go.transform, "folha_larga", new Vector2(3f, PlatformArtHeight), new Vector3(0f, PlatformArtOffset, 0f), 1);
             go.AddComponent<SinkingLeaf>();
         }
 
@@ -915,7 +952,7 @@ namespace SeteVidas.EditorTools
             go.transform.position = new Vector3(x + 1f, y - 0.25f, 0f);
             var box = go.AddComponent<BoxCollider2D>();
             box.size = new Vector2(2f, 0.5f);
-            var sr = Visual(go.transform, "galho_podre", new Vector2(2f, 0.5f), Vector3.zero, 1);
+            var sr = Visual(go.transform, "galho_podre", new Vector2(2f, PlatformArtHeight), new Vector3(0f, RottenArtOffset, 0f), 1);
             var cp = go.AddComponent<CrumblingPlatform>();
             var so = new SerializedObject(cp);
             so.FindProperty("spriteRenderer").objectReferenceValue = sr;

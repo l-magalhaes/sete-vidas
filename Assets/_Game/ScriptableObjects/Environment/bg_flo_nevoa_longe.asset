@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bbd84f7af12e145bdb8cb245e8d077, type: 3}
+  m_Name: bg_flo_nevoa_longe
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.Scenery.EnvAssetDefinition
+  manifestPath: Assets/_Game/Art/Environments/Backgrounds/Flo/manifest.json
+  entry:
+    id: bg_flo_nevoa_longe
+    nome: "N\xE9voa rasteira (longe)"
+    regiao: flo
+    categoria: plx
+    funcao: decorativo
+    material: silhueta
+    epoca: natural
+    tamanho_px: c003000040010000i
+    sprites:
+    - bg_flo_nevoa_longe.png
+    sprites_prefixo: 
+    espelhar: 0
+    camada: bg_medio
+    sorting: 0
+    colisor: nenhum
+    animacao:
+      nome: 
+      quadros: []
+      quadros_por_variacao: 0
+      fps: 0
+      amplitude_px: 0
+    paleta: []
+    posicionamento:
+      apoio: livre
+      inclinacao_max: 
+      distancia_minima_mesmo_id: 0
+      deslocamento_px: 0
+      nao_perto_de: []
+      perto_de: []
+      densidade: 
+      zonas: []
+    fundo:
+      paralaxe:
+      - 0.2
+      - 0.04
+      ancora:
+      - 0
+      - 0
+      repete: 1
+      preencher_abaixo: 
+      altitude_tiles: []
+      estado_do_ceu: []
+      lado_da_luz: 
+      valor_max: 0
+      conjuntos: []
+    leitura: "Fiapos de n\xE9voa luar (#9aacc8, alfa 12/22/34) em 3 degraus lisos, sem pontilhado; atr\xE1s dos troncos pr\xF3ximos, derivando para a direita a 0,12 tile/s (ForestBackgrounds.Drift)."
+    tags:
+    - fundo
+    - floresta
+    - nevoa
+    - f5
+  variants:
+  - {fileID: 21300000, guid: 7a076c8d90bdf46c3d19563441528100, type: 3}
+  frames: []

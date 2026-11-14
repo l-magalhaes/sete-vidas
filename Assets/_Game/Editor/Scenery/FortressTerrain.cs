@@ -49,8 +49,8 @@ namespace SeteVidas.EditorTools
             R(r, TerrainAutotile.Ruin, 186, SealFloor, 234, 116, "passagem dos fundos: abandono");
             R(r, TerrainAutotile.Ruin, 217, -12, 234, SealFloor - 1, "poço e cofres: abandono");
             // Fora do castelo, depois do portão dos fundos: a estrada para Miaravéu
-            R(r, TerrainAutotile.Soil, 235, -12, 250, 0, "estrada para Miaravéu");
-            R(r, TerrainAutotile.Rock, 251, -12, 254, 40, "rocha à direita");
+            R(r, TerrainAutotile.Soil, 235, -12, 290, 0, "estrada para Miaravéu (continua depois da saída)");
+            R(r, TerrainAutotile.Rock, 287, -12, 290, 40, "rocha à direita (fora da tela)");
             return r;
         }
 

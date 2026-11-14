@@ -29,6 +29,7 @@ namespace SeteVidas.Enemies
         readonly List<SpriteRenderer> _neck = new List<SpriteRenderer>();
 
         public PlantState State => _state;
+        protected override ForestSenseProfile SenseProfile => ForestSenseRules.Plant;
         public override bool AcceptsPogo => PlantVulnerable(_state);
 
         public void Configure(float bite) { reach = bite; maxHealth = PlantHealth; }

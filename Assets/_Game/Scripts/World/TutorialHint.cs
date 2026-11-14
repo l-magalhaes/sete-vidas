@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SeteVidas.World
 {
     /// <summary>Que tecla a dica mostra (o texto vem do controle atual: teclado ou gamepad).</summary>
-    public enum HintKey { None, Jump, Crouch, Attack, Up, Move, Interact, NextClass, Heal }
+    public enum HintKey { None, Jump, Crouch, Attack, Up, Move, Interact, NextClass, Heal, Dash, Special }
 
     /// <summary>Quando a dica some e fica marcada como vista.</summary>
     public enum HintDismiss

@@ -143,6 +143,8 @@ namespace SeteVidas.UI
                 case HintKey.Interact: return input != null && input.InteractPressedThisFrame;
                 case HintKey.NextClass: return input != null && (input.NextClassPressedThisFrame || input.PrevClassPressedThisFrame || input.ClassSlotPressedThisFrame > 0);
                 case HintKey.Heal: return input != null && input.HealPressedThisFrame;
+                case HintKey.Dash: return input != null && input.DashPressedThisFrame;
+                case HintKey.Special: return input != null && input.SpecialPressedThisFrame;
                 default: return false;
             }
         }
@@ -164,6 +166,8 @@ namespace SeteVidas.UI
                 case HintKey.Up: return InputPrompts.Glyph(GameAction.Up);
                 case HintKey.Interact: return InputPrompts.Glyph(GameAction.Interact);
                 case HintKey.Heal: return InputPrompts.Glyph(GameAction.Heal);
+                case HintKey.Dash: return InputPrompts.Glyph(GameAction.Dash);
+                case HintKey.Special: return InputPrompts.Glyph(GameAction.Special);
                 case HintKey.NextClass:
                     var kind = InputDevices.Current;
                     return InputGlyphs.ForPaths(InputPrompts.PathFor(GameAction.PrevClass, kind) + "|" + InputPrompts.PathFor(GameAction.NextClass, kind));
@@ -187,6 +191,8 @@ namespace SeteVidas.UI
                 HintKey.Interact => asset.FindAction("Player/Interact"),
                 HintKey.NextClass => asset.FindAction("Player/NextClass"),
                 HintKey.Heal => asset.FindAction("Player/Heal"),
+                HintKey.Dash => asset.FindAction("Player/Dash"),
+                HintKey.Special => asset.FindAction("Player/Special"),
                 _ => asset.FindAction("Player/Move"),
             };
             if (action == null) return "";

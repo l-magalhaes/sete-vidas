@@ -16,7 +16,7 @@ namespace SeteVidas.EditorTools
     public static class FortressLayout
     {
         /// <summary>Suba quando mudar o mapa: o Unity pergunta se quer gerar a cena de novo (FortressSetup).</summary>
-        public const int Version = 18; // 18: atiradores do meio reposicionados (13e); 17: o fim leva à Estrada de Soluki (Floresta F3); 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
+        public const int Version = 19; // 19: a estrada continua depois da saída (sem a faixa preta); // 18: atiradores do meio reposicionados (13e); 17: o fim leva à Estrada de Soluki (Floresta F3); 13: dicas no lugar dos textos; 14: dicas na ordem do caminho; 15: enfeites do usuário; 16: sem a placa de Sethra da câmara e os caixotes do pé da torre, pombal na muralha
 
         public enum Map { Ground, Climbable, Background }
 
@@ -60,7 +60,7 @@ namespace SeteVidas.EditorTools
         public const float SealSanctuaryX = 137f;   // santuário compacto: fonte + caixinha de x 136 a 140
 
         /// <summary>Limites do mapa (tiles) para a prévia e para o fundo.</summary>
-        public const int MinX = -18, MaxX = 254, MinY = -12, MaxY = 116;
+        public const int MinX = -18, MaxX = 290, MinY = -12, MaxY = 116;   // 290: a estrada segue depois da saída (sem o preto)
 
         // ----------------------------------------------------------------- tiles
 
@@ -68,9 +68,9 @@ namespace SeteVidas.EditorTools
         {
             var t = new List<TileRect>();
             // chão base de todo o mapa (topo em 0) e paredes de limite
-            G(t, -18, -12, 254, -1, "chão base");
+            G(t, -18, -12, 290, -1, "chão base");
             G(t, -18, -12, -15, 90, "rocha à esquerda");
-            G(t, 251, -12, 254, 40, "rocha à direita");
+            G(t, 287, -12, 290, 40, "rocha à direita");   // longe, fora da tela: a estrada continua depois da saída
 
             // 1) Montanha: penhasco com topo em 60 (x -14..12); parede de rocha atrás do início
             G(t, -14, 0, 12, CliffTop - 1, "penhasco");
@@ -176,7 +176,7 @@ namespace SeteVidas.EditorTools
             C(t, 223, BellHall, 230, BellHall + 3, "cofre do patamar 72");
             C(t, 223, WallWalk, 230, WallWalk + 3, "cofre do patamar 43");
             C(t, 223, 15, 230, 18, "cofre do patamar 15");
-            C(t, 223, 0, 250, 12, "portão dos fundos e estrada");
+            C(t, 223, 0, 286, 12, "portão dos fundos e estrada");
             G(t, 223, 4, 223, 12, "acima do portão dos fundos: só quebrando se passa");
             return t;
         }
