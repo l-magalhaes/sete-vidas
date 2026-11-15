@@ -19,6 +19,7 @@ namespace SeteVidas.EditorTools
     public static class ForestGrayboxSetup
     {
         const string Folder = ForestTestSetup.Folder;
+        static Dictionary<string, DialogueDefinition> s_lore;
 
         [MenuItem("Tools/Sete Vidas/21. Floresta: graybox (todas as cenas)", priority = 71)]
         public static void Build()
@@ -37,6 +38,7 @@ namespace SeteVidas.EditorTools
             ForestTestSetup.EnsureSprites();
             EnvLibrary.ImportAll();          // F5: fundos da floresta (Backgrounds/Flo/manifest.json)
             ForestPainter.ResetCaches();
+            s_lore = null;
 
             var reports = ForestReach.CheckAll();
             string text = ForestReach.Format(reports, false);
@@ -48,6 +50,7 @@ namespace SeteVidas.EditorTools
             foreach (var region in ForestLayout.Regions()) BuildRegion(region);
             // a casa da Vulpis (a cabana da Forest_Test_C): interior com a porta de volta para o Refúgio (D3)
             ForestTestSetup.BuildCabin(ForestLayout.Cabin, ForestLayout.D, "W16", "gb_cabana_moeda");
+            ForestLore.BuildBook();          // o Diário acha as placas lidas em qualquer cena
             SeteVidasSetup.RegisterScenesInBuild();
             EditorSceneManager.OpenScene($"{Folder}/{ForestLayout.A}.unity");
             AssetDatabase.SaveAssets();
@@ -81,7 +84,8 @@ namespace SeteVidas.EditorTools
             foreach (var r in reg.Rooms)
                 ForestTestSetup.Room(rooms, r.Id, r.Name, new Vector2(r.X + r.W * 0.5f, r.Y + r.H * 0.5f), new Vector2(r.W, r.H), Vector2.zero, reg.MapRegion);
 
-            var dialogues = new Dictionary<string, DialogueDefinition>();
+            if (s_lore == null) s_lore = ForestLore.Create();   // F5: placas dos Primatas (P-PRIM-xx)
+            var dialogues = new Dictionary<string, DialogueDefinition>(s_lore);
             var created = new Dictionary<string, Component>();
             var groups = new Dictionary<string, Transform>();
             var infected = new List<SeteVidas.Enemies.Zombie.ZombieSquad.Post>();
@@ -288,14 +292,11 @@ namespace SeteVidas.EditorTools
             go.transform.position = new Vector3(o.X, o.Y, 0f);
             if (!crawl)
             {
-                var hole = new GameObject("Buraco").AddComponent<SpriteRenderer>();
+                // F4c: a toca camuflada no chão (um montinho de musgo e terra igual ao topo do chão, fresta no meio)
+                var hole = new GameObject("Toca").AddComponent<SpriteRenderer>();
                 hole.transform.SetParent(go.transform, false);
-                hole.transform.localPosition = new Vector3(0f, 0.1f, 0f);
-                hole.sprite = Placeholder("serpente_buraco", 24, 6, (x, y) =>
-                {
-                    float dx = (x - 11.5f) / 12f, dy = (y - 0f) / 6f;
-                    return dx * dx + dy * dy < 1f ? new Color32(0x0e, 0x0c, 0x10, 0xff) : new Color32(0, 0, 0, 0);
-                });
+                hole.sprite = ForestTestSetup.LoadSprite("serpente_buraco");
+                hole.transform.localPosition = new Vector3(0f, hole.sprite != null ? hole.sprite.bounds.extents.y - 0.0625f : 0.1f, 0f);
                 hole.sortingOrder = 1;
             }
             var body = new GameObject("Corpo") { layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Enemy) };
@@ -306,23 +307,10 @@ namespace SeteVidas.EditorTools
             col.size = new Vector2(1.4f, 0.8f);
             var sr = body.AddComponent<SpriteRenderer>();
             sr.sortingOrder = 4;
-            Color32 green = new Color32(0x4a, 0x68, 0x46, 0xff), light = new Color32(0x9a, 0xc0, 0x5a, 0xff), dark = new Color32(0x2e, 0x48, 0x34, 0xff);
-            Color32 eye = new Color32(0xff, 0xd3, 0x4d, 0xff), clear = new Color32(0, 0, 0, 0);
-            var hidden = Placeholder("serpente_olhos", 32, 16, (x, y) => y == 4 && (x == 13 || x == 18) ? eye : clear);
-            var warn = Placeholder("serpente_aviso", 32, 16, (x, y) =>
-                y >= 2 && y <= 8 && x >= 10 && x <= 21 ? ((x + y) % 3 == 0 ? dark : green) : y == 9 && (x == 13 || x == 18) ? eye : clear);
-            var strike = Placeholder("serpente_bote", 32, 16, (x, y) =>
-            {
-                int mid = 6 + (int)(2f * Mathf.Sin(x * 0.5f));
-                if (Mathf.Abs(y - mid) <= 1) return x > 26 && y == mid ? eye : (x % 4 == 0 ? light : green);
-                return clear;
-            });
-            var crawlSprite = Placeholder("serpente", 32, 16, (x, y) =>
-            {
-                int mid = 3 + (int)(1.5f * Mathf.Sin(x * 0.45f));
-                if (Mathf.Abs(y - mid) <= 1 && x >= 2 && x <= 29) return x > 26 && y == mid + 1 ? eye : (x % 5 == 0 ? dark : green);
-                return clear;
-            });
+            // F4c: arte definitiva (Tools/EnemySprites/gerar_floresta.ps1), olhando para a direita
+            var hidden = ForestTestSetup.LoadSprite("serpente_olhos");
+            var crawlSprite = ForestTestSetup.LoadSprite("serpente");
+            if (hidden == null || crawlSprite == null) Debug.LogError("[Sete Vidas] Floresta: falta a arte da serpente (rode Tools/EnemySprites/gerar_floresta.ps1).");
             sr.sprite = crawl ? crawlSprite : hidden;
             var e = go.AddComponent<SeteVidas.Enemies.ForestSnake>();
             e.Configure(o.Facing, crawl, crawl ? o.A : o.X, crawl ? o.B : o.X);
@@ -330,9 +318,15 @@ namespace SeteVidas.EditorTools
             so.FindProperty("spriteRenderer").objectReferenceValue = sr;
             so.FindProperty("body").objectReferenceValue = body.transform;
             so.FindProperty("hiddenSprite").objectReferenceValue = hidden;
-            so.FindProperty("warnSprite").objectReferenceValue = warn;
-            so.FindProperty("strikeSprite").objectReferenceValue = strike;
+            so.FindProperty("warnSprite").objectReferenceValue = ForestTestSetup.LoadSprite("serpente_aviso");
+            so.FindProperty("strikeSprite").objectReferenceValue = ForestTestSetup.LoadSprite("serpente_bote");
             so.FindProperty("crawlSprite").objectReferenceValue = crawlSprite;
+            so.FindProperty("segmentSprite").objectReferenceValue = ForestTestSetup.LoadSprite("serpente_gomo");
+            // na toca: olhos, olhos, olhos, brilho, olhos, olhos, piscada (2 por segundo)
+            ForestTestSetup.SetSprites(so, "hiddenFrames", "serpente_olhos", "serpente_olhos", "serpente_olhos", "serpente_olhos_1",
+                "serpente_olhos", "serpente_olhos", "serpente_olhos_2");
+            ForestTestSetup.SetSprites(so, "warnFrames", "serpente_aviso", "serpente_aviso", "serpente_aviso_1");
+            ForestTestSetup.SetSprites(so, "crawlFrames", "serpente", "serpente_1");
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -538,6 +532,79 @@ namespace SeteVidas.EditorTools
             return sr;
         }
 
+        // ------------------------------------------------------------ F5 parte 2: ruínas dos Primatas e a Isyathy de longe
+
+        /// <summary>Quadros de luz que pisca: aceso, aceso, apagado (o "Verde. Apaga. Verde." da P-PRIM-04), 0,6 s cada.</summary>
+        static Sprite[] BlinkFrames(string baseName)
+        {
+            var on = ForestTestSetup.LoadSprite(baseName + "_0");
+            var off = ForestTestSetup.LoadSprite(baseName + "_1");
+            if (on == null || off == null) { Debug.LogError($"[Sete Vidas] Floresta: falta {baseName}_0/_1.png (rode Tools/EnvironmentSprites/gerar.ps1)."); return null; }
+            return new[] { on, on, off };
+        }
+
+        /// <summary>Máquina dos Primatas com UMA luz verde piscando devagar (fora de sincronia com as outras).</summary>
+        static void RuinLight(Transform parent, ForestLayout.Obj o)
+        {
+            var sr = Prop(parent, o.Name, o.Text + "_0", o.X, o.Y, o.Value, false);
+            var frames = BlinkFrames(o.Text);
+            if (frames != null) sr.gameObject.AddComponent<SpriteLoop>().Configure(frames, 0.6f, (o.X * 0.37f) % 1.8f);
+        }
+
+        /// <summary>Placa dos Primatas que se lê (LoreSign com o desenho dela); o nome do objeto é o título no Diário.</summary>
+        static void PrimateLore(Transform parent, ForestLayout.Obj o, Dictionary<string, DialogueDefinition> dialogues)
+        {
+            if (!dialogues.TryGetValue(o.Id, out var text)) { Debug.LogWarning($"[Sete Vidas] Placa sem texto: {o.Id}"); return; }
+            bool blink = o.C > 0f;
+            var art = ForestTestSetup.LoadSprite(blink ? o.Link + "_0" : o.Link);
+            if (art == null) Debug.LogError($"[Sete Vidas] Floresta: falta {o.Link}.png (rode Tools/EnvironmentSprites/gerar.ps1).");
+            var go = CitadelDecorSetup.Sign(parent, o.Text, o.X, o.Y, text, art, o.Value);
+            if (!blink) return;
+            var frames = BlinkFrames(o.Link);
+            if (frames != null) go.transform.Find("Placa").gameObject.AddComponent<SpriteLoop>().Configure(frames, 0.6f);
+        }
+
+        /// <summary>Ordem da Isyathy de longe: atrás das árvores médias (−80) e das névoas (−70, −55), na frente das copas de longe (−90).</summary>
+        public const int SightingOrder = -85;
+        /// <summary>Paralaxe da Isyathy de longe: entre as copas de longe (0,04) e as árvores médias (0,12).</summary>
+        public const float SightingParallax = 0.08f;
+
+        /// <summary>A Isyathy vista de longe (mapa §6): só desenho no fundo, sem colisão, com a área que a dispara.</summary>
+        static void Sighting(Transform parent, ForestLayout.Obj o)
+        {
+            var kind = (IsyathySighting.Kind)System.Enum.Parse(typeof(IsyathySighting.Kind), o.Text);
+            var eyes = SightingFrames("isy_olhos_", 3);       // só os olhos (melhorias 14/11/2026: pescoço e corpo saíram)
+            var go = new GameObject(o.Name);
+            go.transform.SetParent(parent, false);
+            var artGo = new GameObject("Desenho");
+            artGo.transform.SetParent(go.transform, false);
+            artGo.transform.position = new Vector3(o.X, o.Y, 0f);
+            var sr = artGo.AddComponent<SpriteRenderer>();
+            sr.sprite = eyes.Length > 0 ? eyes[0] : null;
+            // LÁ NO FUNDO, muitas vezes (pedidos do usuário, 14/11/2026): entre as copas de longe (−90) e as árvores médias
+            // (−80), atrás das duas névoas, com o paralaxe do fundo e PEQUENA (está longe). Começa invisível: o componente
+            // escolhe o lugar a partir da câmera e a animação em cada aparição.
+            sr.sortingOrder = SightingOrder;
+            sr.enabled = false;
+            float scale = kind == IsyathySighting.Kind.Coiled ? 0.85f : 0.6f;   // na D4, mais perto
+            go.AddComponent<IsyathySighting>().Configure(kind, sr, eyes, new Rect(o.TX, o.TY, o.TW, o.TH), scale, 0.9f,
+                SightingParallax, o.Link, string.IsNullOrEmpty(o.Id) ? new string[0] : o.Id.Split('|'));
+        }
+
+        /// <summary>Quadros <paramref name="prefix"/>0..n−1 (n = 0: só <paramref name="prefix"/>), de Forest/Placeholder.</summary>
+        static Sprite[] SightingFrames(string prefix, int n)
+        {
+            var list = new List<Sprite>();
+            for (int i = 0; i < Mathf.Max(1, n); i++)
+            {
+                string name = n == 0 ? prefix : prefix + i;
+                var s = ForestTestSetup.LoadSprite(name);
+                if (s == null) Debug.LogError($"[Sete Vidas] Floresta: falta {name}.png (rode Tools/EnvironmentSprites/gerar.ps1).");
+                else list.Add(s);
+            }
+            return list.ToArray();
+        }
+
         /// <summary>Halo liso e quente em volta de uma chama (sem pontilhado), atrás do gato.</summary>
         static void Halo(Transform parent, Vector3 at, float scale, Color32 tint, byte alpha)
         {
@@ -551,11 +618,16 @@ namespace SeteVidas.EditorTools
             sr.sortingOrder = -2;
         }
 
+        /// <summary>Ordem das tochas e fogueiras: na frente do posto abandonado e dos outros enfeites (ordem 1).</summary>
+        public const int FireOrder = 2;
+
         /// <summary>Tocha de poste ou fogueira (chama em 3 quadros, fora de sincronia) com o seu halo: a luz tem dono.</summary>
         static void Fire(Transform parent, string name, float x, float feetY, bool campfire)
         {
             string baseName = campfire ? "fogueira_" : "tocha_poste_";
-            var sr = Prop(parent, name, baseName + "0", x, feetY, 1, false);
+            // ordem 2 (melhorias 14/11/2026): na ordem 1, a mesma do posto abandonado da R1, as duas se sobrepunham e o
+            // Unity trocava quem ficava na frente conforme a câmera andava: a tocha "piscava"
+            var sr = Prop(parent, name, baseName + "0", x, feetY, FireOrder, false);
             var frames = new Sprite[3];
             for (int i = 0; i < 3; i++) frames[i] = ForestTestSetup.LoadSprite(baseName + i);
             sr.gameObject.AddComponent<SpriteLoop>().Configure(frames, 0.22f, Mathf.Repeat(x * 0.37f, 0.66f));   // chama calma
@@ -651,7 +723,7 @@ namespace SeteVidas.EditorTools
             switch (kind)
             {
                 case "dry":
-                case "sprout": return new Vector2(0f, SeteVidas.Enemies.ForestEnemyRules.BranchHeight - 1.6f);
+                case "sprout": return new Vector2(0f, 3f);   // F4c: os olhos nos nós da casca, a 3 tiles do chão
                 case "plant": return new Vector2(0f, 0.9f);
                 case "snake": return new Vector2(0f, 0.4f);
                 default: return Vector2.zero; // morcego e cacto: do centro
@@ -717,6 +789,15 @@ namespace SeteVidas.EditorTools
                 case "hook": ForestTestSetup.Hook(t, o.Name, o.X, o.Y); break;
                 case "torch": Fire(t, o.Name, o.X, o.Y, o.Name.Contains("fogueira")); break;
                 case "templeprop": Prop(t, o.Name, o.Text, o.X, o.Y, o.Value, false); break;
+                case "ruinprop":
+                {
+                    var sr = Prop(t, o.Name, o.Text, o.X, o.Y, o.Value, false);
+                    if (o.C > 0f && sr.sprite != null) sr.transform.position -= new Vector3(0f, sr.sprite.bounds.size.y, 0f); // pendurado: o topo em Y
+                    break;
+                }
+                case "ruinlight": RuinLight(t, o); break;
+                case "prilore": PrimateLore(t, o, dialogues); break;
+                case "sighting": Sighting(t, o); break;
                 case "cabinfacade":ForestTestSetup.CabinFacade(t, o.X, o.Y); break;
                 case "outpost":Prop(t, o.Name, "posto_abandonado", o.X, o.Y, 1, false); break;
                 case "bark":

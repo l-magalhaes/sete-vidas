@@ -17,6 +17,8 @@ namespace SeteVidas.Enemies
         [SerializeField, Min(1f)] float reach = PlantReach;
         [SerializeField] Transform head;
         [SerializeField] Sprite closed, open, recovering;
+        [Tooltip("F4c: cabeça fechada (respirando), aberta (a boca tremendo de vontade)")]
+        [SerializeField] Sprite[] closedFrames = new Sprite[0], openFrames = new Sprite[0];
         [Tooltip("Gomo do pescoço (desenhado várias vezes entre a base e a cabeça)")]
         [SerializeField] Sprite neckSprite;
         [Tooltip("Onde a cabeça descansa, a partir da base, na direção da frente (tiles)")]
@@ -160,7 +162,8 @@ namespace SeteVidas.Enemies
 
             if (spriteRenderer != null)
             {
-                Sprite want = _state == PlantState.Windup || PlantBites(_state) ? open : _state == PlantState.Retract ? recovering : closed;
+                Sprite want = _state == PlantState.Windup || PlantBites(_state) ? Anim(openFrames, open, 12f)
+                           : _state == PlantState.Retract ? recovering : Anim(closedFrames, closed, 2.5f);
                 if (want != null) spriteRenderer.sprite = want;
                 // a cabeça olha para onde vai
                 Vector2 dir = (_state == PlantState.Idle ? Forward : _aim);

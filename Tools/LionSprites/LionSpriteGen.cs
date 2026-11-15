@@ -198,6 +198,17 @@ public static partial class LionSpriteGen
             "............",
             "............",
         } },
+        // dash (melhorias 14/11/2026): o tronco deita para a frente (cada linha acima do cinto anda 1 px), a capa
+        // fica para trás
+        { "dash", new[] {
+            ".......hTVVVVVVV",
+            "....hhHHTvVVVVVV",
+            "..hhhHHHvVVVVVV.",
+            "hhhhhhvVVVVVV...",
+            "..hh.BBkBBB.....",
+            "................",
+            "................",
+        } },
         { "up", new[] {
             ".hhhTVVVVVVV",
             "hhHHTvVVVVVV",
@@ -493,6 +504,24 @@ public static partial class LionSpriteGen
             With(air, p => { p.TorsoV = "up"; p.BackFoot = new Point(7, 20); p.FrontFoot = new Point(11, 20); p.FrontHand = new Point(15, 8); }),
             With(air, p => { p.TorsoV = "up"; p.BackFoot = new Point(6, 20); p.FrontFoot = new Point(11, 21); p.FrontHand = new Point(14, 9); }));
         Add("land", 0.06f, false, LandLow(), LandMid());
+
+        // ---------------- dash (melhorias 14/11/2026): corpo baixo e deitado para a frente, cabeça esticada à frente
+        // com as orelhas para trás, perna de trás estendida, a da frente encolhida, braço varrido para trás.
+        // 0: arranque (bem esticado); 1–2: o avanço (loop curto, as patas trocam um pouco)
+        // Pedido do usuário: como o dash do Hollow Knight, um IMPULSO: corpo compacto e na horizontal, as duas pernas
+        // juntas esticadas para trás (a capa e o rastro de vento completam, em jogo: PlayerVisual + DashFx)
+        var dash = With(std, p =>
+        {
+            p.Px = 8; p.Py = 16; p.TorsoV = "dash"; p.HeadV = "flat"; p.HeadDx = 5; p.HeadDy = 2;
+            p.BackGround = false; p.FrontGround = false;
+            p.BackFoot = new Point(1, 18); p.FrontFoot = new Point(3, 19); p.FrontHand = new Point(7, 16);
+            p.ChestOverride = Rel(p.Px + 6, p.Py - 3);
+        });
+        Add("dash", 0.05f, true,
+            // 0: o arranque: tudo bem esticado, pernas o mais para trás possível
+            With(dash, p => { p.BackFoot = new Point(0, 17); p.FrontFoot = new Point(2, 18); p.FrontHand = new Point(6, 15); }),
+            dash,
+            With(dash, p => { p.BackFoot = new Point(1, 17); p.FrontFoot = new Point(3, 18); p.FrontHand = new Point(7, 15); }));
         var crouchPaws = With(CrouchPose(), p => { p.HeadV = "flat"; });
         Add("land_heavy", 0.06f, false, crouchPaws, crouchPaws, LandLow(), LandMid());
 

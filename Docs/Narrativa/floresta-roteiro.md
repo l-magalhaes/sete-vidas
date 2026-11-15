@@ -99,15 +99,28 @@ GATO (sério): Na Cidadela, eu achei que era problema de cachorro. Uma maldiçã
 GATO (sério): Ela come a floresta inteira. Raiz por raiz.
 
 ### D-OLHOS-02 — O lago (C4, uma vez, quando o reflexo some)
-GATO (irônico): Quando um lago olha de volta para você, é hora de ir embora.
+GATO (irônico): Quando a floresta olha de volta para você, é hora de ir embora. (rev. 14/11/2026: os olhos aparecem no fundo, do outro lado do lago, e não mais refletidos na água)
+
+### D-ESCAMAS-01 — A Ravina (C6, uma vez, quando as escamas passam na névoa) [PROPOSTA, 14/11/2026]
+GATO (sério): ...Raiz não se mexe assim.
+
+Nota (F5): D-OLHOS-01/02, D-SILHUETA-01, D-ESCAMAS-01 e D-MIRANTE-01 tocam como balão (sem parar o jogo), junto com a aparição (`IsyathySighting`). A D-MIRANTE-01 perdeu a câmera mostrando a encosta: o corpo já fica à vista na sala.
 
 ## Ruínas dos Primatas (placas, opcionais)
 
 Sugerem, não explicam. O gato não sabe ler a escrita dos Primatas; ele descreve o que vê.
-- **P-PRIM-01 (A2):** "Placa de metal, letras que ninguém usa mais. Uma seta. Um desenho de algo com rodas." / GATO: "Rodas sem cavalo. Ok."
+- **P-PRIM-01 (A2):** "Placa de metal, letras que ninguém usa mais. Uma seta. Um desenho de algo com rodas." / GATO (irônico): "Uma carroça que anda sozinha? Ok." (rev. 14/11/2026: neste mundo os cavalos também evoluíram; o gato não pensaria em cavalo puxando carga)
 - **P-PRIM-02 (A5):** "Um mapa de linhas coloridas se cruzando, todas terminando em pontos. Embaixo, uma palavra repetida em toda placa." / GATO: "Quem fez isso ia a muitos lugares. E com pressa."
 - **P-PRIM-03 (C3):** "Vidro que não quebrou em mil anos. Atrás dele, cadeiras viradas para uma parede vazia." / GATO (sério): "Sentaram todos para olhar a mesma coisa. E depois sumiram."
 - **P-PRIM-04 (B4, topo da torre):** "Uma luz pequena ainda pisca no alto da torre. Verde. Apaga. Verde." / GATO: "Quem quer que tenha acendido isso não voltou para apagar."
+
+Novas na F5 parte 2 (14/11/2026) [PROPOSTA]. Texto no jogo: `Assets/_Game/Editor/ForestLore.cs`.
+- **P-PRIM-05 (G2, painel do elevador):** "Uma caixa de metal presa lá no fundo do poço, com portas que se abriam ao meio." / "No painel, botões redondos em duas colunas. Quarenta deles." / GATO (irônico): "Quarenta andares e uma caixa para não subir a pé. Gente esperta."
+- **P-PRIM-06 (C5, a carroça de metal):** "Uma carroça de metal com bancos estofados e janelas dos quatro lados." / "Na frente, um círculo para segurar e pedais no chão." / GATO: "Os Primatas iam de um lugar para outro sentados dentro dessas coisas?"
+- **P-PRIM-07 (D6, lápide do templo):** "Pedra talhada à mão, bem mais velha que o concreto das outras ruínas." / "Primatas sentados, entalhados lado a lado. Todos olham para o alto, para o mesmo círculo." / GATO: "Primeiro pedra, depois concreto. Depois, mato."
+- **P-PRIM-08 (A5, cabine secreta da estação):** "Uma mesa, uma cadeira e uma caneca de barro presa à mesa pelo musgo." / "Na parede, um papel com uma lista de horários. O último foi riscado à mão." / GATO: "Alguém ficou esperando o último. Ele não veio."
+
+As placas lidas vão para o Diário (capítulo 2), de qualquer cena.
 
 ## Refúgio da Vulpis
 
@@ -286,3 +299,13 @@ GATO (irônico): Se ela cair, pelo menos eu já sei o caminho.
 - 05a — TOBI (orgulhosa): Deixei uma corda no começo da ponte, lá do lado da Fortaleza. Para descer na floresta sem quebrar o pescoço. De nada. / GATO (irônico): Descer sem cair. Que conceito.
 - 05b — TOBI: Se for a Miaravéu, diga que a Tobi faz telhados também. Preço de amiga. Quase.
 - 05c — GATO: Primeira coisa que eu ajudo a consertar em vez de quebrar. / TOBI: Não se acostume.
+
+## Os devotos da Isyathy (documentos nas cabanas abandonadas) [PROPOSTA, 14/11/2026]
+
+Lidos com Interagir, ao lado do baú de cada cabana (é preciso quebrar a porta rachada). Vão para o Diário. Da devoção ao medo, na ordem do caminho. Texto no jogo: `Assets/_Game/Editor/ForestLore.cs`.
+- **D-DEVOTO-01, Oração da cabana (A3):** pregado na estaca: "Grande Isyathy, que dorme no alto do vale: / guarde nossa lenha, nossos filhotes e o caminho de volta para casa. / Deixamos o primeiro pão da estação na pedra lisa. Não pedimos mais nada." / GATO (irônico): "Rezavam para uma cobra. E ainda deixavam pão."
+- **D-DEVOTO-02, Caderno de contas (B1):** "Doze feixes para o mercador de Soluki. Dois para a pedra lisa." / "A guardiã não come pão, dizia minha avó. Mas o pão some todo inverno." / GATO (irônico): "Alguém come esse pão. Aposto que não é a cobra."
+- **D-DEVOTO-03, Carta não enviada (C3):** "Irmão, a guardiã não responde mais." / "A pedra lisa ficou roxa por baixo do musgo, e as árvores do vale perdem a casca." / "O ancião diz que é castigo, porque rezamos pouco. Eu rezo todas as noites." / GATO: "Reza não segura praga. Pergunte aos cães da Cidadela."
+- **D-DEVOTO-04, Página rasgada (E3, no Ninho):** "Subimos ao ninho com a oferenda, como manda o costume." / "Ela abriu os olhos. Não eram os olhos dela. Eram verdes." / "Corremos. O ancião ficou." / GATO: "...O ancião ficou."
+
+Ganchos: a "pedra lisa" (um altar da guardiã, ainda não está no mapa) e o ancião (pode reaparecer, vivo ou infectado, perto da arena da F8).

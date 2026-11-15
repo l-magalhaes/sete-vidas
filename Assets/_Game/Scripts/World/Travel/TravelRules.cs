@@ -51,6 +51,56 @@ namespace SeteVidas.World
             return false;
         }
 
+        /// <summary>
+        /// A lista do menu da viagem rápida (melhorias 14/11/2026): os santuários ligados à zona, NA ORDEM EM QUE FORAM
+        /// ENCONTRADOS, com o santuário onde o gato está no lugar dele (marcado "você está aqui", não escolhível).
+        /// Assim a lista é a mesma de qualquer santuário: o 3º encontrado é sempre o 3º da lista.
+        /// </summary>
+        public static List<SanctuaryVisit> MenuList(SaveData data, string fromId, string fromScene, string fromZone)
+        {
+            var list = new List<SanctuaryVisit>();
+            if (data?.visitedSanctuaries == null) return list;
+            foreach (var v in data.visitedSanctuaries)
+            {
+                if (v == null) continue;
+                if (IsHere(v, fromId, fromScene)) { list.Add(v); continue; }
+                if (!ZonesLinked(fromZone, string.IsNullOrEmpty(v.zone) ? Zone(v.scene) : v.zone, data)) continue;
+                list.Add(v);
+            }
+            return list;
+        }
+
+        /// <summary>É o santuário de onde se está viajando.</summary>
+        public static bool IsHere(SanctuaryVisit v, string fromId, string fromScene) => v != null && v.id == fromId && v.scene == fromScene;
+
+        /// <summary>Nome da área de uma cena (o subtítulo do mapa e do menu da viagem). "" se a cena não tem nome próprio.</summary>
+        public static string AreaName(string scene)
+        {
+            switch (scene)
+            {
+                case "Fortress_MVP": return "Cidadela do Sol Eterno";
+                case "Forest_Road": return "Estrada de Soluki";
+                case "Forest_A_Roots": return "Raízes da Queda";
+                case "Forest_B_Thorns": return "Bosque dos Espinhos";
+                case "Forest_C_Shadows": return "Vale das Sombras";
+                case "Forest_D_Refuge": return "Refúgio da Vulpis";
+                case "Forest_E_Nest": return "Ninho Adormecido";
+                case "Forest_F_Heart": return "Coração da Floresta";
+                default: return "";
+            }
+        }
+
+        /// <summary>
+        /// Título de um lugar: a região do mapa e, se for diferente, a área da cena ("Floresta Silenciosa · Vale das Sombras").
+        /// </summary>
+        public static string PlaceTitle(string region, string scene)
+        {
+            string area = AreaName(scene);
+            if (string.IsNullOrEmpty(region)) return string.IsNullOrEmpty(area) ? "" : area;
+            if (string.IsNullOrEmpty(area) || area == region) return region;
+            return region + " · " + area;
+        }
+
         /// <summary>Destinos possíveis a partir de um santuário: os visitados, ligados à zona dele, menos ele mesmo. Na ordem da visita.</summary>
         public static List<SanctuaryVisit> Destinations(SaveData data, string fromId, string fromScene, string fromZone)
         {

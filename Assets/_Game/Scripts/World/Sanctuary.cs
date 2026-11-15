@@ -200,7 +200,8 @@ namespace SeteVidas.World
             RecordVisit();
             var destinations = TravelRules.Destinations(SaveManager.Data, sanctuaryId, gameObject.scene.name, Zone);
             if (destinations.Count == 0) return false;
-            SeteVidas.UI.TravelMenu.Open(this, health, destinations);
+            // a lista do menu: na ordem em que foram encontrados, com este no lugar dele ("aqui")
+            SeteVidas.UI.TravelMenu.Open(this, health, TravelRules.MenuList(SaveManager.Data, sanctuaryId, gameObject.scene.name, Zone));
             return true;
         }
 

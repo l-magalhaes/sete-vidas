@@ -138,6 +138,7 @@ namespace SeteVidas.EditorTools
             SeteVidasSetup.BuildTileColliders(scene);
             PlayerSetup.PlaceInScene(scene); // gato + câmera no PlayerSpawn; salva a cena
             SeteVidasSetup.RegisterScenesInBuild();
+            ForestLore.BuildBook();   // catálogo do Diário (placas lidas aparecem de qualquer cena)
             Debug.Log("[Sete Vidas] Fortaleza gerada (Scenes/World/Fortress_MVP). Novo jogo começa no alto da montanha. Mapa: Docs/Level/fortaleza-mvp.md");
         }
 

@@ -270,6 +270,26 @@ namespace SeteVidas.World
             return null;
         }
 
+        /// <summary>O ícone de um santuário (ou baú) no mapa: a peça onde ele fica e o ponto (coordenadas do mapa).</summary>
+        public static bool FindPin(WorldMapData map, string scene, string kind, string id, out WorldMapData.SceneMap piece, out Vector2 point)
+        {
+            piece = null;
+            point = default;
+            if (map == null) return false;
+            foreach (var s in map.scenes)
+            {
+                if (s == null || s.scene != scene || s.pins == null) continue;
+                foreach (var m in s.pins)
+                {
+                    if (m == null || m.kind != kind || m.id != id) continue;
+                    piece = s;
+                    point = new Vector2(m.x, m.y);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>Centro da vista: o ponto pedido, preso para o mapa não sair do painel (ou centrado se couber).</summary>
         public static Vector2 ClampCenter(Vector2 center, RectInt bounds, Vector2 panelPixels, float zoom)
         {

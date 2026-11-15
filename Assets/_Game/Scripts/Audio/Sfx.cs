@@ -323,17 +323,29 @@ namespace SeteVidas.Audio
         string[] _poolIds;
         float[] _poolStarted;
 
+        /// <summary>
+        /// O Play está fechando (ou o jogo saindo): não cria mais o tocador. Sem isto, um som pedido enquanto a cena é
+        /// destruída (OnDisable, OnTriggerExit2D disparado pela limpeza...) criava o "[Sfx]" no meio da limpeza e o Unity
+        /// avisava "Some objects were not cleaned up when closing the scene".
+        /// </summary>
+        static bool s_quitting;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() // Play sem recarregar o domínio
         {
             s_instance = null;
             s_warned.Clear();
+            s_quitting = false;
+            Application.quitting -= OnQuitting;
+            Application.quitting += OnQuitting;   // no editor, chamado ao parar o Play
         }
+
+        static void OnQuitting() => s_quitting = true;
 
         internal static SfxPlayer Get()
         {
             if (s_instance != null) return s_instance;
-            if (!Application.isPlaying) return null;
+            if (!Application.isPlaying || s_quitting) return null;
             var go = new GameObject("[Sfx]");
             DontDestroyOnLoad(go);
             s_instance = go.AddComponent<SfxPlayer>();

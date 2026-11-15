@@ -223,5 +223,30 @@ namespace SeteVidas.Tests
             Assert.AreEqual(4f, TransitionRules.FallHeight(9f, 6f), "Teto a 6: cai de 4");
             Assert.AreEqual(0f, TransitionRules.FallHeight(9f, 1f), "Teto colado: chega de pé");
         }
+
+        // ------------------------------------------------------------ viagem rápida: ordem e título
+
+        [Test]
+        public void TravelMenu_ListsInDiscoveryOrder_WithHereInPlace()
+        {
+            var d = SaveData.NewGame();
+            TravelRules.RecordVisit(d, "S-F1", "Raízes Gêmeas", "Forest_A_Roots", TravelRules.Forest);
+            TravelRules.RecordVisit(d, "S-F1B", "Pé do Bosque", "Forest_B_Thorns", TravelRules.Forest);
+            TravelRules.RecordVisit(d, "S-F2", "Ravina", "Forest_C_Shadows", TravelRules.Forest);
+            TravelRules.RecordVisit(d, "S1", "Muralha", "Fortress_MVP", TravelRules.Fortress); // sem a ponte: fora
+            TravelRules.RecordVisit(d, "S-F1", "Raízes Gêmeas", "Forest_A_Roots", TravelRules.Forest); // de novo: não muda a ordem
+
+            var list = TravelRules.MenuList(d, "S-F1B", "Forest_B_Thorns", TravelRules.Forest);
+            CollectionAssert.AreEqual(new[] { "S-F1", "S-F1B", "S-F2" }, list.ConvertAll(v => v.id));
+            Assert.IsTrue(TravelRules.IsHere(list[1], "S-F1B", "Forest_B_Thorns"), "o de partida fica no lugar dele");
+        }
+
+        [Test]
+        public void PlaceTitle_JoinsRegionAndArea()
+        {
+            Assert.AreEqual("Floresta Silenciosa · Vale das Sombras", TravelRules.PlaceTitle("Floresta Silenciosa", "Forest_C_Shadows"));
+            Assert.AreEqual("Estrada de Soluki", TravelRules.PlaceTitle("Estrada de Soluki", "Forest_Road"), "sem repetir");
+            Assert.AreEqual("Raízes da Queda", TravelRules.PlaceTitle("", "Forest_A_Roots"));
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace SeteVidas.EditorTools
     public static class ForestLayout
     {
         /// <summary>Suba quando mudar o graybox (o menu 21 recria as cenas).</summary>
-        public const int Version = 19; // 19: corda na beira do abismo (R4), destroços da ponte (A1), cabaninhas; // 18: tutoriais da Floresta (pogo no cacto, cogumelo, atalhos, Caçador), posto e marcos; // 17: raiz com vinha na saída da G3; 10: F4, infectados; 11: sem cacto infectado; 12: F4b (D5, D6, Portão do Templo); 13: corações temporários; 14: troncos até o teto, melhorias 3; 15: ganchos pela floresta; 16: ganchos nas quinas, vãos de dash no Ninho
+        public const int Version = 24; // 24: a Isyathy no fundo em todas as salas de A a D, muitas vezes; documentos dos devotos nas cabanas; // 23: a Isyathy aparece de vez em quando no fundo (o pescoço que espia), sem desenho parado; // 22: parede em cima do Portão do Templo (não dá mais para pular por cima), portal de pedra; // 21: a Isyathy de longe toda no fundo (atrás das árvores e névoas), árvore da sombra da E2 até o chão; // 20: F5 parte 2 (placas e objetos dos Primatas, cabine secreta da A5, a Isyathy de longe); // 19: corda na beira do abismo (R4), destroços da ponte (A1), cabaninhas; // 18: tutoriais da Floresta (pogo no cacto, cogumelo, atalhos, Caçador), posto e marcos; // 17: raiz com vinha na saída da G3; 10: F4, infectados; 11: sem cacto infectado; 12: F4b (D5, D6, Portão do Templo); 13: corações temporários; 14: troncos até o teto, melhorias 3; 15: ganchos pela floresta; 16: ganchos nas quinas, vãos de dash no Ninho
 
         public const string Road = "Forest_Road";
         public const string A = "Forest_A_Roots";
@@ -59,6 +59,8 @@ namespace SeteVidas.EditorTools
             public string Flag; public bool Opens;
             /// <summary>Inimigo da Floresta na variante infectada (F4). Marcado por <see cref="MarkInfected"/>.</summary>
             public bool Infected;
+            /// <summary>Aparição da Isyathy (F5): a área que a dispara (mundo, canto de baixo à esquerda e tamanho).</summary>
+            public float TX, TY, TW, TH;
         }
 
         public class Room
@@ -122,7 +124,30 @@ namespace SeteVidas.EditorTools
             foreach (var reg in list) VinesToTheTop(reg);
             foreach (var reg in list) MarkInfected(reg);
             foreach (var reg in list) Ambushes(reg);
+            foreach (var reg in list) BackgroundSightings(reg);
             return list;
+        }
+
+        /// <summary>
+        /// A Isyathy no fundo em TODAS as salas de A a D (pedido do usuário, 14/11/2026: "apareça muitas e muitas vezes"):
+        /// as salas sem aparição própria (mapa §6) ganham uma que sorteia a animação a cada vez, sem fala. No Ninho (E) e
+        /// no Coração (F) não: lá ela está perto de verdade (F7, F8).
+        /// </summary>
+        static void BackgroundSightings(Region reg)
+        {
+            if (reg.Scene != A && reg.Scene != B && reg.Scene != C && reg.Scene != D) return;
+            var has = new HashSet<string>();
+            foreach (var o in reg.Objects)
+                if (o.Kind == "sighting") has.Add(o.Name.Substring(0, o.Name.IndexOf(':')));
+            foreach (var r in reg.Rooms)
+            {
+                if (has.Contains(r.Id)) continue;
+                reg.Objects.Add(new Obj
+                {
+                    Kind = "sighting", Name = r.Id + ": Isyathy ao longe (Random)", Text = "Random",
+                    X = r.X + r.W * 0.5f, Y = r.Y + 1, TX = r.X + 1, TY = r.Y + 1, TW = r.W - 2, TH = r.H - 2, Link = "", Id = "",
+                });
+            }
         }
 
         /// <summary>
@@ -487,6 +512,37 @@ namespace SeteVidas.EditorTools
             var o = O("templeprop", sprite, cx, ly);
             o.Text = sprite; o.Value = order;
         }
+        // ------------------------------------------------------------ F5 parte 2: ruínas dos Primatas e a Isyathy de longe
+        /// <summary>
+        /// Placa dos Primatas que se lê (texto P-PRIM-xx em <c>ForestLore</c>), com o desenho dela (Forest/Placeholder).
+        /// <paramref name="title"/> = o nome no Diário. <paramref name="blink"/>: o desenho tem os quadros _0 (aceso) e _1.
+        /// </summary>
+        static void Lore(float cx, float ly, string id, string title, string sprite, int order, bool blink = false)
+        {
+            var o = O("prilore", title, cx, ly);
+            o.Id = id; o.Text = title; o.Link = sprite; o.Value = order; o.C = blink ? 1f : 0f;
+        }
+        /// <summary>Objeto de ruína só de cenário (atrás do gato). <paramref name="hang"/>: pendurado, o topo em <paramref name="ly"/>.</summary>
+        static void RuinProp(string sprite, float cx, float ly, int order, bool hang = false)
+        {
+            var o = O("ruinprop", sprite, cx, ly);
+            o.Text = sprite; o.Value = order; o.C = hang ? 1f : 0f;
+        }
+        /// <summary>Máquina com a luzinha verde piscando devagar (quadros <paramref name="sprite"/>_0 e _1).</summary>
+        static void RuinMachine(float cx, float ly, int order) { var o = O("ruinlight", "máquina dos Primatas", cx, ly); o.Text = "pri_maquina"; o.Value = order; }
+        /// <summary>
+        /// A Isyathy vista de longe (mapa §6): <paramref name="kind"/> = Eyes, Silhouette, Lake, Scales ou Coiled. Aparece
+        /// de vez em quando LÁ NO FUNDO, entre as árvores (o lugar sai da câmera na hora), enquanto o gato está na sala
+        /// (pedido do usuário, 14/11/2026). A fala do Lion vem na primeira vez.
+        /// </summary>
+        static void Sighting(string kind, string bark, params string[] lines)
+        {
+            var o = O("sighting", "Isyathy ao longe (" + kind + ")", S.W * 0.5f - 1f, 0f);
+            o.Text = kind;
+            o.TX = S.X + 1; o.TY = S.Y + 1; o.TW = S.W - 2; o.TH = S.H - 2;     // a sala inteira
+            o.Link = bark; o.Id = string.Join("|", lines);
+        }
+
         static void Key(float cx, float cy, string id) { O("key", "chave " + id, cx, cy).Id = id; }
         /// <summary>Porta de residência (o interior é outra cena); a chegada de volta (<paramref name="doorId"/>) fica ao lado.</summary>
         static void Residence(float cx, float ly, string scene, string verb, string doorId, string keyId)
@@ -797,7 +853,7 @@ namespace SeteVidas.EditorTools
             Sanctuary(11.5f, 0f, "S-F1", "Raízes Gêmeas");
             Branch(0, 6, 3);
             Blob(3, 8, 19, 9);                                       // arco (topo 10)
-            Sign(11f, 10f, "P-PRIM-01 (placa dos Primatas)");
+            Lore(11f, 10f, "P-PRIM-01", "Placa da estrada", "pri_placa_estrada", -4);   // F5: a primeira ruína (só a placa)
             Coins(14f, 10f, 3);
             Sign(19.5f, 0f, "serpente: espere o bote e acerte enquanto ela estica");
             Bush(21f, 0f);
@@ -822,6 +878,7 @@ namespace SeteVidas.EditorTools
             G(15, 4, 23, 4); G(11, 0, 12, 1); G(23, 0, 23, 3);
             Trunk(16, 0, "gb_A3_tronco");
             Chest(20f, 0f, "W01");
+            Lore(17.5f, 0f, "D-DEVOTO-01", "Oração da cabana", "doc_oracao", -4);   // F5: a gente que rezava para a Isyathy (1/4)
             G(27, 4, 27, 38);
             G(43, 0, 43, 34);
             Mushroom(30f, 0f);
@@ -867,7 +924,7 @@ namespace SeteVidas.EditorTools
             Branch(15, 31, 3); Leaf(10.5f, 32f); Rotten(7, 35);
             Blob(1, 37, 6, 37); Coins(2f, 38f, 3);                   // nicho no alto (topo 38)
             Bat(14f, Top + 0.6f); Bat(22f, Top + 0.6f);
-            Sign(2f, 18f, "olhos da Isyathy no fundo (F5)");
+            Sighting("Eyes", "olhos_01", "...", "Não. Eu não vi nada. Olhos daquele tamanho não existem.");   // F5: D-OLHOS-01, no topo do poço
             LedgeHook(20, 29, -1); LedgeHook(6, 38, 1);                  // ganchos: a prateleira (sem o pogo) e o nicho das moedas
             DoorE(0, 3);
             DoorE(36, 39);
@@ -879,7 +936,18 @@ namespace SeteVidas.EditorTools
             G(44, 0, 53, 1); G(44, 7, 53, 7); G(44, 14, 54, 14); G(54, 5, 54, 14); // vagão B: 2 andares
             V(54, 5, 54, 14); VE(1, 20);                             // chaminé de 3 (x 55..57)
             Chest(49f, 15f, "W03", 5);
-            Sign(12f, 3f, "P-PRIM-02");
+            Lore(12f, 3f, "P-PRIM-02", "Mapa da estação", "pri_mapa", -4);
+            // F5 parte 2: a ruína COM segredo. Passarela de concreto no alto da estação (sobe-se pelo teto do vagão A, com a
+            // serra) até a cabine do chefe da estação, fechada por uma parede de blocos (marreta). Dentro: moedas e a P-PRIM-08.
+            G(14, 9, 29, 9);                                         // passarela (topo 10)
+            G(14, 10, 14, 13); G(14, 14, 19, 14);                    // parede de trás e teto da cabine
+            RuinWall(19, 10, "gb_A5_cabine");                        // a frente da cabine: blocos (marreta)
+            Lore(16.5f, 10f, "P-PRIM-08", "Cabine da estação", "pri_cabine_mesa", -4);
+            Coin(15.5f, 12f, 5); Coin(17.5f, 12f, 5);
+            RuinMachine(24f, 3f, -5);                                // a bilheteria: uma luz verde, devagar
+            RuinMachine(26.5f, 10f, -5);
+            RuinProp("pri_relogio", 36f, 22f + 1f, -6, hang: true);   // pendurado do teto, parado
+            RuinProp("pri_poste_tombado", 3.5f, 0f, -5);
             Infected(18f, 3f, 1, 9f, 27f, false);
             Plant(29.5f, 0f);
             Shadow(32, 2, 9, 4);
@@ -948,6 +1016,7 @@ namespace SeteVidas.EditorTools
             G(0, 18, 2, 22); G(3, 22, 10, 22);
             Trunk(10, 18, "gb_B1_tronco");
             Chest(6f, 18f, "W05");
+            Lore(3.5f, 18f, "D-DEVOTO-02", "Caderno de contas", "doc_caderno", -4);   // F5: devotos (2/4)
             Dry(12.5f, 18f, 1); Dry(16.5f, 18f, 1);
             Cactus(23.5f, 2.8f); Cactus(27.5f, 8.3f); Cactus(24f, 14.8f);
             Hint("pogo_cacto", "no ar, ↓ + ataque no cacto: quique", 22f, 0f, 8f, 6f, "atacar:ler");   // tutorial (pedido do usuário, 14/11/2026)
@@ -1025,6 +1094,13 @@ namespace SeteVidas.EditorTools
             Cactus(10f, 28f, 1.2f, 0f);                              // pogo até 36,4
             G(11, 34, Right, 35);                                    // viga (topo 36)
             Bat(14f, 33.6f);
+            // F5 parte 2: a torre é só cenário (o segredo dela é o cipó do atalho). A luzinha verde na viga alta (P-PRIM-04),
+            // a escada quebrada no fundo e, do alto, a silhueta da Isyathy passando atrás das copas (D-SILHUETA-01)
+            Lore(16f, 36f, "P-PRIM-04", "Luz da torre", "pri_farol", -4, blink: true);
+            RuinProp("pri_escada", 7f, 17f, -7);
+            RuinMachine(10f, 0f, -5);
+            Sighting("Silhouette", "silhueta_01",
+                "Aquilo passando atrás das árvores... é uma coisa só?", "Ótimo. A floresta tem dono. E ele é comprido.");
             Branch(5, 40, 4);
             G(1, 43, 4, 43);                                         // topo (44): porta para a Copa
             ScVine(AtTorre, -1, 4, 43);                              // começa acima da porta do Jardim
@@ -1149,10 +1225,15 @@ namespace SeteVidas.EditorTools
             Branch(1, 31, 4);
             Infected(20f, 0f, 1, 8f, 32f, false); Shadow(33, 0, 4, 5); Shadow(2, 0, 4, 5);
             Infected(18f, 9f, -1, 8f, 30f, true); Shadow(31, 9, 5, 5); Bush(12f, 9f);
-            Sign(22f, 9f, "P-PRIM-03");
+            Lore(22f, 9f, "P-PRIM-03", "Vitrine do prédio", "pri_vitrine", -4);
+            // F5 parte 2: janelas que dão para a terra (o prédio está enterrado), a escada quebrada e uma máquina
+            RuinProp("pri_janela", 27f, 0.5f, -6); RuinProp("pri_janela", 30f, 18.5f, -6); RuinProp("pri_janela", 14f, 27.5f, -6);
+            RuinProp("pri_escada", 9f, 36f, -7);
+            RuinMachine(35f, 18f, -5);
             Infected(24f, 18f, 1, 10f, 36f, false); Shadow(8, 18, 4, 5); Plant(40f, 18f);
             Dry(20f, 27f, -1); Shadow(28, 27, 6, 5); Snake(10f, 27f, 1);
-            Trunk(24, 36, "gb_C3_tronco", 7); Chest(30f, 36f, "W10"); Shadow(33, 36, 5, 4);
+            Trunk(24, 36, "gb_C3_tronco", 7); Chest(30f, 36f, "W10"); Lore(26.5f, 36f, "D-DEVOTO-03", "Carta não enviada", "doc_carta", -4); // F5: devotos (3/4)
+            Shadow(33, 36, 5, 4);
             Coins(12f, 36f, 3);
             LedgeHook(36, 9, 1); LedgeHook(36, 27, 1);                   // ganchos: nas bordas dos andares (vãos da escada)
             DoorE(0, 3);
@@ -1172,6 +1253,8 @@ namespace SeteVidas.EditorTools
             Lever(AtLago, 28f, 0f, 0, 1, "abrir o alçapão");
             Hint("atalho", "abra o alçapão: atalho de volta", 28f, 0f, 5f, 4f, "interagir:acao");
             Sign(24.5f, 0f, "o lago escoa por aqui");
+            // F5: olhos no fundo, do outro lado do lago, vistos da ilha; agachar faz sumir (D-OLHOS-02). No fundo, não na água (pedido do usuário)
+            Sighting("Lake", "olhos_02", "Quando a floresta olha de volta para você, é hora de ir embora.");
             Mushroom(34f, 0f); Mushroom(45f, 0f);
             Snake(40f, 0f, -1);
             Leaf(37.5f, 8f); Branch(30, 10, 3); Branch(42, 11, 4); Leaf(21.5f, 9f); Branch(14, 11, 4); Branch(6, 9, 4);
@@ -1206,6 +1289,10 @@ namespace SeteVidas.EditorTools
             Coins(37f, 10f, 3); Coins(17f, 8f, 3);
             LedgeHook(36, 10, -1); LedgeHook(16, 8, -1);                 // ganchos: os galhos das moedas
             Bat(46f, Top + 0.6f); Bat(20f, Top + 0.6f);
+            // F5 parte 2: a estrada é só cenário. A carroça sem cavalo em cima do entulho (P-PRIM-06), postes de pé e caídos
+            Lore(58f, 3f, "P-PRIM-06", "Carroça de metal", "pri_carcaca", -4);
+            RuinProp("pri_poste", 32f, 4f, -5); RuinProp("pri_poste", 5f, 0f, -5);
+            RuinProp("pri_poste_tombado", 22f, 0f, -5);
             DoorE(0, 3);
             DoorW(0, 3);
 
@@ -1239,6 +1326,8 @@ namespace SeteVidas.EditorTools
             VE(5, 30);
             Blob(20, 12, Right, 13);                                 // topo 14
             Sanctuary(6f, 0f, "S-F2", "Ravina");
+            // F5: subindo, uma curva de escamas se mexe atrás da névoa e some
+            Sighting("Scales", "escamas_01", "...Raiz não se mexe assim.");
             LedgeHook(13, 36, -1); LedgeHook(12, 46, -1); LedgeHook(22, 51, -1); // ganchos: subir a Ravina de volta até a saída
             Entrance("C6_alcapao", 14.5f, 0f, -1);
             DoorS(17, 18);
@@ -1349,7 +1438,7 @@ namespace SeteVidas.EditorTools
 
             // D4 Mirante: o topo da árvore; a Isyathy enrolada ao longe. Templário, serpente e um vão de espinhos
             Sala("D4", "Mirante", 240, -73, 45, 17);
-            Sign(20f, 0f, "a Isyathy enrolada no alto (F5)");
+            Sighting("Coiled", "mirante_01", "Aquilo tudo... é ela.", "Se a praga faz isso com uma coisa desse tamanho, o que ela faz com uma cidade?");   // F5: D-MIRANTE-01
             Shadow(10, 0, 4, 4);
             Spikes(33, 0, 3); Cactus(34.5f, 4f, 0f, 0.4f);
             Infected(15f, 0f, 1, 2f, 22f, false);
@@ -1359,6 +1448,11 @@ namespace SeteVidas.EditorTools
             Entrance("D4_leste", 40f, 0f, -1);
             // F4b: o Portão do Templo da Serpente tranca a passagem para o Ninho (a chave está nas Ruínas, D6)
             Gate(41.5f, 0f, KeyTemple, GateTemple);
+            // parede até o teto em cima do portão (pedido do usuário, 14/11/2026: dava para pular por cima sem a chave,
+            // com o cacto do vão de espinhos) e o portal de pedra do templo: pilares atrás, verga na frente da parede
+            G(41, 4, 42, Top);
+            TempleProp("portal_templo_pilares", 41.5f, 0f, -4);
+            TempleProp("portal_templo_lintel", 41.5f, 4f, 6);
             ExitE(0, E, "E1_oeste");
 
             // ---------------------------------------------------------------- F4b (pedido do usuário, 14/11/2026)
@@ -1390,7 +1484,7 @@ namespace SeteVidas.EditorTools
             TempleProp("templo_nicho", 17f, 9f, -8);                 // sobre a laje 1
             TempleProp("templo_nicho", 3.5f, 12f, -8);               // sobre a laje 2
             TempleProp("templo_nicho", 19f, 17f, -8);                // sobre a laje 3
-            Sign(2f, 0f, "ruínas dos Primatas");
+            Lore(2f, 0f, "P-PRIM-07", "Lápide do templo", "pri_lapide", -4);
             Spikes(7, 0, 7);                                         // 7 tiles de espinhos no chão: o pulo (4) não vence, o dash sim
             Hint("dash", "dash: passe por cima dos espinhos", 4f, 0f, 6f, 5f, "dash:acao:vinculo_vulpis");
             Hint("gancho", "mire no gancho: flecha com corda", 17f, 0f, 7f, 6f, "especial:acao:vinculo_vulpis");
@@ -1481,7 +1575,8 @@ namespace SeteVidas.EditorTools
             Rotten(39, 11);                                                  // ...e pula na plataforma temporária
             Mushroom(44f, 8f);
             LedgeHook(26, 17, -1); LedgeHook(55, 8, -1);                 // ganchos: o alto (do piso de cima) e a saída (por baixo)
-            Trunk(20, 0, "gb_E3_tronco", 7); Chest(24f, 0f, "W17");
+            Trunk(20, 0, "gb_E3_tronco", 7); Chest(24f, 0f, "W17"); Lore(21.5f, 0f, "D-DEVOTO-04", "Página rasgada", "doc_pagina", -4); // F5: devotos (4/4)
+           
             Shadow(28, 0, 10, 5); Infected(36f, 0f, -1, 27f, 44f, false);
             Crawler(12f, 0f, 9f, 18f);
             Branch(47, 3, 4); Branch(47, 6, 4); G(55, 7, Right, 7);           // a saída 8 adiante: dash (melhorias 5)
@@ -1588,7 +1683,7 @@ namespace SeteVidas.EditorTools
             G(16, 19, 17, 19); Coin(16.5f, 20f, 3); Coin(17.5f, 21f, 3);         // nicho (topo 20): moedas de 3
             G(15, 24, 17, 46);                                                 // fechado acima do nicho
             Bat(2.5f, 27f);                                                    // o morcego passa para os cogumelos
-            Sign(8f, 47f, "P-PRIM-05");
+            Lore(8f, 47f, "P-PRIM-05", "Painel da coluna", "pri_painel", -4);
             DoorN(8, 11);
 
             // G3 Sob a Ponte: a última subida pelo pilar leste; aurora no topo; sai na cabeceira leste (R5)

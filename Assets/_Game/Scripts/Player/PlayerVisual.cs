@@ -20,6 +20,11 @@ namespace SeteVidas.Player
         [SerializeField] PlayerController controller;
         SeteVidas.Classes.BowAbility _bow;
         SeteVidas.Abilities.GrappleAbility _grapple;
+        DashAbility _dash;
+        bool _wasDashing;
+        float _dashTime, _ghostTimer;
+        DashFx _dashStreak;
+        const float DashBodyHeight = 0.55f;   // meio do corpo na pose do dash (acima dos pés)
         [SerializeField] SpriteRenderer spriteRenderer;
         [SerializeField] WallClimbAbility wallClimb;
         [SerializeField] CombatController combat;
@@ -35,6 +40,8 @@ namespace SeteVidas.Player
         [SerializeField] Vector2 landSquash = new Vector2(1.25f, 0.8f);
         [SerializeField] Vector2 heavyLandSquash = new Vector2(1.4f, 0.65f);
         [SerializeField] Vector2 stealthHitSquash = new Vector2(1.15f, 0.9f);
+        [Tooltip("Arranque do dash: estica para a frente")]
+        [SerializeField] Vector2 dashSquash = new Vector2(1.3f, 0.8f);
         [Tooltip("Tempo para voltar ao tamanho normal (s)")]
         [SerializeField] float squashRecover = 0.1f;
 
@@ -445,6 +452,30 @@ namespace SeteVidas.Player
                 }
             }
 
+            // dash (melhorias 14/11/2026): arranque esticado, com poeira se estiver no chão
+            if (_dash == null) _dash = controller.GetComponent<DashAbility>();
+            bool dashing = _dash != null && _dash.IsDashing;
+            _dashTime += dt;
+            if (dashing && !_wasDashing)
+            {
+                // o impulso (como o Hollow Knight): estica, solta o rastro de vento atrás e a poeira no chão
+                _dashTime = 0f;
+                _ghostTimer = 0f;
+                _squash = dashSquash;
+                if (grounded) Dust(animationSet.dustStep, 0.05f, feet - new Vector3(_facing * 0.3f, 0f), _facing < 0);
+                if (_dashStreak != null) _dashStreak.Release();
+                _dashStreak = DashFx.Streak(controller.transform, _facing, DashBodyHeight,
+                    spriteRenderer.sortingLayerID, spriteRenderer.sortingOrder - 3, SeteVidas.Abilities.HunterRules.DashTime);
+            }
+            if (dashing)
+            {
+                // imagens-fantasma deixadas para trás
+                _ghostTimer -= dt;
+                if (_ghostTimer <= 0f) { _ghostTimer = 0.04f; DashFx.Ghost(spriteRenderer, 0.45f); }
+            }
+            else if (_wasDashing && _dashStreak != null) { _dashStreak.Release(); _dashStreak = null; }
+            _wasDashing = dashing;
+
             // agachou
             if (controller.IsCrouching && !_wasCrouching) _crouchTime = 0f;
 
@@ -542,6 +573,19 @@ namespace SeteVidas.Player
                     }
                 }
                 return wc.At(_wallAnimTime);
+            }
+
+            // ----- dash: corpo deitado para a frente, cabeça esticada (o 1º quadro é o arranque; depois, o loop do avanço)
+            if (_wasDashing && !attacking)
+            {
+                var dc = set.Get("dash");
+                if (dc != null)
+                {
+                    ResetIdle();
+                    _base = null;
+                    CurrentClipName = dc.name;
+                    return dc.Count < 2 || _dashTime < dc.frameTime ? dc.frames[0] : dc.frames[1 + (int)((_dashTime - dc.frameTime) / dc.frameTime) % Mathf.Max(1, dc.Count - 1)];
+                }
             }
 
             // ----- golpe (sincronizado com as fases do código)

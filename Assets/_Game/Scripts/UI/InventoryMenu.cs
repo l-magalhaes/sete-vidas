@@ -608,16 +608,29 @@ namespace SeteVidas.UI
         /// </summary>
         void FillDiary()
         {
-            var byChapter = new SortedDictionary<int, List<LoreSign>>();
+            var byChapter = new SortedDictionary<int, List<DiaryPage>>();
             int current = InventoryTexts.ChapterOf(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-            byChapter[current] = new List<LoreSign>();
+            byChapter[current] = new List<DiaryPage>();
+            var listed = new HashSet<string>();
             foreach (var sign in LoreSign.All)
             {
                 if (sign == null || !sign.IsRead) continue;
                 int ch = InventoryTexts.ChapterOf(sign.gameObject.scene.name);
-                if (!byChapter.TryGetValue(ch, out var list)) byChapter[ch] = list = new List<LoreSign>();
-                list.Add(sign);
+                if (!byChapter.TryGetValue(ch, out var list)) byChapter[ch] = list = new List<DiaryPage>();
+                list.Add(new DiaryPage { Title = sign.Title, Text = sign.Text, Order = sign.transform.position.x });
+                listed.Add(sign.Key);
             }
+            // placas lidas em outras cenas (a Floresta tem uma cena por região): vêm do catálogo
+            var book = LoreBook.Active;
+            var data = SaveManager.Data;
+            if (book != null && data != null)
+                foreach (var e in book.entries)
+                {
+                    if (e == null || e.text == null || listed.Contains(e.key) || !data.HasFlag(LoreSign.ReadPrefix + e.key)) continue;
+                    if (!byChapter.TryGetValue(e.chapter, out var list)) byChapter[e.chapter] = list = new List<DiaryPage>();
+                    list.Add(new DiaryPage { Title = e.title, Text = e.text, Order = e.order });
+                    listed.Add(e.key);
+                }
 
             int row = 0;
             foreach (var kv in byChapter)
@@ -627,7 +640,7 @@ namespace SeteVidas.UI
                 _headers[row] = title;
                 row++;
                 var signs = kv.Value;
-                signs.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+                signs.Sort((a, b) => a.Order.CompareTo(b.Order));
                 for (int i = 0; i < signs.Count; i++)
                 {
                     var sb = new StringBuilder();
@@ -642,6 +655,9 @@ namespace SeteVidas.UI
                 row += Mathf.Max(1, (signs.Count + columns - 1) / columns);
             }
         }
+
+        /// <summary>Uma placa lida, da cena aberta ou do catálogo (<see cref="LoreBook"/>).</summary>
+        struct DiaryPage { public string Title; public SeteVidas.Dialogue.DialogueDefinition Text; public float Order; }
 
         void RefreshLion()
         {
@@ -1275,7 +1291,9 @@ namespace SeteVidas.UI
                 _mapLion.transform.SetAsLastSibling();
             }
             var here = hasCat ? catScene : WorldMapRules.SceneAt(map, _mapCenter);
-            _mapTitle.text = here != null && !string.IsNullOrEmpty(here.region) ? here.region : "Mapa";
+            // região e área onde o gato está (melhorias 14/11/2026): "Floresta Silenciosa · Vale das Sombras"
+            string title = here != null ? TravelRules.PlaceTitle(here.region, here.scene) : "";
+            _mapTitle.text = string.IsNullOrEmpty(title) ? "Mapa" : title;
             _mapLegend.text = "santuário · baú aberto · Lion: você   zoom ×" + _mapZoom;
         }
 

@@ -17,6 +17,8 @@ namespace SeteVidas.Enemies
         [SerializeField, Min(1f)] float height = BranchHeight;
         [SerializeField] bool startsDisguised = true;
         [SerializeField] Sprite standing, armUp, armDown, disguised;
+        [Tooltip("F4c: disfarçado (a copa balança; de vez em quando um olho se abre na casca), acordado (respirando) e braço erguido (tremendo)")]
+        [SerializeField] Sprite[] disguisedFrames = new Sprite[0], standingFrames = new Sprite[0], armUpFrames = new Sprite[0];
         [Header("Broto: solta morcegos")]
         [SerializeField] bool spawnsBats;
         [Tooltip("Morcego modelo (desligado) que o Broto copia")]
@@ -137,7 +139,9 @@ namespace SeteVidas.Enemies
 
             if (spriteRenderer != null)
             {
-                Sprite want = _state == BranchState.Disguised ? disguised : _state == BranchState.Windup ? armUp : _state == BranchState.Stuck ? armDown : standing;
+                Sprite want = _state == BranchState.Disguised ? Anim(disguisedFrames, disguised, 2.5f)
+                           : _state == BranchState.Windup ? Anim(armUpFrames, armUp, 14f)
+                           : _state == BranchState.Stuck ? armDown : Anim(standingFrames, standing, 3f);
                 if (want != null) spriteRenderer.sprite = want;
             }
         }

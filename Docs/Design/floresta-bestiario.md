@@ -134,3 +134,18 @@ Os bichos da Floresta (Galho Seco, Planta Carnívora, Serpente, Morcego) usam o 
 - Apanhar = "!" na hora. O Galho Seco disfarçado não mostra o ícone (não entrega o disfarce). Morcegos do Broto já nascem em alerta.
 - Ainda não muda: os bichos continuam sem bônus de golpe surpresa (`InCombat` sempre verdadeiro). Se quiser que o ataque pelas costas de um bicho desatento dê mais dano, é uma linha.
 - Ajuste de 14/11/2026: a parede bloqueia a visão testando nos dois sentidos (o morcego, encostado no teto, enxergava o gato no chão de cima) e **bloqueia o som** (do outro lado do bloco, o bicho não ouve; antes era 30% e o morcego ainda ficava com "?" pelos pousos lá em cima). O "!" do morcego aparece embaixo dele.
+
+---
+
+## F4c: arte definitiva (pedido do usuário, 14/11/2026) [PROPOSTA: arte para aprovar no jogo]
+
+Gerador: `Tools/EnemySprites/gerar_floresta.ps1` (`ForestBestiaryGen.cs`). Prévia: `SeteVidasDocs/Referencias/floresta_bestiario_f4c.png`. A arte usa os mesmos nomes de arquivo que o jogo já carrega. O menu 21 refaz a variante infectada (troca de paleta) a partir da arte nova. As mecânicas não mudaram.
+
+| Inimigo | O que mudou |
+|---|---|
+| **Vespas da Raiz** (era o Morcego Noturno) | **Insetos voadores**: três vespas que dormem agarradas de ponta-cabeça na raiz (uma mexe a antena) e voam juntas, as asas batendo fora de fase. Olho vermelho-alaranjado e listras ocre apagadas (nada de dourado). O Broto agora tem casulos na copa, de onde elas saem. A mecânica é a mesma do morcego (`NightBat`) |
+| **Galho Seco / Broto** | Desenhado com **as cores das árvores comuns do cenário**: a casca dos troncos e a copa das árvores do fundo. Disfarçado, não dá para saber se é cenário: a copa balança de leve e, de vez em quando, um olho se abre na casca. Acordado: dois olhos âmbar nos nós e o galho-braço saindo de lado, na frente da copa. Aviso: o braço lá no alto, tremendo. Preso: o braço batido no chão à frente |
+| **Planta Carnívora** | Lembra a planta de cano, mas com identidade própria: um bulbo **vinho** com pintas claras, lábios cor de pele com espinhos-dentes e duas folhas-orelha. Respira fechada; na hora do bote, a boca abre em V, treme e mostra a língua. Na volta, murcha com a **flor turquesa** no alto, o único lugar de pogo |
+| **Serpente** | Víbora oliva com losangos escuros, ventre claro e olhos laranja. A **toca se camufla no chão**: é um montinho com o mesmo musgo e a mesma terra do topo do chão, com uma fresta onde só se veem os olhos (que brilham e piscam). Aviso: a cabeça sai da toca e a língua aparece. Bote: boca aberta com as presas. Rastejando: o corpo ondula. Os gomos do corpo esticado também têm escamas |
+
+Cores reservadas respeitadas: turquesa só no pogo; nenhum amarelo-dourado (é a rachadura do Paladino); roxo e verde-ácido só na variante infectada.

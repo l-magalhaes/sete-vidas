@@ -64,23 +64,31 @@ namespace SeteVidas.EditorTools
 
         /// <summary>Placa de lore no chão (E para ler).</summary>
         internal static void Sign(Transform parent, string name, float x, float floorY, DialogueDefinition text)
+            => Sign(parent, name, x, floorY, text, null, Behind + 1);
+
+        /// <summary>
+        /// Placa de lore com outro desenho (as placas dos Primatas na Floresta: placa de metal, mapa, vitrine...).
+        /// <paramref name="art"/> null = a placa de pedra da Cidadela. O gatilho acompanha a largura do desenho.
+        /// </summary>
+        internal static GameObject Sign(Transform parent, string name, float x, float floorY, DialogueDefinition text, Sprite art, int order)
         {
             var go = new GameObject(name) { layer = LayerMask.NameToLayer(GameConstants.Layers.Interactable) };
             go.transform.SetParent(parent, false);
             go.transform.position = new Vector3(x, floorY, 0f);
             var box = go.AddComponent<BoxCollider2D>();
             box.isTrigger = true;
-            box.size = new Vector2(1.5f, 2f);
-            box.offset = new Vector2(0f, 1f);
             var plate = new GameObject("Placa");
             plate.transform.SetParent(go.transform, false);
             var sr = plate.AddComponent<SpriteRenderer>();
-            sr.sprite = PlaqueSprite();
-            sr.sortingOrder = Behind + 1;
+            sr.sprite = art != null ? art : PlaqueSprite();
+            sr.sortingOrder = order;
             plate.transform.localPosition = new Vector3(0f, sr.sprite.bounds.extents.y, 0f);
+            float w = Mathf.Max(1.5f, sr.sprite.bounds.size.x * 0.8f), h = Mathf.Max(2f, sr.sprite.bounds.size.y);
+            box.size = new Vector2(w, h);
+            box.offset = new Vector2(0f, h * 0.5f);
             var promptGo = new GameObject("Prompt");
             promptGo.transform.SetParent(go.transform, false);
-            promptGo.transform.localPosition = new Vector3(0f, 1.9f, 0f);
+            promptGo.transform.localPosition = new Vector3(0f, Mathf.Max(1.9f, sr.sprite.bounds.size.y + 0.4f), 0f);
             var prompt = DamagePopup.CreateText(promptGo, "E: ler", new Color32(0xff, 0xe9, 0xa8, 0xff), 28);
             promptGo.SetActive(false);
             var sign = go.AddComponent<LoreSign>();
@@ -88,6 +96,7 @@ namespace SeteVidas.EditorTools
             so.FindProperty("text").objectReferenceValue = text;
             so.FindProperty("prompt").objectReferenceValue = prompt;
             so.ApplyModifiedPropertiesWithoutUndo();
+            return go;
         }
 
         // ------------------------------------------------------------- lore

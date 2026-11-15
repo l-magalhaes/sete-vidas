@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ebd106b804a8084ca8a17f4c4b77d8e, type: 3}
+  m_Name: LoreBook
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.World.LoreBook
+  entries:
+  - key: D-PLACA-10
+    title: Marco da estrada
+    chapter: 1
+    order: 23.8
+    text: {fileID: 11400000, guid: f9815ee485a32a0438bbf67052248326, type: 2}
+  - key: D-PLACA-01
+    title: "Placa do p\xE1tio"
+    chapter: 1
+    order: 58
+    text: {fileID: 11400000, guid: fd15b0bf6daa4474ca4f4a00e501fd70, type: 2}
+  - key: D-PLACA-05
+    title: "Placa do est\xE1bulo"
+    chapter: 1
+    order: 116
+    text: {fileID: 11400000, guid: 055c4d5f563bbd1439f1d8591f8368b2, type: 2}
+  - key: D-PLACA-11
+    title: Altar de Sethra (muralha)
+    chapter: 1
+    order: 142.85
+    text: {fileID: 11400000, guid: a50c1f11f6a93e54c99c11b07aa6698f, type: 2}
+  - key: D-PLACA-02
+    title: Placa do alojamento
+    chapter: 1
+    order: 164.4
+    text: {fileID: 11400000, guid: 1c34ff7ec6f0ad040b3a68bdebfce5a1, type: 2}
+  - key: D-PLACA-03
+    title: Placa do juramento
+    chapter: 1
+    order: 205
+    text: {fileID: 11400000, guid: ca5c2481bb702cc4d8c65965a43e4851, type: 2}
+  - key: D-PLACA-04
+    title: "Placa da c\xE2mara"
+    chapter: 1
+    order: 144.6
+    text: {fileID: 11400000, guid: f0c4b0b07fba2ad4983ac752a0b5131a, type: 2}
+  - key: D-PLACA-06
+    title: "Di\xE1rio do guardi\xE3o"
+    chapter: 1
+    order: 206.5
+    text: {fileID: 11400000, guid: 2a2fb11930ce4c747aa7acbb5d334f17, type: 2}
+  - key: D-PLACA-07
+    title: Mural da Marcha Dourada
+    chapter: 1
+    order: 229
+    text: {fileID: 11400000, guid: 2f6a5b28636c06749834033b79599541, type: 2}
+  - key: D-PLACA-08
+    title: Pedra dos votos
+    chapter: 1
+    order: 229
+    text: {fileID: 11400000, guid: b37173222a941ed4caa0ea14c7368a5a, type: 2}
+  - key: D-PLACA-09
+    title: "Lista dos guardi\xF5es"
+    chapter: 1
+    order: 229
+    text: {fileID: 11400000, guid: 2b0fa390d901e464aaf12a3188d48987, type: 2}
+  - key: P-PRIM-01
+    title: Placa da estrada
+    chapter: 2
+    order: 171
+    text: {fileID: 11400000, guid: 6f7e02dd64c181b48ad644ac44fb0584, type: 2}
+  - key: P-PRIM-02
+    title: "Mapa da esta\xE7\xE3o"
+    chapter: 2
+    order: 315
+    text: {fileID: 11400000, guid: fbd932be645c02748931d8084502113e, type: 2}
+  - key: P-PRIM-08
+    title: "Cabine da esta\xE7\xE3o"
+    chapter: 2
+    order: 319.5
+    text: {fileID: 11400000, guid: dd4f9186a239ff8449b51d85a2e5be3a, type: 2}
+  - key: P-PRIM-04
+    title: Luz da torre
+    chapter: 2
+    order: 542
+    text: {fileID: 11400000, guid: 4cf1aa15b3b417d4baaeb114b7b7ab51, type: 2}
+  - key: P-PRIM-03
+    title: "Vitrine do pr\xE9dio"
+    chapter: 2
+    order: 357
+    text: {fileID: 11400000, guid: 2fb14cb93f1884e409cd3dda56180979, type: 2}
+  - key: P-PRIM-06
+    title: "Carro\xE7a de metal"
+    chapter: 2
+    order: 260
+    text: {fileID: 11400000, guid: ae429cd7c801d00499af8f3c33316623, type: 2}
+  - key: P-PRIM-07
+    title: "L\xE1pide do templo"
+    chapter: 2
+    order: 313
+    text: {fileID: 11400000, guid: 10cd969daba1c9d4385414c82684bc1f, type: 2}
+  - key: P-PRIM-05
+    title: Painel da coluna
+    chapter: 2
+    order: 586
+    text: {fileID: 11400000, guid: 9e86c5a5b4a40ce4f82a4adea1d14e84, type: 2}
+  - key: D-DEVOTO-01
+    title: "Ora\xE7\xE3o da cabana"
+    chapter: 2
+    order: 221.5
+    text: {fileID: 11400000, guid: 3ac9f48ad713b4342954fac375d1eb6a, type: 2}
+  - key: D-DEVOTO-02
+    title: Caderno de contas
+    chapter: 2
+    order: 365.5
+    text: {fileID: 11400000, guid: 6c23cf89daba0134db32932400aff64a, type: 2}
+  - key: D-DEVOTO-03
+    title: "Carta n\xE3o enviada"
+    chapter: 2
+    order: 361.5
+    text: {fileID: 11400000, guid: 13b04b8feb687bf47ad152976699f995, type: 2}
+  - key: D-DEVOTO-04
+    title: "P\xE1gina rasgada"
+    chapter: 2
+    order: 394.5
+    text: {fileID: 11400000, guid: f7a6d1ea0b429384f823d065f500f22e, type: 2}

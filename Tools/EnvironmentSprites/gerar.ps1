@@ -13,7 +13,7 @@ $meta = Join-Path $root 'Tools\LionSprites\sprite_meta_template.txt'
 Add-Type -ReferencedAssemblies System.Drawing -Path @((Join-Path $here 'EnvPalette.cs'), (Join-Path $root 'Tools\CharacterSprites\PixelKit.cs'), (Join-Path $here 'PropSpriteGen.cs'),
     (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\TerrainAutotile.cs'), (Join-Path $here 'TerrainSpriteGen.cs'), (Join-Path $here 'WaterSpriteGen.cs'), (Join-Path $here 'ArchitectureSpriteGen.cs'), (Join-Path $here 'VegetationSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.cs'), (Join-Path $here 'ObjectSpriteGen.Culture.cs'), (Join-Path $here 'ObjectSpriteGen.Life.cs'), (Join-Path $here 'BackgroundSpriteGen.cs'),
     (Join-Path $root 'Assets\_Game\Scripts\World\Scenery\ForestAutotile.cs'), (Join-Path $here 'ForestSpriteGen.cs'), (Join-Path $here 'ForestObjectGen.cs'),
-    (Join-Path $root 'Assets\_Game\Editor\ForestLayout.cs'), (Join-Path $root 'Assets\_Game\Editor\Scenery\ForestTerrain.cs'), (Join-Path $here 'ForestShadowGen.cs'), (Join-Path $here 'ForestPropGen.cs'))
+    (Join-Path $root 'Assets\_Game\Editor\ForestLayout.cs'), (Join-Path $root 'Assets\_Game\Editor\Scenery\ForestTerrain.cs'), (Join-Path $here 'ForestShadowGen.cs'), (Join-Path $here 'ForestPropGen.cs'), (Join-Path $here 'ForestLoreGen.cs'), (Join-Path $here 'VulpisHomeGen.cs'))
 
 # 1) paleta
 [EnvPalette]::Export($root, $refs)
@@ -41,6 +41,10 @@ $sombras = [ForestShadowGen]::Run($root, $meta, $refs)
 Write-Host "floresta (F5): sombras dos esconderijos e as arvores que as fazem (Forest/Shadows): $sombras"
 $props = [ForestPropGen]::Run($root, $meta, $refs)
 Write-Host "floresta (F5): $props (Forest/Placeholder)"
+$casa = [VulpisHomeGen]::Run($root, $meta, $refs)
+Write-Host "casa da Vulpis: $casa (Forest/Placeholder e Forest/Terrain)"
+$lore = [ForestLoreGen]::Run($root, $meta, $refs)
+Write-Host "floresta (F5 parte 2): $lore (Forest/Placeholder)"
 Write-Host "objetos (Etapa 5A): treino, defesa, alojamento, servico (Soluki/Objects), armadilhas (Citadel/Traps), exterior (Exterior/Objects), barulhentos (Common/Noisy)"
 
 # 2) pastas da biblioteca (plano, 3.1 e 7.9). Unity cria os .meta das pastas ao abrir.

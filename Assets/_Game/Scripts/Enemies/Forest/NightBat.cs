@@ -13,6 +13,8 @@ namespace SeteVidas.Enemies
     public class NightBat : ForestEnemy
     {
         [SerializeField] Sprite sleeping, flyA, flyB;
+        [Tooltip("F4c: quadros pousado (insetos agarrados ao poleiro) e voando (asas batendo). Vazio = os desenhos únicos")]
+        [SerializeField] Sprite[] sleepFrames = new Sprite[0], flyFrames = new Sprite[0];
         [Tooltip("Barulho mínimo (0..1) que acorda o morcego")]
         [SerializeField, Range(0f, 1f)] float noiseToWake = 0.3f;
         [Tooltip("Distância em que vê o gato de pé (agachado, a metade). Padrão: 7")]
@@ -174,7 +176,8 @@ namespace SeteVidas.Enemies
 
             if (spriteRenderer != null)
             {
-                Sprite s = _state == BatState.Sleep ? sleeping : (((int)(Time.time * 10f)) & 1) == 0 ? flyA : flyB;
+                Sprite s = _state == BatState.Sleep ? Anim(sleepFrames, sleeping, 1.6f)
+                         : flyFrames.Length > 0 ? Anim(flyFrames, flyA, 18f) : (((int)(Time.time * 10f)) & 1) == 0 ? flyA : flyB;
                 if (s != null) spriteRenderer.sprite = s;
             }
         }

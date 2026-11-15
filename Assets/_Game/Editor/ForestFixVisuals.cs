@@ -19,6 +19,7 @@ namespace SeteVidas.EditorTools
         {
             var report = new List<string>();
             UpgradePlatformArt(report);             // antes de tudo: o desenho das plataformas ficou mais alto (F5)
+            FixFireOrder(report);                   // tochas que piscavam atrás/na frente do posto abandonado (R1)
             Visit<OneWayPlatform>(report);          // galhos, folha larga, galho que balança
             Visit<FloatingCactus>(report);
             Visit<BounceMushroom>(report);
@@ -60,6 +61,24 @@ namespace SeteVidas.EditorTools
                 Upgrade(c, -0.125f, 0.375f, ForestTestSetup.PlatformArtOffset, report);
             foreach (var c in Object.FindObjectsByType<CrumblingPlatform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 if (IsRottenBranch(c)) Upgrade(c, 0f, 0.5f, ForestTestSetup.RottenArtOffset, report);
+        }
+
+        /// <summary>
+        /// Tochas de poste e fogueiras na mesma ordem do enfeite atrás delas (o posto abandonado da Estrada, ordem 1):
+        /// o Unity alternava quem ficava na frente e a chama piscava. Passa para <see cref="ForestGrayboxSetup.FireOrder"/>.
+        /// </summary>
+        static void FixFireOrder(List<string> report)
+        {
+            foreach (var loop in Object.FindObjectsByType<SpriteLoop>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                var sr = loop.GetComponent<SpriteRenderer>();
+                if (sr == null || sr.sprite == null || sr.sortingOrder >= ForestGrayboxSetup.FireOrder) continue;
+                string n = sr.sprite.name;
+                if (!n.StartsWith("tocha_poste_") && !n.StartsWith("fogueira_")) continue;
+                Undo.RecordObject(sr, "Ordem das tochas");
+                sr.sortingOrder = ForestGrayboxSetup.FireOrder;
+                report.Add($"{loop.name}: tocha na frente do enfeite (ordem {ForestGrayboxSetup.FireOrder})");
+            }
         }
 
         /// <summary>Galho podre da Floresta (a Fortaleza usa o mesmo componente com outro desenho).</summary>

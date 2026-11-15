@@ -111,7 +111,7 @@ Medidor de alerta global da Isyathy (0–100), alimentado pelo `NoiseSystem` exi
 
 ## 2. Fases de implementação
 
-Cada fase termina com algo **jogável e testável**. Arte e som entram em todas as fases como placeholder e são finalizados nas fases de conteúdo.
+Cada fase termina com algo **jogável e testável**. Arte entra em todas as fases como placeholder e é finalizada nas fases de conteúdo. **Som: todo na F10** (decisão do usuário, 14/11/2026: as fases F3–F9 focam em game design, assets e gameplay; o que era áudio de cada uma está listado na F10).
 
 ### F0 — Pré-produção e decisões (sem código de gameplay)
 
@@ -177,14 +177,14 @@ Cada fase termina com algo **jogável e testável**. Arte e som entram em todas 
 - Estrada com postos abandonados, tochas e sinais de luta (props novos), ligada à saída da Fortaleza.
 - **Sequência da ponte de pedra**: horda avançando, segmentos de pedra que se rompem (`CrumblingPlatform` roteirizado) e **cutscene 1** (§1.3): colapso central, queda com câmera, tela preta, acordar nas Raízes.
 - **Arte:** ponte canina de **pedra** (intacta, rachando, blocos caindo, destruída), sentinelas infectados.
-- **Áudio:** pedra rachando e desabando, horda gemendo, música de fuga.
+- **Áudio:** → F10.
 - **Narrativa:** falas curtas do Lion; objetivo novo "Reencontrar a ponte".
 - **Estado (13/11/2026): primeira parte implementada, falta testar no Unity** (roteiro: `Docs/QA/floresta-f3-plano-de-teste.md`).
   - **Ligação Fortaleza → Estrada:** o gatilho do fim (`D-FIM`) passou a levar à `Forest_Road` (chegada `R1_oeste`) com a vida e o save, sem voltar ao menu. A conversa toca uma vez (`fortaleza_fim_visto`); depois é só passagem. A R1 volta para a Fortaleza (chegada `fortaleza_estrada`). `DialogueTrigger.loadEntranceAfter`; `FortressLayout.Version` 17; menu **13d** troca só a saída na cena aberta (sem recriar a fase).
   - **Luz de passagem** (pedido do usuário): toda saída para outra cena tem um clarão pontilhado na frente de tudo (`PassageLight`), dourado na Fortaleza e na estrada, verde-claro na Floresta; portas de atalho têm um clarão atrás. O **escuro do fim da Fortaleza virou luz** (o da entrada, no penhasco, continua).
   - **Infectados** (`ZombieSquad`, Templário Zumbi da Fortaleza como base): de espada e de **escudo** (`ZombieAI.GiveShield`, `ZombieRules.ShieldBlocks`: bloqueia golpe comum de frente; passa pelas costas ou com a marreta). R1 com posto abandonado e tochas; R2 com o de escudo embaixo da torre caída.
   - **Ponte** (`BridgeCollapse`): inteira até o gato pisar nela; então a horda nasce atrás (R3) correndo, a pedra treme e racha; no meio (ou depois de 10 s) o centro desaba, bloco por bloco, e o gato cai. A flag `ponte_caiu` vai para o save e libera o gatilho da queda, que leva à A1 com fade; lá o Lion fala ao acordar. Com a flag, a ponte já aparece caída (dos dois lados, cair leva à A1).
-  - Falta da F3: arte de verdade (ponte de pedra, infectados caninos, props da estrada), sons próprios e música de fuga, câmera acompanhando a queda pela copa (hoje: queda + fade), objetivo "Reencontrar a ponte".
+  - Falta da F3: arte de verdade (ponte de pedra, infectados caninos, props da estrada), câmera acompanhando a queda pela copa (hoje: queda + fade), objetivo "Reencontrar a ponte".
 
 ### Melhorias gerais (14/11/2026, pedido do usuário, antes da F4)
 
@@ -211,7 +211,7 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
 | Serpente da Floresta | Camuflada em raízes/buracos, bote rápido | Mais agressiva, ataque com veneno (`PoisonRules`) | Em padrões específicos |
 
 - **Arte por inimigo:** parado, andar/voar, aviso (telegraph), ataque, recuo/vulnerável, dano, morte; versão infectada como troca de paleta + detalhes (olhos, rachaduras verdes).
-- **Áudio por inimigo:** idle, alerta, ataque, dano, morte; variante infectada usa os sons do zumbi por enquanto (próprios depois).
+- **Áudio por inimigo:** → F10 (até lá, a variante infectada usa os sons do zumbi).
 - **Testes:** regras de pogo por estado, percepção (reuso de `PerceptionMath`).
 - **Estado (14/11/2026): variante infectada implementada, falta testar no Unity** (rodar o menu **21**; roteiro: `Docs/QA/floresta-f4-plano-de-teste.md`). A versão básica dos 5 inimigos já vinha da F1/F2 (rev. 4).
   - **Componente `Infected`** (Enemies/Forest) no mesmo objeto da IA: a IA lê no Awake e troca os números (`ForestEnemyRules.*For(infected)`); o componente cuida do visual (troca cada sprite pelo `*_infectado.png`, tinge de roxo o que é feito na hora, pontinho verde dos olhos). Infectado tem **+1 de vida**.
@@ -223,11 +223,18 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
   - **Nuvem tóxica** envenena uma vez por nuvem (não deixa o veneno letal sozinha).
   - **Distribuição** (`ForestLayout.InfectionShare`, [PROPOSTA]): A sem infectados; B e C1–C3, 1 em 4; C4–C7 e D, metade (D3, o respiro da Vulpis, 1 em 4); E e F1, todos; G (volta), metade. Cactos sempre normais. `ForestLayout.Version` 11.
   - Sprites infectados gerados pelo editor (`ForestInfectedArt`, troca de paleta; o turquesa do pogo não muda). Testes: `ForestBestiaryTests` (10).
-  - Falta da F4: arte de verdade por inimigo (animações completas), sons próprios, Sentinela Canino com silhueta canina.
+  - Falta da F4: arte de verdade por inimigo (animações completas), Sentinela Canino com silhueta canina.
 
 ### F4b — Vulpis, Caçador e a Chave do Templo (pedido do usuário, 14/11/2026)
 
-**Estado: implementado, falta testar no Unity** (`Docs/Floresta/plano-f4b.md`; roteiro: `Docs/QA/floresta-f4b-plano-de-teste.md`; ficha: `Docs/Design/classe-cacador.md`; rodar os menus 21 e 22). Depois da arena do D3, sala nova com a Vulpis: vínculo (+1 coração, classe **Caçador**: arco, flecha com corda, dash); trecho de plataforma nas Ruínas do Templo (dash + gancho) até o baú da **Chave do Templo**, atrás de uma parede de ruínas; a passagem D4 → E1 vira o **Portão do Templo**, trancado. Chave da cabana e do templo com visuais diferentes. Adianta parte da F6 (Refúgio da Vulpis) e muda a ordem das classes do GDD (Caçador passa a 3º).
+**Correção (14/11/2026):** dava para pular por cima do Portão do Templo sem a chave; agora há parede até o teto em cima dele, com o portal de pedra (pilares e verga). Portão e grades da arena com arte nova (`ForestLoreGen`). **Estado: implementado, falta testar no Unity** (`Docs/Floresta/plano-f4b.md`; roteiro: `Docs/QA/floresta-f4b-plano-de-teste.md`; ficha: `Docs/Design/classe-cacador.md`; rodar os menus 21 e 22). Depois da arena do D3, sala nova com a Vulpis: vínculo (+1 coração, classe **Caçador**: arco, flecha com corda, dash); trecho de plataforma nas Ruínas do Templo (dash + gancho) até o baú da **Chave do Templo**, atrás de uma parede de ruínas; a passagem D4 → E1 vira o **Portão do Templo**, trancado. Chave da cabana e do templo com visuais diferentes. Adianta parte da F6 (Refúgio da Vulpis) e muda a ordem das classes do GDD (Caçador passa a 3º).
+
+### F4c — Arte definitiva do bestiário (pedido do usuário, 14/11/2026)
+
+**Estado: implementado, falta testar no Unity** (rodar `Tools/EnemySprites/gerar_floresta.ps1` (já rodado) e o menu **21**; roteiro: `Docs/QA/floresta-f4c-plano-de-teste.md`; detalhes: `Docs/Design/floresta-bestiario.md`, F4c).
+- **Vespas da Raiz** no lugar do Morcego (insetos voadores), **Galho Seco/Broto** com as cores das árvores comuns (ambíguo com o cenário, com uma animação leve que denuncia), **Planta Carnívora** inspirada na planta de cano com identidade própria, **Serpente** refeita e a **toca camuflada no chão**.
+- Animação por quadros nos inimigos (`ForestEnemy.Anim`, listas de quadros em `NightBat`, `DryBranch`, `CarnivorousPlant`, `ForestSnake`); a variante infectada sai da arte nova (menu 21). Testes: `ForestBestiaryArtTests`.
+- Falta: Sentinela Canino com silhueta canina (hoje o templário zumbi) e o Cacto (fora da Floresta).
 
 ### F5 — Regiões A, B e C (conteúdo)
 
@@ -236,7 +243,7 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
 - **Fundo e parallax**: céu índigo com lua, 3–4 camadas de árvores, névoa rasteira, vagalumes, fungos bioluminescentes (`PulseLight`), fachos de luar.
 - **Região A** (tutorial do martelo e primeiro baú), **B** (pogo), **C** (furtividade e rotas alternativas), com santuários.
 - **Corrupção progressiva**: densidade de infectados e vegetação enegrecida cresce em direção ao Coração.
-- **Áudio:** ambiências viva, ruínas e corrompida; músicas de exploração da floresta e das ruínas.
+- **Áudio:** → F10.
 - **Narrativa:** placas/entradas de diário sobre os Primatas (sugerir, não explicar).
 - **Estado (14/11/2026): parte 1 (cenário) implementada, falta testar no Unity** (rodar `Tools/EnvironmentSprites/gerar.ps1` e o menu **21**; roteiro: `Docs/QA/floresta-f5-plano-de-teste.md`). Vale para as 7 cenas, não só A–C.
   - **Tileset** (`ForestAutotile`, runtime, C# 5): solo, praga e concreto dos Primatas, com faixas musgo/terra/transição/rocha, **troncos** nas colunas finas, vinha (casca + hera de escalar), rampas 1:1 e 1:2, paredes do fundo. Material e praga por sala em `Editor/Scenery/ForestTerrain.cs` (concreto: A5, B4, C3, C5, G2; praga: C7, E, F1; praga chegando: C4–C6, D, G).
@@ -244,13 +251,31 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
   - **Fundo** (`ForestBackgrounds`): céu com lua, copas, árvores com fachos de luar, troncos próximos com névoa; versão praga no Ninho e no Coração.
   - **Detalhes e mundo vivo** (`ForestPainter`): samambaias que curvam, fungos azuis e brotos da praga que pulsam, raízes e vergalhão no teto; vaga-lumes, folhas e poeira da praga por sala.
   - Arte: `Tools/EnvironmentSprites/ForestSpriteGen.cs`. Prévia e conferência sem o Unity: `Tools/LevelPreview/ver_floresta.ps1` e `conferir_arte_floresta.ps1`. Testes: `ForestSceneryTests` (6).
-  - **Falta da F5:** parte 2, ruínas com objetos e segredos, placas e diário dos Primatas; parte 3, ambiências e músicas (floresta, ruínas). Tetos da estrada soltos no céu (fica para a arte da estrada, F3).
+  - Tetos da estrada soltos no céu: fica para a arte da estrada (F3). A parte 3 (ambiências e músicas) foi para a F10.
+- **Parte 2 (14/11/2026): ruínas, placas, Diário e a Isyathy de longe. Implementada, falta testar no Unity** (rodar `Tools/EnvironmentSprites/gerar.ps1` e os menus **21** e **22**; roteiro: `Docs/QA/floresta-f5b-plano-de-teste.md`).
+  - **Ruínas com segredo × só cenário** (guia visual: ruína com segredo mostra baú, alavanca ou parede quebrável na entrada):
+
+    | Ruína | Sala | Tipo | O que tem |
+    |---|---|---|---|
+    | Placa da estrada | A2 | cenário | P-PRIM-01 (a primeira pista dos Primatas) |
+    | Estação | A5 | **segredo novo** | passarela no alto (pelo teto do vagão A, com a serra) até a **cabine do chefe da estação**, fechada por blocos (marreta): 10 moedas e a P-PRIM-08. Também: P-PRIM-02 (mapa), relógio parado, bilheteria com luz verde, W03 (já existia) |
+    | Torre Enferrujada | B4 | cenário (o segredo é o cipó do atalho) | P-PRIM-04 (a luz verde que pisca, de verdade), escada quebrada, máquina |
+    | Prédio Soterrado | C3 | segredo (já existia: escritório com tronco rachado, W10) | P-PRIM-03 (vitrine), janelas que dão para a terra, escada quebrada, máquina |
+    | Estrada Negra | C5 | cenário | P-PRIM-06 (a carroça de metal), postes de pé e caídos |
+    | Templo | D6 | segredo (já existia: Chave do Templo) | P-PRIM-07 (lápide com primatas olhando para cima) |
+    | Coluna dos Primatas | G2 | segredo (já existia: nicho de moedas) | P-PRIM-05 (painel do elevador) |
+  - **Placas dos Primatas** (`LoreSign` com desenho próprio, textos em `Editor/ForestLore.cs`): 8 placas, P-PRIM-01 a 08. O gato descreve, não lê.
+  - **Diário em todas as cenas** (`LoreBook`, `Resources/LoreBook.asset`, menus 13, 21 e **21c**): antes ele só listava as placas da cena aberta, e a Floresta tem uma cena por região. Agora lista toda placa lida, de qualquer cena, no capítulo dela.
+  - **A Isyathy de longe** (`IsyathySighting`, mapa §6): **em todas as salas de A a D, a cada 5–11 s** (as salas do mapa §6 com a animação delas; as outras sorteiam: pescoço com a língua, olhos ou o corpo atravessando). aparece **de vez em quando, lá no fundo** (ordem −85, atrás das árvores médias e das névoas, paralaxe 0,08, pequena), numa animação curta, e some (pedido do usuário). Olhos que piscam (A4, C4; no lago somem se o gato agacha), corpo atravessando atrás das copas (B4), o pescoço que sobe entre as árvores, olha, se mexe, pisca e afunda (C6 e D4, maior na D4). Sem colisão; o lugar sai da câmera a cada vez (de um lado da tela, nunca em cima do gato); fala do Lion uma vez por jogo; somem com a flag `isyathy_morta` (o espírito é da F8).
+  - **Documentos dos devotos** (D-DEVOTO-01 a 04) nas 4 cabanas abandonadas com baú: a gente que rezava para a Isyathy, da devoção ao medo.
+  - **Corrupção progressiva:** já vinha da parte 1 (material por sala, brotos e poeira da praga) e da F4 (infectados por região).
+  - Arte: `Tools/EnvironmentSprites/ForestLoreGen.cs` (prévia: `SeteVidasDocs/Referencias/floresta_ruinas_f5.png`). Testes: `ForestRuinsTests` (5). `ForestLayout.Version` 20.
 
 ### F6 — Refúgio da Vulpis
 
 - Trilha de flechas presas nas árvores e criaturas abatidas (props).
 - Cena: criatura infectada prestes a atacar, flecha a derruba, **Vulpis** no galho alto (`CutsceneRunner`).
-- **NPC Vulpis** (raposa, feminina, arqueira): sprite (parado, mirar, atirar, saltar entre galhos), retrato com 3–4 expressões, tema musical curto.
+- **NPC Vulpis** (raposa, feminina, arqueira): sprite (parado, mirar, atirar, saltar entre galhos), retrato com 3–4 expressões (tema musical: F10).
 - Diálogo (GDD §8.1; as falas do "Arqueiro" passam a ser da Vulpis) + aviso sobre Isyathy e o caminho para a ponte. Sem desbloqueio da classe Arqueiro.
 - Santuário e respiro (intensidade baixa).
 
@@ -261,7 +286,7 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
 - **Bote de busca**: aviso no chão, cabeça entra do fundo, destrói plataformas (que se refazem); acerto = **meio coração**.
 - Folhagem e sombras como zonas de recuperação; troncos rachados opcionais (rota curta e barulhenta).
 - Checkpoint no meio + santuário antes da arena.
-- **Áudio:** música e natureza diminuem ao avançar; respiração colossal como camada principal, ficando mais rápida e grave conforme o alerta.
+- **Áudio:** → F10. O medidor de alerta precisa dar o retorno pela imagem (escamas, galhos, olho), sem depender do som.
 - **Testes:** travessia sem detecção possível; nenhum estado de alerta gera softlock; recuperação do alerta.
 
 ### F8 — Chefe: Isyathy, a Devoradora Silenciosa
@@ -284,9 +309,9 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
   Regra de leitura: **quanto maior o aviso, maior o dano**. O Rugido Profundo não fere; ele só muda as plataformas.
 - **`ArcherSupport`** (Vulpis): eventos ligados a limiar de vida/estado (65%, 30%, janela final): flecha → reação → janela de vulnerabilidade. Posição segura se o jogador estiver em lugar incomum. Nunca dá o golpe final.
 - **Derrota = morte [APROVADO]:** um último rugido, a cabeça desaba, o brilho verde dos olhos apaga e o corpo para de respirar. **A praga não tem cura.** Logo depois, o **espírito da Isyathy** sobe do corpo (translúcido, azul-claro e âmbar), fala com o Lion e a Vulpis e some entre as árvores. Ele fica livre na floresta e reaparece em 5 lugares para conversas opcionais. Falas: D-ISYATHY-DERROTA e D-ISYATHY-ESPIRITO-01/02 em `floresta-roteiro.md`.
-- **Espírito (NPC):** sem colisão, interagível, aparece só com a flag `isyathy_morta`; arte de cabeça e pescoço translúcidos com brilho; som de voz antiga (eco grave e suave).
+- **Espírito (NPC):** sem colisão, interagível, aparece só com a flag `isyathy_morta`; arte de cabeça e pescoço translúcidos com brilho (voz: F10).
 - **Arte:** cabeça grande com quadros por ataque (aviso, bote, recuo, exposta, atordoada pela flecha), estágios de corrupção por fase, projéteis, esporos, arena com plataformas e galhos da Vulpis.
-- **Áudio:** tema da Isyathy em 3 camadas (uma por fase), rugidos, cuspe, impacto, flecha da Vulpis com prioridade alta na mixagem.
+- **Áudio:** → F10.
 - **Testes:** `BossRules` por fase, gatilhos da Vulpis, plano de teste do chefe.
 
 ### F9 — Retorno, Tobi e a ponte
@@ -296,10 +321,18 @@ Ordem pela região em que aparece. Cada um com variante **infectada** via compon
 - Diálogo (GDD §11.1) e contagem das madeiras que faltam ("Faltam 3. E eu não trabalho fiado!"); dica de onde procurar usando o mapa.
 - **Opcional [APROVADO]:** entrega das 12 madeiras + **20 moedas** (`CoinPurse.TrySpend(20)`; sem saldo, a Tobi recusa com humor).
 - **Cutscene 2: reconstrução em madeira** (§1.3). Flag `ponte_reconstruida` no save: ponte nova permanente, **volta para a Fortaleza liberada** e **corda no início da ponte** descendo para as Raízes (atalho permanente).
-- **Áudio:** tema da Tobi, SFX cômicos, jingle de conclusão.
+- **Áudio:** → F10.
 
 ### F10 — Polimento, mixagem e QA
 
+- **Todo o som da Floresta** (decisão do usuário, 14/11/2026: as fases F3–F9 ficam sem som novo; plano de base em `Docs/Audio/floresta-audio.md`):
+  - **F3, Estrada e ponte:** pedra rachando e desabando, horda gemendo, música de fuga.
+  - **F4, bestiário:** por inimigo, idle, alerta, ataque, dano e morte; sons próprios da variante infectada (hoje usa os do zumbi).
+  - **F5, regiões:** ambiências viva, ruínas e corrompida; músicas de exploração da floresta e das ruínas; as aparições da Isyathy de longe com respiração muito baixa (mapa §6); a luzinha e as máquinas dos Primatas (zumbido baixo, opcional).
+  - **F6, Vulpis:** tema curto.
+  - **F7, Ninho:** música e natureza diminuem ao avançar; respiração colossal como camada principal, mais rápida e grave conforme o alerta.
+  - **F8, Isyathy:** tema em 3 camadas (uma por fase), rugidos, cuspe, impacto, flecha da Vulpis com prioridade alta; voz do espírito (eco grave e suave).
+  - **F9, Tobi:** tema da Tobi (pizzicato/fagote em chiptune), SFX cômicos exagerados, jingle de conclusão.
 - Mixagem final (prioridade: respiração da Isyathy, árvores quebrando, flechas da Vulpis).
 - Playtests: escala e tempo, legibilidade de pogo e de troncos rachados, punição no ninho, dificuldade da Isyathy com e sem apoio da Vulpis.
 - Planos de teste em `Docs/QA/floresta-*-plano-de-teste.md` por fase.
@@ -359,6 +392,12 @@ Tileset da floresta; galhos plataforma; espinhos comuns vs. de pogo; tronco rach
 | 13/11/2026 | `Forest_Test_A/B/C` entram na fase como **A3, B1 e D3**, com o desenho do usuário; o S-T2 vira o **S-F1B** e o S-T1 sai (a A2, ao lado, tem o S-F1) | Entrar na fase: [APROVADA] (pedido do usuário); lugares e santuários: [PROPOSTA] |
 | 13/11/2026 | Salas antes do chefe dormindo (E1–E3) com rampas, pogo, vinhas e plataformas temporárias, e **vários ganchos** para o caminho de volta com o Caçador | [APROVADA] (pedido do usuário) |
 | 13/11/2026 | Chegando à sala do chefe dormindo (E5), **não há volta**: a furtividade vai até a arena. S-F4 passa da Antessala (E6) para a Clareira do Musgo (E4), antes do trecho sem volta | Sem volta: [APROVADA]; S-F4 na E4: [PROPOSTA] |
+| 14/11/2026 | **Todo o som fica para a F10** (F3–F9 focam em game design, assets e gameplay) | [APROVADA] (pedido do usuário) |
+| 14/11/2026 | Ruínas com segredo: Estação (cabine nova), Prédio, Templo e Coluna; só cenário: placa da A2, Torre e Estrada Negra | [PROPOSTA] |
+| 14/11/2026 | Placas P-PRIM-05 a 08 (painel, carroça, lápide, cabine) com texto novo | [PROPOSTA] |
+| 14/11/2026 | O Diário lista as placas lidas de qualquer cena (catálogo `LoreBook`) | [PROPOSTA] |
+| 14/11/2026 | **Toda aparição da Isyathy fica no fundo**, atrás das árvores médias e das névoas, com paralaxe (pedido do usuário: "escondida junto com as névoas e árvores"); o lago virou olhos do outro lado da água. Placas sem cavalo puxando carga (neste mundo os cavalos também evoluíram) | [APROVADA] (pedido do usuário) |
+| 14/11/2026 | Aparições da Isyathy com falas curtas do Lion (balão, sem parar o jogo), também a D-MIRANTE-01; nova: "...Raiz não se mexe assim." (C6). A regra "nunca numa sala com combate" do mapa §6 não vale na B4 (morcego) nem na D4 (templário e serpente): ficou como o mapa definiu as salas | [PROPOSTA] |
 
 ### Ainda em aberto
 1. Arco futuro da Vulpis.

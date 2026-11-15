@@ -337,6 +337,34 @@ MonoBehaviour:
       body: {x: 0, y: -1}
       hasTail: 1
       hasTrim: 1
+  - name: dash
+    frameTime: 0.05
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 8bf7129342980009a27a0eaed7c9529c, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 4.5, y: 8.5}
+      trim: {x: 1.5, y: 9}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 029613cff46d015f06855ce2c93603cd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 4.5, y: 8.5}
+      trim: {x: 1.5, y: 9}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
+    - sprite: {fileID: 21300000, guid: 677d6a95a75d4f61b93e685ace813648, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: -4.5, y: 6.5}
+      chest: {x: 4.5, y: 8.5}
+      trim: {x: 1.5, y: 9}
+      body: {x: 1, y: 0}
+      hasTail: 1
+      hasTrim: 1
   - name: land_heavy
     frameTime: 0.06
     loop: 0

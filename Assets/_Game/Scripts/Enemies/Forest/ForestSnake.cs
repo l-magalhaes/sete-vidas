@@ -18,6 +18,10 @@ namespace SeteVidas.Enemies
     {
         [SerializeField] Transform body;
         [SerializeField] Sprite hiddenSprite, warnSprite, strikeSprite, crawlSprite;
+        [Tooltip("F4c: na toca (os olhos e a piscada), aviso (a língua), rastejando (o corpo ondulando)")]
+        [SerializeField] Sprite[] hiddenFrames = new Sprite[0], warnFrames = new Sprite[0], crawlFrames = new Sprite[0];
+        [Tooltip("F4c: gomo do corpo (16 × 16, emenda dos lados). Vazio = o feito na hora")]
+        [SerializeField] Sprite segmentSprite;
         [Header("Rastejar (opcional)")]
         [SerializeField] bool crawls;
         [SerializeField] float minX, maxX;
@@ -32,7 +36,7 @@ namespace SeteVidas.Enemies
         static Sprite s_segment;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { s_segment = null; s_wallMask = 0; } // Play sem recarregar o domínio
+        static void ResetStatics() { s_segment = null; s_wallMask = 0; s_lip = null; s_lipInfected = null; } // Play sem recarregar o domínio
 
         public SnakeState State => _state;
         public bool Crawls => crawls;
@@ -68,7 +72,7 @@ namespace SeteVidas.Enemies
         {
             base.Awake();
             if (body != null) _hitBox = body.GetComponent<BoxCollider2D>();
-            var seg = SegmentSprite();
+            var seg = segmentSprite != null ? segmentSprite : SegmentSprite();
             for (int i = 0; i < SegmentCount; i++)
             {
                 var go = new GameObject("Gomo " + i);
@@ -79,6 +83,64 @@ namespace SeteVidas.Enemies
                 sr.enabled = false;
                 _segments.Add(sr);
             }
+            // a boca da toca (melhorias 14/11/2026): terra levantada POR CIMA da ponta do corpo, que mergulha nela;
+            // o corpo esticado sai de dentro da terra em vez de acabar no vazio
+            if (!crawls && transform.Find("Toca") != null)
+            {
+                var lip = new GameObject("Toca: boca (frente)").AddComponent<SpriteRenderer>();
+                lip.transform.SetParent(transform, false);
+                lip.sprite = LipSprite(Infected.On(this));
+                lip.sortingOrder = 5;          // na frente do corpo (4) e dos gomos (3)
+                lip.enabled = false;
+                _lip = lip;
+            }
+        }
+
+        SpriteRenderer _lip;
+        static Sprite s_lip, s_lipInfected;
+
+        /// <summary>
+        /// Montinho de terra e musgo da boca da toca (22 × 10 px, pivot embaixo no meio, aberto para a direita):
+        /// a cúpula cobre a ponta do corpo, a fresta escura do lado da cabeça é por onde ele sai.
+        /// </summary>
+        static Sprite LipSprite(bool infected)
+        {
+            var cached = infected ? s_lipInfected : s_lip;
+            if (cached != null) return cached;
+            const int w = 22, h = 10;
+            Color32 clear = new Color32(0, 0, 0, 0), outline = new Color32(0x14, 0x10, 0x0e, 0xff),
+                    mossDark = infected ? new Color32(0x3a, 0x2e, 0x44, 0xff) : new Color32(0x1f, 0x3a, 0x2c, 0xff),
+                    moss = infected ? new Color32(0x5c, 0x48, 0x6a, 0xff) : new Color32(0x3c, 0x62, 0x4a, 0xff),
+                    mossLight = infected ? new Color32(0x86, 0x6c, 0x96, 0xff) : new Color32(0x6e, 0x9a, 0x7c, 0xff),
+                    dirt = new Color32(0x3a, 0x24, 0x20, 0xff), dirtDark = new Color32(0x24, 0x16, 0x14, 0xff),
+                    hole = new Color32(0x08, 0x06, 0x08, 0xff), pebble = new Color32(0x6a, 0x58, 0x4a, 0xff);
+            var px = new Color32[w * h];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    // cúpula achatada: mais alta no meio-esquerdo, cai para a direita (a boca)
+                    float cx = (x + 0.5f - 9f) / 11f, top = (h - 0.5f) * (1f - cx * cx);
+                    Color32 c = clear;
+                    if (y < top)
+                    {
+                        float depth = top - y;
+                        c = depth < 1f ? outline : depth < 2.2f ? (((x * 3 + y) % 5 == 0) ? mossLight : moss)
+                          : depth < 3.4f ? mossDark : ((x + y * 2) % 7 == 0 ? dirtDark : dirt);
+                        if (y == 0) c = dirtDark;
+                    }
+                    // a boca: fresta escura do lado direito, na altura do corpo, com a borda de terra em volta
+                    if (x >= 14 && x <= 18 && y >= 1 && y <= 5 && y < top - 0.6f) c = (x == 14 || y == 5) ? dirtDark : hole;
+                    px[y * w + x] = c;
+                }
+            px[2 * w + 4] = pebble; px[1 * w + 9] = pebble; px[3 * w + 11] = pebble;   // pedrinhas na terra
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false)
+                { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "serpente_toca_boca", hideFlags = HideFlags.DontSave };
+            tex.SetPixels32(px);
+            tex.Apply(false);
+            var s = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0f), 16f);
+            s.hideFlags = HideFlags.DontSave;
+            if (infected) s_lipInfected = s; else s_lip = s;
+            return s;
         }
 
         /// <summary>Gomo do corpo (1 tile, a mesma faixa verde do bote), feito na hora: não depende de arte nova.</summary>
@@ -200,8 +262,8 @@ namespace SeteVidas.Enemies
             {
                 // fora do buraco (bote, esticada ou ainda voltando) mostra o corpo; só os olhos quando já entrou
                 bool outside = _state == SnakeState.Strike || _state == SnakeState.Stretched || (_state == SnakeState.Retreat && ext > 0.02f);
-                Sprite rest = crawls ? crawlSprite : hiddenSprite;
-                Sprite want = outside ? strikeSprite : _state == SnakeState.Warn ? warnSprite : rest;
+                Sprite rest = crawls ? Anim(crawlFrames, crawlSprite, 6f) : Anim(hiddenFrames, hiddenSprite, 2f);
+                Sprite want = outside ? strikeSprite : _state == SnakeState.Warn ? Anim(warnFrames, warnSprite, 7f) : rest;
                 if (want != null) spriteRenderer.sprite = want;
             }
         }
@@ -230,8 +292,17 @@ namespace SeteVidas.Enemies
                 g.enabled = show;
                 if (!show) continue;
                 float t = _segments.Count == 1 ? 0.5f : i / (_segments.Count - 1f);
-                g.transform.localPosition = new Vector3(_facing * Mathf.Lerp(from, to, t), 0.3f, 0f);
+                // com a toca, o 1º gomo afunda (mergulha na terra, atrás da boca) e o 2º desce um pouco: a curva
+                float dive = _lip == null ? 0f : i == 0 ? 0.25f : i == 1 ? 0.0625f : 0f;
+                g.transform.localPosition = new Vector3(_facing * Mathf.Lerp(from, to, t), 0.3f - dive, 0f);
                 g.flipX = _facing < 0;
+            }
+            if (_lip != null)
+            {
+                // a boca só aparece com o corpo para fora; parada, a toca camuflada de sempre basta
+                _lip.enabled = show;
+                _lip.flipX = _facing < 0;   // a fresta fica do lado da cabeça
+                _lip.transform.localPosition = new Vector3(_facing * -0.05f, -0.0625f, 0f);
             }
         }
 

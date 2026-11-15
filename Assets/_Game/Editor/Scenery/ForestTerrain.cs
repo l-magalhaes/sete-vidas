@@ -374,8 +374,8 @@ namespace SeteVidas.EditorTools
                 {
                     int trunkX = s.X0 + TrunkTile(s.W);
                     int below = 0;
-                    while (below < 12 && !m.Real(trunkX, s.Y0 - 1 - below)) below++;
-                    s.Below = below >= 12 ? 0 : below;
+                    while (below < 40 && !m.Real(trunkX, s.Y0 - 1 - below)) below++;   // 40: a sombra no paredão de vinha da E2 fica a 26 do chão (a árvore flutuava)
+                    s.Below = below >= 40 ? 0 : below;
                 }
                 s.Blight = m.BlightAt(s.X0, s.Y0) >= 2;
                 list.Add(s);

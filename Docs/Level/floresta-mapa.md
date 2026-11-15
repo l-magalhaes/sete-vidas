@@ -224,6 +224,8 @@ Durante a exploração, antes do ninho, ela aparece **só no fundo** (parallax, 
 
 Regras: nunca numa sala com combate; uma vez por visita; respiração muito baixa junto.
 
+**Implementado na F5 (14/11/2026):** `IsyathySighting`, posições no `ForestLayout` (`Sighting(...)`). A respiração fica para a F10 (som). B4 e D4 têm inimigos: ficaram assim mesmo (as salas são as deste mapa).
+
 **Depois da morte [APROVADO]:** a Isyathy morre de verdade, mas o **espírito** dela fica livre na floresta. Nos mesmos 5 lugares, no lugar dos olhos doentes, aparece o espírito (translúcido, azul-claro e âmbar, olhos calmos), agora **no primeiro plano e com quem dá para falar** (Interagir: D-ISYATHY-ESPIRITO-02, em rodízio). Sem colisão, sem perigo. A floresta fica um pouco mais clara (menos névoa, mais vagalumes).
 
 ## 7. Salas
@@ -248,7 +250,7 @@ Regras: nunca numa sala com combate; uma vez por visita; respiração muito baix
 | A2 Raízes Gêmeas | 45 × 25 H | **S-F1** num patamar entre duas raízes; primeira folhagem alta; P-PRIM-01. Duas alturas de raiz | → A3 |
 | A3 O Primeiro Tronco | 30 × 34 V | Tutorial vertical: galhos de mão única e parede escalável. Patamar com o **tronco rachado** (tutorial do martelo) e **W01**. Embaixo, outro tronco rachado leva a A5 | ▲ A4 · ▼ A5 |
 | A4 Poço das Raízes | 30 × 68 V | Subida de 4 telas dentro de uma raiz oca gigante: galhos de mão única, folhas largas, 2 Morcegos. Olhos da Isyathy (§6) | ▲ A6 |
-| A5 Estação dos Primatas (opcional) | 60 × 25 H | Plataforma de estação soterrada, vagões em 2 andares, árvore atravessando o teto. P-PRIM-02. **W02** no teto do vagão (pulo de parede) | ← A3 |
+| A5 Estação dos Primatas (opcional) | 60 × 25 H | Plataforma de estação soterrada, vagões em 2 andares, árvore atravessando o teto. P-PRIM-02. **W02** no teto do vagão (pulo de parede). **F5:** passarela no alto (pelo teto do vagão A) até a cabine do chefe da estação, fechada por blocos (marreta): 10 moedas e P-PRIM-08 | ← A3 |
 | A6 Galhos Baixos | 60 × 34 H | Travessia para o leste em **3 alturas** de galhos (balançam), 1 Galho Seco disfarçado, sombra larga. Recebe o cipó AT1 | → B1 |
 
 ### B — Bosque dos Espinhos (`Forest_B_Thorns`): pogo, vertical

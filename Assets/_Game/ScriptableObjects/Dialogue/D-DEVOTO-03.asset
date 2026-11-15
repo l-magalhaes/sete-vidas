@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-DEVOTO-03
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-DEVOTO-03
+  Required: 0
+  Revision: 1
+  IsDocument: 0
+  Lines:
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "Uma carta que nunca foi mandada: \"Irm\xE3o, a guardi\xE3 n\xE3o responde mais.\""
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "\"A pedra lisa ficou roxa por baixo do musgo, e as \xE1rvores do vale perdem a casca.\""
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: "\"O anci\xE3o diz que \xE9 castigo, porque rezamos pouco. Eu rezo todas as noites.\""
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: "Reza n\xE3o segura praga. Pergunte aos c\xE3es da Cidadela."

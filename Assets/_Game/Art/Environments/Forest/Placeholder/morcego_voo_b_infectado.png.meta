@@ -118,10 +118,10 @@ TextureImporter:
       name: morcego_voo_b_infectado_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 2
-        width: 16
-        height: 11
+        x: 1
+        y: 0
+        width: 22
+        height: 20
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

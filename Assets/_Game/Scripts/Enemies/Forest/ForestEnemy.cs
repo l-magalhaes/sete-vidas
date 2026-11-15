@@ -68,7 +68,21 @@ namespace SeteVidas.Enemies
             _hp = MaxHealth;
             _facing = startFacing >= 0 ? 1 : -1;
             _colliders = GetComponentsInChildren<Collider2D>(true);
+            _animPhase = Random.Range(0f, 10f);   // iguais lado a lado não animam em sincronia
             Senses = new ForestAwareness(gameObject, SenseProfile, IconOffset);
+        }
+
+        float _animPhase;
+
+        /// <summary>
+        /// Quadro da animação em loop (F4c, arte definitiva do bestiário): <paramref name="frames"/> a <paramref name="fps"/>
+        /// quadros por segundo, fora de sincronia com os vizinhos. Sem quadros, o desenho único <paramref name="fallback"/>.
+        /// </summary>
+        protected Sprite Anim(Sprite[] frames, Sprite fallback, float fps)
+        {
+            if (frames == null || frames.Length == 0) return fallback;
+            int i = (int)((Time.time + _animPhase) * fps) % frames.Length;
+            return frames[i] != null ? frames[i] : fallback;
         }
 
         protected virtual void OnEnable() { if (!s_all.Contains(this)) s_all.Add(this); GameEvents.WorldReset += Revive; NoiseSystem.Emitted += OnNoise; }

@@ -100,33 +100,72 @@ namespace SeteVidas.EditorTools
                     var c = new Vector3Int(x, y, 0);
                     if (ctx.Ground.HasTile(c))
                     {
-                        // a casa da Vulpis é habitada: toras deitadas e reboco (a viga e o piso são os da cabaninha)
-                        string tile = y < y0 ? ForestTerrain.CabinTile("piso", x, y) : y > y1 ? ForestTerrain.CabinTile("telhado", x, y)
+                        // a casa da Vulpis é habitada (pedido do usuário, 14/11/2026: "orgânica e detalhada, parecendo que
+                        // alguém mora lá"): assoalho de tábuas sobre pedra, toras nas paredes grossas, o telhado da cabaninha
+                        string tile = y == y0 - 1 ? "tile_flo_casa_piso_" + TerrainAutotile.Mod(x, 2)
+                            : y < y0 ? "tile_flo_casa_alicerce_" + TerrainAutotile.Mod(x, 2)
+                            : y > y1 ? ForestTerrain.CabinTile("telhado", x, y)
                             : "tile_flo_cabana_tora_" + TerrainAutotile.Mod(x, 3);
                         Set(ctx.Ground, c, tile);
                     }
                     else if (x >= x0 && x <= x1 && y >= y0 && y <= y1)
-                        Set(ctx.Back, c, "tile_flo_cabana_reboco_" + (TerrainAutotile.Hash(x, y, 152) % 100u < 80u ? 0 : 1 + (int)(TerrainAutotile.Hash(x, y, 153) % 2u)));
+                        // por dentro, toras deitadas com barro entre elas; aqui e ali um nó ou um gancho de ferro
+                        Set(ctx.Back, c, "tile_flo_casa_parede_" + (TerrainAutotile.Hash(x, y, 152) % 100u < 78u ? 0 : 1 + (int)(TerrainAutotile.Hash(x, y, 153) % 2u)));
                 }
-            var parent = new GameObject("Móveis da cabana").transform;
+            var parent = new GameObject("Móveis da casa").transform;
             parent.SetParent(ctx.Root, false);
-            Furniture(parent, "cabana_janela", 6f, y0 + 3f, -5);
-            Furniture(parent, "cabana_cama", 4.5f, y0, -3);
-            Furniture(parent, "cabana_mesa", 9.5f, y0, -3);
-            Furniture(parent, "cabana_peles", 11f, y1 - 2.4f, -4);
-            Furniture(parent, "cabana_arco", 17.5f, y0 + 4f, -4);
+            // Tools/EnvironmentSprites/VulpisHomeGen.cs. Da porta (x 0) para a direita: barril de flechas, cama embaixo da
+            // janela, pele no bastidor, lenha, lareira acesa com o tapete na frente, o baú (do jogo), o mapa na parede,
+            // ervas secando do teto, a mesa com a vela, o banco, a prateleira (a plataforma do jogo) e o arco.
+            Furniture(parent, "casa_barril", 2.4f, y0, -3);
+            Furniture(parent, "casa_janela", 5f, y0 + 3.2f, -5);
+            Furniture(parent, "casa_cama", 5f, y0, -3);
+            Furniture(parent, "casa_pele", 7.4f, y0 + 4.2f, -5);
+            Furniture(parent, "casa_lenha", 7.6f, y0, -3);
+            Furniture(parent, "casa_lareira", 10f, y0, -4);
+            var fire = Furniture(parent, "casa_fogo_0", 10f, y0 + 0.25f, -3);
+            if (fire != null)
+            {
+                var frames = new[] { ForestTestSetup.LoadSprite("casa_fogo_0"), ForestTestSetup.LoadSprite("casa_fogo_1"), ForestTestSetup.LoadSprite("casa_fogo_2") };
+                fire.gameObject.AddComponent<SpriteLoop>().Configure(frames, 0.12f);
+                WarmLight(parent, "Luz da lareira", new Vector3(10f, y0 + 1.1f, 0f), 1.6f, 255);   // toda luz tem quem a faça
+            }
+            Furniture(parent, "casa_tapete", 10f, y0, -2);
+            Furniture(parent, "casa_mapa", 13f, y0 + 4f, -5);
+            Furniture(parent, "casa_ervas", 12.5f, y1 + 1f - 26f / 16f, -4);
+            Furniture(parent, "casa_mesa", 15f, y0, -3);
+            WarmLight(parent, "Luz da vela", new Vector3(15.94f, y0 + 1.8f, 0f), 0.6f, 200);
+            Furniture(parent, "casa_banco", 17.2f, y0, -3);
+            Furniture(parent, "casa_prateleira", 16f, y0 + 2.25f, -2);   // a tábua fica no topo da plataforma (y 3)
+            Furniture(parent, "casa_arco", 18.1f, y0 + 4.6f, -4);
         }
 
-        static void Furniture(Transform parent, string sprite, float x, float feetY, int order)
+        /// <summary>Halo quente e liso (luz_quente, sem pontilhado) em volta de uma chama, atrás do gato.</summary>
+        static void WarmLight(Transform parent, string name, Vector3 at, float scale, byte alpha)
+        {
+            var s = ForestTestSetup.LoadSprite("luz_quente");
+            if (s == null) return;
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.position = at;
+            go.transform.localScale = new Vector3(scale, scale, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = s;
+            sr.color = new Color32(0xff, 0xb0, 0x60, alpha);
+            sr.sortingOrder = -2;
+        }
+
+        static SpriteRenderer Furniture(Transform parent, string sprite, float x, float feetY, int order)
         {
             var s = ForestTestSetup.LoadSprite(sprite);
-            if (s == null) { s_missing++; Debug.LogWarning($"[Sete Vidas] Cabana: falta {sprite}.png (rode gerar.ps1)"); return; }
+            if (s == null) { s_missing++; Debug.LogWarning($"[Sete Vidas] Cabana: falta {sprite}.png (rode gerar.ps1)"); return null; }
             var go = new GameObject(sprite);
             go.transform.SetParent(parent, false);
             go.transform.position = new Vector3(x, feetY + s.bounds.extents.y, 0f);
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = s;
             sr.sortingOrder = order;
+            return sr;
         }
 
         // ------------------------------------------------------------ poços das saídas verticais

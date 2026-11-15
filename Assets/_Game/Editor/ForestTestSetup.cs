@@ -359,20 +359,21 @@ namespace SeteVidas.EditorTools
             Entrance(ctx.Root, "Entrada", new Vector2(1.5f, 0.05f), "entrada", 1);
             Residence(ctx.Root, "Porta (sair)", 0.5f, 0f, outsideScene, "cabana_vulpis", "sair", "", "");
             Chest(ctx.Root, "Baú " + chestId + " (cabana)", 12f, 0f, chestId, wood: true, coins: 0);
-            TrapsSetup.Sign(ctx.Root, 8f, 2.2f, "Cabana da Vulpis");
-            // o Lion comenta ao entrar (uma vez): a cabana está vazia e é de um caçador (pedido do usuário)
+            // o Lion comenta ao entrar (uma vez): a casa está vazia, mas alguém mora nela (pedido do usuário)
             var bark = new GameObject("Fala ao entrar");
             bark.transform.SetParent(ctx.Root, false);
             bark.AddComponent<SceneBark>().Configure("cabana_vulpis_vazia", 0.8f,
-                "Vazia.",
-                "Arco na parede, flechas no chão, peles secando...",
-                "Algum caçador mora aqui. E não está em casa.");
+                "Vazia. Mas a lareira está acesa.",
+                "Arco na parede, flechas no barril, uma pele secando...",
+                "Algum caçador mora aqui. E saiu faz pouco.");
             // depois do vínculo (pedido de 14/11/2026): ele já sabe de quem é
             bark.GetComponent<SceneBark>().ConfigureAfter(SeteVidas.Abilities.HunterRules.BondFlag,
-                "Arco na parede, flechas no chão, peles secando...",
+                "Arco na parede, mapa da floresta, a trilha até o ninho...",
                 "Deve ser a casa daquela raposa.",
                 "Ela não vai sentir falta de umas moedas. Né?");
             Branch(ctx.Root, "Prateleira", 14f, 3f, 4f);          // 3 do chão (degrau confortável)
+            // a plataforma fica; o desenho é o da prateleira com potes (ForestPainter.DressCabin), não o galho provisório
+            foreach (var sr in ctx.Root.Find("Prateleira").GetComponentsInChildren<SpriteRenderer>(true)) sr.enabled = false;
             FortressSetup.Coin(ctx.Root, "Moeda da prateleira", new Vector2(16f, 3.6f), coinId, 5);
             ForestPainter.DressCabin(ctx, 0, 0, 18, 8);   // tábuas, telhado e os móveis da caçadora
             End(ctx);
@@ -415,6 +416,20 @@ namespace SeteVidas.EditorTools
             so.FindProperty("openHeight").floatValue = 4.2f;
             so.ApplyModifiedPropertiesWithoutUndo();
             return gate;
+        }
+
+        /// <summary>Põe a lista de sprites (de Forest/Placeholder) num campo Sprite[] do componente.</summary>
+        internal static void SetSprites(SerializedObject so, string prop, params string[] names)
+        {
+            var p = so.FindProperty(prop);
+            if (p == null) { Debug.LogError($"[Sete Vidas] Campo {prop} não existe."); return; }
+            p.arraySize = names.Length;
+            for (int i = 0; i < names.Length; i++)
+            {
+                var s = LoadSprite(names[i]);
+                if (s == null) Debug.LogError($"[Sete Vidas] Floresta: falta {names[i]}.png (rode Tools/EnemySprites/gerar_floresta.ps1).");
+                p.GetArrayElementAtIndex(i).objectReferenceValue = s;
+            }
         }
 
         internal static void KeyItem(Transform parent, string name, float x, float y, string keyId)
@@ -579,7 +594,8 @@ namespace SeteVidas.EditorTools
             float h = SeteVidas.Enemies.ForestEnemyRules.BranchHeight;
             string kind = sprout ? "broto" : "galho_alto";
             var sr = EnemyRoot(parent, name, x, y, new Vector2(1.2f, h), new Vector2(0f, h * 0.5f), kind + "_disfarce", out var go);
-            sr.transform.localPosition = new Vector3(0f, h * 0.5f, 0f); // sprite 24×88 com o pivô no meio
+            // pivô no meio do desenho, pés no chão (F4c: árvore de 96 × 104, a copa passa do corpo de 5,5 tiles)
+            sr.transform.localPosition = new Vector3(0f, sr.sprite != null ? sr.sprite.bounds.extents.y : h * 0.5f, 0f);
             var e = go.AddComponent<SeteVidas.Enemies.DryBranch>();
             e.Configure(h, facing, disguise: true, sprout: sprout);
             var so = new SerializedObject(e);
@@ -588,6 +604,11 @@ namespace SeteVidas.EditorTools
             so.FindProperty("armUp").objectReferenceValue = LoadSprite(kind + "_braco");
             so.FindProperty("armDown").objectReferenceValue = LoadSprite(kind + "_preso");
             so.FindProperty("disguised").objectReferenceValue = LoadSprite(kind + "_disfarce");
+            // F4c: disfarçado, a copa balança e, de vez em quando, um olho se abre na casca (quadros repetidos = tempo)
+            string d0 = kind + "_disfarce", d1 = kind + "_disfarce_1", d2 = kind + "_disfarce_2";
+            SetSprites(so, "disguisedFrames", d0, d0, d1, d1, d0, d0, d1, d1, d0, d2);
+            SetSprites(so, "standingFrames", kind, kind + "_1");
+            SetSprites(so, "armUpFrames", kind + "_braco", kind + "_braco_1");
             if (sprout)
             {
                 var template = Bat(parent, name + " (morcego modelo)", x, y + h, sleeping: false);
@@ -609,6 +630,9 @@ namespace SeteVidas.EditorTools
             so.FindProperty("sleeping").objectReferenceValue = LoadSprite("morcego_dormindo");
             so.FindProperty("flyA").objectReferenceValue = LoadSprite("morcego_voo_a");
             so.FindProperty("flyB").objectReferenceValue = LoadSprite("morcego_voo_b");
+            // F4c: Vespas da Raiz (insetos voadores no lugar do morcego), animadas
+            SetSprites(so, "sleepFrames", "morcego_dormindo", "morcego_dormindo_1");
+            SetSprites(so, "flyFrames", "morcego_voo_a", "morcego_voo_b", "morcego_voo_c", "morcego_voo_d");
             so.ApplyModifiedPropertiesWithoutUndo();
             return e;
         }
@@ -650,6 +674,8 @@ namespace SeteVidas.EditorTools
             so.FindProperty("open").objectReferenceValue = LoadSprite("planta_cabeca_aberta");
             so.FindProperty("recovering").objectReferenceValue = LoadSprite("planta_cabeca_recuo");
             so.FindProperty("neckSprite").objectReferenceValue = LoadSprite("planta_pescoco");
+            SetSprites(so, "closedFrames", "planta_cabeca", "planta_cabeca_1");             // F4c: respirando
+            SetSprites(so, "openFrames", "planta_cabeca_aberta", "planta_cabeca_aberta_1"); // F4c: a boca tremendo
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
