@@ -4,7 +4,7 @@ O que mudou: só o **desenho**. A colisão, as salas, os inimigos e os objetos s
 
 Antes:
 1. Rode `powershell -ExecutionPolicy Bypass -File Tools/EnvironmentSprites/gerar.ps1` (já rodado: os PNGs estão em `Art/Environments/Forest/Terrain` e `Backgrounds/Flo`). Volte ao Unity e espere a importação.
-2. Rode **Tools > Sete Vidas > 21. Floresta: graybox (todas as cenas)**. O menu importa a biblioteca de cenário (fundos `bg_flo_*`), pinta o terreno e escreve no console, por cena: "N tiles, N de massa, N detalhes, N emissores". **Nenhum erro "sem arte"** deve aparecer.
+2. Rode **Tools > Sete Vidas > Floresta: gerar as cenas**. O menu importa a biblioteca de cenário (fundos `bg_flo_*`), pinta o terreno e escreve no console, por cena: "N tiles, N de massa, N detalhes, N emissores". **Nenhum erro "sem arte"** deve aparecer.
 3. Não precisa rodar o 22 (mapa do mundo): o tilemap Ground continua com as mesmas células.
 
 Sem o Unity: `Tools/LevelPreview/conferir_arte_floresta.ps1` (todo tile pedido tem PNG, nas 7 cenas: conferido) e `Tools/LevelPreview/ver_floresta.ps1 <cena> <sala> [-Dx n -Dy n]` (uma tela com a arte; saída em `SeteVidasDocs/Referencias/floresta/arte_*.png`).
@@ -44,7 +44,7 @@ Sem o Unity: `Tools/LevelPreview/conferir_arte_floresta.ps1` (todo tile pedido t
 | 24 | Esconderijos com árvore | Olhe o escuro | Sem cantos retos: arredondado, com bojos, borda suave e manchas de luar |
 | 25 | Gancho, cipó do atalho, baú | Olhe, abra o atalho e o baú | Gancho com argola e corda; cipó trançado com folhas (enrolado antes de abrir); baú com cadeado dourado e, aberto, o brilho dentro |
 | 26 | Atalhos (A2/C6 Ravina, A6/C4 Lago, B Patamar e Torre, C1/E4 Musgo, D Raiz) | Chegue ao lado que abre | **Sem clarão**: cipó = estaca com o nó e a laçada; alçapão = argola na tampa de raízes. Ao abrir: o cipó desce amarrado na estaca / a tampa fica em pé ao lado do buraco. Recarregar a cena mantém o estado |
-| 27 | Fim da Fortaleza (x 240) → R1 | Rode o menu 13 (Fortaleza) e o 21; ande até a saída e volte | **Sem faixa preta**: a estrada continua depois do marco da trilha; a câmera para antes do fim. Na R1, o mesmo céu, a cordilheira e o chão de terra da Fortaleza: parece a mesma noite |
+| 27 | Fim da Fortaleza (x 240) → R1 | Rode o "Fortaleza: gerar a cena" (Fortaleza) e o 21; ande até a saída e volte | **Sem faixa preta**: a estrada continua depois do marco da trilha; a câmera para antes do fim. Na R1, o mesmo céu, a cordilheira e o chão de terra da Fortaleza: parece a mesma noite |
 | 28 | Estrada (R1–R5) | Olhe para cima | Sem teto nem paredes no céu (a colisão continua: não dá para sair pelo alto); telhados de Miaravéu no horizonte |
 | 29 | Tochas (R1, R2, R3) e fogueira (D5) | Olhe | Poste com a chama animada e um halo liso, sem pontilhado; nenhuma luz solta sem objeto |
 | 30 | Saídas laterais da Floresta | Olhe a borda da sala | Marco da trilha com a placa apontando para fora e a lanterna acesa (no lugar do clarão) |

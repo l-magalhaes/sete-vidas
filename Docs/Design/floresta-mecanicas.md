@@ -120,7 +120,7 @@ O `StealthController` já emite passos (0,15), aterrissagem (0,4) e golpe (0,3).
 - **Floresta legível:** no jogo as salas encostam umas nas outras (o anel); no mapa cada sala é uma peça com contorno próprio, **afastada das vizinhas** (o centro fica 25% mais longe da origem, `WorldMapSetup.Spread`), e portas e passagens viram **traços de ligação**. Raízes e blocos soltos no meio da sala não aparecem.
 - Ícones: **cabeça do Lion** piscando onde ele está, santuários (aceso/apagado) dos trechos explorados e **baús só depois de abertos**.
 - **Atalho rápido:** **M** no teclado ou **Exibir** no controle abre o inventário direto no mapa; o mesmo botão fecha. No mapa: direcional **anda** (segurando), **Enter/A** troca o **zoom** (1×, 2×, 3×). Abre centrado no gato.
-- Depois de mudar uma cena (inclusive à mão na Fortaleza), rode o menu 22 de novo.
+- Depois de mudar uma cena (inclusive à mão na Fortaleza), rode o "Mapa do mundo e Diário" de novo.
 
 Grade antiga (fica como reserva enquanto o mapa do mundo não foi gerado):
 - Grade com as salas da região atual. Cada sala é um retângulo no tamanho da sala, revelado ao entrar (`sala_vista_<id>`).

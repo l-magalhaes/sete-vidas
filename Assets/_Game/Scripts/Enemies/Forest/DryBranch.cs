@@ -46,7 +46,20 @@ namespace SeteVidas.Enemies
 
         public Rect Bounds => new Rect(transform.position.x - 0.6f, transform.position.y, 1.2f, height);
         public bool IsSolid => !IsDead && isActiveAndEnabled;
-        public void OnBumped(Vector2 playerPosition) { }
+        /// <summary>
+        /// O gato encostou no tronco (pedido do usuário, 15/11/2026: "os Galhos Secos te detectam se você encostar neles"):
+        /// vê na hora ("!"), larga o disfarce mesmo com o gato na sombra e vira para ele (logo em seguida, a pancada).
+        /// </summary>
+        public void OnBumped(Vector2 playerPosition)
+        {
+            if (IsDead || Senses == null) return;
+            bool wasDisguised = _state == BranchState.Disguised;
+            if (wasDisguised || !Aware)
+                SeteVidas.Audio.Sfx.Play("zumbi_sente", transform.position, 0.8f, 0.7f); // estalo de madeira (provisório)
+            Senses.ForceAware(playerPosition);
+            _state = BranchBumped(_state);
+            if (_state == BranchState.Awake) _facing = playerPosition.x >= transform.position.x ? 1 : -1;
+        }
 
         protected override void OnEnable() { base.OnEnable(); SolidBodies.Register(this); }
         protected override void OnDisable() { base.OnDisable(); SolidBodies.Unregister(this); }

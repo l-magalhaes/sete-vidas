@@ -24,7 +24,6 @@ namespace SeteVidas.EditorTools
         static readonly Color32 Ink = new Color32(0x3b, 0x2a, 0x1e, 0xff);
         static readonly Color32 Light = new Color32(0xe9, 0xdc, 0xb8, 0xff);
 
-        [MenuItem("Tools/Sete Vidas/14. Prólogo: o contrato (antes da Fortaleza)", priority = 50)]
         public static void CreatePrologue()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

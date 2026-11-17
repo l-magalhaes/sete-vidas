@@ -3,7 +3,7 @@
 | ID | Sistema | Pré-condição | Passos | Resultado esperado | Status |
 |---|---|---|---|---|---|
 | F0-01 | Projeto | Projeto aberto | Ver o Console após compilar | Nenhum erro vermelho | ☐ |
-| F0-02 | Setup | F0-01 ok | Tools > Sete Vidas > Executar Fase 0 completa | Mensagens "[Sete Vidas]" de sucesso no Console, sem erros | ☐ |
+| F0-02 | Setup | F0-01 ok | Tools > Sete Vidas > Manutenção > Configurar projeto + Manutenção > Playground | Mensagens "[Sete Vidas]" de sucesso no Console, sem erros | ☐ |
 | F0-03 | Layers | F0-02 ok | Project Settings > Tags and Layers | Layers 8–14 = Player, Enemy, Ground, Climbable, Breakable, Hazard, Interactable | ☐ |
 | F0-04 | Colisão | F0-02 ok | Project Settings > Physics 2D > Layer Collision Matrix | Enemy×Enemy desmarcado; Interactable marcado só com Player | ☐ |
 | F0-05 | Pacotes | F0-02 ok | Window > Package Manager > In Project | Cinemachine, Input System, 2D Tilemap Extras, 2D Aseprite Importer e Test Framework instalados | ☐ |

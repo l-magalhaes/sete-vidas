@@ -32,7 +32,7 @@ namespace SeteVidas.Tests
             _arena = Object.FindAnyObjectByType<BossArena>();
             _tome = Object.FindAnyObjectByType<CursedTome>();
             _health = PlayerHealth.Active;
-            Assert.IsNotNull(_boss, "Sem chefão na Playground. Rode Tools > Sete Vidas > 10");
+            Assert.IsNotNull(_boss, "Sem chefão na Playground. Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.IsNotNull(_arena);
             Assert.IsNotNull(_tome);
         }
@@ -68,7 +68,7 @@ namespace SeteVidas.Tests
             yield return null;
             var sr = _boss.GetComponentInChildren<SpriteRenderer>();
             Assert.That(sr.sprite != null && sr.sprite.name.StartsWith("chr_koda_"),
-                "O chefe deveria usar a arte do Koda. Rode Tools/CharacterSprites/gerar.ps1 e Tools > Sete Vidas > 10");
+                "O chefe deveria usar a arte do Koda. Rode Tools/CharacterSprites/gerar.ps1 e Tools > Sete Vidas > Manutenção > Playground");
             Defeat();
             yield return null;
             Assert.AreEqual("kneel", _boss.CurrentClipName, "Derrotado, Koda fica de joelhos (não morre)");
@@ -80,7 +80,7 @@ namespace SeteVidas.Tests
             yield return Load();
             Defeat();
             var contractor = _tome.transform.Find("Contratante");
-            Assert.IsNotNull(contractor.GetComponent<ContractorVisual>(), "Contratante sem animações. Rode Tools > Sete Vidas > 10");
+            Assert.IsNotNull(contractor.GetComponent<ContractorVisual>(), "Contratante sem animações. Rode Tools > Sete Vidas > Manutenção > Playground");
             _tome.StartCoroutine(_tome.Take(_health));
             float t = 0f;
             while (!contractor.gameObject.activeSelf && t < 15f) { SkipDialogues(); t += Time.unscaledDeltaTime; yield return null; }
@@ -238,7 +238,7 @@ namespace SeteVidas.Tests
             Assert.IsTrue(onDisk.HasFlag(CursedTome.TakenFlag));
             Assert.IsTrue(onDisk.HasFlag(CursedTome.StolenFlag), "O contratante levou o tomo");
             var coin = _tome.transform.Find("Moeda de ouro");
-            Assert.IsNotNull(coin, "Tomo sem a moeda. Rode Tools > Sete Vidas > 10 ou 13");
+            Assert.IsNotNull(coin, "Tomo sem a moeda. Rode Tools > Sete Vidas > Manutenção > Playground ou Fortaleza: gerar a cena");
             // A moeda do pagamento é a primeira da bolsa: vale 100 e só pode ser pega depois da cena
             var pay = coin.GetComponent<CoinPickup>();
             Assert.IsNotNull(pay, "A moeda do Contratante deveria ser uma CoinPickup");

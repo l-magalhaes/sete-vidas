@@ -6,7 +6,7 @@ namespace SeteVidas.World
 {
     /// <summary>
     /// Vai marcando no save os pedaços do mapa do mundo por onde o gato passa (melhorias 14/11/2026). Nasce sozinho
-    /// no começo do Play e atravessa as trocas de cena. Sem o mapa gerado (menu 22), não faz nada.
+    /// no começo do Play e atravessa as trocas de cena. Sem o mapa gerado (menu "Mapa do mundo e Diário"), não faz nada.
     /// </summary>
     public class MapExplorer : MonoBehaviour
     {

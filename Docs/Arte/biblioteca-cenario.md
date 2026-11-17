@@ -14,7 +14,7 @@ paleta (EnvPalette.cs) ───┘      (metadados, à mão)      (importador, 
 
 - **PNG:** desenhado por código (`Tools/...`, `PixelKit`) ou pelo editor (`CitadelDecorSetup`). Use só cores da paleta (`Docs/Arte/paleta.md`).
 - **`manifest.json`:** um por pasta em `Assets/_Game/Art/Environments/`. É a **fonte de verdade** dos metadados: região, função, camada, apoio, variações, animação, paralaxe.
-- **`EnvAssetDefinition`:** criado em `Assets/_Game/ScriptableObjects/Environment/<id>.asset`. **Não edite esses assets**: eles são recriados a partir do manifesto (sozinhos quando o JSON muda, ou pelo menu *Tools > Sete Vidas > Cenário > Importar biblioteca de cenário*).
+- **`EnvAssetDefinition`:** criado em `Assets/_Game/ScriptableObjects/Environment/<id>.asset`. **Não edite esses assets**: eles são recriados a partir do manifesto (sozinhos quando o JSON muda, ou pelo menu *Tools > Sete Vidas > Importar biblioteca de cenário*).
 - **Dados da fase:** `Assets/_Game/Editor/Scenery/FortressDressing.cs` diz qual id vai em qual posição. O menu *13. Fase 6: Fortaleza* monta tudo.
 
 ## Adicionar um asset novo
@@ -23,7 +23,7 @@ paleta (EnvPalette.cs) ───┘      (metadados, à mão)      (importador, 
 2. Acrescente a entrada no `manifest.json` da pasta (copie uma parecida). Campos mínimos: `id`, `categoria`, `funcao`, `camada`, `sprites`, `posicionamento.apoio`.
 3. Rode `powershell -ExecutionPolicy Bypass -File Tools/EnvironmentSprites/gerar.ps1`. Ele confere ids, campos, imagens e **cores reservadas**.
 4. No Unity, o manifesto é reimportado sozinho. Coloque o asset na fase em `FortressDressing.Items()` com `Add(d, área, "id", "Nome", x, y)`.
-5. Gere a Fortaleza (menu 13).
+5. Gere a Fortaleza (Tools > Sete Vidas > Fortaleza: gerar a cena).
 
 **Variações:** liste vários PNGs em `sprites`, ou use `sprites_prefixo` (ex.: `"env_ext_roc_media_"`) para pegar todos os PNGs que começam assim. A montagem escolhe um por semente fixa da posição (sempre o mesmo resultado) e nunca repete a mesma variação 3 vezes seguidas. `espelhar: true` deixa espelhar às vezes; `posicionamento.deslocamento_px` dá um deslocamento de até N px. Quando o tamanho importa para a leitura (ex.: placa que não pode sair da parede), fixe a variação com `Fixed(d, área, "id", variação, "Nome", x, y)`.
 

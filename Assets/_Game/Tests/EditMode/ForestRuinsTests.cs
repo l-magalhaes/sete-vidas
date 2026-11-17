@@ -22,7 +22,8 @@ namespace SeteVidas.Tests
             {
                 "pri_placa_estrada", "pri_mapa", "pri_vitrine", "pri_farol_0", "pri_farol_1", "pri_painel", "pri_carcaca", "pri_lapide",
                 "pri_cabine_mesa", "pri_poste", "pri_poste_tombado", "pri_maquina_0", "pri_maquina_1", "pri_janela", "pri_escada",
-                "pri_relogio", "isy_olhos_0", "isy_olhos_1", "isy_olhos_2", "isy_silhueta",
+                "pri_relogio", "pri_letreiro", "pri_caixa", "pri_carrinho", "pri_gondola", "pri_gondola_tombada", "pri_prateleira",
+                "pri_vinhas_teto", "isy_olhos_0", "isy_olhos_1", "isy_olhos_2", "isy_silhueta",
                 "isy_fundo_0", "isy_fundo_1", "isy_fundo_2", "isy_fundo_3", "isy_fundo_4", "isy_fundo_5", "isy_fundo_6", "doc_oracao", "doc_caderno", "doc_carta", "doc_pagina", "portao_templo_fechado",
                 "portao_templo_aberto", "portal_templo_pilares", "portal_templo_lintel", "portao_barras",
                 "casa_lareira", "casa_fogo_0", "casa_fogo_1", "casa_fogo_2", "casa_cama", "casa_mesa", "casa_banco", "casa_prateleira",

@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-04
   Required: 0
-  Revision: 2
+  Revision: 3
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "C\xE2mara do Selo. H\xE1 cinco s\xE9culos, Golden, o Dourado, prendeu aqui um tomo que bebe vidas."
+    Text: "C\xE2mara do Selo. H\xE1 cinco s\xE9culos, Golden, o Dourado, prendeu aqui um tomo com uma magia proibida."
   - Speaker: {fileID: 0}
     Expression: 
     Text: "Que ningu\xE9m o desperte. Que nenhum guardi\xE3o o abandone."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
-    Text: "...Ningu\xE9m falou nada de beber vidas."
+    Text: "...Ningu\xE9m falou nada de magias proibidas."

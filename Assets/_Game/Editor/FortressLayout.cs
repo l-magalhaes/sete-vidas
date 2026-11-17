@@ -187,7 +187,7 @@ namespace SeteVidas.EditorTools
         public class MapRoomRect { public string Name; public int X0, Y0, X1, Y1; public bool Whole; }
 
         /// <summary>
-        /// As salas da Fortaleza no mapa do mundo (estilo Hollow Knight; menu 22, <c>WorldMapSetup</c>). O espaço de
+        /// As salas da Fortaleza no mapa do mundo (estilo Hollow Knight; menu "Mapa do mundo e Diário", <c>WorldMapSetup</c>). O espaço de
         /// cada sala é o ar dentro dela; plataformas soltas no meio somem (a sala fica inteira). Ao ar livre, a sala vai
         /// só até ~9 tiles acima do chão, para o céu não entrar no mapa.
         /// </summary>

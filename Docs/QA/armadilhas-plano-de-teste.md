@@ -1,7 +1,7 @@
 # Plano de teste — Armadilhas
 
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080.
-Antes: rode **Tools > Sete Vidas > 11. Armadilhas**. Do spawn (x 0,5), ande para a **esquerda**: o circuito vai de x -8 a x -74.
+Antes: rode **Tools > Sete Vidas > Manutenção > Playground**. Do spawn (x 0,5), ande para a **esquerda**: o circuito vai de x -8 a x -74.
 Dica: ligue Gizmos para ver as áreas de perigo (vermelho) e, com o `Player` selecionado, o último chão seguro (círculo azul).
 
 | ID | Armadilha | Pré-condição | Passos | Resultado esperado | Status |

@@ -1,7 +1,7 @@
 # Plano de teste — Fase 3 (Sentinela e furtividade)
 
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080 · valores padrão de `StealthSettings` e `SentinelSettings`.
-Antes: rode **Tools > Sete Vidas > 6. Fase 3**. Para ir direto ao trecho H, durante o Play mude o **Position X** do `Player` para **121**.
+Antes: rode **Tools > Sete Vidas > Manutenção > Playground**. Para ir direto ao trecho H, durante o Play mude o **Position X** do `Player` para **121**.
 Dica: ligue **Gizmos** na Game view para ver o cone de visão (cinza = alcance base; colorido = alcance contra o gato agora), a última posição conhecida (X magenta) e os ruídos (círculos amarelos). O canto superior esquerdo mostra a visibilidade do gato.
 
 | ID | Sistema | Pré-condição | Passos | Resultado esperado | Status |

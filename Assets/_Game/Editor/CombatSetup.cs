@@ -18,7 +18,6 @@ namespace SeteVidas.EditorTools
         const string DummyArtFolder = "Assets/_Game/Art/Enemies/TrainingDummy";
         public const string DummyPrefabPath = "Assets/_Game/Prefabs/Enemies/TrainingDummy.prefab";
 
-        [MenuItem("Tools/Sete Vidas/5. Fase 2: escalada, adagas e boneco de treino", priority = 41)]
         public static void RunPhase2()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

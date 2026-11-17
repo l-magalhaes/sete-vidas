@@ -29,7 +29,7 @@ namespace SeteVidas.Tests
         {
             yield return SceneManager.LoadSceneAsync("Fortress_MVP", LoadSceneMode.Single);
             yield return null;
-            Assert.IsNotNull(GameObject.Find("Fortaleza"), "Fortaleza não gerada. Rode Tools > Sete Vidas > 13");
+            Assert.IsNotNull(GameObject.Find("Fortaleza"), "Fortaleza não gerada. Rode Tools > Sete Vidas > Fortaleza: gerar a cena");
         }
 
         static Tilemap Map(string name) => GameObject.Find("Grid/" + name).GetComponent<Tilemap>();
@@ -156,7 +156,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var director = SeteVidas.Audio.MusicDirector.Active;
-            Assert.IsNotNull(director, "Diretor de música na cena (menu 13)");
+            Assert.IsNotNull(director, "Diretor de música na cena (Fortaleza: gerar a cena)");
             for (int i = 0; i < 30; i++) yield return null;
             Assert.AreEqual(SeteVidas.Audio.MusicCue.Explore, director.Current, "O penhasco usa a música da fase");
             Assert.IsNotNull(director.CurrentClip, "A faixa da fase está tocando (Assets/_Game/Audio/Music)");
@@ -173,7 +173,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var fog = GameObject.Find("Pontas da fase");
-            Assert.IsNotNull(fog, "Sem as pontas da fase. Rode Tools > Sete Vidas > 13");
+            Assert.IsNotNull(fog, "Sem as pontas da fase. Rode Tools > Sete Vidas > Fortaleza: gerar a cena");
             bool startHidden = false, marker = false;
             foreach (var r in fog.GetComponentsInChildren<SpriteRenderer>())
             {
@@ -213,7 +213,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var limit = GameObject.Find("Limite da câmera (fim da fase)");
-            Assert.IsNotNull(limit, "Sem limite de câmera. Rode Tools > Sete Vidas > 13d");
+            Assert.IsNotNull(limit, "Sem limite de câmera. Rode Tools > Sete Vidas > Fortaleza: atualizar sem recriar");
             bool confined = false;   // o confiner do Cinemachine (sem referenciar o pacote nos testes)
             foreach (var b in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
                 if (b.GetType().Name == "CinemachineConfiner2D") confined = true;
@@ -227,7 +227,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var water = Object.FindAnyObjectByType<WaterSurface>();
-            Assert.IsNotNull(water, "Lagoa sem WaterSurface. Rode Tools > Sete Vidas > 13");
+            Assert.IsNotNull(water, "Lagoa sem WaterSurface. Rode Tools > Sete Vidas > Fortaleza: gerar a cena");
             var player = Object.FindAnyObjectByType<PlayerController>();
             var area = water.GetComponent<BoxCollider2D>().bounds;
             player.Teleport(new Vector2(area.center.x, water.SurfaceY + 1.5f));
@@ -503,7 +503,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var dressing = GameObject.Find("Fortaleza/Enfeites");
-            Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > 13. Fase 6: Fortaleza");
+            Assert.IsNotNull(dressing, "Enfeites (FortressDressing). Gere a cena: Tools > Sete Vidas > Fortaleza: gerar a cena");
             // 152 itens no FortressDressing (Etapas 1–8 e as melhorias), com 4 fileiras (4 escudos do salão, 5 ameias da torre,
             // 13 trechos do cano de óleo, 12 trechos do tapete do salão): 179 objetos (com as placas de seta da melhoria 9 e o arranjo do usuário: sem vitrais, escudos com nome, runas, marca da Guilda, placa e emblema do altar)
             Assert.AreEqual(179, dressing.transform.childCount, "Todos os enfeites do FortressDressing");
@@ -552,7 +552,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var trigger = GameObject.Find("Conversa: Chegada").GetComponent<DialogueTrigger>();
-            Assert.IsTrue(trigger.HasDialogue, "Gatilho sem conversa ligada. Rode Tools > Sete Vidas > 13 de novo");
+            Assert.IsTrue(trigger.HasDialogue, "Gatilho sem conversa ligada. Rode Tools > Sete Vidas > Fortaleza: gerar a cena de novo");
             var health = PlayerHealth.Active;
             var runner = SeteVidas.Dialogue.DialogueRunner.Active;
             // o gato nasce dentro da área de chegada: a narração pode já ter começado sozinha (é o comportamento certo)

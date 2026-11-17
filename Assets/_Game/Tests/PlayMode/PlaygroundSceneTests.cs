@@ -23,9 +23,9 @@ namespace SeteVidas.Tests
             Assert.IsNotNull(ground.GetComponent<TilemapCollider2D>(), "Ground sem TilemapCollider2D");
             var composite = ground.GetComponent<CompositeCollider2D>();
             Assert.IsNotNull(composite,
-                "Ground sem CompositeCollider2D: o gato pode enganchar nas emendas dos tiles. Rode Tools > Sete Vidas > 2. Criar cenas");
+                "Ground sem CompositeCollider2D: o gato pode enganchar nas emendas dos tiles. Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.Greater(composite.pathCount, 0,
-                "CompositeCollider2D do Ground foi salvo vazio: o chão não colide. Rode Tools > Sete Vidas > 2. Criar cenas");
+                "CompositeCollider2D do Ground foi salvo vazio: o chão não colide. Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.Greater(ground.GetComponent<Tilemap>().GetUsedTilesCount(), 0, "Ground sem tiles pintados");
 
             // Só a layer Ground: desde a Fase 1 o gato está no spawn e o raio o atingiria primeiro.

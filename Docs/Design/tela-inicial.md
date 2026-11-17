@@ -21,7 +21,7 @@ Entrar no jogo em segundos: continuar de onde parou (o santuário) ou começar d
 
 ## Implementação (Unity)
 - `MainMenu` (Scripts/UI), `SelectOnHover`, `SaveSummary` (C# puro), `SaveManager.HasSaveFile`, `SaveData.lastSanctuaryName`.
-- Cena gerada por **Tools > Sete Vidas > 12. Tela inicial**; também coloca a cena em primeiro na build.
+- Cena gerada por **Tools > Sete Vidas > Tela inicial**; também coloca a cena em primeiro na build.
 
 ## Perguntas abertas
 - [PROPOSTA] Um único save (sem escolher slot).
@@ -37,4 +37,4 @@ Entrar no jogo em segundos: continuar de onde parou (o santuário) ou começar d
 - **Área de testes só em build de desenvolvimento** (e no editor).
 - **Entrada:** fade a partir do preto (0,8 s).
 - Ficou de fora: o gato se levantar e a câmera descer ao escolher (a cena troca direto, como antes).
-- Arte gerada pelo `MenuSetup` (menu 12) em `Art/UI/Menu`; vida da tela em `TitleScreenFx`. Maquete: `SeteVidasDocs/Referencias/tela_inicial_maquete.png`.
+- Arte gerada pelo `MenuSetup` (menu "Tela inicial") em `Art/UI/Menu`; vida da tela em `TitleScreenFx`. Maquete: `SeteVidasDocs/Referencias/tela_inicial_maquete.png`.

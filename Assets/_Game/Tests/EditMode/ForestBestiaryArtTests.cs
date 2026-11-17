@@ -6,7 +6,7 @@ namespace SeteVidas.Tests
 {
     /// <summary>
     /// F4c, arte definitiva do bestiário da Floresta (Tools/EnemySprites/gerar_floresta.ps1): todos os quadros que os
-    /// inimigos carregam existem. A variante infectada é refeita pelo menu 21 a partir destes.
+    /// inimigos carregam existem. A variante infectada é refeita por "Floresta: gerar as cenas" a partir destes.
     /// </summary>
     public class ForestBestiaryArtTests
     {

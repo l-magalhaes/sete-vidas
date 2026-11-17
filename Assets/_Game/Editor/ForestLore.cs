@@ -51,6 +51,17 @@ namespace SeteVidas.EditorTools
                     (null, "", "Uma mesa, uma cadeira e uma caneca de barro presa à mesa pelo musgo."),
                     (null, "", "Na parede, um papel com uma lista de horários. O último foi riscado à mão."),
                     (cat, "", "Alguém ficou esperando o último. Ele não veio.")),
+                // O Mercado dos Primatas (térreo da C3, pedido do usuário de 15/11/2026): comida guardada para ninguém.
+                // A P-PRIM-03 (vitrine) saiu da C3 junto com o desenho dela (ajuste à mão); o texto fica para outro lugar.
+                ["P-PRIM-09"] = DialogueSetup.Conversation("P-PRIM-09", false, 1,
+                    (null, "", "Prateleiras de metal em fileiras, do chão quase até o teto. As vinhas subiram por todas."),
+                    (null, "", "Latas iguais, viradas para a frente, cada uma com o mesmo rosto sorrindo. Nenhuma foi aberta."),
+                    (cat, "", "Guardaram comida para mil invernos. E não ficou ninguém com fome.")),
+                ["P-PRIM-10"] = DialogueSetup.Conversation("P-PRIM-10", false, 1,
+                    (null, "", "Um balcão com uma esteira parada e uma gaveta de metal aberta."),
+                    (null, "", "Dentro, discos finos e papéis coloridos, colados um no outro pelo mofo."),
+                    (null, "", "Ao lado, gaiolas de arame com rodinhas, encaixadas umas nas outras."),
+                    (cat, "ironico", "Pagavam para levar a comida que já estava ali. E ainda empurravam uma gaiola.")),
                 // Documentos das cabanas abandonadas (14/11/2026, pedido do usuário): a gente que rezava para a Isyathy, na
                 // ordem do caminho. Da devoção ao medo: a oração (A3), as contas (B1), a carta (C3), a última página (E3).
                 ["D-DEVOTO-01"] = DialogueSetup.Conversation("D-DEVOTO-01", false, 1,
@@ -79,9 +90,8 @@ namespace SeteVidas.EditorTools
 
         /// <summary>
         /// Gera (ou atualiza) o catálogo do Diário com as placas da Fortaleza (capítulo 1) e as da Floresta (capítulo 2).
-        /// Os menus 13 e 21 chamam; dá para rodar sozinho pelo menu 21c.
+        /// A Fortaleza e a Floresta chamam; também roda em "Mapa do mundo e Diário".
         /// </summary>
-        [MenuItem("Tools/Sete Vidas/21c. Diário: catálogo de placas", priority = 73)]
         public static LoreBook BuildBook()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(BookPath));

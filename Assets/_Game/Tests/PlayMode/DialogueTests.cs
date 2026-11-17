@@ -27,7 +27,7 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Playground", LoadSceneMode.Single);
             yield return null;
             var runner = DialogueRunner.Active;
-            Assert.IsNotNull(runner, "HUD sem DialogueRunner. Rode Tools > Sete Vidas > 9");
+            Assert.IsNotNull(runner, "HUD sem DialogueRunner. Rode Tools > Sete Vidas > Manutenção > Playground");
             var golden = Object.FindAnyObjectByType<CompanionBond>();
             var health = PlayerHealth.Active;
             var input = health.GetComponent<PlayerInputReader>();
@@ -72,7 +72,7 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Playground", LoadSceneMode.Single);
             yield return null;
             var runner = DialogueRunner.Active;
-            Assert.IsNotNull(runner, "HUD sem DialogueRunner. Rode Tools > Sete Vidas > 9");
+            Assert.IsNotNull(runner, "HUD sem DialogueRunner. Rode Tools > Sete Vidas > Manutenção > Playground");
             var golden = Object.FindAnyObjectByType<CompanionBond>();
             var health = PlayerHealth.Active;
             health.ApplyCurse(1);

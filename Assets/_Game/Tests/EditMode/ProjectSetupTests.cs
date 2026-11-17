@@ -31,7 +31,7 @@ namespace SeteVidas.Tests
             {
                 string name = GameConstants.Layers.All[i];
                 Assert.AreEqual(GameConstants.Layers.FirstIndex + i, LayerMask.NameToLayer(name),
-                    $"Layer '{name}' ausente ou fora do índice. Rode Tools > Sete Vidas > 1. Configurar projeto.");
+                    $"Layer '{name}' ausente ou fora do índice. Rode Tools > Sete Vidas > Manutenção > Configurar projeto.");
             }
         }
 
@@ -50,7 +50,7 @@ namespace SeteVidas.Tests
             int player = LayerMask.NameToLayer(GameConstants.Layers.Player);
             Assume.That(enemy >= 0 && player >= 0, "Layers ainda não criadas");
             Assert.IsTrue(Physics2D.GetIgnoreLayerCollision(player, enemy),
-                "O gato precisa atravessar inimigos para chegar às costas. Rode Tools > Sete Vidas > 6");
+                "O gato precisa atravessar inimigos para chegar às costas. Rode Tools > Sete Vidas > Manutenção > Playground");
         }
     }
 }

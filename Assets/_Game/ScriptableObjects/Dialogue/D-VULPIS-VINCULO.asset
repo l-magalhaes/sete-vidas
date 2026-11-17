@@ -14,30 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-VULPIS-VINCULO
   Required: 1
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Desde as ra\xEDzes eu sigo voc\xEA. Um gato que cai de pontes n\xE3o passa despercebido."
+    Expression: serio
+    Text: "Desde que caiu daquela ponte, venho seguindo seus passos. Voc\xEA faz bastante barulho para algu\xE9m que se diz ladr\xE3o."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: Seguindo um gato pela floresta. Isso tem nome, sabia?
+    Text: "E voc\xEA segue desconhecidos pela floresta. Cada um com seus defeitos."
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Vigiar. Eu vigio esta floresta. E ela est\xE1 morrendo."
-  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "A praga chegou na Isyathy, a guardi\xE3. Uma serpente mais velha que as \xE1rvores."
-  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Ela dorme enrolada no alto do vale, e a doen\xE7a dela corre pelas ra\xEDzes. Cada planta torta, cada bicho de olho verde... \xE9 ela."
+    Expression: serio
+    Text: "Sou Vulpis. Vigio estas terras desde antes de voc\xEA aprender a roubar."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: E o caminho para a ponte passa por ela. Claro que passa.
+    Expression: ironico
+    Text: Que bonito. E vai me prender por pisar na grama?
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Passa pelo Templo da Serpente, no Mirante. Fechado. A chave se perdeu h\xE1 muitos anos, nas ru\xEDnas atr\xE1s deste posto."
+    Expression: triste
+    Text: "Se ainda houvesse grama saud\xE1vel por aqui..."
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Eu n\xE3o posso ir. Se eu tirar os olhos do ninho, ningu\xE9m avisa quando ela acordar."
+    Expression: serio
+    Text: "A praga alcan\xE7ou Isyathy, a antiga guardi\xE3. Uma serpente t\xE3o velha que estas \xE1rvores cresceram \xE0 sombra dela."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: triste
+    Text: "Agora, enquanto ela agoniza, a corrup\xE7\xE3o escorre pelas ra\xEDzes. A floresta est\xE1 adoecendo junto com sua protetora."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Maravilha. E aposto que a sa\xEDda que sobrou desta floresta passa bem pelo ninho dessa cobra gigante."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "Pelo Templo da Serpente, no alto do Mirante. Mas seus port\xF5es est\xE3o selados h\xE1 gera\xE7\xF5es."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "A chave foi perdida nas ru\xEDnas antigas, a leste deste posto. Eu ainda n\xE3o a encontrei."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Est\xE1 come\xE7ando a parecer meu tipo de trabalho."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: Vou continuar vigiando o ninho para impedir que Isyathy escape.

@@ -1,6 +1,6 @@
 # Plano de teste — Fase 6 (Fortaleza e playtest do MVP)
 
-Antes: rode **Tools > Sete Vidas > 13. Fase 6: Fortaleza** e **12. Tela inicial**; depois **Save > Apagar save**. Abra `Scenes/MainMenu/MainMenu` e aperte Play.
+Antes: rode **Tools > Sete Vidas > Fortaleza: gerar a cena** e **Tela inicial**; depois **Save > Apagar save**. Abra `Scenes/MainMenu/MainMenu` e aperte Play.
 Mapa e fichas: `Docs/Level/fortaleza-mvp.md`.
 
 ## Percurso (QA)

@@ -31,7 +31,6 @@ namespace SeteVidas.EditorTools
         public const string PrefabPath = "Assets/_Game/Prefabs/Player/Player.prefab";
         const string CameraName = "CM Player Camera";
 
-        [MenuItem("Tools/Sete Vidas/4. Criar jogador e câmera (Fase 1)", priority = 40)]
         public static void CreatePlayerAndCamera()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

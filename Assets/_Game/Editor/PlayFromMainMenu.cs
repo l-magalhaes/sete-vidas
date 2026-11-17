@@ -28,7 +28,7 @@ namespace SeteVidas.EditorTools
             set => EditorPrefs.SetBool(PrefKey, value);
         }
 
-        [MenuItem(MenuPath, priority = 62)]
+        [MenuItem(MenuPath, priority = 45)]
         static void Toggle()
         {
             Enabled = !Enabled;

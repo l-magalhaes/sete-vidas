@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-10
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Marco da estrada: Cidadela do Sol Eterno, adiante. Miarav\xE9u, tr\xEAs dias para tr\xE1s."
+    Text: 'Marco da estrada: Cidadela do Sol Eterno, adiante.'
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
-    Text: "Tr\xEAs dias de volta. Com o livro, dois."
+    Text: "Depois, tr\xEAs dias de volta para Miarav\xE9u."

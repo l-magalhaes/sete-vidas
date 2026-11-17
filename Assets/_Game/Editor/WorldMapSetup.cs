@@ -51,7 +51,6 @@ namespace SeteVidas.EditorTools
             return list;
         }
 
-        [MenuItem("Tools/Sete Vidas/22. Mapa do mundo: gerar silhuetas (Fortaleza + Floresta)", priority = 70)]
         public static void Bake()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

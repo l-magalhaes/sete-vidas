@@ -1,7 +1,7 @@
 # Plano de teste — Floresta F3 (da Fortaleza à queda da ponte)
 
 Antes:
-1. Abra `Scenes/World/Fortress_MVP` e rode **Tools > Sete Vidas > 13d. Fortaleza: saída para a Estrada (sem recriar a fase)**. Ele troca só o fim da fase e mantém os ajustes feitos à mão. Se o Unity perguntar "o mapa da Fortaleza mudou", responda **Depois** e use o 13d.
+1. Abra `Scenes/World/Fortress_MVP` e rode **Tools > Sete Vidas > Fortaleza: atualizar sem recriar**. Ele troca só o fim da fase e mantém os ajustes feitos à mão. Se o Unity perguntar "o mapa da Fortaleza mudou", responda **Depois** e use o "Fortaleza: atualizar sem recriar".
 2. Rode **21. Floresta F2: graybox (7 cenas)** para gerar a `Forest_Road` nova (infectados, ponte, luzes).
 
 Para o teste completo, jogue pela tela inicial com um save que já passou da maldição (ou chegue ao fim da Fortaleza). Para testar só a estrada, dê Play direto na `Forest_Road` com "Play começa na tela inicial" desmarcado (usa o save de testes).

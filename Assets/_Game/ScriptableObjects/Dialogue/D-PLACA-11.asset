@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-11
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
@@ -25,4 +25,4 @@ MonoBehaviour:
     Text: "Um bilhete na cesta: \"Frutas frescas toda lua. N\xE3o contem ao capit\xE3o. \u2014 B.\""
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: "Um c\xE3o rezando para uma gata. Agora eu j\xE1 vi de tudo."
+    Text: "Engra\xE7ado... Os c\xE3es ainda lembram de Sethra."

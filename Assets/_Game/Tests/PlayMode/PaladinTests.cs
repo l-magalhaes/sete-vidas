@@ -30,12 +30,12 @@ namespace SeteVidas.Tests
             yield return null; // Start de todo mundo
             _health = PlayerHealth.Active;
             _classes = ClassManager.Active;
-            Assert.IsNotNull(_classes, "Gato sem ClassManager. Rode Tools > Sete Vidas > 8");
+            Assert.IsNotNull(_classes, "Gato sem ClassManager. Rode Tools > Sete Vidas > Manutenção > Playground");
             _combat = _classes.GetComponent<CombatController>();
             _wall = Object.FindAnyObjectByType<BreakableWall>();
             _golden = Object.FindAnyObjectByType<CompanionBond>();
-            Assert.IsNotNull(_wall, "Parede rachada ausente. Rode Tools > Sete Vidas > 8");
-            Assert.IsNotNull(_golden, "Golden ausente. Rode Tools > Sete Vidas > 8");
+            Assert.IsNotNull(_wall, "Parede rachada ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
+            Assert.IsNotNull(_golden, "Golden ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
         }
 
         [TearDown]

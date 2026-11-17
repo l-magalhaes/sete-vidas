@@ -7,6 +7,8 @@
 //   cogumelo        32 × 16  cogumelo saltador: chapéu turquesa (a cor do pogo) com a marca de uma pata de gato
 //   cacto_flutuante 24 × 24  cacto-barril arrancado do chão: espinhos pelos lados e por baixo, topo achatado com a flor
 //                            turquesa (só o topo aceita pogo) e as raízes soltas embaixo
+//   lamina          32 × 12  o pêndulo: tora de espinheiro amarrada no meio pelo cipó (no lugar da lâmina de aço)
+//   haste            4 × 16  o cipó torcido que pendura a tora (repete na altura)
 // Linha de pisar: as plataformas de mão única (galho, folha) têm o topo em 2 px abaixo do alto do sprite; o galho podre,
 // no alto do sprite. A luz vem da lua, no alto à esquerda. C# 5 (compilado pelo PowerShell).
 using System;
@@ -40,6 +42,8 @@ public static class ForestObjectGen
         Write("alcapao_argola", TrapdoorRing(), 0, 0);
         Write("alcapao_aberto", TrapdoorOpen(), 0, 0);
         Write("tampa_raizes", RootLid(), 0, 0);
+        Write("lamina", ThornLog(), 0, 0);       // o pêndulo: tora de espinheiro (15/11/2026)
+        Write("haste", PendulumVine(), 0, 0);    // e o cipó que a pendura
         Preview(Path.Combine(previewDir, "floresta_objetos_f5.png"));
     }
 
@@ -521,6 +525,56 @@ public static class ForestObjectGen
         if (vBand) return cx == 5 ? 'L' : cx == 7 ? 'K' : 'B';                     // raiz em pé
         return 'q';                                                                  // o vão escuro entre elas
     }
+    // =============================================================== pêndulo da Floresta (no lugar da lâmina de aço)
+
+    /// <summary>
+    /// Tora de espinheiro (pedido do usuário, 15/11/2026: a lâmina de aço não combinava com a Floresta): um pedaço de
+    /// tronco deitado, amarrado no meio pelo cipó que o pendura, cheio de espinhos claros para baixo e para os lados (a
+    /// mesma cor dos espinhos do cacto). Mesmo tamanho da lâmina (32 × 12) e o mesmo dano/pogo.
+    /// </summary>
+    static PixelCanvas ThornLog()
+    {
+        var cv = new PixelCanvas(32, 12);
+        // a tora: x 3..28, y 3..8, pontas com o anel do corte
+        for (int x = 3; x <= 28; x++)
+            for (int y = 3; y <= 8; y++)
+            {
+                char c = y == 3 ? 'L' : y == 8 ? 'K' : y == 7 ? 'b' : (TerrainAutotile.Mod(x * 3 + y, 7) == 0 ? 'b' : 'B');
+                if (x == 3 || x == 28) c = 'o';
+                cv.Force(x, y, c);
+            }
+        for (int y = 4; y <= 7; y++) { cv.Force(4, y, y == 4 || y == 7 ? 'L' : 'l'); cv.Force(27, y, y == 4 || y == 7 ? 'b' : 'L'); }
+        cv.Force(4, 5, 'b'); cv.Force(27, 6, 'K');                                          // o miolo dos anéis
+        for (int x = 3; x <= 28; x++) cv.Force(x, 2, 'o');
+        for (int x = 3; x <= 28; x++) cv.Force(x, 9, 'o');
+        // espinhos para baixo (pares, um claro e a base escura), nas pontas para os lados e uns poucos em cima
+        for (int x = 5; x <= 26; x += 3) { cv.Force(x, 10, 'x'); cv.Force(x, 11, 'X'); }
+        Stamp(cv, 0, 4, new[] { "Xx.", ".Xx", "Xx." });
+        Stamp(cv, 29, 4, new[] { ".xX", "xX.", ".xX" });
+        foreach (int x in new[] { 6, 10, 21, 25 }) { cv.Force(x, 1, 'x'); cv.Force(x, 0, 'X'); }
+        // o cipó amarrado no meio (laço por cima, voltas na tora)
+        Stamp(cv, 13, 0, new[] { ".2332.", "21..12", "2....2" });
+        for (int y = 3; y <= 8; y++) { cv.Force(14, y, (y & 1) == 0 ? '2' : '3'); cv.Force(17, y, (y & 1) == 0 ? '3' : '2'); }
+        cv.Force(15, 9, '1'); cv.Force(16, 10, '2');                                          // a ponta que sobra
+        return cv;
+    }
+
+    /// <summary>Cipó do pêndulo (4 × 16, repete na altura): dois fios de hera torcidos, com uma folhinha.</summary>
+    static PixelCanvas PendulumVine()
+    {
+        var cv = new PixelCanvas(4, 16);
+        for (int y = 0; y < 16; y++)
+        {
+            int ph = TerrainAutotile.Mod(y, 8);
+            bool leftFront = ph < 4;
+            cv.Force(0, y, '4'); cv.Force(3, y, '4');
+            cv.Force(1, y, leftFront ? '3' : '1');
+            cv.Force(2, y, leftFront ? '1' : '2');
+        }
+        cv.Force(0, 5, '2'); cv.Force(3, 12, '3');                                           // folhinhas
+        return cv;
+    }
+
     // =============================================================== util
 
     static void Stamp(PixelCanvas cv, int x0, int y0, string[] rows)
@@ -556,8 +610,8 @@ public static class ForestObjectGen
                     x += w + 6;
                 }
             }
-            int[][] at = { new[] { 4, 24 }, new[] { 58, 24 }, new[] { 4, 44 }, new[] { 40, 44 }, new[] { 80, 44 }, new[] { 110, 44 }, new[] { 132, 44 }, new[] { 152, 44 }, new[] { 172, 44 }, new[] { 194, 44 }, new[] { 132, 28 } };
-            string[] names = { "folha_larga", "galho_podre", "galho_podre_rachando", "cogumelo", "cacto_flutuante", "gancho", "cipo_atalho", "cipo_enrolado", "bau_fechado", "bau_aberto", "cipo_atalho" };
+            int[][] at = { new[] { 4, 24 }, new[] { 58, 24 }, new[] { 4, 44 }, new[] { 40, 44 }, new[] { 80, 44 }, new[] { 110, 44 }, new[] { 132, 44 }, new[] { 152, 44 }, new[] { 172, 44 }, new[] { 194, 44 }, new[] { 132, 28 }, new[] { 160, 30 }, new[] { 172, 14 } };
+            string[] names = { "folha_larga", "galho_podre", "galho_podre_rachando", "cogumelo", "cacto_flutuante", "gancho", "cipo_atalho", "cipo_enrolado", "bau_fechado", "bau_aberto", "cipo_atalho", "lamina", "haste" };
             for (int i = 0; i < names.Length; i++)
                 using (var b = Bmp(names[i])) g.DrawImage(b, at[i][0] * S, at[i][1] * S, b.Width * S, b.Height * S);
             sheet.Save(path, System.Drawing.Imaging.ImageFormat.Png);

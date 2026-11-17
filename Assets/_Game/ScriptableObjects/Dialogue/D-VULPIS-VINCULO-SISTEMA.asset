@@ -14,15 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-VULPIS-VINCULO-SISTEMA
   Required: 1
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Ca\xE7ador desbloqueado! +1 cora\xE7\xE3o. Aperte {trocar_classe} para trocar de classe."
+    Text: "Classe Ca\xE7ador desbloqueada! +1 cora\xE7\xE3o. Pressione {trocar_classe} para alternar entre as classes."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Com o Ca\xE7ador, {atacar} atira flechas ({subir} + {atacar}: para cima)."
+    Text: "Ca\xE7ador: pressione {atacar} para disparar flechas. Use {subir} + {atacar} para atirar para cima."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Em qualquer classe: {dash} avan\xE7a (no ch\xE3o e no ar) e {especial} atira a flecha com corda nos ganchos."
+    Text: "Nova habilidade permanente: pressione {dash} para realizar um avan\xE7o r\xE1pido no ch\xE3o ou no ar."
+  - Speaker: {fileID: 0}
+    Expression: 
+    Text: 'Nova habilidade permanente: pressione {especial} para disparar a flecha com corda em ganchos.'

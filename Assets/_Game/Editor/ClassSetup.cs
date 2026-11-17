@@ -27,7 +27,6 @@ namespace SeteVidas.EditorTools
         public const string WallPrefabPath = "Assets/_Game/Prefabs/Interactables/BreakableWall.prefab";
         public const string GoldenPrefabPath = "Assets/_Game/Prefabs/Interactables/Golden.prefab";
 
-        [MenuItem("Tools/Sete Vidas/8. Fase 5: classes, Paladino e parede rachada", priority = 44)]
         public static void RunPhase5()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

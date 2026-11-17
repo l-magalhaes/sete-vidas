@@ -127,7 +127,7 @@ namespace SeteVidas.World
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() { s_cached = null; s_loaded = false; } // Play sem recarregar o domínio
 
-        /// <summary>O mapa gerado (null se o menu 22 ainda não rodou).</summary>
+        /// <summary>O mapa gerado (null se o menu "Mapa do mundo e Diário" ainda não rodou).</summary>
         public static WorldMapData Load()
         {
             if (!s_loaded)

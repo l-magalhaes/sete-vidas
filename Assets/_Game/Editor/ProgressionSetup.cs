@@ -24,7 +24,6 @@ namespace SeteVidas.EditorTools
         public const string SanctuaryPrefabPath = "Assets/_Game/Prefabs/Interactables/Sanctuary.prefab";
         public const string HeartPickupPrefabPath = "Assets/_Game/Prefabs/Interactables/HalfHeartPickup.prefab";
 
-        [MenuItem("Tools/Sete Vidas/7. Fase 4: vida, santuário e save", priority = 43)]
         public static void RunPhase4()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -38,7 +37,7 @@ namespace SeteVidas.EditorTools
                       "Save em " + SaveManager.FilePath);
         }
 
-        [MenuItem("Tools/Sete Vidas/Save/Apagar save", priority = 60)]
+        [MenuItem("Tools/Sete Vidas/Save/Apagar save", priority = 40)]
         public static void DeleteSave()
         {
             if (Application.isPlaying)
@@ -54,7 +53,7 @@ namespace SeteVidas.EditorTools
             Debug.Log("[Sete Vidas] Saves apagados (jogo e área de testes).");
         }
 
-        [MenuItem("Tools/Sete Vidas/Save/Abrir pasta do save", priority = 61)]
+        [MenuItem("Tools/Sete Vidas/Save/Abrir pasta do save", priority = 41)]
         public static void RevealSave()
         {
             Directory.CreateDirectory(Application.persistentDataPath);

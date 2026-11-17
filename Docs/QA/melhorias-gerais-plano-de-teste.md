@@ -1,8 +1,8 @@
 # Plano de teste — Melhorias gerais (14/11/2026, antes da Floresta F4)
 
 Antes:
-1. Abra `Scenes/World/Fortress_MVP` e rode **Tools > Sete Vidas > 13e. Fortaleza: atiradores do meio (sem recriar a fase)**. Ele move só os dois atiradores e mantém os ajustes feitos à mão. Se o Unity perguntar "o mapa da Fortaleza mudou" (versão 18), responda **Depois** e use o 13e.
-2. Rode **Tools > Sete Vidas > 22. Mapa do mundo: gerar silhuetas (Fortaleza + Floresta)**. Ele abre cada cena por trás, lê o terreno e grava `Resources/WorldMap.asset`. Console: "Mapa do mundo: 8 cenas". Se faltar alguma cena da Floresta, gere antes no menu 21.
+1. Abra `Scenes/World/Fortress_MVP` e rode **Tools > Sete Vidas > Fortaleza: atualizar sem recriar**. Ele move só os dois atiradores e mantém os ajustes feitos à mão. Se o Unity perguntar "o mapa da Fortaleza mudou" (versão 18), responda **Depois** e use o "Fortaleza: atualizar sem recriar".
+2. Rode **Tools > Sete Vidas > Mapa do mundo e Diário**. Ele abre cada cena por trás, lê o terreno e grava `Resources/WorldMap.asset`. Console: "Mapa do mundo: 8 cenas". Se faltar alguma cena da Floresta, gere antes em "Floresta: gerar as cenas".
 
 ## Testes automáticos
 

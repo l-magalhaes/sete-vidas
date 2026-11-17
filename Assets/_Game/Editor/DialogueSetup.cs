@@ -19,7 +19,6 @@ namespace SeteVidas.EditorTools
         const string DataFolder = "Assets/_Game/ScriptableObjects/Dialogue";
         const float UiPixelScale = 100f / 16f; // sprites PPU 16 numa Canvas de referência 100: 1 pixel = 1 unidade
 
-        [MenuItem("Tools/Sete Vidas/9. Diálogos (interface com retratos)", priority = 45)]
         public static void RunDialogueSetup()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -49,19 +48,22 @@ namespace SeteVidas.EditorTools
             var result = new GoldenDialogues
             {
                 // D-GOLDEN-01 (rev. 6): o resgate. Koda gastou a última força segurando a praga do livro e precisa descansar
-                Bond = Conversation("D-GOLDEN-01", true, 6,
-                    (golden, "ferido", "Ladrãozinho! Aguente firme. Seu último coração ainda bate... por pouco."),
-                    (cat, "ironico", "Ótimo. Agora o cão de lata vai me dar sermão antes de eu morrer."),
-                    (golden, "", "Sermão nenhum. Quem fez isso? Quem levou o tomo?"),
-                    (cat, "", "O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas."),
-                    (golden, "ferido", "Gastei minha última força segurando a praga do livro. Contive pouco; ela já se espalha."),
-                    (golden, "serio", "Preciso descansar. Jure me ajudar a recuperar o tomo e destruí-lo, e minha força é sua.")),
-                // D-GOLDEN-01b: o gato aceita, movido pela vingança
-                BondFollowUp = Conversation("D-GOLDEN-01b", true, 2,
-                    (cat, "", "Destruir o tomo... tanto faz. Eu quero a capivara."),
-                    (cat, "", "Ninguém me usa como chave e me paga com troco. Ninguém."),
-                    (golden, "serio", "Vingança é um começo ruim. Mas é um começo. Jure, e levante."),
-                    (cat, "", "Eu juro. Pelo tomo, pela moeda... e pelas seis vidas que ele me tirou.")),
+               
+            Bond = Conversation("D-GOLDEN-01", true, 7,
+                (golden, "ferido", "Ei, ladrãozinho... Não feche os olhos. Seu último coração ainda bate."),
+                (cat, "ironico", "Que sorte a minha... Sobrevivi à maldição pra morrer ouvindo um sermão de um cão enlatado."),
+                (golden, "serio", "Poupe seu fôlego. Quem levou o tomo?"),
+                (cat, "ferido", "Meu contratante... Uma capivara. Maldita seja. Me usou como chave para libertar aquela coisa."),
+                (golden, "ferido", "Consegui conter parte da maldição... mas a praga já escapou. E não vai parar por conta própria."),
+                (golden, "serio", "Minha força está se esgotando. Preciso descansar... Mas me faça uma promessa: vamos encontrar aquele tomo e destruí-lo.")),
+
+                // D-GOLDEN-01b: O gato aceita, movido pela vingança.
+                BondFollowUp = Conversation("D-GOLDEN-01b", true, 3,
+                    (cat, "ironico", "Salvar o mundo? Destruir um livro? Hah... Você realmente escolheu o gato errado."),
+                    (cat, "serio", "Mas aquela capivara me deve seis vidas. E eu pretendo cobrar cada uma delas."),
+                    (golden, "serio", "A vingança pode colocar você de pé, pequeno ladrão... Mas não deixe que ela escolha seu caminho."),
+                    (cat, "determinado", "Então estamos combinados, lata velha. Você fica com o tomo... e eu fico com a capivara.")
+                ),
                 Unlock = Conversation("D-GOLDEN-01-SISTEMA", true, 3,
                     (null, "", "Paladino desbloqueado! Aperte {trocar_classe} para trocar de classe."),
                     (null, "", "Cura aprendida! Aperte {curar} para recuperar 1 coração. 3 usos; o santuário recarrega.")),
@@ -103,38 +105,75 @@ namespace SeteVidas.EditorTools
         {
             var (cat, _) = Speakers();
             var fox = VulpisSpeaker();
-            var result = new GoldenDialogues
-            {
-                Bond = Conversation("D-VULPIS-VINCULO", true, 1,
-                    (fox, "", "Desde as raízes eu sigo você. Um gato que cai de pontes não passa despercebido."),
-                    (cat, "ironico", "Seguindo um gato pela floresta. Isso tem nome, sabia?"),
-                    (fox, "", "Vigiar. Eu vigio esta floresta. E ela está morrendo."),
-                    (fox, "", "A praga chegou na Isyathy, a guardiã. Uma serpente mais velha que as árvores."),
-                    (fox, "", "Ela dorme enrolada no alto do vale, e a doença dela corre pelas raízes. Cada planta torta, cada bicho de olho verde... é ela."),
-                    (cat, "", "E o caminho para a ponte passa por ela. Claro que passa."),
-                    (fox, "", "Passa pelo Templo da Serpente, no Mirante. Fechado. A chave se perdeu há muitos anos, nas ruínas atrás deste posto."),
-                    (fox, "", "Eu não posso ir. Se eu tirar os olhos do ninho, ninguém avisa quando ela acordar.")),
-                BondFollowUp = Conversation("D-VULPIS-VINCULO-b", true, 1,
-                    (fox, "", "Mas você pode. Leve isto: meu arco, e uma flecha com corda. Prende em gancho, puxa você até lá."),
-                    (fox, "", "E aprenda a avançar como raposa: um salto rápido, rente, que vence o vão que o pulo não vence."),
-                    (cat, "ironico", "Arco, corda e um curso de raposa. Quanto eu devo?"),
-                    (fox, "", "Uma floresta viva. E a chave. Vá antes que eu me arrependa.")),
-                Unlock = Conversation("D-VULPIS-VINCULO-SISTEMA", true, 1,
-                    (null, "", "Caçador desbloqueado! +1 coração. Aperte {trocar_classe} para trocar de classe."),
-                    (null, "", "Com o Caçador, {atacar} atira flechas ({subir} + {atacar}: para cima)."),
-                    (null, "", "Em qualquer classe: {dash} avança (no chão e no ar) e {especial} atira a flecha com corda nos ganchos.")),
-                Idle = new[]
-                {
-                    Conversation("D-VULPIS-03e", false, 1,
-                        (fox, "", "As ruínas ficam a leste. Ganchos velhos nas pedras: a corda segura."),
-                        (cat, "ironico", "E se não segurar?"), (fox, "", "Aí você cai. Gatos caem bem, não?")),
-                    Conversation("D-VULPIS-03f", false, 1,
-                        (fox, "", "Parede de pedra antiga não cede a flecha. Precisa de força. Daquele cachorro dourado, talvez.")),
-                    Conversation("D-VULPIS-03a", false, 1,
-                        (fox, "", "Não mate a guardiã se puder evitar. Ela não escolheu ficar doente."),
-                        (cat, "", "Nem eu. E olha eu aqui.")),
-                },
-            };
+
+var result = new GoldenDialogues
+{
+    Bond = Conversation("D-VULPIS-VINCULO", true, 2,
+        (fox, "serio", "Desde que caiu daquela ponte, venho seguindo seus passos. Você faz bastante barulho para alguém que se diz ladrão."),
+        (cat, "ironico", "E você segue desconhecidos pela floresta. Cada um com seus defeitos."),
+        (fox, "serio", "Sou Vulpis. Vigio estas terras desde antes de você aprender a roubar."),
+        (cat, "ironico", "Que bonito. E vai me prender por pisar na grama?"),
+        (fox, "triste", "Se ainda houvesse grama saudável por aqui..."),
+        (fox, "serio", "A praga alcançou Isyathy, a antiga guardiã. Uma serpente tão velha que estas árvores cresceram à sombra dela."),
+        (fox, "triste", "Agora, enquanto ela agoniza, a corrupção escorre pelas raízes. A floresta está adoecendo junto com sua protetora."),
+        (cat, "ironico", "Maravilha. E aposto que a saída que sobrou desta floresta passa bem pelo ninho dessa cobra gigante."),
+        (fox, "serio", "Pelo Templo da Serpente, no alto do Mirante. Mas seus portões estão selados há gerações."),
+        (fox, "serio", "A chave foi perdida nas ruínas antigas, a leste deste posto. Eu ainda não a encontrei."),
+        (cat, "ironico", "Está começando a parecer meu tipo de trabalho."),
+        (fox, "serio", "Vou continuar vigiando o ninho para impedir que Isyathy escape.")
+    ),
+
+    // Vulpis entrega suas habilidades e equipamentos ao protagonista.
+    BondFollowUp = Conversation("D-VULPIS-VINCULO-b", true, 2,
+        (fox, "serio", "Você, por outro lado, é pequeno, ágil... e aparentemente difícil de matar."),
+        (cat, "ironico", "Acredite, já fui muito melhor nessa última parte."),
+        (fox, "serio", "Então vai precisar de toda ajuda possível. Pegue meu arco. E esta flecha com corda."),
+        (fox, "serio", "Os antigos deixaram ganchos espalhados pelas ruínas. Acerte um deles e a corda o puxará até lá."),
+        (fox, "serio", "E observe meus movimentos. Um avanço rápido, rente ao chão. Às vezes, um impulso vale mais que um salto."),
+        (cat, "ironico", "Um arco, uma corda e aulas particulares de uma raposa. Qual é a pegadinha?"),
+        (fox, "serio", "Encontre a chave. Alcance o templo. E juntos vamos lidar com Isyathy."),
+        (cat, "ironico", "Impedir uma floresta inteira de morrer. Você costuma pedir pouco, hein?"),
+        (fox, "ironico", "Costumo escolher melhor meus aliados. Hoje estou sem opções."),
+        (cat, "ironico", "Heh... Acho que vamos nos dar bem."),
+        (fox, "serio", "Não me faça mudar de ideia, ladrão.")
+    ),
+
+    Unlock = Conversation("D-VULPIS-VINCULO-SISTEMA", true, 2,
+        (null, "", "Classe Caçador desbloqueada! +1 coração. Pressione {trocar_classe} para alternar entre as classes."),
+        (null, "", "Caçador: pressione {atacar} para disparar flechas. Use {subir} + {atacar} para atirar para cima."),
+        (null, "", "Nova habilidade permanente: pressione {dash} para realizar um avanço rápido no chão ou no ar."),
+        (null, "", "Nova habilidade permanente: pressione {especial} para disparar a flecha com corda em ganchos.")
+    ),
+
+    Idle = new[]
+    {
+        // Dica sobre as ruínas e os ganchos.
+        Conversation("D-VULPIS-03e", false, 2,
+            (fox, "serio", "As ruínas ficam a leste. Procure os ganchos enferrujados nas pedras. Sua corda deve alcançá-los."),
+            (cat, "ironico", "Deve? Não gosto muito dessa palavra quando estou pendurado num precipício."),
+            (fox, "ironico", "Achei que gatos sempre caíssem de pé."),
+            (cat, "ironico", "Raposas são muito engraçadinhas.")
+        ),
+
+        // Dica sobre obstáculos que exigem força.
+        Conversation("D-VULPIS-03f", false, 2,
+            (fox, "serio", "Há muralhas antigas que nem minhas flechas conseguem atravessar. Pedra daquela época não cede facilmente."),
+            (cat, "ironico", "Então atiro mais flechas?"),
+            (fox, "ironico", "Ou usa a cabeça. Aquele cachorro dourado parece ter força suficiente para derrubar uma parede."),
+            (cat, "ironico", "Ótimo. Finalmente uma utilidade para aquela armadura ambulante.")
+        ),
+
+        // Vulpis demonstra preocupação com a guardiã.
+        Conversation("D-VULPIS-03a", false, 2,
+            (fox, "triste", "Se encontrar Isyathy... tente não matá-la. Ela protegeu esta floresta por séculos."),
+            (cat, "serio", "Ela está espalhando a praga. Talvez não me dê muita escolha."),
+            (fox, "triste", "Eu sei. Mas ela não escolheu se tornar um monstro."),
+            (cat, "serio", "... Nem eu escolhi perder minhas vidas."),
+            (fox, "serio", "Então talvez você entenda a dor dela melhor do que imagina.")
+        )
+    },
+};
+
             AssetDatabase.SaveAssets();
             return result;
         }

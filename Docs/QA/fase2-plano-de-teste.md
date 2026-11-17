@@ -1,7 +1,7 @@
 # Plano de teste — Fase 2 (escalada, adagas e ataque pelas costas)
 
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080 · valores padrão de `WallClimbSettings` e `RogueDaggers`.
-Antes: rode **Tools > Sete Vidas > 5. Fase 2**. Para ir direto aos trechos novos, durante o Play mude o **Position X** do `Player` no Inspector (chaminé: x 90; bonecos: x 106).
+Antes: rode **Tools > Sete Vidas > Manutenção > Playground**. Para ir direto aos trechos novos, durante o Play mude o **Position X** do `Player` no Inspector (chaminé: x 90; bonecos: x 106).
 
 | ID | Sistema | Pré-condição | Passos | Resultado esperado | Status |
 |---|---|---|---|---|---|

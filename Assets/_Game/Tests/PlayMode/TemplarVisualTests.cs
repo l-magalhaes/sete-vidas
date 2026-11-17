@@ -32,7 +32,7 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             Assert.That(_sprite.sprite != null && _sprite.sprite.name.StartsWith("enm_templar_"),
-                "A Sentinela deveria usar a arte do templário. Rode Tools/EnemySprites/gerar.ps1 e Tools > Sete Vidas > 6");
+                "A Sentinela deveria usar a arte do templário. Rode Tools/EnemySprites/gerar.ps1 e Tools > Sete Vidas > Manutenção > Playground");
             Assert.That(_enemy.CurrentClipName == "idle" || _enemy.CurrentClipName == "walk",
                 "Patrulhando: parado ou andando, não " + _enemy.CurrentClipName);
         }

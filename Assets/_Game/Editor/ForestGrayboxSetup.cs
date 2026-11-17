@@ -21,7 +21,6 @@ namespace SeteVidas.EditorTools
         const string Folder = ForestTestSetup.Folder;
         static Dictionary<string, DialogueDefinition> s_lore;
 
-        [MenuItem("Tools/Sete Vidas/21. Floresta: graybox (todas as cenas)", priority = 71)]
         public static void Build()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -58,7 +57,6 @@ namespace SeteVidas.EditorTools
                       "(desligue \"Play começa na tela inicial\" para dar Play direto nela). Roteiro: Docs/QA/floresta-rev4-plano-de-teste.md");
         }
 
-        [MenuItem("Tools/Sete Vidas/21b. Floresta F2: conferir alcance (sem gerar)", priority = 72)]
         public static void CheckOnly()
         {
             Debug.Log("[Sete Vidas] Floresta F2: alcance do graybox\n" + ForestReach.Format(ForestReach.CheckAll(), true));
@@ -475,7 +473,7 @@ namespace SeteVidas.EditorTools
             var settings = AssetDatabase.LoadAssetAtPath<SeteVidas.Enemies.Zombie.ZombieSettings>(FortressSetup.ZombieSettingsPath);
             var animations = AssetDatabase.LoadAssetAtPath<SeteVidas.Player.CharacterAnimationSet>(FortressSetup.ZombieAnimationsPath);
             if (settings == null || animations == null)
-                Debug.LogWarning("[Sete Vidas] Infectados: falta o ZombieSettings ou a arte do zumbi (rode o menu 13 da Fortaleza e Tools/EnemySprites/gerar.ps1)");
+                Debug.LogWarning("[Sete Vidas] Infectados: falta o ZombieSettings ou a arte do zumbi (rode \"Fortaleza: gerar a cena\" e Tools/EnemySprites/gerar.ps1)");
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
             var squad = go.AddComponent<SeteVidas.Enemies.Zombie.ZombieSquad>();

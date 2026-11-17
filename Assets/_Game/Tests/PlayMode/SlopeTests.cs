@@ -10,7 +10,7 @@ namespace SeteVidas.Tests
     /// <summary>
     /// Rampas (trecho L da Playground, x -110..-77): parado numa rampa o gato escorrega (pedido de 14/11/2026) e o desenho
     /// encosta na rampa; numa rampa íngreme ele escorrega até o chão.
-    /// Se falhar por falta das rampas, rode Tools > Sete Vidas > 2. Criar cenas.
+    /// Se falhar por falta das rampas, rode Tools > Sete Vidas > Manutenção > Playground.
     /// </summary>
     public class SlopeTests
     {
@@ -18,8 +18,8 @@ namespace SeteVidas.Tests
         {
             yield return SceneManager.LoadSceneAsync("Playground", LoadSceneMode.Single);
             var player = Object.FindAnyObjectByType<PlayerController>();
-            Assert.IsNotNull(player, "Sem jogador na Playground. Rode Tools > Sete Vidas > 4. Criar jogador e câmera");
-            Assert.IsNotNull(GameObject.Find("Rampas/Rampa 1x1"), "Playground sem o trecho de rampas. Rode Tools > Sete Vidas > 2. Criar cenas");
+            Assert.IsNotNull(player, "Sem jogador na Playground. Rode Tools > Sete Vidas > Manutenção > Playground");
+            Assert.IsNotNull(GameObject.Find("Rampas/Rampa 1x1"), "Playground sem o trecho de rampas. Rode Tools > Sete Vidas > Manutenção > Playground");
             yield return new WaitForFixedUpdate();
             found(player);
         }

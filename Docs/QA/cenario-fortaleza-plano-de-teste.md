@@ -1,6 +1,6 @@
 # Plano de teste — Cenário da Fortaleza (Etapa 9 do plano de assets)
 
-Antes: rode **Tools > Sete Vidas > 13. Fase 6: Fortaleza** (aceite recriar a fase) e **Save > Apagar save**. Abra a Fortaleza e aperte Play. Mapa: `Docs/Level/fortaleza-mvp.md`. Guia: `Docs/Arte/guia-de-assets.md`.
+Antes: rode **Tools > Sete Vidas > Fortaleza: gerar a cena** (aceite recriar a fase) e **Save > Apagar save**. Abra a Fortaleza e aperte Play. Mapa: `Docs/Level/fortaleza-mvp.md`. Guia: `Docs/Arte/guia-de-assets.md`.
 
 Severidade (QA): **S1** bloqueante · **S2** mecânica central quebrada ou leitura que engana o jogador (ex.: enfeite confundido com plataforma ou perigo) · **S3** comportamento errado de pouco impacto · **S4** cosmético.
 

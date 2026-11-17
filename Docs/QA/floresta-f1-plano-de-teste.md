@@ -1,6 +1,6 @@
 # Plano de teste — Floresta F1 (base técnica)
 
-Antes: rode **Tools > Sete Vidas > 20. Floresta F1: cenas de teste (A e B)** (gera as cenas A, B, C e o interior da cabana). A cena `Scenes/World/Forest/Forest_Test_A` abre sozinha: aperte Play nela.
+Antes: rode **Tools > Sete Vidas > Manutenção > Floresta F1: cenas de teste antigas** (gera as cenas A, B, C e o interior da cabana). A cena `Scenes/World/Forest/Forest_Test_A` abre sozinha: aperte Play nela.
 As cenas de teste deixam o save como o de quem saiu da Fortaleza: **Paladino liberado e 2 corações** (`ForestTestBootstrap`). Elas usam o **save da área de testes** (o mesmo da Playground), nunca o do jogo.
 Para o Play começar na cena aberta, desmarque **Tools > Sete Vidas > Play começa na tela inicial**.
 Para repetir do zero, apague só `save_playground.json` (**Tools > Sete Vidas > Save > Abrir pasta do save**). Cuidado: **Save > Apagar save** apaga também o save do jogo.

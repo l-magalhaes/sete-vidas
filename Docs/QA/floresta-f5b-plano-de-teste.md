@@ -11,7 +11,7 @@ Som: nada novo (tudo na F10).
 
 Antes:
 1. Rode `powershell -ExecutionPolicy Bypass -File Tools/EnvironmentSprites/gerar.ps1`. Já está rodado: os PNG `pri_*` e `isy_*` estão em `Art/Environments/Forest/Placeholder`. Volte ao Unity e espere a importação.
-2. Rode **Tools > Sete Vidas > 21. Floresta: graybox (todas as cenas)**.
+2. Rode **Tools > Sete Vidas > Floresta: gerar as cenas**.
    - O console não pode ter "falta pri_…/isy_…" nem "Placa sem texto".
    - Precisa ter "Diário: catálogo com N placas" (N = as da Fortaleza + 8).
 3. Rode o **22. Mapa do mundo**: a passarela e a cabine da A5 mudaram o terreno.

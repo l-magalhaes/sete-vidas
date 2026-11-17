@@ -26,7 +26,6 @@ namespace SeteVidas.EditorTools
         public const string BushPrefabPath = "Assets/_Game/Prefabs/Interactables/Bush.prefab";
         const string BushSpritePath = "Assets/_Game/Art/Environments/Placeholder/env_bush_placeholder.png";
 
-        [MenuItem("Tools/Sete Vidas/6. Fase 3: Sentinela e furtividade", priority = 42)]
         public static void RunPhase3()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -147,7 +146,7 @@ namespace SeteVidas.EditorTools
             settings.MaxAimUp = 30f;
         }
 
-        /// <summary>Aplica a percepção nova no asset do atirador que já existe (menu 13e).</summary>
+        /// <summary>Aplica a percepção nova no asset do atirador que já existe ("Fortaleza: atualizar sem recriar").</summary>
         public static void TuneCrossbowSettings()
         {
             var settings = AssetDatabase.LoadAssetAtPath<SentinelSettings>(CrossbowSettingsPath);

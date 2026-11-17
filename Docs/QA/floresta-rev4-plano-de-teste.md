@@ -1,7 +1,7 @@
 # Plano de teste — Floresta rev. 4 (anel, atalhos de verdade, serpentes, cenas de teste na fase)
 
 Antes:
-1. Rode **Tools > Sete Vidas > 21. Floresta: graybox (todas as cenas)**. Ele recria `Forest_Road`, `Forest_A_Roots` … `Forest_F_Heart` e a casa da Vulpis (`Forest_D_Cabin`).
+1. Rode **Tools > Sete Vidas > Floresta: gerar as cenas**. Ele recria `Forest_Road`, `Forest_A_Roots` … `Forest_F_Heart` e a casa da Vulpis (`Forest_D_Cabin`).
 2. Se o console avisar de alcance, rode `Tools/LevelPreview/checar_floresta.ps1`. O mapa inteiro sai em `SeteVidasDocs/Referencias/floresta/floresta_mapa.png`.
 
 Play direto numa cena da floresta, com "Play começa na tela inicial" desmarcado, usa o save de testes. Para zerar os atalhos, apague esse save.

@@ -1,7 +1,7 @@
 # Plano de teste — Fase 4 (vida, morte, santuário e save)
 
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080.
-Antes: rode **Tools > Sete Vidas > 7. Fase 4** e depois **Tools > Sete Vidas > Save > Apagar save** (começa um jogo novo).
+Antes: rode **Tools > Sete Vidas > Manutenção > Playground** e depois **Tools > Sete Vidas > Save > Apagar save** (começa um jogo novo).
 Santuários: x 3 (início) e x 119,5 (antes da Sentinela). Atalhos de depuração: selecione o `Player` durante o Play e use o menu ⋮ do componente `PlayerHealth` ("+1 coração", "tomar 1 hit").
 
 | ID | Sistema | Pré-condição | Passos | Resultado esperado | Status |

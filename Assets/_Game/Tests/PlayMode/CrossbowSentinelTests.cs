@@ -35,7 +35,7 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Fortress_MVP", LoadSceneMode.Single);
             yield return null;
             var archer = Find("Atirador da arquibancada");
-            Assert.IsNotNull(archer, "Sem o atirador da arquibancada. Gere a Fortaleza de novo (Tools > Sete Vidas > 13)");
+            Assert.IsNotNull(archer, "Sem o atirador da arquibancada. Gere a Fortaleza de novo (Tools > Sete Vidas > Fortaleza: gerar a cena)");
             Assert.IsTrue(archer.Settings.Ranged, "O atirador usa a besta");
             Assert.Greater(archer.transform.position.y, 5f, "Fica no alto");
             var start = archer.transform.position;

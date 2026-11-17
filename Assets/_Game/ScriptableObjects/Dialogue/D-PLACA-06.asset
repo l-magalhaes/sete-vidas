@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-06
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
@@ -25,4 +25,4 @@ MonoBehaviour:
     Text: "A resposta de Soluki chegou hoje. Uma palavra: \"Supersti\xE7\xE3o.\""
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
-    Text: "...O c\xE3o de lata avisou. Ningu\xE9m ouviu."
+    Text: "...Os c\xE3es sabiam mais do que eu suspeitava."

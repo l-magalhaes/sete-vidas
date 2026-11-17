@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-FORT-02
   Required: 1
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
@@ -22,4 +22,4 @@ MonoBehaviour:
     Text: "\xC1gua. Claro que tinha que ser \xE1gua."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: 
-    Text: "Ca\xED de p\xE9, pelo menos. Como sempre."
+    Text: "Odeio \xE1gua."

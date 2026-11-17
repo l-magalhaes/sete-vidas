@@ -20,6 +20,14 @@
 //   pri_janela          32 × 40  janela de concreto com cacos de vidro; atrás, terra e raízes (prédio soterrado)
 //   pri_escada          64 × 64  lance de escada de concreto quebrado, com vergalhão
 //   pri_relogio         24 × 40  relógio da estação pendurado do teto, parado
+//   Mercado dos Primatas (térreo da C3, 15/11/2026), tomado pelas vinhas:
+//   pri_prateleira      40 × 40  prateleira cheia de latas iguais com o mesmo rosto sorrindo (P-PRIM-09)
+//   pri_caixa           44 × 28  balcão do caixa: esteira parada e a gaveta aberta com discos e papéis (P-PRIM-10)
+//   pri_letreiro        64 × 20  letreiro de metal pendurado torto (uma corrente partiu), letras que ninguém lê
+//   pri_carrinho        32 × 22  gaiola de arame com rodinhas, uma roda a menos, a trepadeira por dentro
+//   pri_gondola         48 × 40  gôndola de metal com poucas latas, o resto caído; vinhas subindo
+//   pri_gondola_tombada 56 × 24  gôndola caída de lado, latas espalhadas
+//   pri_vinhas_teto     32 × 40  vinhas penduradas do teto (o topo no teto)
 // Isyathy vista de longe (mapa §6; corpo #2e4834, ventre #52664c, mas escurecidos: fica no fundo):
 //   isy_olhos_0..2      40 × 12  dois olhos amarelo-esverdeados: abertos, meio fechados, fechados (A4 e o lago da C4)
 //   isy_silhueta       192 × 40  um trecho do corpo passando atrás das copas (B4)
@@ -55,6 +63,10 @@ public static class ForestLoreGen
         Write("pri_janela", BuriedWindow());
         Write("pri_escada", BrokenStairs());
         Write("pri_relogio", Clock());
+        // o Mercado dos Primatas (térreo da C3, 15/11/2026)
+        Write("pri_letreiro", MarketSign()); Write("pri_caixa", Checkout()); Write("pri_carrinho", Cart());
+        Write("pri_gondola", Gondola()); Write("pri_gondola_tombada", FallenGondola()); Write("pri_prateleira", CanShelf());
+        Write("pri_vinhas_teto", HangingVines());
         for (int i = 0; i < 3; i++) Write("isy_olhos_" + i, Eyes(i));
         Write("isy_silhueta", Silhouette());
         // o pescoço que espia entre as árvores do fundo (pedido do usuário, 14/11/2026): fechados, meio, abertos,
@@ -77,7 +89,8 @@ public static class ForestLoreGen
     {
         "pri_placa_estrada", "pri_mapa", "pri_vitrine", "pri_farol_0", "pri_farol_1", "pri_painel", "pri_carcaca", "pri_lapide",
         "pri_cabine_mesa", "pri_poste", "pri_poste_tombado", "pri_maquina_0", "pri_maquina_1", "pri_janela", "pri_escada",
-        "pri_relogio", "isy_olhos_0", "isy_olhos_1", "isy_olhos_2", "isy_silhueta",
+        "pri_relogio", "pri_letreiro", "pri_caixa", "pri_carrinho", "pri_gondola", "pri_gondola_tombada", "pri_prateleira",
+        "pri_vinhas_teto", "isy_olhos_0", "isy_olhos_1", "isy_olhos_2", "isy_silhueta",
         "portao_templo_fechado", "portao_templo_aberto", "portal_templo_pilares", "portal_templo_lintel", "portao_barras",
         "isy_fundo_0", "isy_fundo_1", "isy_fundo_2", "isy_fundo_3", "isy_fundo_4", "isy_fundo_5", "isy_fundo_6",
         "doc_oracao", "doc_caderno", "doc_carta", "doc_pagina",
@@ -697,6 +710,185 @@ public static class ForestLoreGen
         Rust(c, 0, 0, 63, 63, 'C', 152, 17u);
         MossTop(c, 0, 63, 153);
         Creeper(c, 10, 34, 63, 154);
+        return c;
+    }
+
+    // ============================================================ o Mercado dos Primatas (térreo da C3)
+
+    /// <summary>Lata de 5 × 7: aro claro em cima, rótulo colorido; <paramref name="face"/> = o rosto sorrindo (P-PRIM-09).</summary>
+    static void Can(PixelCanvas c, int x, int y, char label, bool face)
+    {
+        Rect(c, x, y, x + 4, y, 'w');
+        Rect(c, x, y + 1, x + 4, y + 6, label);
+        c.Force(x, y + 1, 'x'); c.Force(x, y + 6, 'n'); c.Force(x + 4, y + 6, 'n');
+        for (int yy = y + 1; yy <= y + 6; yy++) c.Force(x + 4, yy, yy == y + 1 ? label : 'n');   // sombra à direita
+        if (!face) { Rect(c, x + 1, y + 3, x + 3, y + 3, 'w'); return; }
+        c.Force(x + 1, y + 2, 'a'); c.Force(x + 3, y + 2, 'a');                                  // olhos
+        c.Force(x + 1, y + 4, 'a'); c.Force(x + 2, y + 5, 'a'); c.Force(x + 3, y + 4, 'a');      // o sorriso
+    }
+
+    /// <summary>Uprights e prateleiras de metal: de (x0, y0) a (x1, y1), prateleiras nas linhas <paramref name="shelves"/>.</summary>
+    static void ShelfFrame(PixelCanvas c, int x0, int y0, int x1, int y1, int[] shelves)
+    {
+        Rect(c, x0, y0, x0 + 1, y1, 'n'); c.Force(x0, y0, 'M');
+        Rect(c, x1 - 1, y0, x1, y1, 'n'); c.Force(x1 - 1, y0, 'M');
+        Rect(c, x0 + 2, y0 + 1, x1 - 2, y1, 'v');                                                   // o fundo escuro
+        foreach (int s in shelves) { Rect(c, x0, s, x1, s, 'M'); Rect(c, x0, s + 1, x1, s + 1, 'n'); }
+    }
+
+    /// <summary>P-PRIM-09: prateleira cheia de latas iguais, viradas para a frente, todas com o mesmo rosto sorrindo.</summary>
+    static PixelCanvas CanShelf()
+    {
+        var c = new PixelCanvas(40, 40);
+        int[] shelves = { 11, 22, 33 };
+        ShelfFrame(c, 0, 0, 39, 39, shelves);
+        foreach (int s in shelves)
+            for (int k = 0; k < 6; k++) Can(c, 3 + k * 6, s - 7, 'o', true);
+        Rect(c, 0, 37, 39, 39, 'n');                                                                 // rodapé
+        Rust(c, 0, 0, 39, 39, 'n', 401, 11u);
+        MossTop(c, 0, 39, 402);
+        Creeper(c, 1, 3, 39, 403); Creeper(c, 37, 12, 39, 404);
+        for (int x = 2; x < 38; x++) if (H(x, 38, 405) % 3u == 0) c.Force(x, 38, 'G');            // mato no pé
+        return c;
+    }
+
+    /// <summary>P-PRIM-10: o balcão do caixa com a esteira parada e, à direita, a máquina com a gaveta aberta.</summary>
+    static PixelCanvas Checkout()
+    {
+        var c = new PixelCanvas(44, 28);
+        Box(c, 0, 12, 43, 27, 'm', 'M', 'n');                                                       // o balcão
+        Rect(c, 2, 10, 27, 12, 'k'); Rect(c, 2, 10, 27, 10, 'K');                                   // a esteira
+        for (int x = 4; x <= 26; x += 4) c.Force(x, 11, 'a');
+        Box(c, 30, 2, 41, 11, 'C', 'D', 'c');                                                       // a máquina
+        Rect(c, 32, 4, 39, 6, 'v'); c.Force(33, 4, 'W');                                            // a telinha morta
+        for (int x = 32; x <= 39; x += 2) c.Force(x, 9, 'a');                                       // teclas
+        Box(c, 29, 13, 42, 17, 'n', 'm', 'a');                                                      // a gaveta aberta, para fora
+        c.Force(31, 14, 'o'); c.Force(32, 14, 'o'); c.Force(34, 15, 'o'); c.Force(35, 14, 'Y');     // os discos
+        Rect(c, 37, 14, 40, 15, 'P'); c.Force(38, 14, 'q');                                          // os papéis, colados
+        for (int y = 19; y <= 25; y += 3) Rect(c, 3, y, 26, y, 'n');                                // painel do balcão
+        Rust(c, 1, 13, 42, 26, 'm', 411, 13u);
+        MossTop(c, 0, 43, 412);
+        Creeper(c, 2, 14, 27, 413); Creeper(c, 25, 16, 27, 414);
+        return c;
+    }
+
+    /// <summary>Letreiro de metal pendurado por duas correntes; a da direita partiu e ele pende torto. Letras gastas.</summary>
+    static PixelCanvas MarketSign()
+    {
+        var c = new PixelCanvas(64, 20);
+        for (int y = 0; y <= 3; y++) { c.Force(8, y, y % 2 == 0 ? 'M' : 'n'); }                    // corrente inteira
+        c.Force(55, 0, 'M'); c.Force(55, 1, 'n');                                                    // o toco da partida
+        for (int x = 2; x <= 61; x++)
+        {
+            int dy = Math.Max(0, (x - 10) / 12);                                                     // cai para a direita
+            for (int y = 4 + dy; y <= 13 + dy; y++)
+            {
+                bool edge = x == 2 || x == 61 || y == 4 + dy || y == 13 + dy;
+                c.Force(x, y, edge ? 'a' : y == 5 + dy ? 'P' : 'p');
+            }
+            // as letras: blocos claros que ninguém lê (7 letras com espaço)
+            int k = (x - 6) % 8;
+            if (x >= 6 && x <= 58 && k < 5 && (x - 6) / 8 != 3)
+                for (int y = 7 + dy; y <= 10 + dy; y++)
+                    if (!(k == 2 && y == 8 + dy) && H(x, y, 421) % 7u != 0) c.Force(x, y, (x + y) % 5 == 0 ? 'x' : 'w');
+        }
+        Rust(c, 3, 5, 60, 18, 'p', 422, 9u);
+        MossTop(c, 2, 61, 423);
+        // vinhas escorrendo por baixo
+        foreach (int x in new[] { 6, 19, 33, 47, 58 })
+        {
+            int dy = Math.Max(0, (x - 10) / 12), len = 2 + (int)(H(x, 0, 424) % 4u);
+            for (int y = 14 + dy; y < Math.Min(20, 14 + dy + len); y++) c.Force(x, y, y % 2 == 0 ? 'g' : 'G');
+        }
+        return c;
+    }
+
+    /// <summary>Gaiola de arame com rodinhas (o carrinho): sem a roda da frente, inclinado, com a trepadeira por dentro.</summary>
+    static PixelCanvas Cart()
+    {
+        var c = new PixelCanvas(32, 22);
+        // a cesta: trapézio (mais largo em cima), grade de arame
+        for (int y = 3; y <= 13; y++)
+        {
+            int x0 = 5 + (y - 3) / 3, x1 = 28 - (y - 3) / 4;
+            for (int x = x0; x <= x1; x++)
+            {
+                bool rim = y == 3 || y == 13 || x == x0 || x == x1;
+                if (rim) c.Force(x, y, y == 3 ? 'M' : 'm');
+                else if ((x - x0) % 3 == 0 || (y - 3) % 3 == 0) c.Force(x, y, 'n');
+            }
+        }
+        Rect(c, 1, 2, 5, 2, 'M'); c.Force(1, 3, 'm'); c.Force(1, 4, 'm');                         // a alça
+        Rect(c, 8, 14, 27, 15, 'n');                                                                 // o chassi
+        Rect(c, 9, 16, 9, 18, 'm'); Rect(c, 25, 16, 25, 17, 'm');                                    // pés
+        Rect(c, 8, 19, 10, 21, 'a'); c.Force(9, 20, 'm');                                            // a roda que sobrou
+        Rect(c, 24, 18, 26, 18, 'R');                                                                // sem roda: só ferrugem
+        Rust(c, 5, 3, 28, 15, 'n', 431, 6u);
+        Creeper(c, 16, 4, 21, 432); Creeper(c, 22, 8, 21, 433);
+        for (int x = 3; x < 30; x++) if (H(x, 21, 434) % 3u == 0) c.Force(x, 21, 'G');
+        return c;
+    }
+
+    /// <summary>Gôndola de metal com poucas latas (o resto caiu ou sumiu); vinhas subindo pelos lados e caindo de cima.</summary>
+    static PixelCanvas Gondola()
+    {
+        var c = new PixelCanvas(48, 40);
+        int[] shelves = { 11, 22, 33 };
+        ShelfFrame(c, 0, 0, 47, 39, shelves);
+        char[] labels = { 'q', 'u', 'o' };
+        foreach (int s in shelves)
+            for (int k = 0; k < 7; k++)
+            {
+                uint h = H(k, s, 441);
+                if (h % 3u == 0) continue;                                                           // vão: caiu ou sumiu
+                if (h % 5u == 0) { Rect(c, 3 + k * 6, s - 3, 9 + k * 6, s - 1, labels[k % 3]); c.Force(3 + k * 6, s - 3, 'w'); continue; } // deitada
+                Can(c, 3 + k * 6, s - 7, labels[(int)(h % 3u)], false);
+            }
+        Rect(c, 0, 37, 47, 39, 'n');
+        Rust(c, 0, 0, 47, 39, 'n', 442, 10u);
+        MossTop(c, 0, 47, 443);
+        Creeper(c, 1, 2, 39, 444); Creeper(c, 46, 6, 39, 445); Creeper(c, 22, 14, 39, 446);
+        for (int x = 4; x <= 44; x += 9) { int len = 3 + (int)(H(x, 1, 447) % 6u); for (int y = 1; y < len; y++) c.Force(x, y, y % 2 == 0 ? 'g' : 'G'); }
+        return c;
+    }
+
+    /// <summary>Gôndola caída de lado (as prateleiras viram paredes), latas espalhadas no chão e o mato tomando tudo.</summary>
+    static PixelCanvas FallenGondola()
+    {
+        var c = new PixelCanvas(56, 24);
+        Rect(c, 2, 8, 53, 9, 'n'); Rect(c, 2, 8, 53, 8, 'M');                                      // a lateral, agora em cima
+        Rect(c, 2, 19, 53, 20, 'n');                                                                 // a outra, no chão
+        Rect(c, 3, 10, 52, 18, 'v');                                                                 // o fundo
+        foreach (int x in new[] { 2, 18, 35, 52 }) { Rect(c, x, 10, x + 1, 18, 'M'); c.Force(x + 1, 18, 'n'); } // prateleiras de pé
+        char[] labels = { 'u', 'o', 'q' };
+        for (int k = 0; k < 8; k++)                                                                  // latas rolaram para fora
+        {
+            int x = 1 + (int)(H(k, 0, 451) % 50u), y = 21;
+            Rect(c, x, y, x + 3, y + 2, labels[k % 3]); c.Force(x, y, 'w'); c.Force(x + 3, y + 2, 'n');
+        }
+        Rust(c, 2, 8, 53, 20, 'n', 452, 7u);
+        MossTop(c, 0, 55, 453);
+        Creeper(c, 10, 2, 22, 454); Creeper(c, 44, 4, 22, 455); Creeper(c, 27, 9, 22, 456);
+        for (int x = 0; x < 56; x++) if (H(x, 23, 457) % 2u == 0) c.Force(x, 23, H(x, 23, 458) % 3u == 0 ? 'H' : 'G');
+        return c;
+    }
+
+    /// <summary>Vinhas penduradas do teto (o topo no teto): um tufo de musgo e fios de comprimentos diferentes, com folhas.</summary>
+    static PixelCanvas HangingVines()
+    {
+        var c = new PixelCanvas(32, 40);
+        for (int x = 0; x < 32; x++) { c.Force(x, 0, 'g'); if (H(x, 0, 461) % 2u == 0) c.Force(x, 1, 'G'); }
+        foreach (int x0 in new[] { 3, 9, 14, 20, 26, 30 })
+        {
+            int len = 10 + (int)(H(x0, 1, 462) % 28u), x = x0;
+            for (int y = 1; y < len && y < 40; y++)
+            {
+                c.Force(x, y, y % 3 == 0 ? 'G' : 'g');
+                if (y % 5 == 2) { c.Force(x - 1, y, 'G'); c.Force(x + 1, y + 1, 'H'); }                // folhas
+                if (y % 7 == 0) x += H(x, y, 463) % 2u == 0 ? 1 : -1;
+                x = Math.Max(0, Math.Min(31, x));
+            }
+        }
         return c;
     }
 

@@ -195,7 +195,7 @@ Cada fase termina com algo **jogável e testável**. Arte entra em todas as fase
 4. **Santuário com os dois avisos juntos**: [Interagir] descansar, [Ataque] viagem rápida; o menu lista só os santuários.
 5. **Mapa do mundo estilo Hollow Knight** (Fortaleza + Estrada + Floresta), atalho **M / Exibir**: `WorldMapData`, `WorldMapRules`, `MapExplorer`, `Editor/WorldMapSetup.cs` (menu 22).
 6. **A cura corta o veneno.**
-7. **Atiradores do meio da Fortaleza** em lugares novos e mais atentos (menu 13e, `FortressLayout.Version` 18).
+7. **Atiradores do meio da Fortaleza** em lugares novos e mais atentos ("Fortaleza: atualizar sem recriar", `FortressLayout.Version` 18).
 8. **Transições**: sai e entra andando pelas passagens laterais, cai pelos buracos; chegada de queda (A1_queda) com o gato despencando, deitado e levantando (`TransitionRules`, `RoomEntrance.Style`).
 
 ### F4 — Bestiário da floresta

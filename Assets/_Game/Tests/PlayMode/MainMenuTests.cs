@@ -24,7 +24,7 @@ namespace SeteVidas.Tests
         {
             yield return SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
             yield return null;
-            Assert.IsNotNull(Object.FindAnyObjectByType<MainMenu>(), "Sem tela inicial. Rode Tools > Sete Vidas > 12");
+            Assert.IsNotNull(Object.FindAnyObjectByType<MainMenu>(), "Sem tela inicial. Rode Tools > Sete Vidas > Tela inicial");
         }
 
         /// <summary>Grava um save como se o jogador tivesse descansado no santuário antes da arena.</summary>
@@ -101,7 +101,7 @@ namespace SeteVidas.Tests
             // a narração de chegada grava a flag dela assim que o gato nasce (dentro da área): o que não pode sobrar é o save
             // antigo (santuário da arena, 2 corações)
             Assert.IsTrue(!SaveManager.HasSaveFile || string.IsNullOrEmpty(SaveStore.Read(SaveManager.FilePath).lastSanctuaryId), "Novo jogo apaga o save");
-            Assert.AreEqual("Fortress_MVP", SceneManager.GetActiveScene().name, "Novo jogo começa na Fortaleza (tela inicial antiga? Rode Tools > Sete Vidas > 12)");
+            Assert.AreEqual("Fortress_MVP", SceneManager.GetActiveScene().name, "Novo jogo começa na Fortaleza (tela inicial antiga? Rode Tools > Sete Vidas > Tela inicial)");
             Assert.AreEqual(7, PlayerHealth.Active.HeartsRecovered);
             Assert.AreEqual(3f, PlayerHealth.Active.transform.position.x, 0.5f, "Começa na entrada da Fortaleza");
         }

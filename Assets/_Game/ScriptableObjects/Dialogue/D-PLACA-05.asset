@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-05
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
@@ -22,4 +22,4 @@ MonoBehaviour:
     Text: "Est\xE1bulo da Ordem. Aviso de Soluki: s\xF3 c\xE3es passam deste port\xE3o."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: "\xD3timo. Eu nem sou de passar por port\xF5es."
+    Text: "\xD3timo. Eu prefiro pular por cima dos port\xF5es."

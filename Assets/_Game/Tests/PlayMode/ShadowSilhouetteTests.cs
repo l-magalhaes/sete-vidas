@@ -24,7 +24,7 @@ namespace SeteVidas.Tests
             LightZone shadow = null;
             foreach (var z in Object.FindObjectsByType<LightZone>(FindObjectsSortMode.None))
                 if (z.Exposure < silhouette.ShadowExposure) { shadow = z; break; }
-            Assert.IsNotNull(shadow, "Sem sombra jogável na Playground. Rode Tools > Sete Vidas > 6");
+            Assert.IsNotNull(shadow, "Sem sombra jogável na Playground. Rode Tools > Sete Vidas > Manutenção > Playground");
 
             var area = shadow.Area;
             player.Teleport(new Vector2(area.center.x, area.center.y)); // cai até o chão dentro da sombra

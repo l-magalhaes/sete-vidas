@@ -34,7 +34,6 @@ namespace SeteVidas.EditorTools
         const string ForestArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/bg_ext_floresta_vale.png";
         const string AetherionMenuArt = "Assets/_Game/Art/Environments/Backgrounds/Ext/Aetherion/bg_ext_aetherion_menu.png";
 
-        [MenuItem("Tools/Sete Vidas/12. Tela inicial (Novo jogo / Continuar)", priority = 48)]
         public static void CreateMainMenu()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

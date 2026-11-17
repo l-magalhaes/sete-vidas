@@ -14,12 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-VULPIS-03a
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "N\xE3o mate a guardi\xE3 se puder evitar. Ela n\xE3o escolheu ficar doente."
+    Expression: triste
+    Text: "Se encontrar Isyathy... tente n\xE3o mat\xE1-la. Ela protegeu esta floresta por s\xE9culos."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: Nem eu. E olha eu aqui.
+    Expression: serio
+    Text: "Ela est\xE1 espalhando a praga. Talvez n\xE3o me d\xEA muita escolha."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: triste
+    Text: "Eu sei. Mas ela n\xE3o escolheu se tornar um monstro."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: serio
+    Text: ... Nem eu escolhi perder minhas vidas.
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "Ent\xE3o talvez voc\xEA entenda a dor dela melhor do que imagina."

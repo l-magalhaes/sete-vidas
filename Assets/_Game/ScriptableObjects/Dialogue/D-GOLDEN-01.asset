@@ -14,24 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01
   Required: 1
-  Revision: 6
+  Revision: 7
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: ferido
-    Text: "Ladr\xE3ozinho! Aguente firme. Seu \xFAltimo cora\xE7\xE3o ainda bate... por pouco."
+    Text: "Ei, ladr\xE3ozinho... N\xE3o feche os olhos. Seu \xFAltimo cora\xE7\xE3o ainda bate."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: "\xD3timo. Agora o c\xE3o de lata vai me dar serm\xE3o antes de eu morrer."
-  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: 
-    Text: "Serm\xE3o nenhum. Quem fez isso? Quem levou o tomo?"
-  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: "O contratante. Uma capivara. Me pagou com uma moeda... e com seis vidas."
-  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
-    Expression: ferido
-    Text: "Gastei minha \xFAltima for\xE7a segurando a praga do livro. Contive pouco; ela j\xE1 se espalha."
+    Text: "Que sorte a minha... Sobrevivi \xE0 maldi\xE7\xE3o pra morrer ouvindo um serm\xE3o de um c\xE3o enlatado."
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: serio
-    Text: "Preciso descansar. Jure me ajudar a recuperar o tomo e destru\xED-lo, e minha for\xE7a \xE9 sua."
+    Text: "Poupe seu f\xF4lego. Quem levou o tomo?"
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ferido
+    Text: Meu contratante... Uma capivara. Maldita seja. Me usou como chave para libertar aquela coisa.
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: ferido
+    Text: "Consegui conter parte da maldi\xE7\xE3o... mas a praga j\xE1 escapou. E n\xE3o vai parar por conta pr\xF3pria."
+  - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
+    Expression: serio
+    Text: "Minha for\xE7a est\xE1 se esgotando. Preciso descansar... Mas me fa\xE7a uma promessa: vamos encontrar aquele tomo e destru\xED-lo."

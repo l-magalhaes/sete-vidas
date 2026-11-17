@@ -19,7 +19,6 @@ namespace SeteVidas.EditorTools
     /// </summary>
     public static class SeteVidasSetup
     {
-        const string Menu = "Tools/Sete Vidas/";
         const string PlaceholderFolder = "Assets/_Game/Art/Environments/Placeholder";
 
         static readonly string[] Folders =
@@ -33,18 +32,32 @@ namespace SeteVidas.EditorTools
             "ScriptableObjects", "Settings/Input", "Tests/EditMode", "Tests/PlayMode", "Editor"
         };
 
-        // ------------------------------------------------------------------ menu
+        // ---------------------------------------------- etapas (menu: SeteVidasMenu)
 
-        [MenuItem(Menu + "Executar Fase 0 completa", priority = 0)]
-        public static void RunAll()
+        /// <summary>
+        /// Playground (cena de teste das mecânicas): faz todos os prefabs que ela usa e recria a cena com o jogador.
+        /// Junta o que eram os antigos menus 4 a 11 (uma fase da Playground cada).
+        /// </summary>
+        public static void BuildPlayground()
         {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             ConfigureProject();
-            CreateScenes();
-            PlayerSetup.CreatePlayerAndCamera(); // Fases 1 e 2 (prefab com escalada e adagas)
-            InstallPackages(); // por último: a instalação recompila o projeto
+            if (!PlayerSetup.CreatePlayerAssets()) return;     // gato: escalada, adagas, furtividade, vida, classes
+            CombatSetup.CreateDummyPrefab();                   // bonecos de treino
+            EnemySetup.CreateSentinelPrefab();                 // Sentinela e furtividade
+            EnemySetup.CreateBushPrefab();
+            ProgressionSetup.CreateHudPrefab();                // corações, classe, diálogo, barra do chefe
+            ProgressionSetup.CreateSanctuaryPrefab();
+            ProgressionSetup.CreateHeartPickupPrefab();
+            ClassSetup.CreateWallPrefab();                     // parede rachada
+            ClassSetup.CreateGoldenPrefab();                   // Golden com as conversas
+            BossSetup.CreatePrefabs();                         // arena, tomo e chefão
+            TrapsSetup.CreatePrefabs();                        // circuito de armadilhas
+            CreateScenes();                                    // recria a Playground e põe o jogador
+            Debug.Log("[Sete Vidas] Playground pronta: armadilhas à esquerda do início; chaminé, bonecos, furtividade, " +
+                      "santuários, parede rachada, Golden e arena do chefão para a direita.");
         }
 
-        [MenuItem(Menu + "1. Configurar projeto (pastas, layers, colisões, input)", priority = 20)]
         public static void ConfigureProject()
         {
             CreateFolders();
@@ -55,7 +68,6 @@ namespace SeteVidas.EditorTools
             Debug.Log("[Sete Vidas] Projeto configurado: pastas, layers 8–14, matriz de colisão e serialização.");
         }
 
-        [MenuItem(Menu + "2. Criar cenas (Playground + Fortress_MVP)", priority = 21)]
         public static void CreateScenes()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -71,7 +83,14 @@ namespace SeteVidas.EditorTools
             Debug.Log("[Sete Vidas] Cenas criadas. Playground aberta.");
         }
 
-        [MenuItem(Menu + "3. Instalar pacotes que faltam (Cinemachine)", priority = 22)]
+        /// <summary>Instala o Cinemachine só se ele ainda não estiver no manifesto (instalar recompila o projeto).</summary>
+        public static void InstallPackagesIfMissing()
+        {
+            var manifest = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Packages", "manifest.json");
+            if (File.Exists(manifest) && File.ReadAllText(manifest).Contains("\"com.unity.cinemachine\"")) return;
+            InstallPackages();
+        }
+
         public static void InstallPackages()
         {
             s_addRequest = Client.AddAndRemove(new[] { "com.unity.cinemachine" }, null);

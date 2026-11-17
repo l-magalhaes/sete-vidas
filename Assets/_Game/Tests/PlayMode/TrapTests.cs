@@ -21,8 +21,8 @@ namespace SeteVidas.Tests
             yield return null;
             _health = PlayerHealth.Active;
             _player = _health.GetComponent<PlayerController>();
-            Assert.IsNotNull(GameObject.Find("TrapCourse"), "Sem circuito de armadilhas. Rode Tools > Sete Vidas > 11");
-            Assert.IsNotNull(_player.GetComponent<SafeGroundTracker>(), "Gato sem SafeGroundTracker. Rode Tools > Sete Vidas > 11");
+            Assert.IsNotNull(GameObject.Find("TrapCourse"), "Sem circuito de armadilhas. Rode Tools > Sete Vidas > Manutenção > Playground");
+            Assert.IsNotNull(_player.GetComponent<SafeGroundTracker>(), "Gato sem SafeGroundTracker. Rode Tools > Sete Vidas > Manutenção > Playground");
         }
 
         [TearDown]

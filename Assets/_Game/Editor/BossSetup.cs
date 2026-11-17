@@ -34,7 +34,6 @@ namespace SeteVidas.EditorTools
         // Trecho J da Playground (tiles em SeteVidasSetup.CreatePlayground)
         public const float ArenaMinX = 180f, ArenaMaxX = 211f, ArenaFloorY = 5f;
 
-        [MenuItem("Tools/Sete Vidas/10. Chefão: Golden, arena e tomo", priority = 46)]
         public static void RunBossSetup()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

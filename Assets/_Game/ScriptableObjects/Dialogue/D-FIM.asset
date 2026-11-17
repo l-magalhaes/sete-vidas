@@ -14,14 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-FIM
   Required: 1
-  Revision: 2
+  Revision: 3
+  IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Voc\xEA deixa a Cidadela sem o tomo. Com uma moeda de ouro e um juramento."
-  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: Uma moeda. Seis vidas. Vou cobrar o troco com juros, capivara.
+    Text: "Voc\xEA deixa a Cidadela sem o tomo e com um juramento."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Fim da demonstra\xE7\xE3o. Obrigado por jogar!"
+    Text: "A estrada para Miarav\xE9u segue para o leste, pela Ponte do \xDAltimo Marco."

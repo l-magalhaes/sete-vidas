@@ -14,18 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-GOLDEN-01b
   Required: 1
-  Revision: 2
+  Revision: 3
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: Destruir o tomo... tanto faz. Eu quero a capivara.
+    Expression: ironico
+    Text: "Salvar o mundo? Destruir um livro? Hah... Voc\xEA realmente escolheu o gato errado."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: "Ningu\xE9m me usa como chave e me paga com troco. Ningu\xE9m."
+    Expression: serio
+    Text: Mas aquela capivara me deve seis vidas. E eu pretendo cobrar cada uma delas.
   - Speaker: {fileID: 11400000, guid: 13fde793bf1ab1249b81bd2fbc88a640, type: 2}
     Expression: serio
-    Text: "Vingan\xE7a \xE9 um come\xE7o ruim. Mas \xE9 um come\xE7o. Jure, e levante."
+    Text: "A vingan\xE7a pode colocar voc\xEA de p\xE9, pequeno ladr\xE3o... Mas n\xE3o deixe que ela escolha seu caminho."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: Eu juro. Pelo tomo, pela moeda... e pelas seis vidas que ele me tirou.
+    Expression: determinado
+    Text: "Ent\xE3o estamos combinados, lata velha. Voc\xEA fica com o tomo... e eu fico com a capivara."

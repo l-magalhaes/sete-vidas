@@ -14,7 +14,6 @@ namespace SeteVidas.EditorTools
     /// </summary>
     public static class ForestFixVisuals
     {
-        [MenuItem("Tools/Sete Vidas/20b. Floresta: juntar desenho e colisão (cena aberta)", priority = 71)]
         public static void Fix()
         {
             var report = new List<string>();

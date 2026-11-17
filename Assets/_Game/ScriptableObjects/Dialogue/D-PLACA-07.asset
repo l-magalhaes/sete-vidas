@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-07
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
@@ -22,4 +22,4 @@ MonoBehaviour:
     Text: "Mural da Marcha Dourada: quarenta dias subindo os sal\xF5es de Aetherion."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "\xC0 frente, Golden, o Dourado. No fim, entre os escombros, um livro que sussurrava."
+    Text: "\xC0 frente, Golden, o Dourado. No fim, entre os escombros, um tomo."

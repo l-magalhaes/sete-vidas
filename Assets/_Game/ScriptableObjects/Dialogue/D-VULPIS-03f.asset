@@ -14,9 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-VULPIS-03f
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Parede de pedra antiga n\xE3o cede a flecha. Precisa de for\xE7a. Daquele cachorro dourado, talvez."
+    Expression: serio
+    Text: "H\xE1 muralhas antigas que nem minhas flechas conseguem atravessar. Pedra daquela \xE9poca n\xE3o cede facilmente."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Ent\xE3o atiro mais flechas?"
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: ironico
+    Text: "Ou usa a cabe\xE7a. Aquele cachorro dourado parece ter for\xE7a suficiente para derrubar uma parede."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "\xD3timo. Finalmente uma utilidade para aquela armadura ambulante."

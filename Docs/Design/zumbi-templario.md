@@ -63,5 +63,5 @@ SenseHeight 2 · LoseTime 3 · AlertTime 0,5 · ContactSize 0,85×1,5 · Contact
 - O zumbi é mais lento que o templário (mas acelera ao perseguir) e vira na parede e na beira.
 
 ## Ferramentas
-- `Tools > Sete Vidas > 13c. Fortaleza: zumbis depois do tomo` põe o `ZombieOutbreak` na Fortaleza aberta sem recriar a fase
-  (o menu 13 também o cria).
+- `Tools > Sete Vidas > Fortaleza: atualizar sem recriar` põe o `ZombieOutbreak` na Fortaleza aberta sem recriar a fase
+  ("Fortaleza: gerar a cena" também o cria).

@@ -8,7 +8,7 @@ namespace SeteVidas.Tests
 {
     /// <summary>
     /// F2 da Floresta Silenciosa (graybox): as regras de runtime que o graybox trouxe. O alcance das 39 salas
-    /// (baús, saídas, softlock) é conferido pelo ForestReach, no menu 21b ou em Tools/LevelPreview/checar_floresta.ps1.
+    /// (baús, saídas, softlock) é conferido pelo ForestReach, em "Floresta: conferir alcance" ou em Tools/LevelPreview/checar_floresta.ps1.
     /// </summary>
     public class ForestGrayboxTests
     {

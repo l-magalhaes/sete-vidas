@@ -122,4 +122,4 @@ Também evite: amarelo-dourado brilhante em coisas que não se pegam (parece moe
 | `... Tools/LevelPreview/gerar_cena.ps1 x y nome` | Prévia de uma tela (cor e cinza) sem abrir o Unity |
 | `... Tools/LevelPreview/gerar_mapa_arte.ps1 [escala]` | A fase inteira com a arte |
 | `... Tools/LevelPreview/gerar_mapa.ps1` | Mapa esquemático (tiles e objetos de jogo) |
-| Unity: *Tools > Sete Vidas > 13. Fase 6: Fortaleza* | Monta a cena a partir dos dados |
+| Unity: *Tools > Sete Vidas > Fortaleza: gerar a cena* | Monta a cena a partir dos dados |

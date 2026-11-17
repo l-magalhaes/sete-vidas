@@ -14,18 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-VULPIS-VINCULO-b
   Required: 1
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Mas voc\xEA pode. Leve isto: meu arco, e uma flecha com corda. Prende em gancho, puxa voc\xEA at\xE9 l\xE1."
-  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "E aprenda a avan\xE7ar como raposa: um salto r\xE1pido, rente, que vence o v\xE3o que o pulo n\xE3o vence."
+    Expression: serio
+    Text: "Voc\xEA, por outro lado, \xE9 pequeno, \xE1gil... e aparentemente dif\xEDcil de matar."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: Arco, corda e um curso de raposa. Quanto eu devo?
+    Text: "Acredite, j\xE1 fui muito melhor nessa \xFAltima parte."
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "Uma floresta viva. E a chave. V\xE1 antes que eu me arrependa."
+    Expression: serio
+    Text: "Ent\xE3o vai precisar de toda ajuda poss\xEDvel. Pegue meu arco. E esta flecha com corda."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "Os antigos deixaram ganchos espalhados pelas ru\xEDnas. Acerte um deles e a corda o puxar\xE1 at\xE9 l\xE1."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "E observe meus movimentos. Um avan\xE7o r\xE1pido, rente ao ch\xE3o. \xC0s vezes, um impulso vale mais que um salto."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Um arco, uma corda e aulas particulares de uma raposa. Qual \xE9 a pegadinha?"
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: Encontre a chave. Alcance o templo. E juntos vamos lidar com Isyathy.
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Impedir uma floresta inteira de morrer. Voc\xEA costuma pedir pouco, hein?"
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: ironico
+    Text: "Costumo escolher melhor meus aliados. Hoje estou sem op\xE7\xF5es."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: Heh... Acho que vamos nos dar bem.
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "N\xE3o me fa\xE7a mudar de ideia, ladr\xE3o."

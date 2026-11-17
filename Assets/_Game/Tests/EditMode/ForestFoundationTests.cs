@@ -399,6 +399,21 @@ namespace SeteVidas.Tests
         }
 
         [Test]
+        public void DryBranch_WakesWhenTouched_EvenWithTheCatHidden()
+        {
+            // pedido do usuário, 15/11/2026: o Galho Seco te detecta se você encostar nele
+            var disguised = SeteVidas.Enemies.ForestEnemyRules.BranchState.Disguised;
+            Assert.AreEqual(SeteVidas.Enemies.ForestEnemyRules.BranchState.Awake,
+                SeteVidas.Enemies.ForestEnemyRules.BranchBumped(disguised), "Encostou: larga o disfarce");
+            float t = 0f;
+            var s = SeteVidas.Enemies.ForestEnemyRules.BranchBumped(disguised);
+            s = SeteVidas.Enemies.ForestEnemyRules.StepBranch(s, ref t, 0.1f, 0.6f, true);
+            Assert.AreEqual(SeteVidas.Enemies.ForestEnemyRules.BranchState.Windup, s, "Colado nele, mesmo na sombra: levanta o braço");
+            foreach (var other in new[] { SeteVidas.Enemies.ForestEnemyRules.BranchState.Windup, SeteVidas.Enemies.ForestEnemyRules.BranchState.Stuck })
+                Assert.AreEqual(other, SeteVidas.Enemies.ForestEnemyRules.BranchBumped(other), "Já acordado: não interrompe o golpe");
+        }
+
+        [Test]
         public void Sprout_ReleasesBats_EveryFewSeconds_UpToTwo()
         {
             Assert.IsTrue(SeteVidas.Enemies.ForestEnemyRules.SproutSpawns(4f, 0, true));

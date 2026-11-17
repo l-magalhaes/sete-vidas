@@ -22,9 +22,9 @@ namespace SeteVidas.Tests
             yield return new WaitForFixedUpdate();
             _sentinel = Object.FindAnyObjectByType<EnemyAI>();
             _player = Object.FindAnyObjectByType<PlayerController>();
-            Assert.IsNotNull(_sentinel, "Sem Sentinela na Playground. Rode Tools > Sete Vidas > 6");
+            Assert.IsNotNull(_sentinel, "Sem Sentinela na Playground. Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.IsNotNull(_player, "Sem jogador na Playground");
-            Assert.IsNotNull(_player.GetComponent<StealthController>(), "Gato sem StealthController. Rode Tools > Sete Vidas > 6");
+            Assert.IsNotNull(_player.GetComponent<StealthController>(), "Gato sem StealthController. Rode Tools > Sete Vidas > Manutenção > Playground");
         }
 
         [TearDown]
@@ -92,11 +92,11 @@ namespace SeteVidas.Tests
         {
             yield return Load();
             var section = GameObject.Find("StealthSection");
-            Assert.IsNotNull(section, "Trecho H ausente. Rode Tools > Sete Vidas > 6");
+            Assert.IsNotNull(section, "Trecho H ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
             var spots = section.GetComponentsInChildren<SeteVidas.World.HidingSpot>();
             bool inPatrol = false;
             foreach (var s in spots) inPatrol |= s.transform.position.x > 133f && s.transform.position.x < 140f;
-            Assert.IsTrue(inPatrol, "Falta o matinho no meio da patrulha (x 133–140). Rode Tools > Sete Vidas > 6");
+            Assert.IsTrue(inPatrol, "Falta o matinho no meio da patrulha (x 133–140). Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.AreEqual(1f, SeteVidas.World.HidingSpot.ConcealmentAt(new Vector2(120f, 0.5f)), "Fora do matinho não esconde");
             Assert.Less(SeteVidas.World.HidingSpot.ConcealmentAt(new Vector2(138f, 0.5f)), 1f, "Dentro do matinho esconde");
         }

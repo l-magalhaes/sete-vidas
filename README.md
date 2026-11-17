@@ -6,7 +6,7 @@ GDD: [`Docs/GDD_Sete_Vidas_v0.1.md`](Docs/GDD_Sete_Vidas_v0.1.md)
 ## Fase 0 — como concluir a configuração
 
 1. Abra o projeto no Unity e espere a compilação terminar (sem erros vermelhos no Console).
-2. Menu **Tools > Sete Vidas > Executar Fase 0 completa**. Isso:
+2. Menu **Tools > Sete Vidas > Manutenção > Configurar projeto + Manutenção > Playground**. Isso:
    - cria as pastas de `Assets/_Game/`;
    - cria as layers de física 8–14 (`Player`, `Enemy`, `Ground`, `Climbable`, `Breakable`, `Hazard`, `Interactable`) e ajusta a matriz de colisão;
    - força serialização em texto e confirma o novo Input System;
@@ -20,7 +20,7 @@ Cada item do menu pode ser executado de novo sem problema. Atenção: o item 2 *
 
 ## Fase 1 — controlador do gato
 
-1. Menu **Tools > Sete Vidas > 4. Criar jogador e câmera (Fase 1)**. Isso cria os sprites placeholder do gato, o asset `ScriptableObjects/Player/PlayerMovementSettings`, o prefab `Prefabs/Player/Player` e a câmera Cinemachine na `Playground`.
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Isso cria os sprites placeholder do gato, o asset `ScriptableObjects/Player/PlayerMovementSettings`, o prefab `Prefabs/Player/Player` e a câmera Cinemachine na `Playground`.
 2. Aperte Play na `Playground`: A/D ou setas para andar, Espaço para pular, S para agachar (o controle também funciona).
 3. Com o jogo rodando, selecione `PlayerMovementSettings` e ajuste os valores no Inspector. **Atenção:** mudanças no asset durante o Play **ficam salvas** (é um ScriptableObject).
 4. Meça o pulo nos degraus e buracos e anote em `Docs/Level/metricas.md`.
@@ -30,65 +30,65 @@ Rodar "2. Criar cenas" de novo recria a `Playground` e recoloca o jogador e a c�
 
 ## Fase 2 — escalada, adagas e ataque pelas costas
 
-1. Menu **Tools > Sete Vidas > 5. Fase 2: escalada, adagas e boneco de treino**. Isso atualiza o prefab do gato (escalada + adagas), cria `ScriptableObjects/Player/WallClimbSettings`, `ScriptableObjects/Combat/RogueDaggers`, o prefab `Prefabs/Enemies/TrainingDummy` e recria a `Playground` com a chaminé (x 92–104) e dois bonecos (x 110 e 115).
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Isso atualiza o prefab do gato (escalada + adagas), cria `ScriptableObjects/Player/WallClimbSettings`, `ScriptableObjects/Combat/RogueDaggers`, o prefab `Prefabs/Enemies/TrainingDummy` e recria a `Playground` com a chaminé (x 92–104) e dois bonecos (x 110 e 115).
 2. Controles novos: **W/S** sobem e descem escalando, **Espaço** salta da parede, **clique esquerdo** ataca (botão oeste no controle).
 3. Specs: `Docs/Design/escalada.md` e `Docs/Design/combate-adagas.md`. Plano de teste: `Docs/QA/fase2-plano-de-teste.md`.
 4. Habilidades de locomoção novas (pulo duplo, dash) entram como componentes `PlayerAbility`, sem editar o `PlayerController`.
 
 ## Fase 3 — Sentinela e furtividade
 
-1. Menu **Tools > Sete Vidas > 6. Fase 3: Sentinela e furtividade**. Isso faz o gato atravessar inimigos (matriz de colisão), adiciona ao gato a visibilidade/ruído (`StealthController`) e o dano no gato (hoje `PlayerHealth`, da Fase 4), cria `ScriptableObjects/Player/StealthSettings`, `ScriptableObjects/Enemies/SentinelSettings`, o prefab `Prefabs/Enemies/Sentinel` e recria a `Playground` com o trecho H (x 122–151).
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Isso faz o gato atravessar inimigos (matriz de colisão), adiciona ao gato a visibilidade/ruído (`StealthController`) e o dano no gato (hoje `PlayerHealth`, da Fase 4), cria `ScriptableObjects/Player/StealthSettings`, `ScriptableObjects/Enemies/SentinelSettings`, o prefab `Prefabs/Enemies/Sentinel` e recria a `Playground` com o trecho H (x 122–151).
 2. Ligue **Gizmos** na Game view para ver o cone de visão, a última posição conhecida e os ruídos. A visibilidade do gato aparece no canto superior esquerdo.
 3. Spec: `Docs/Design/furtividade-sentinela.md`. Plano de teste: `Docs/QA/fase3-plano-de-teste.md`.
 4. O dano no gato é provisório (conta hits, empurra e pisca, sem morte) até a Fase 4.
 
 ## Fase 4 — vida, morte, santuário e save
 
-1. Menu **Tools > Sete Vidas > 7. Fase 4: vida, santuário e save**. Isso cria o HUD de corações (`Prefabs/UI/HUD`), o santuário (`Prefabs/Interactables/Sanctuary`), troca o dano provisório do gato pelo `PlayerHealth` e recria a `Playground` com santuários em x 3 e x 119,5.
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Isso cria o HUD de corações (`Prefabs/UI/HUD`), o santuário (`Prefabs/Interactables/Sanctuary`), troca o dano provisório do gato pelo `PlayerHealth` e recria a `Playground` com santuários em x 3 e x 119,5.
 2. **E** perto de um santuário: descansa, cura e salva. Morrer volta ao último santuário; inimigos reaparecem ao descansar e ao morrer.
 3. O save fica em `Application.persistentDataPath/save_slot1.json`. **Tools > Sete Vidas > Save** apaga o save ou abre a pasta dele. Os testes usam um save temporário.
 4. Spec: `Docs/Design/vida-morte-save.md`. Plano de teste: `Docs/QA/fase4-plano-de-teste.md`.
 
 ## Fase 5 — troca de classe e o Paladino
 
-1. Menu **Tools > Sete Vidas > 8. Fase 5: classes, Paladino e parede rachada**. Cria `ScriptableObjects/Classes/Rogue` e `Paladin`, a marreta `ScriptableObjects/Combat/PaladinHammer`, os prefabs `BreakableWall` e `Golden`, coloca o `ClassManager` no gato, o ícone da classe no HUD e recria a `Playground` com o trecho I (x 154–177).
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Cria `ScriptableObjects/Classes/Rogue` e `Paladin`, a marreta `ScriptableObjects/Combat/PaladinHammer`, os prefabs `BreakableWall` e `Golden`, coloca o `ClassManager` no gato, o ícone da classe no HUD e recria a `Playground` com o trecho I (x 154–177).
 2. Controles: **R/Q** giram entre as classes desbloqueadas, **1–7** escolhem direto, **E** fala com o Golden.
 3. Specs: `Docs/Design/classes-paladino.md`; falas em `Docs/Narrativa/dialogos-mvp.md`. Plano de teste: `Docs/QA/fase5-plano-de-teste.md`.
 4. Nova classe = um `ClassDefinition` + um componente `ClassAbility` (ver a spec).
 
 ## Diálogos
 
-1. Menu **Tools > Sete Vidas > 9. Diálogos (interface com retratos)**. Cria os falantes e as conversas em `ScriptableObjects/Dialogue`, a interface de diálogo no HUD e atualiza o Golden.
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Cria os falantes e as conversas em `ScriptableObjects/Dialogue`, a interface de diálogo no HUD e atualiza o Golden.
 2. E perto de um NPC abre a conversa: retrato de quem fala (gato à esquerda, NPCs à direita), texto letra por letra; E/Espaço/clique avançam. O jogo pausa enquanto a conversa está aberta.
 3. Para mudar um texto, edite o asset da conversa no Inspector. Spec: `Docs/Design/dialogo.md`. Plano de teste: `Docs/QA/dialogo-plano-de-teste.md`.
 
 ## Chefão: Golden, arena e tomo
 
-1. Menu **Tools > Sete Vidas > 10. Chefão: Golden, arena e tomo**. Cria o Golden chefão, os relâmpagos, as grades, o tomo, a barra de vida no HUD e recria a `Playground` com a arena (x 180–210) e a sala do tomo (x 213–218).
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Cria o Golden chefão, os relâmpagos, as grades, o tomo, a barra de vida no HUD e recria a `Playground` com a arena (x 180–210) e a sala do tomo (x 213–218).
 2. **Novo jogo começa com 7 corações.** Pegar o tomo apaga 6; o juramento com o Golden devolve o 2º e dá o Paladino.
 3. Spec: `Docs/Design/chefe-golden.md`. Plano de teste: `Docs/QA/chefe-plano-de-teste.md`. Golpes do chefe para teste: menu ⋮ do `GoldenBoss` no Inspector.
 
 ## Prólogo: o contrato
 
-1. Menu **Tools > Sete Vidas > 14. Prólogo: o contrato**. Cria a cena `Scenes/Prologue/Prologue`: o Novo jogo passa a abrir com a leitura do contrato (E avança, Esc pula) e depois começa a Fortaleza.
+1. Menu **Tools > Sete Vidas > Prólogo (o contrato)**. Cria a cena `Scenes/Prologue/Prologue`: o Novo jogo passa a abrir com a leitura do contrato (E avança, Esc pula) e depois começa a Fortaleza.
 2. Texto em `ScriptableObjects/Dialogue/D-CONTRATO` (roteiro em `Docs/Narrativa/dialogos-mvp.md`).
 
 ## Fase 6 — Fortaleza (o jogo)
 
-1. Menu **Tools > Sete Vidas > 13. Fase 6: Fortaleza (gera a cena do jogo)**. Gera `Scenes/World/Fortress_MVP` do zero: entrada, pátio, muralha, corredor patrulhado, salão, armadilhas, câmara do Golden e a saída atrás da parede rachada. **Novo jogo começa aqui.**
+1. Menu **Tools > Sete Vidas > Fortaleza: gerar a cena**. Gera `Scenes/World/Fortress_MVP` do zero: entrada, pátio, muralha, corredor patrulhado, salão, armadilhas, câmara do Golden e a saída atrás da parede rachada. **Novo jogo começa aqui.**
 2. A Playground é só a **área de testes** (botão no menu), com save separado.
 3. Mapa, fichas e checagem anti-softlock: `Docs/Level/fortaleza-mvp.md`. Plano de teste e playtest: `Docs/QA/fase6-plano-de-teste.md`.
-4. O gerador recria a cena do zero: depois de começar a editar a Fortaleza à mão, não rode o menu 13 de novo.
+4. O gerador recria a cena do zero: depois de começar a editar a Fortaleza à mão, não rode o "Fortaleza: gerar a cena" de novo.
 
 ## Tela inicial
 
-1. Menu **Tools > Sete Vidas > 12. Tela inicial (Novo jogo / Continuar)**. Cria `Scenes/MainMenu/MainMenu` e a coloca como primeira cena da build.
+1. Menu **Tools > Sete Vidas > Tela inicial**. Cria `Scenes/MainMenu/MainMenu` e a coloca como primeira cena da build.
 2. No editor, o Play começa pela tela inicial mesmo com outra cena aberta. Para testar uma cena direto, desmarque **Tools > Sete Vidas > Play começa na tela inicial**.
 3. **Continuar** leva ao último santuário salvo; **Novo jogo** pede confirmação antes de apagar o save. Spec: `Docs/Design/tela-inicial.md`. Plano de teste: `Docs/QA/tela-inicial-plano-de-teste.md`.
 
 ## Armadilhas
 
-1. Menu **Tools > Sete Vidas > 11. Armadilhas (circuito à esquerda do início)**. Cria os prefabs em `Prefabs/Traps`, dá ao gato o "último chão seguro" e recria a `Playground` com o circuito K: do início, ande para a **esquerda**.
+1. Menu **Tools > Sete Vidas > Manutenção > Playground**. Cria os prefabs em `Prefabs/Traps`, dá ao gato o "último chão seguro" e recria a `Playground` com o circuito K: do início, ande para a **esquerda**.
 2. Espinhos tiram 1 hit e devolvem o gato ao último chão seguro. Fio de alarme e placa de pressão não disparam com o gato agachado. Disparar faz barulho (Sentinelas ouvem).
 3. Spec: `Docs/Design/armadilhas.md`. Plano de teste: `Docs/QA/armadilhas-plano-de-teste.md`.
 

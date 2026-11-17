@@ -1208,7 +1208,7 @@ namespace SeteVidas.UI
         int _mapZoom = 2;
         const int MaxZoom = 3;
 
-        /// <summary>O mapa do mundo foi gerado (menu 22). Sem ele, a aba Mapa usa as salas da região.</summary>
+        /// <summary>O mapa do mundo foi gerado (menu "Mapa do mundo e Diário"). Sem ele, a aba Mapa usa as salas da região.</summary>
         static bool WorldMapMode => WorldMapData.Load() != null;
 
         /// <summary>Zoom atual do mapa do mundo, em pixels por tile (testes).</summary>

@@ -58,7 +58,7 @@ namespace SeteVidas.Audio
     /// O diretor de música da fase: escolhe a faixa pelo que está acontecendo (estado das Sentinelas, gato escondido,
     /// chefe, cena do tomo, santuário, alto da montanha) e troca com crossfade entre duas fontes. A fase, a montanha
     /// e a furtividade voltam de onde pararam; combate, chefe e cena começam do início. No inventário a música fica
-    /// abafada. Volume em PlayerPrefs ("volume_musica"). Montado pelo menu 13 (FortressSetup).
+    /// abafada. Volume em PlayerPrefs ("volume_musica"). Montado por "Fortaleza: gerar a cena" (FortressSetup).
     /// </summary>
     public class MusicDirector : MonoBehaviour
     {
@@ -300,7 +300,7 @@ namespace SeteVidas.Audio
             if (src.time < t.LoopEnd) src.time = t.LoopEnd;
         }
 
-        /// <summary>Monta as faixas (o menu 13 chama no editor).</summary>
+        /// <summary>Monta as faixas (o FortressSetup chama no editor).</summary>
         public void Configure(Track[] list, Rect mountain)
         {
             tracks = list;

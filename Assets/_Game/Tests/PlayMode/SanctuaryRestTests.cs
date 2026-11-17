@@ -23,9 +23,9 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Playground", LoadSceneMode.Single);
             yield return null;
             var health = PlayerHealth.Active;
-            Assert.IsNotNull(health, "Gato sem PlayerHealth. Rode Tools > Sete Vidas > 7");
+            Assert.IsNotNull(health, "Gato sem PlayerHealth. Rode Tools > Sete Vidas > Manutenção > Playground");
             var sanctuary = Sanctuary.Find(SanctuaryB);
-            Assert.IsNotNull(sanctuary, "Santuário de x 119,5 ausente. Rode Tools > Sete Vidas > 7");
+            Assert.IsNotNull(sanctuary, "Santuário de x 119,5 ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
             var input = health.GetComponent<PlayerInputReader>();
             var visual = health.GetComponentInChildren<PlayerVisual>();
 

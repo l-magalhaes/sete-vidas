@@ -14,15 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-VULPIS-03e
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "As ru\xEDnas ficam a leste. Ganchos velhos nas pedras: a corda segura."
+    Expression: serio
+    Text: "As ru\xEDnas ficam a leste. Procure os ganchos enferrujados nas pedras. Sua corda deve alcan\xE7\xE1-los."
   - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
     Expression: ironico
-    Text: "E se n\xE3o segurar?"
+    Text: "Deve? N\xE3o gosto muito dessa palavra quando estou pendurado num precip\xEDcio."
   - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
-    Expression: 
-    Text: "A\xED voc\xEA cai. Gatos caem bem, n\xE3o?"
+    Expression: ironico
+    Text: "Achei que gatos sempre ca\xEDssem de p\xE9."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Raposas s\xE3o muito engra\xE7adinhas."

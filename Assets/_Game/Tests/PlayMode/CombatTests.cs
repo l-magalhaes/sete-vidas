@@ -85,13 +85,13 @@ namespace SeteVidas.Tests
 
             var climbable = GameObject.Find("Grid/Climbable")?.GetComponent<Tilemap>();
             Assert.IsNotNull(climbable, "Tilemap Grid/Climbable não encontrado");
-            Assert.IsNotNull(climbable.GetTile(new Vector3Int(92, 0, 0)), "Parede esquerda da chaminé (x 92) ausente. Rode Tools > Sete Vidas > 5");
+            Assert.IsNotNull(climbable.GetTile(new Vector3Int(92, 0, 0)), "Parede esquerda da chaminé (x 92) ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.IsNotNull(climbable.GetTile(new Vector3Int(97, 5, 0)), "Parede direita da chaminé (x 97) ausente");
 
             var group = GameObject.Find("TrainingDummies");
-            Assert.IsNotNull(group, "Grupo TrainingDummies ausente. Rode Tools > Sete Vidas > 5");
+            Assert.IsNotNull(group, "Grupo TrainingDummies ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
             var dummies = group.GetComponentsInChildren<TrainingDummy>();
-            Assert.AreEqual(2, dummies.Length, "A Playground deve ter 2 bonecos de treino. Rode Tools > Sete Vidas > 5");
+            Assert.AreEqual(2, dummies.Length, "A Playground deve ter 2 bonecos de treino. Rode Tools > Sete Vidas > Manutenção > Playground");
             Assert.AreNotEqual(dummies[0].FacingDirection, dummies[1].FacingDirection, "Um boneco para cada lado");
             foreach (var d in dummies)
                 Assert.AreEqual(LayerMask.NameToLayer("Enemy"), d.gameObject.layer, "Boneco precisa estar na layer Enemy");

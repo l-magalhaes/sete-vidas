@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-01
   Required: 0
-  Revision: 1
+  Revision: 2
+  IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "P\xE1tio dos Escudeiros. Aqui o filhote vira templ\xE1rio, e o templ\xE1rio, paladino."
+    Text: "P\xE1tio dos Escudeiros. Aqui o filhote ir\xE1 virar templ\xE1rio."
   - Speaker: {fileID: 0}
     Expression: 
-    Text: "Quem n\xE3o aguenta o boneco de palha n\xE3o aguenta a praga."
+    Text: Enfrente o boneco de palha.

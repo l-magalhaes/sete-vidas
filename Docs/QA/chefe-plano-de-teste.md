@@ -3,7 +3,7 @@
 > **Nome (10/11/2026):** o paladino "Golden" agora se chama **Koda, o Dourado** no jogo. "Golden" continua só nos nomes do código.
 
 Cena: `Scenes/Dev/Playground` · Game view em 1920×1080.
-Antes: rode **Tools > Sete Vidas > 10. Chefão** e **Tools > Sete Vidas > Save > Apagar save** (começa com 7 corações).
+Antes: rode **Tools > Sete Vidas > Manutenção > Playground** e **Tools > Sete Vidas > Save > Apagar save** (começa com 7 corações).
 Caminho: Position X do `Player` = 153 → agarre a borda da laje em x 156 → siga pela laje para a direita (santuário em x 172) → arena em x 180.
 Depuração: selecione o Golden durante a luta e use o menu ⋮ do `GoldenBoss` para forçar salto, cura, relâmpagos ou marretada.
 

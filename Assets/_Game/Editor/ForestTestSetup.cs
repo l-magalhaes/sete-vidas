@@ -32,7 +32,6 @@ namespace SeteVidas.EditorTools
         public const string SceneCabin = "Forest_Test_Cabin"; // interior (residência): a cabana da Vulpis
         const string ArtFolder = "Assets/_Game/Art/Environments/Forest/Placeholder";
 
-        [MenuItem("Tools/Sete Vidas/20. Floresta F1: cenas de teste (A e B)", priority = 70)]
         public static void Build()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

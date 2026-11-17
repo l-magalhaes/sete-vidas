@@ -1,6 +1,6 @@
 # Plano de teste — Floresta F2 (graybox da floresta inteira)
 
-Antes: rode **Tools > Sete Vidas > 21. Floresta F2: graybox (7 cenas)**. Ele confere o alcance (console: "alcance conferido") e gera `Forest_Road` e `Forest_A_Roots` … `Forest_F_Heart` em `Scenes/World/Forest/`. A `Forest_A_Roots` abre sozinha.
+Antes: rode **Tools > Sete Vidas > Floresta: gerar as cenas**. Ele confere o alcance (console: "alcance conferido") e gera `Forest_Road` e `Forest_A_Roots` … `Forest_F_Heart` em `Scenes/World/Forest/`. A `Forest_A_Roots` abre sozinha.
 Para dar Play direto numa delas, desmarque **Tools > Sete Vidas > Play começa na tela inicial**. Assim o graybox usa o **save da área de testes** (`save_playground.json`), com Paladino e 2 corações, e nunca mexe no save do jogo.
 Blocos e arte provisória. Inimigos são placeholders: **Sentinela** no lugar do Sentinela Infectado e da Serpente; Plantas nos "buracos de serpente". O que está em teste é **escala, caminho e softlock**.
 Mudou algo? Ajuste em `Assets/_Game/Editor/ForestLayout.cs` (a cena é recriada) e rode `Tools/LevelPreview/checar_floresta.ps1` antes de abrir o Unity.
@@ -8,7 +8,7 @@ Mudou algo? Ajuste em `Assets/_Game/Editor/ForestLayout.cs` (a cena é recriada)
 ## Testes automáticos
 
 - Test Runner > EditMode > `ForestGrayboxTests` (save do graybox, lado fechado do atalho) e `ForestFoundationTests`.
-- Alcance: **Tools > Sete Vidas > 21b. Floresta F2: conferir alcance** (ou o `.ps1`): os 12 baús, todas as saídas e atalhos, sem softlock, também só pela rota principal de cada cena. É física aproximada: pulos "no limite" passam lá e podem ser difíceis aqui.
+- Alcance: **Tools > Sete Vidas > Floresta: conferir alcance** (ou o `.ps1`): os 12 baús, todas as saídas e atalhos, sem softlock, também só pela rota principal de cada cena. É física aproximada: pulos "no limite" passam lá e podem ser difíceis aqui.
 
 ## Roteiro manual
 

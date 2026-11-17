@@ -16,7 +16,7 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Playground", LoadSceneMode.Single);
 
             var player = Object.FindAnyObjectByType<PlayerController>();
-            Assert.IsNotNull(player, "Sem jogador na Playground. Rode Tools > Sete Vidas > 4. Criar jogador e câmera");
+            Assert.IsNotNull(player, "Sem jogador na Playground. Rode Tools > Sete Vidas > Manutenção > Playground");
             Vector3 start = player.transform.position;
 
             yield return new WaitForSeconds(1f);

@@ -24,9 +24,9 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Playground", LoadSceneMode.Single);
             yield return null; // Start do PlayerHealth
             _health = PlayerHealth.Active;
-            Assert.IsNotNull(_health, "Gato sem PlayerHealth. Rode Tools > Sete Vidas > 7");
+            Assert.IsNotNull(_health, "Gato sem PlayerHealth. Rode Tools > Sete Vidas > Manutenção > Playground");
             _player = _health.GetComponent<PlayerController>();
-            Assert.IsNotNull(Sanctuary.Find(SanctuaryB), "Santuário de x 119,5 ausente. Rode Tools > Sete Vidas > 7");
+            Assert.IsNotNull(Sanctuary.Find(SanctuaryB), "Santuário de x 119,5 ausente. Rode Tools > Sete Vidas > Manutenção > Playground");
         }
 
         [TearDown]
@@ -107,7 +107,7 @@ namespace SeteVidas.Tests
             var sentinel = Object.FindAnyObjectByType<EnemyAI>();
             Assert.IsNull(sentinel.TryDropHeart(0.99f), "Fora da chance (15%): nada cai");
             var drop = sentinel.TryDropHeart(0f);
-            Assert.IsNotNull(drop, "Dentro da chance: cai meio coração. Rode Tools > Sete Vidas > 7 se o prefab da Sentinela for antigo");
+            Assert.IsNotNull(drop, "Dentro da chance: cai meio coração. Rode Tools > Sete Vidas > Manutenção > Playground se o prefab da Sentinela for antigo");
             Assert.IsNotNull(drop.GetComponent<HeartPickup>());
             Object.Destroy(drop);
         }

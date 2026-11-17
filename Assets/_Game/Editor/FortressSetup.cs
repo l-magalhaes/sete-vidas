@@ -25,7 +25,6 @@ namespace SeteVidas.EditorTools
     {
         const string CoinPrefabPath = "Assets/_Game/Prefabs/Interactables/Coin.prefab";
 
-        [MenuItem("Tools/Sete Vidas/13. Fase 6: Fortaleza (gera a cena do jogo)", priority = 49)]
         public static void Build()
         {
             if (File.Exists(Path.GetFullPath(GameConstants.FortressScenePath)) &&
@@ -58,13 +57,13 @@ namespace SeteVidas.EditorTools
                 if (EditorUtility.DisplayDialog("Sete Vidas: o mapa da Fortaleza mudou",
                         $"O layout da Fortaleza está na versão {FortressLayout.Version}, mas a cena foi gerada com uma versão anterior.\n\n" +
                         "Gerar a cena Fortress_MVP agora? (Edições feitas à mão nela se perdem.)\n\n" +
-                        "Dá para gerar depois em Tools > Sete Vidas > 13. Fase 6: Fortaleza.",
+                        "Dá para gerar depois em Tools > Sete Vidas > Fortaleza: gerar a cena.",
                         "Gerar agora", "Depois"))
                     BuildNow();
             };
         }
 
-        static void BuildNow()
+        internal static void BuildNow()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             EditorPrefs.SetInt(BuiltVersionKey, FortressLayout.Version);
@@ -158,7 +157,7 @@ namespace SeteVidas.EditorTools
 
         // --------------------------------------------------------- conversas
 
-        static Dictionary<string, DialogueDefinition> CreateDialogues()
+        internal static Dictionary<string, DialogueDefinition> CreateDialogues()
         {
             var (cat, _) = DialogueSetup.Speakers();
             var d = CitadelDecorSetup.CreateLore(); // placas de lore (D-PLACA-xx)
@@ -166,12 +165,11 @@ namespace SeteVidas.EditorTools
                 (null, "", "Do alto da montanha, a Cidadela do Sol Eterno brilha no pôr do sol."),
                 (cat, "ironico", "Muralhas, sentinelas, armadilhas. O contratante não exagerou."),
                 (cat, "", "Caminho mais curto até lá? Para baixo."));
-            d["D-FORT-02"] = DialogueSetup.Conversation("D-FORT-02", true, 1,
+            d["D-FORT-02"] = DialogueSetup.Conversation("D-FORT-02", true, 2,
                 (cat, "ironico", "Água. Claro que tinha que ser água."),
-                (cat, "", "Caí de pé, pelo menos. Como sempre."));
-            d["D-FIM"] = DialogueSetup.Conversation("D-FIM", true, 2,
-                (null, "", "Você deixa a Cidadela sem o tomo. Com uma moeda de ouro e um juramento."),
-                (cat, "", "Uma moeda. Seis vidas. Vou cobrar o troco com juros, capivara."),
+                (cat, "", "Odeio água."));
+            d["D-FIM"] = DialogueSetup.Conversation("D-FIM", true, 3,
+                (null, "", "Você deixa a Cidadela sem o tomo e com um juramento."),
                 (null, "", "A estrada para Miaravéu segue para o leste, pela Ponte do Último Marco."));
             AssetDatabase.SaveAssets();
             return d;
@@ -729,7 +727,6 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>Põe (ou refaz) os zumbis na Fortaleza aberta, sem recriar a fase: os ajustes feitos à mão continuam.</summary>
-        [MenuItem("Tools/Sete Vidas/13c. Fortaleza: zumbis depois do tomo", priority = 51)]
         public static void RebuildZombiesOnly()
         {
             var scene = SceneManager.GetActiveScene();
@@ -751,7 +748,6 @@ namespace SeteVidas.EditorTools
         /// continuam): a luz no lugar do escuro da saída, a passagem para a Estrada de Soluki (Forest_Road, R1) depois
         /// do D-FIM, o texto novo do D-FIM e a chegada de quem volta da estrada.
         /// </summary>
-        [MenuItem("Tools/Sete Vidas/13d. Fortaleza: saída para a Estrada (sem recriar a fase)", priority = 52)]
         public static void PatchExitToRoad()
         {
             var scene = SceneManager.GetActiveScene();
@@ -787,14 +783,13 @@ namespace SeteVidas.EditorTools
             EditorPrefs.SetInt(BuiltVersionKey, FortressLayout.Version); // não pergunta de novo por esta versão
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log("[Sete Vidas] Fortaleza: o fim agora leva à Estrada de Soluki (Forest_Road). Gere as cenas da Floresta no menu 21 se ainda não gerou.");
+            Debug.Log("[Sete Vidas] Fortaleza: o fim agora leva à Estrada de Soluki (Forest_Road). Gere as cenas da Floresta (Tools > Sete Vidas > Floresta: gerar as cenas) se ainda não gerou.");
         }
 
         /// <summary>
         /// Melhorias 14/11/2026: põe os atiradores do meio da fase (alojamento e salão) no lugar e no lado novos do
         /// FortressLayout, sem recriar a fase (os ajustes feitos à mão continuam). Também atualiza a percepção da besta.
         /// </summary>
-        [MenuItem("Tools/Sete Vidas/13e. Fortaleza: atiradores do meio (sem recriar a fase)", priority = 53)]
         public static void PatchMiddleArchers()
         {
             var scene = SceneManager.GetActiveScene();
@@ -855,10 +850,33 @@ namespace SeteVidas.EditorTools
         }
 
         /// <summary>
+        /// Atualiza a Fortaleza sem recriar a fase (os ajustes feitos à mão continuam): fundos, zumbis depois do tomo,
+        /// saída para a Estrada e atiradores do meio. Cada passo refaz só a sua parte, então dá para rodar sempre.
+        /// Abre a cena da Fortaleza se ela não estiver aberta.
+        /// </summary>
+        public static void PatchAll()
+        {
+            if (SceneManager.GetActiveScene().path != GameConstants.FortressScenePath)
+            {
+                if (!File.Exists(Path.GetFullPath(GameConstants.FortressScenePath)))
+                {
+                    EditorUtility.DisplayDialog("Sete Vidas", "A Fortaleza ainda não foi gerada. Use \"Fortaleza: gerar a cena\" antes.", "Ok");
+                    return;
+                }
+                if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+                EditorSceneManager.OpenScene(GameConstants.FortressScenePath, OpenSceneMode.Single);
+            }
+            RebuildBackgroundsOnly();
+            RebuildZombiesOnly();
+            PatchExitToRoad();
+            PatchMiddleArchers();
+            Debug.Log("[Sete Vidas] Fortaleza atualizada sem recriar a fase (fundos, zumbis, saída e atiradores).");
+        }
+
+        /// <summary>
         /// Refaz só o céu e as montanhas (os conjuntos de fundo) na Fortaleza aberta, sem recriar a fase: os ajustes
         /// feitos à mão na cena continuam. Use depois de mudar o FortressBackgrounds ou os desenhos de fundo.
         /// </summary>
-        [MenuItem("Tools/Sete Vidas/13b. Fortaleza: atualizar só os fundos", priority = 50)]
         public static void RebuildBackgroundsOnly()
         {
             var scene = SceneManager.GetActiveScene();

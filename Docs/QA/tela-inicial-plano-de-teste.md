@@ -1,6 +1,6 @@
 # Plano de teste — Tela inicial
 
-Antes: rode **Tools > Sete Vidas > 12. Tela inicial**. Abra `Scenes/MainMenu/MainMenu` e aperte Play.
+Antes: rode **Tools > Sete Vidas > Tela inicial**. Abra `Scenes/MainMenu/MainMenu` e aperte Play.
 
 | ID | Pré-condição | Passos | Resultado esperado | Status |
 |---|---|---|---|---|

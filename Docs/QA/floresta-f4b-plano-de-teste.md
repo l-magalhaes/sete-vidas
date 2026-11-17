@@ -1,7 +1,7 @@
 # Plano de teste — Floresta F4b: Vulpis, Caçador e a Chave do Templo (14/11/2026)
 
 Antes:
-1. Rode **Tools > Sete Vidas > 21. Floresta: graybox (todas as cenas)**. Ele reconstrói o gato (dash, gancho, arco) e as cenas; o `ForestLayout` está na **versão 12** (D5, D6 e o Portão do Templo). Na primeira vez gera o retrato e o desenho provisórios da Vulpis, o portão e a classe Caçador (`ScriptableObjects/Classes/Hunter.asset`, `Combat/HunterBow.asset`).
+1. Rode **Tools > Sete Vidas > Floresta: gerar as cenas**. Ele reconstrói o gato (dash, gancho, arco) e as cenas; o `ForestLayout` está na **versão 12** (D5, D6 e o Portão do Templo). Na primeira vez gera o retrato e o desenho provisórios da Vulpis, o portão e a classe Caçador (`ScriptableObjects/Classes/Hunter.asset`, `Combat/HunterBow.asset`).
 2. Rode o **22** (mapa do mundo): há duas salas novas.
 3. Comece do **S-F3 (Refúgio)** com a viagem rápida, ou pela cena `Forest_D_Refuge`.
 

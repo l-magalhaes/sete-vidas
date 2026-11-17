@@ -128,3 +128,13 @@ MonoBehaviour:
     chapter: 2
     order: 394.5
     text: {fileID: 11400000, guid: f7a6d1ea0b429384f823d065f500f22e, type: 2}
+  - key: P-PRIM-10
+    title: Caixa do mercado
+    chapter: 2
+    order: 364
+    text: {fileID: 11400000, guid: 01d2cb22b7d46e3419e0bd56603a9474, type: 2}
+  - key: P-PRIM-09
+    title: Prateleira do mercado
+    chapter: 2
+    order: 344.5
+    text: {fileID: 11400000, guid: cf3760f620e6e384ba6fc133157c93ff, type: 2}

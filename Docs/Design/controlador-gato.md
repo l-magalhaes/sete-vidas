@@ -70,7 +70,7 @@ Com os valores iniciais: gravidade = 2 × 4 / 0,38² ≈ 55,4 tiles/s², velocid
 | `PlayerVisual` | Sprite placeholder por estado (parado, correndo, subindo, caindo, agachado) e virar para o lado do movimento |
 | Câmera | `CinemachineCamera` + `CinemachinePositionComposer` (dead zone e antecipação) + `CinemachinePixelPerfect` |
 
-O prefab, o asset de valores e a câmera são criados por **Tools > Sete Vidas > 4. Criar jogador e câmera (Fase 1)**.
+O prefab, o asset de valores e a câmera são criados por **Tools > Sete Vidas > Manutenção > Playground**.
 
 ## Critérios de aceite
 - **Dado** o gato parado no chão, **quando** segurar D por 0,2 s, **então** ele está a `MoveSpeed` e virado para a direita.

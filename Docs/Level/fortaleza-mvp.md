@@ -1,11 +1,11 @@
 # Fortaleza — a Cidadela do Sol Eterno (MVP, versão vertical)
 
-**Cena:** `Scenes/World/Fortress_MVP`, gerada por **Tools > Sete Vidas > 13. Fase 6: Fortaleza**. É onde o **Novo jogo** começa, logo depois do contrato.
+**Cena:** `Scenes/World/Fortress_MVP`, gerada por **Tools > Sete Vidas > Fortaleza: gerar a cena**. É onde o **Novo jogo** começa, logo depois do contrato.
 
 **Fonte do mapa:** `Assets/_Game/Editor/FortressLayout.cs` reúne todos os tiles e objetos jogáveis como dados.
 - **Enfeites** (estátuas, estandartes, vitrais, tochas, escudos...) ficam à parte, em `Assets/_Game/Editor/Scenery/FortressDressing.cs`, e apontam para ids da biblioteca de cenário (`Docs/Arte/biblioteca-cenario.md`). Na prévia, aparecem como losangos bege.
 - **Prévia sem abrir o Unity:** rode `Tools/LevelPreview/gerar_mapa.ps1`. Ela grava `SeteVidasDocs/Referencias/fortaleza_mapa.png`.
-- **Para mudar o mapa:** edite o layout, gere a prévia, confira, e só então rode o menu 13.
+- **Para mudar o mapa:** edite o layout, gere a prévia, confira, e só então rode o "Fortaleza: gerar a cena".
 - **Atenção:** o gerador recria a cena do zero.
 
 **Unidades:**

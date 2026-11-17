@@ -1,7 +1,7 @@
 # Plano de teste — Floresta F4: bestiário infectado (14/11/2026)
 
 Antes:
-1. Rode **Tools > Sete Vidas > 21. Floresta F2: graybox (7 cenas)**. O `ForestLayout` subiu para a **versão 11**: as cenas são recriadas e os inimigos marcados ganham o componente `Infected`. Na primeira vez o menu gera os sprites `*_infectado.png` em `Art/Environments/Forest/Placeholder` (troca de paleta: roxo e verde-ácido).
+1. Rode **Tools > Sete Vidas > Floresta: gerar as cenas**. O `ForestLayout` subiu para a **versão 11**: as cenas são recriadas e os inimigos marcados ganham o componente `Infected`. Na primeira vez o menu gera os sprites `*_infectado.png` em `Art/Environments/Forest/Placeholder` (troca de paleta: roxo e verde-ácido).
 2. Não muda terreno: não precisa rodar o 22 (mapa do mundo) de novo.
 
 Como reconhecer um infectado: tons roxos, olhos e rachaduras verde-ácido, um pontinho verde subindo de vez em quando. Na cena, o nome do objeto termina em "(infectado)".
@@ -51,4 +51,4 @@ Cactos: **todos normais** na Floresta (o cacto infectado está pronto no código
 
 - **Sons**: os infectados usam os mesmos sons provisórios (os do zumbi), como os normais; os espinhos do cacto usam o "virote_crava". Sons próprios ficam para a F10/sound design.
 - **Arte**: a troca de paleta é automática (placeholder). O gomo da Serpente é feito na hora e só ganha a tinta roxa.
-- **Distribuição** é [PROPOSTA]: ajuste a parte de cada trecho em `ForestLayout.InfectionShare` e rode o 21 de novo.
+- **Distribuição** é [PROPOSTA]: ajuste a parte de cada trecho em `ForestLayout.InfectionShare` e rode "Floresta: gerar as cenas" de novo.

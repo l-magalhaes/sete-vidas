@@ -26,7 +26,7 @@ namespace SeteVidas.Tests
             yield return SceneManager.LoadSceneAsync("Fortress_MVP", LoadSceneMode.Single);
             yield return null;
             Assert.IsNotNull(Object.FindAnyObjectByType<ZombieOutbreak>(),
-                "Sem o ZombieOutbreak. Rode Tools > Sete Vidas > 13c (ou o 13)");
+                "Sem o ZombieOutbreak. Rode Tools > Sete Vidas > Fortaleza: atualizar sem recriar (ou gerar a cena)");
         }
 
         [UnityTest]

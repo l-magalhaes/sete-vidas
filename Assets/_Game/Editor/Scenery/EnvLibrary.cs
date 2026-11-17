@@ -17,11 +17,10 @@ namespace SeteVidas.EditorTools
     {
         public const string ArtRoot = "Assets/_Game/Art/Environments";
         public const string DefinitionsFolder = "Assets/_Game/ScriptableObjects/Environment";
-        const string Menu = "Tools/Sete Vidas/Cenário/";
+        const string Menu = "Tools/Sete Vidas/";
 
         static Dictionary<string, EnvAssetDefinition> s_cache;
 
-        [MenuItem(Menu + "Importar biblioteca de cenário", priority = 40)]
         public static void ImportMenu()
         {
             var report = ImportAll();

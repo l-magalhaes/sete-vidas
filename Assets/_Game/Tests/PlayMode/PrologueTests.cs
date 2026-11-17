@@ -22,7 +22,7 @@ namespace SeteVidas.Tests
         {
             yield return SceneManager.LoadSceneAsync("Prologue", LoadSceneMode.Single);
             yield return null;
-            Assert.IsNotNull(Object.FindAnyObjectByType<PrologueController>(), "Sem prólogo. Rode Tools > Sete Vidas > 14");
+            Assert.IsNotNull(Object.FindAnyObjectByType<PrologueController>(), "Sem prólogo. Rode Tools > Sete Vidas > Prólogo");
         }
 
         [UnityTest]

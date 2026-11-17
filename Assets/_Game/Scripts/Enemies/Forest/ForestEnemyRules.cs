@@ -67,6 +67,12 @@ namespace SeteVidas.Enemies
             }
         }
 
+        /// <summary>
+        /// O gato encostou no tronco (15/11/2026): disfarçado, acorda na hora, mesmo com o gato escondido na sombra.
+        /// Acordado, levantando o braço ou preso no chão, continua o que estava fazendo.
+        /// </summary>
+        public static BranchState BranchBumped(BranchState s) => s == BranchState.Disguised ? BranchState.Awake : s;
+
         /// <summary>Só aceita pogo com o braço preso no chão; e as costas levam o dobro.</summary>
         public static bool BranchVulnerable(BranchState s) => s == BranchState.Stuck;
 

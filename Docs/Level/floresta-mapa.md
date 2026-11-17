@@ -33,7 +33,7 @@ A subida total caiu de ~670 para ~290 tiles. A estrada e o mapa da floresta são
 | `Forest_Test_B` | **B1 Pé do Bosque** | o S-T2 virou **S-F1B**; a "porta interna" (teleporte do chão ao patamar) virou um **cipó que se solta do patamar** |
 | `Forest_Test_C` | **D3 Refúgio** | o S-T3 virou **S-F3**; a cabana agora é a cena `Forest_D_Cabin`; a saída por cima leva à D4 |
 
-As cenas `Forest_Test_*` continuam existindo (menu 20) como bancada de testes.
+As cenas `Forest_Test_*` continuam existindo (Manutenção > Floresta F1: cenas de teste antigas) como bancada de testes.
 
 **Atalhos de verdade (estilo Dark Souls).** Nada de porta que teletransporta. Cada atalho abre do lado mais adiantado e grava a flag no save; os dois lados olham a mesma flag:
 
@@ -271,7 +271,7 @@ Regras: nunca numa sala com combate; uma vez por visita; respiração muito baix
 |---|---|---|---|
 | C1 Entrada do Vale | 60 × 25 H | Escuro, folhagem alta em 2 alturas de terreno. 2 Serpentes nos buracos | → C2 |
 | C2 Raízes Caídas | 30 × 51 V | **Duas colunas** de subida: galhos (Galho Seco disfarçado) ou sombra na parede (Serpentes) | ▲ C3 |
-| C3 Prédio Soterrado | 45 × 51 V | **Prédio dos Primatas enterrado de pé**: cada andar é uma plataforma; janelas, escadas quebradas, raízes. Subir andar por andar. 2 Sentinelas Infectados + 1 Galho Seco infectado; dá para passar pelas janelas sem lutar. P-PRIM-03. **W06** num escritório trancado (furtividade) | ▲ C4 · → C7 |
+| C3 Prédio Soterrado | 45 × 51 V | **Prédio dos Primatas enterrado de pé**: cada andar é uma plataforma; raízes. **Térreo: o Mercado dos Primatas** tomado pelas vinhas (gôndolas, caixa P-PRIM-10, prateleira de latas P-PRIM-09, letreiro, carrinho); no fundo, o baú **W21** com o coração fantasma e o tutorial dele (15/11/2026). Subir andar por andar. 2 Sentinelas Infectados + 1 Galho Seco infectado; dá para passar pelas janelas sem lutar. **W06** num escritório trancado (furtividade) | ▲ C4 · → C7 |
 | C4 Caverna do Lago | 60 × 25 H | (pequena descida) Lago escuro com cogumelos e folhas largas sobre a água. Serpentes infectadas. **W07** numa ilha (rota furtiva). Olhos no lago | → C5 |
 | C5 Escombros da Estrada Negra | 75 × 25 H | Estrada dos Primatas subindo em rampa entre carcaças e postes tombados. Duas rotas: em cima, pelos postes; embaixo, pela sombra | → C6 |
 | C6 Ravina | 30 × 51 V | **S-F2** na base. Subida pela parede da ravina (escalada + pulo de parede). Recebe AT2 | ▲ D1 |

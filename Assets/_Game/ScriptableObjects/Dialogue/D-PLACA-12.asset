@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
   ScriptId: D-PLACA-12
   Required: 0
-  Revision: 1
+  Revision: 2
   IsDocument: 0
   Lines:
   - Speaker: {fileID: 0}
@@ -23,6 +23,3 @@ MonoBehaviour:
   - Speaker: {fileID: 0}
     Expression: 
     Text: "Na borda: \"Quem dorme aos p\xE9s de Sethra acorda com a centelha acesa.\""
-  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
-    Expression: 
-    Text: "...Ent\xE3o \xE9 por isso que eu continuo voltando."

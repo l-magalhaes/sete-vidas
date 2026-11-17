@@ -17,7 +17,6 @@ namespace SeteVidas.EditorTools
         const string Art = "Assets/_Game/Art/Environments/Traps";
         const string Prefabs = "Assets/_Game/Prefabs/Traps";
 
-        [MenuItem("Tools/Sete Vidas/11. Armadilhas (circuito à esquerda do início)", priority = 47)]
         public static void RunTrapsSetup()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
