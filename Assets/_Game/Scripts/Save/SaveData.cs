@@ -28,6 +28,8 @@ namespace SeteVidas.Save
         public string scene = "";
         /// <summary>Moedas na bolsa do gato (gastas na loja). As moedas pegas no mundo viram marcas "moeda:&lt;id&gt;" em <see cref="flags"/>.</summary>
         public int coins;
+        /// <summary>Potinhos de mel no bolso (as vespas soltam; 17/11/2026). Usar no inventário cura meio coração.</summary>
+        public int honey;
         /// <summary>Usos da magia de cura (Paladino). Recarrega ao descansar no santuário.</summary>
         public int healCharges = MaxHealCharges;
         public const int MaxHealCharges = 3;

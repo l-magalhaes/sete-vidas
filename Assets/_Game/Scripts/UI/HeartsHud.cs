@@ -33,10 +33,10 @@ namespace SeteVidas.UI
         float[] _pulseUntil, _fadeUntil, _shakeUntil;
         const float HitShake = 0.25f;
         Vector2[] _basePos;
-        Image _paladinGlow;
+        Image _paladinGlow, _hunterGlow;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { s_classSprites.Clear(); s_glowSprite = null; s_scroll = s_scrollFaded = s_sealLit = s_sealOut = null; s_ghostFull = s_ghostHalf = null; } // Play sem recarregar o domínio
+        static void ResetStatics() { s_classSprites.Clear(); s_glowSprite = null; s_forestGlow = null; s_scroll = s_scrollFaded = s_sealLit = s_sealOut = null; s_ghostFull = s_ghostHalf = null; } // Play sem recarregar o domínio
 
         /// <summary>
         /// De que classe é o coração <paramref name="index"/> (regra do usuário): antes da maldição, os 7 são do Ladino;
@@ -176,44 +176,102 @@ namespace SeteVidas.UI
                 float shake = shakeLeft > 0f ? (((int)(shakeLeft * 40f) & 1) == 0 ? 1f : -1f) : 0f;
                 rt.anchoredPosition = _basePos[i] + new Vector2(-grow.x + shake, grow.y + ghostBob);
             }
-            UpdatePaladinGlow(curseDone && classHearts && states.Length > 1 && states[1] != HeartState.Locked);
+            UpdateClassGlows(states, curseDone);
             UpdateHealCharges(health);
         }
 
-        // ------------------------------------------- luz dourada do Paladino
+        // ------------------------------------------- a luz das classes: dourada do Paladino, verde do Caçador
 
-        static Sprite s_glowSprite;
+        static Sprite s_glowSprite, s_forestGlow;
 
-        /// <summary>O coração do Paladino tem uma luz dourada saindo dele (pedido do usuário): raios atrás, pulsando.</summary>
-        void UpdatePaladinGlow(bool show)
+        /// <summary>O coração (índice) da classe <paramref name="cls"/>, se já recuperado; senão −1.</summary>
+        int HeartOf(SeteVidas.Classes.CharacterClass cls, HeartState[] states, bool curseDone)
         {
-            if (hearts.Length < 2 || hearts[1] == null) return;
-            if (_paladinGlow == null)
+            if (!curseDone || !classHearts) return -1;
+            var unlocked = SaveManager.Data?.unlockedClasses;
+            for (int i = 0; i < hearts.Length && i < states.Length; i++)
+                if (states[i] != HeartState.Locked && HeartClass(i, curseDone, unlocked) == (int)cls) return i;
+            return -1;
+        }
+
+        /// <summary>
+        /// O coração do Paladino tem uma luz dourada saindo dele (pedido do usuário): raios atrás, pulsando. O do Caçador
+        /// brilha na magia da floresta da Vulpis, verde clara (pedido do usuário, 17/11/2026): folhas de luz girando devagar.
+        /// </summary>
+        void UpdateClassGlows(HeartState[] states, bool curseDone)
+        {
+            UpdateGlow(ref _paladinGlow, HeartOf(SeteVidas.Classes.CharacterClass.Paladin, states, curseDone), "Luz do Paladino", GlowSprite(), 3f, 0f);
+            UpdateGlow(ref _hunterGlow, HeartOf(SeteVidas.Classes.CharacterClass.Hunter, states, curseDone), "Luz do Caçador (magia da floresta)", ForestGlowSprite(), 2.2f, 14f);
+        }
+
+        void UpdateGlow(ref Image glow, int heart, string name, Sprite sprite, float pulse, float spin)
+        {
+            bool show = heart >= 0 && hearts[heart] != null && hearts[heart].enabled;
+            if (glow == null)
             {
                 if (!show) return;
-                var heart = hearts[1].rectTransform;
-                var go = new GameObject("Luz do Paladino", typeof(RectTransform), typeof(Image));
+                var h0 = hearts[heart].rectTransform;
+                var go = new GameObject(name, typeof(RectTransform), typeof(Image));
                 var rt = (RectTransform)go.transform;
-                rt.SetParent(heart.parent, false);
-                rt.SetSiblingIndex(heart.GetSiblingIndex()); // atrás do coração
-                rt.anchorMin = heart.anchorMin; rt.anchorMax = heart.anchorMax; rt.pivot = new Vector2(0.5f, 0.5f);
-                rt.sizeDelta = heart.sizeDelta * 1.75f;
-                _paladinGlow = go.GetComponent<Image>();
-                _paladinGlow.sprite = GlowSprite();
-                _paladinGlow.raycastTarget = false;
+                rt.SetParent(h0.parent, false);
+                rt.anchorMin = h0.anchorMin; rt.anchorMax = h0.anchorMax; rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.sizeDelta = h0.sizeDelta * 1.75f;
+                glow = go.GetComponent<Image>();
+                glow.sprite = sprite;
+                glow.raycastTarget = false;
             }
-            _paladinGlow.enabled = show;
+            glow.enabled = show;
             if (!show) return;
-            var h = hearts[1].rectTransform;
-            var g = _paladinGlow.rectTransform;
+            var h = hearts[heart].rectTransform;
+            var g = glow.rectTransform;
+            if (g.GetSiblingIndex() > h.GetSiblingIndex()) g.SetSiblingIndex(h.GetSiblingIndex()); // atrás do coração
             // no meio do coração (o pivô dele é o canto de cima; o desenho fica 2 px abaixo do meio do quadro)
-            g.anchoredPosition = h.anchoredPosition + new Vector2(h.sizeDelta.x * 0.5f, -h.sizeDelta.y * 0.5f - 1f);
+            g.anchoredPosition = _basePos[heart] + new Vector2(h.sizeDelta.x * 0.5f, -h.sizeDelta.y * 0.5f - 1f);
             float t = Time.unscaledTime;
-            var c = _paladinGlow.color;
-            c.a = 0.55f + 0.3f * Mathf.Sin(t * 3f);
-            _paladinGlow.color = c;
-            float s = 1f + 0.08f * Mathf.Sin(t * 3f + 1f);
+            var c = glow.color;
+            c.a = 0.55f + 0.3f * Mathf.Sin(t * pulse);
+            glow.color = c;
+            float s = 1f + 0.08f * Mathf.Sin(t * pulse + 1f);
             g.localScale = new Vector3(s, s, 1f);
+            // gira em degraus de 45° (pixel art não gira liso)
+            g.localRotation = spin > 0f ? Quaternion.Euler(0f, 0f, Mathf.Floor(t * spin / 45f) * 45f) : Quaternion.identity;
+        }
+
+        /// <summary>
+        /// A luz do Caçador 28×28: quatro folhas de luz verde clara (em cruz) e um anel pontilhado de faíscas, nas cores da
+        /// magia da Vulpis (<see cref="SeteVidas.Enemies.Boss.ForestMagic"/>).
+        /// </summary>
+        static Sprite ForestGlowSprite()
+        {
+            if (s_forestGlow != null) return s_forestGlow;
+            const int n = 28;
+            var px = new Color32[n * n];
+            Color32 core = new Color32(0xe2, 0xff, 0xd8, 0xff), mid = new Color32(0x8f, 0xf2, 0x8a, 0xff), deep = new Color32(0x3c, 0xbf, 0x5a, 0xff);
+            float cx = (n - 1) * 0.5f;
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = x - cx, dy = y - cx, d = Mathf.Sqrt(dx * dx + dy * dy);
+                    float ang = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
+                    float toLeaf = Mathf.Abs(Mathf.DeltaAngle(ang, Mathf.Round(ang / 90f) * 90f));
+                    // folha: larga no meio do comprimento e fina nas pontas
+                    float along = Mathf.Clamp01((d - 5f) / 8.5f);
+                    float width = 16f * Mathf.Sin(along * Mathf.PI);
+                    bool leaf = d > 5f && d < 13.5f && toLeaf < width;
+                    bool vein = leaf && toLeaf < 2.5f;
+                    bool ring = d > 7.5f && d < 8.6f && (x + y) % 3 == 0 && !leaf;          // faíscas em volta
+                    bool halo = d < 7f && d > 5f && (x + y) % 2 == 0;
+                    if (!leaf && !ring && !halo) continue;
+                    var c = vein ? core : leaf ? (d < 9.5f ? mid : deep) : ring ? mid : core;
+                    c.a = (byte)Mathf.Clamp(255f * (1f - (d - 5f) / 10f), 70f, 255f);
+                    px[y * n + x] = c;
+                }
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            tex.SetPixels32(px);
+            tex.Apply(false);
+            s_forestGlow = Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), 16f);
+            s_forestGlow.name = "ui_luz_cacador";
+            return s_forestGlow;
         }
 
         /// <summary>Raios dourados 28×28 em pixel art (8 direções, mais fortes perto do meio), em código.</summary>

@@ -9,7 +9,7 @@ namespace SeteVidas.UI
         Rogue, Paladin, Mage, Monk, Bard, Hunter, Druid,
         Climb, Sneak, Backstab, DownStab, DoubleJump, Dash, Anchor,
         Coin, Page, TabAbilities, TabItems, TabDiary,
-        Wood, Map, Key, TempleKey,
+        Wood, Map, Key, TempleKey, Honey,
     }
 
     /// <summary>Como o quadrado de um slot é desenhado.</summary>
@@ -64,6 +64,7 @@ namespace SeteVidas.UI
                 case InventoryIcon.Map: pal = FoldedMap(g); break;
                 case InventoryIcon.Key: pal = KeyShape(g); break;
                 case InventoryIcon.TempleKey: pal = TempleKeyShape(g); break;
+                case InventoryIcon.Honey: pal = HoneyPot(g); break;
                 default: pal = Book(g); break;
             }
             return Colorize(g, Size, Size, ParsePalette(pal), true);
@@ -333,6 +334,18 @@ namespace SeteVidas.UI
             R(g, 8, 8, 7, 3, 'S'); R(g, 11, 5, 2, 3, 'S'); R(g, 14, 5, 1, 4, 'S');
             P(g, 2, 12, 'e'); P(g, 6, 12, 'd'); L(g, 8, 9, 14, 9, 'd');
             return "S=#4f7a52 d=#2e4a34 e=#5ce0c8";
+        }
+
+        /// <summary>O mel das vespas (17/11/2026): um potinho de barro cheio de mel, o pano amarrado na boca e uma gota escorrendo.</summary>
+        static string HoneyPot(char[,] g)
+        {
+            Disc(g, 8, 10, 5, 'd'); Disc(g, 7, 9, 4, 'h');                  // o pote e o mel aparecendo
+            R(g, 3, 13, 10, 1, 'd');
+            P(g, 5, 8, 'w'); P(g, 5, 9, 'w'); P(g, 6, 7, 'w');             // o brilho
+            R(g, 5, 3, 7, 3, 'c'); P(g, 4, 2, 'c'); P(g, 12, 2, 'c');    // o pano na boca
+            L(g, 5, 5, 11, 5, 'r');                                    // a cordinha
+            P(g, 12, 6, 'y'); P(g, 12, 7, 'y'); P(g, 13, 8, 'y');        // a gota escorrendo
+            return "d=#9c5e18 h=#e0a030 w=#fff0b0 c=#d6c49a r=#8a3a2a y=#f6c44a";
         }
 
         /// <summary>Aba Mapa: papel dobrado em três, com uma trilha pontilhada e um X.</summary>

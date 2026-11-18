@@ -1,0 +1,415 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e7a1c0d9b8f4e2a8c3d6f1b2a4e7c90, type: 3}
+  m_Name: TobiAnimationSet
+  m_EditorClassIdentifier: 
+  clips:
+  - name: idle
+    frameTime: 0.22
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 91933859a9e7397c834cbfa92e76b874, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: a404d0d1e8701ee54dad64f999da0c8f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: c83382dad6705729434b4c76307d1d9f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: f1d011bf62f85f9c57ea039965205e4e, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 09c9846f91c70638abe49abb2528a0cd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: a364d6fb2981055c3d7267427636b9d8, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: talk
+    frameTime: 0.13
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 307668059ebbb0df435de94bda4fb137, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: efe35ad351bbd57b0b7bdad7f600cb29, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 92711894753c430ffe4563f5f621caad, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 86272ea501c811832b47005098021aee, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: greedy
+    frameTime: 0.12
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 40663ed8b920674e989aae649e3b876b, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 238122ca24cdc1eec67f0cc1bac2feea, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 485f019ba8ad42a5af2ed90a683f1b6f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: offended
+    frameTime: 0.3
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 0607b09c00af9bad0a60a134dcdf8efe, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: cea320197e2b582f632a2921e19e0cac, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: proud
+    frameTime: 0.3
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 23a56fa84623c2414ba948552cdfcad0, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: e66f0442128842667d1911ff289e1488, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: wrench
+    frameTime: 0.12
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: bfabb40801f522e37227544cd405168f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: a3f06a84afd773d43ad4d33c96260985, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: d4d40e1dac420c20ea7a52704fb51005, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 7b3e0ea3b5caa9f93a4945c98544fdb4, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: carry
+    frameTime: 0.14
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: a7c31221f4537010a4badf64738d1842, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 13140f7f81c1512a2668c08acddf3ff9, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: e12530f12bfc6e37e6919c93632e254f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: dc7ac932d340d50016ca6e208c57f8c6, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: dig
+    frameTime: 0.09
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: 5877b1de4d63b1b2d0ccead5397afeef, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 5f8e5ba6dbcfd5b47c4ac165c8183729, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: d191e184ed3468e64118ac0b43c5c6c1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 89c3b72530bf128d6c4fb5e4bee3e25a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 542f64acd562571325f45059d0f897f1, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 220656244bc7e32f19aa37a08df498eb, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: emerge
+    frameTime: 0.09
+    loop: 0
+    frames:
+    - sprite: {fileID: 21300000, guid: f4a5e75ff697b2dabde3ac5a980f4d73, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 66729bd00e620482e92478bf784e2e4f, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 90b2361efc025c4f5e423a2379a20444, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: e183f2adcbe88e9dbada7ef0262c1026, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 4826f032aa868dedc81d7171fa0285af, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: pull
+    frameTime: 0.12
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: 1eeb4fb4238559e587e45d0cb3f7f707, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 8169c37c22e977366dc3a619ac44c4dd, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: hammer
+    frameTime: 0.08
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: a60ea5b1499519e57c48fbc9baebb211, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 16b8e7216105d31518877fb6b4fb3abc, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+  - name: drill
+    frameTime: 0.06
+    loop: 1
+    frames:
+    - sprite: {fileID: 21300000, guid: d08ed7f7c4ea5c6c3048d2784d9de057, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 3496d6bd001be4573dea60a25f9698af, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: 93d7bddad531b858e31fd81a8ed91c52, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0
+    - sprite: {fileID: 21300000, guid: f8751f4395de61dcba1aeba76dbb2a8a, type: 3}
+      overlay: {fileID: 0}
+      tail: {x: 0, y: 0}
+      chest: {x: 0, y: 0}
+      trim: {x: 0, y: 0}
+      body: {x: 0, y: 0}
+      hasTail: 0
+      hasTrim: 0

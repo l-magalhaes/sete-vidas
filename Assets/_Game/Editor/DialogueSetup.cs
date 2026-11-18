@@ -87,13 +87,15 @@ namespace SeteVidas.EditorTools
 
         // ------------------------------------------------------------------ Vulpis (F4b)
 
-        /// <summary>Vulpis: raposa arqueira (voz média, rápida). Retrato provisório 48×48. Criado se faltar.</summary>
+        /// <summary>Vulpis: raposa caçadora (voz média, rápida). Retratos de VulpisSpriteGen (o provisório só se faltar).</summary>
         public static SpeakerProfile VulpisSpeaker()
         {
             Directory.CreateDirectory(DataFolder + "/Speakers");
             Directory.CreateDirectory(PortraitArt);
             AssetDatabase.Refresh();
-            return Speaker("Vulpis", "Vulpis", SpeakerProfile.ScreenSide.Right, new Color32(0xf0, 0x9a, 0x4a, 0xff), 1.1f, VulpisPortrait());
+            var fox = Speaker("Vulpis", "Vulpis", SpeakerProfile.ScreenSide.Right, new Color32(0xf0, 0x9a, 0x4a, 0xff), 1.1f, VulpisPortrait());
+            AddExpressions(fox, VulpisExpressions);
+            return fox;
         }
 
         /// <summary>
@@ -224,6 +226,50 @@ var result = new GoldenDialogues
         static readonly (string key, string file)[] KodaExpressions =
         {
             ("serio", "portrait_koda_serious"), ("ferido", "portrait_koda_hurt"), ("sorriso", "portrait_koda_smile"),
+        };
+        /// <summary>
+        /// Tobi: toupeira engenheira (F9; voz aguda e rápida, de ópera). Retratos de Tools/CharacterSprites/TobiSpriteGen.cs:
+        /// animada (o padrão), ofendida, gananciosa e orgulhosa. Criado se faltar.
+        /// </summary>
+        public static SpeakerProfile TobiSpeaker()
+        {
+            Directory.CreateDirectory(DataFolder + "/Speakers");
+            AssetDatabase.Refresh();
+            var portrait = AssetDatabase.LoadAssetAtPath<Sprite>($"{PortraitArt}/portrait_tobi.png");
+            if (portrait == null) Debug.LogWarning("[Sete Vidas] Tobi: falta portrait_tobi.png (rode Tools/CharacterSprites/gerar_tobi.ps1).");
+            var tobi = Speaker("Tobi", "Tobi", SpeakerProfile.ScreenSide.Right, new Color32(0xf0, 0x8c, 0x9c, 0xff), 1.35f, portrait);
+            AddExpressions(tobi, TobiExpressions);
+            return tobi;
+        }
+
+        /// <summary>
+        /// O espírito da Isyathy (F8, fim da luta; voz grave e lenta). O retrato é o recorte da cabeça do espírito
+        /// (<see cref="SeteVidas.World.IsyathySpiritArt.Portrait"/>), azul-claro, com as plumas e a tiara de luz.
+        /// </summary>
+        public static SpeakerProfile IsyathySpiritSpeaker()
+        {
+            Directory.CreateDirectory(DataFolder + "/Speakers");
+            Directory.CreateDirectory(PortraitArt);
+            AssetDatabase.Refresh();
+            var art = SeteVidas.World.IsyathySpiritArt.Portrait(48);
+            var portrait = Draw($"{PortraitArt}/portrait_isyathy_spirit.png", 48, 48, set =>
+            {
+                for (int y = 0; y < 48; y++)
+                    for (int x = 0; x < 48; x++)
+                        if (art[y * 48 + x].a != 0) set(x, y, art[y * 48 + x]);
+            });
+            return Speaker("IsyathyEspirito", "Isyathy", SpeakerProfile.ScreenSide.Right, new Color32(0x9c, 0xe4, 0xff, 0xff), 0.7f, portrait);
+        }
+
+        static readonly (string key, string file)[] TobiExpressions =
+        {
+            ("animada", "portrait_tobi"), ("ofendida", "portrait_tobi_offended"), ("gananciosa", "portrait_tobi_greedy"), ("orgulhosa", "portrait_tobi_proud"),
+        };
+
+        /// <summary>Retratos da Vulpis gerados por Tools/CharacterSprites/VulpisSpriteGen.cs (17/11/2026).</summary>
+        static readonly (string key, string file)[] VulpisExpressions =
+        {
+            ("serio", "portrait_vulpis_serious"), ("ironico", "portrait_vulpis_ironic"), ("triste", "portrait_vulpis_sad"), ("sorriso", "portrait_vulpis_smile"),
         };
         static readonly (string key, string file)[] ContractorExpressions =
         {

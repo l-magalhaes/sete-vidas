@@ -41,7 +41,7 @@ As cenas `Forest_Test_*` continuam existindo (Manutenção > Floresta F1: cenas 
 |---|---|---|---|
 | `atalho_ravina` | C6 Ravina (fundo, S-F2) | A2 Raízes Gêmeas (S-F1) | alçapão de raízes no chão; o cipó desce pela raiz pendurada da A2 |
 | `atalho_lago` | C4 Caverna do Lago | A6 Galhos Baixos | alçapão no chão do lago → poço estreito (C4p) → cipó na parede da A6 |
-| `atalho_musgo` | E4 Clareira do Musgo (S-F4) | C1 Entrada do Vale | alçapão → poço comprido (E4p) → cipó na raiz pendurada da C1 |
+| `atalho_musgo` | E4 Clareira do Musgo | C1 Entrada do Vale | alçapão → poço comprido (E4p) → cipó na raiz pendurada da C1 |
 | `atalho_torre` | B4 Torre (topo) | o pé da torre | cipó solto do alto, a parede inteira vira subida |
 | `atalho_patamar` | B1 (patamar) | o chão da B1 | tampa + cipó na parede (era a porta interna da cena de teste) |
 | `atalho_raiz` | E2 (topo) | o vão da vinha da E2 | o cipó fecha o vão; a E2 vira subida rápida |
@@ -66,7 +66,7 @@ Do lado fechado, o gato vê o cipó enrolado lá no alto (ou a tampa) e comenta 
 
 **Baús de madeira:** W01–W19, mais que as 12 madeiras do Tobi. O W15 (D3) só se alcança com o Arqueiro, como na cena de teste.
 
-**Santuários:** S-F1 (A2), **S-F1B** (B1), **S-F1C** (B4, pé da Torre), **S-F1D** (C4, patamar da chegada), S-F2 (C6), S-F3 (D3), **S-F3B** (E2, pé da subida), S-F4 (E4) e S-F5 (R5). S-F1C, S-F1D e S-F3B entraram em 13/11/2026 (pedido do usuário: santuários muito espaçados), cada um no fim de um atalho.
+**Santuários:** S-F1 (A2), **S-F1B** (B1), **S-F1C** (B4, pé da Torre), **S-F1D** (C4, patamar da chegada), S-F2 (C6), S-F3 (D3), **S-F3B** (E1, começo do Ninho), **S-F4** (E6, antes do chefe) e S-F5 (R5). Em 18/11/2026 (pedido do usuário) o Ninho ficou com só esses dois: o S-F3B saiu da E2 e o S-F4 saiu da E4. S-F1C, S-F1D e S-F3B entraram em 13/11/2026 (pedido do usuário: santuários muito espaçados), cada um no fim de um atalho.
 
 ## 0. Rev. 3 — o que o graybox (F2) mudou [SUBSTITUÍDO EM PARTE PELA REV. 4]
 
@@ -89,7 +89,7 @@ Prévia e alcance: `Tools/LevelPreview/checar_floresta.ps1` → `SeteVidasDocs/R
   | AT8 | A6 Galhos Baixos (saída) | A2 Raízes Gêmeas | raiz |
 
 - **Antes do chefe dormindo (E1–E3), movimento encadeado (pedido do usuário):** E1 rampa 1:2 → vão de espinhos só com pogo → rampa 1:1 → descida correndo → pulo até a vinha do pilar; E2 rampas nos patamares jogam para o galho que balança e para a vinha, com um galho podre (plataforma temporária); E3 por cima: sobe até o alto, rampa 1 desce e cai na rampa 2, que lança para um galho podre sobre os espinhos. **20 ganchos** nas três salas e na E4: com o Caçador, o caminho contrário pelo alto.
-- **Sem volta a partir da E5 (pedido do usuário):** da E4 o gato cai no focinho da E5, alto demais para voltar; E5 → E6 → F1 é furtividade contínua, e a F1 não tem saída para o oeste. Por isso o **S-F4 foi para a E4** (último santuário antes do trecho); morrer no trecho volta para a E4.
+- **Sem volta a partir da E5 (pedido do usuário):** da E4 o gato cai no focinho da E5, alto demais para voltar; E5 → E6 → F1 é furtividade contínua, e a F1 não tem saída para o oeste. O S-F4 chegou a ir para a E4; em 18/11/2026 (pedido do usuário) voltou para a **E6**, logo antes do chefe: morrer na Isyathy volta para a E6.
 - **Furtividade em todas as regiões (pedido do usuário):** 60 sombras, 29 patrulhas (placeholders) e armadilhas (espinhos, serras, lâminas, fios de alarme, lanças, fogo, lançador de flechas) distribuídas pelas salas.
 
 ## 1. A forma da floresta: uma subida do fundo do vale até o outro lado da ponte
@@ -240,7 +240,7 @@ Regras: nunca numa sala com combate; uma vez por visita; respiração muito baix
 | R2 Posto de Vigia | 45 × 25 H | Torre de vigia caída com 3 andares de plataformas; Infectado (escudo) embaixo: chegar por cima e cair nas costas dele (tutorial do escudo) | → R3 |
 | R3 Cabeceira oeste | 30 × 17 H | Pilar da ponte, marco "Ponte do Último Marco". Depois da ponte nova: **corda (AT4)** até o fundo do vale | → R4 · ▼ A1 (AT4) |
 | R4 Ponte do Último Marco | 60 × 17 H | **Antes:** pedra; fuga + **cutscene 1**: a câmera acompanha a queda pela copa até o fundo. **Depois:** madeira, liga R5 a R3 | ▼ A1 (queda) |
-| R5 Cabeceira leste | 30 × 17 H | Saída da subida final (G3). **Tobi**, **S-F5**, marco "Miaravéu, adiante" | ← R4 (ponte nova) · → Miaravéu |
+| R5 Cabeceira leste | 56 × 40 H | Saída da subida final (G3), **amanhecendo** no fundo. **S-F5**; a Tobi fica logo a oeste (R4). No leste, o **portão em ruínas de Miaravéu** ("Bem-vindo a Miaravéu"): passar por ele é o fim da fase (D-MIARAVEU-PORTAO). No alto, três galhos só de gancho (11, 22, 33) levam ao caminho das cachoeiras, fechado por pedras (área futura) | ← R4 (ponte nova) · → Miaravéu · ↑ cachoeiras (fechado) |
 
 ### A — Raízes da Queda (`Forest_A_Roots`): fundo do vale, intensidade baixa
 
@@ -368,7 +368,7 @@ Como a fase sempre sobe, **voltar é descer**: os atalhos são cipós e portas q
 | B1–B7 | ▲ | média | B6 |
 | C1–C7 | → ▲ | média | S-F2 (C6) |
 | D1–D4 | ▲ | baixa | — |
-| E1–E6 | → ▲ | alta | E4, S-F4 |
+| E1–E6 | → ▲ | alta | S-F3B (E1), S-F4 (E6) |
 | F1 | — | muito alta | G1 |
 | G1–G3, R5 | ▲ | baixa (vitória, aurora, Tobi) | — |
 

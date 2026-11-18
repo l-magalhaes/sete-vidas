@@ -31,7 +31,9 @@ namespace SeteVidas.World
         /// <summary>Espera antes da primeira aparição numa sala (s): logo.</summary>
         public static readonly Vector2 FirstDelay = new Vector2(0.6f, 1.8f);
         /// <summary>Intervalo entre aparições (s): curto, para os olhos aparecerem bastante.</summary>
-        public static readonly Vector2 Gap = new Vector2(1.8f, 4.5f);
+        public static readonly Vector2 Gap = new Vector2(4f, 8f);   // 17/11/2026: era 1,8–4,5 (pedido do usuário: "diminua a aparição dos olhos")
+        /// <summary>Depois de um par de olhos sumir, nenhum outro aparece por este tempo (s), em nenhuma sala.</summary>
+        public const float GlobalRest = 2.5f;
 
         [SerializeField] Kind kind;
         [SerializeField] SpriteRenderer art;
@@ -90,6 +92,7 @@ namespace SeteVidas.World
             bool dead = SaveManager.Data != null && SaveManager.Data.HasFlag(DeadFlag);
             if (!CanAppear(dead) || art == null || eyeFrames == null || eyeFrames.Length == 0) { gameObject.SetActive(false); return; }
             _alpha = 0f;
+            EnsureGlow();
             Apply();
             StartCoroutine(Loop());
         }
@@ -114,8 +117,11 @@ namespace SeteVidas.World
             yield return new WaitForSeconds(Random.Range(FirstDelay.x, FirstDelay.y));
             while (true)
             {
-                while (!PlayerInside()) yield return new WaitForSeconds(0.3f);
+                while (!PlayerInside() || !MayAppear(s_showing != null && s_showing != this, Time.time, s_restUntil)) yield return new WaitForSeconds(0.3f);
+                s_showing = this;
                 yield return Appear();
+                if (s_showing == this) s_showing = null;
+                s_restUntil = Time.time + GlobalRest;
                 yield return new WaitForSeconds(Random.Range(Gap.x, Gap.y));
             }
         }
@@ -221,6 +227,77 @@ namespace SeteVidas.World
         void SetFrame(int i)
         {
             if (art != null && eyeFrames != null && eyeFrames.Length > 0) art.sprite = eyeFrames[Mathf.Clamp(i, 0, eyeFrames.Length - 1)];
+            _frame = i;
+        }
+
+        // ------------------------------------------------------------ o brilho roxo da praga
+        // Pedido do usuário (17/11/2026): "os olhos da Isyathy brilham em roxo pela praga ao aparecer durante a fase".
+        // Um halo roxo em degraus (sem pontilhado) em volta de cada olho, atrás deles, pulsando; mais fraco com o olho
+        // fechando. Os olhos continuam verde-amarelados.
+
+        int _frame = EyesClosed;
+        SpriteRenderer _glow;
+        static Sprite s_glow;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() { s_glow = null; s_showing = null; s_restUntil = 0f; }   // Play sem recarregar o domínio
+
+        /// <summary>Só um par de olhos na tela por vez (pedido do usuário, 17/11/2026): quem está aparecendo agora.</summary>
+        static IsyathySighting s_showing;
+        static float s_restUntil;
+
+        /// <summary>Pode começar a aparecer agora? Ninguém mais aparecendo e o descanso geral acabou.</summary>
+        public static bool MayAppear(bool someoneShowing, float now, float restUntil) => !someoneShowing && now >= restUntil;
+
+        /// <summary>Quanto o halo brilha (0..1) com o olho no quadro <paramref name="frame"/> e o pulso em <paramref name="time"/>.</summary>
+        public static float GlowStrength(int frame, float time)
+        {
+            float open = frame == EyesOpen ? 1f : frame == EyesHalf ? 0.6f : 0.25f;
+            return open * (0.75f + 0.25f * Mathf.Sin(time * 5f));
+        }
+
+        /// <summary>O halo dos dois olhos (64 × 36, o mesmo meio do desenho dos olhos de 40 × 12): 3 degraus de roxo.</summary>
+        static Sprite GlowSprite()
+        {
+            if (s_glow != null) return s_glow;
+            const int w = 64, h = 36;
+            var px = new Color32[w * h];
+            var inner = new Color32(0xd2, 0x8c, 0xff, 0x8c); var mid = new Color32(0xa8, 0x4c, 0xd8, 0x55); var outer = new Color32(0x6a, 0x26, 0x8c, 0x30);
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                    foreach (int ex in new[] { 20, 42 })
+                    {
+                        float dx = (x + 0.5f - ex), dy = (y + 0.5f - 18f);
+                        float r = Mathf.Sqrt(dx * dx / 1.7f + dy * dy);
+                        Color32 c = r < 7f ? inner : r < 10f ? mid : r < 13.5f ? outer : default;
+                        if (c.a > px[y * w + x].a) px[y * w + x] = c;
+                    }
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false)
+                { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "isy_olhos_brilho", hideFlags = HideFlags.DontSave };
+            tex.SetPixels32(px);
+            tex.Apply(false);
+            s_glow = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 16f);
+            s_glow.hideFlags = HideFlags.DontSave;
+            return s_glow;
+        }
+
+        void EnsureGlow()
+        {
+            if (_glow != null || art == null) return;
+            _glow = new GameObject("Brilho roxo (praga)").AddComponent<SpriteRenderer>();
+            _glow.transform.SetParent(art.transform, false);
+            _glow.sprite = GlowSprite();
+            _glow.sortingLayerID = art.sortingLayerID;
+            _glow.sortingOrder = art.sortingOrder - 1;
+            _glow.enabled = false;
+        }
+
+        void Update()
+        {
+            if (_glow == null) return;
+            float a = _alpha * GlowStrength(_frame, Time.time);
+            _glow.enabled = art != null && art.enabled && a > 0.01f;
+            _glow.color = new Color(1f, 1f, 1f, a);
         }
 
         void Apply()
@@ -229,6 +306,8 @@ namespace SeteVidas.World
             var c = art.color; c.a = _alpha; art.color = c;
             art.enabled = _alpha > 0.001f;
         }
+
+        void OnDisable() { if (s_showing == this) s_showing = null; }
 
         void OnDrawGizmosSelected()
         {

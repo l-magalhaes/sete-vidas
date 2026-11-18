@@ -40,6 +40,55 @@ namespace SeteVidas.EditorTools
         [MenuItem(M + "Floresta: juntar desenho e colisão (cena aberta)", priority = 6)]
         static void ForestFix() => ForestFixVisuals.Fix();
 
+        [MenuItem(M + "Floresta: Ninho F7 (a Isyathy embaixo da terra, sem recriar a cena)", priority = 7)]
+        static void ForestNest() => NestSetup.PatchScene();
+
+        [MenuItem(M + "Floresta: Ninho com 2 santuários, E1 e E6 (sem recriar a cena)", priority = 7)]
+        static void ForestNestSanctuaries() => NestSanctuariesSetup.PatchScene();
+
+        [MenuItem(M + "Floresta: gerar só a Estrada e as Raízes (a ponte nova e as duas escadas do atalho)", priority = 4)]
+        static void ForestRoadOnly() => ForestGrayboxSetup.BuildOnly(ForestLayout.Road, ForestLayout.A);
+
+        [MenuItem(M + "Floresta: ganchos da arena F1 (sem recriar a cena)", priority = 9)]
+        static void ForestArenaHooks() => ArenaHooksSetup.PatchScene();
+
+        [MenuItem(M + "Floresta: chefe Isyathy F8 (sem recriar a cena)", priority = 9)]
+        static void ForestBoss() => IsyathyBossSetup.PatchScene();
+
+        [MenuItem(M + "Floresta: Vulpis com a arte nova (NPC da D5 e arena da F1, sem recriar as cenas)", priority = 10)]
+        static void ForestVulpisArt() => VulpisArtSetup.PatchScenes();
+
+        [MenuItem(M + "Floresta: Tobi e a ponte F9 (sem recriar a cena)", priority = 11)]
+        static void ForestTobi() => TobiSetup.PatchScene();
+
+        /// <summary>
+        /// Tira das cenas da Floresta já montadas os matinhos (esconderijo "folhagem alta"), sem recriar nada (pedido do
+        /// usuário, 17/11/2026: os novos virão em outro estilo). O ForestLayout já não os põe (versão 28).
+        /// </summary>
+        [MenuItem(M + "Floresta: tirar os matinhos (sem recriar as cenas)", priority = 8)]
+        static void ForestNoBushes()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            int total = 0;
+            foreach (var guid in AssetDatabase.FindAssets("t:Scene Forest_", new[] { "Assets/_Game/Scenes/World/Forest" }))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.Contains("Forest_Test")) continue;
+                var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+                var doomed = new System.Collections.Generic.List<GameObject>();
+                foreach (var root in scene.GetRootGameObjects())
+                    foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                        if (t.name.EndsWith(": folhagem alta")) doomed.Add(t.gameObject);
+                foreach (var go in doomed) if (go != null) Object.DestroyImmediate(go);
+                if (doomed.Count == 0) continue;
+                total += doomed.Count;
+                EditorSceneManager.MarkSceneDirty(scene);
+                EditorSceneManager.SaveScene(scene);
+                Debug.Log($"[Sete Vidas] {scene.name}: {doomed.Count} matinho(s) removido(s).");
+            }
+            Debug.Log($"[Sete Vidas] Floresta: {total} matinho(s) removido(s) no total.");
+        }
+
         // ------------------------------------------------ dados do jogo (20–29)
 
         [MenuItem(M + "Mapa do mundo e Diário", priority = 20)]

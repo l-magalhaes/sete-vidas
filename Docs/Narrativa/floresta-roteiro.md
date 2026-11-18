@@ -262,6 +262,13 @@ A ponte é **opcional** [APROVADO]: um bônus que facilita a circulação (volta
 [AÇÃO: o sol nasce atrás da ponte quebrada]
 GATO: Do outro lado. Finalmente.
 GATO (irônico): E dessa vez eu subi. Ninguém me jogou de lugar nenhum.
+[AÇÃO, 18/11/2026: o céu da cabeceira leste amanhece (DawnSky) conforme o gato chega]
+
+### D-MIARAVEU-PORTAO — O portão de Miaravéu (obrigatório, uma vez, o fim da fase)
+[AÇÃO: o portão de pedra em ruínas na R5, o arco quebrado no meio, a placa de madeira rachada pendurada]
+GATO (irônico): "Bem-vindo a Miaravéu." A placa ainda acredita nisso.
+GATO (sério): Ninguém conserta este portão faz tempo. Do que será que a cidade estava se protegendo?
+SISTEMA: Fim da Floresta Silenciosa. A estrada para Miaravéu continua... em breve.
 
 ### D-TOBI-01 — O encontro (obrigatório, ela está no caminho; a entrega é opcional)
 TOBI: Olha só essa tragédia! Uma ponte inteirinha destruída!
@@ -296,7 +303,7 @@ GATO (irônico): "Talvez" é a palavra que eu menos queria ouvir em cima de um a
 GATO (irônico): Se ela cair, pelo menos eu já sei o caminho.
 
 ### D-TOBI-05 — Depois (opcional, em rodízio)
-- 05a — TOBI (orgulhosa): Deixei uma corda no começo da ponte, lá do lado da Fortaleza. Para descer na floresta sem quebrar o pescoço. De nada. / GATO (irônico): Descer sem cair. Que conceito.
+- 05a — TOBI (orgulhosa): Abri o poço da escada no começo da ponte, lá do lado da Fortaleza (18/11/2026: era a corda). Para descer na floresta sem quebrar o pescoço. De nada. / GATO (irônico): Descer sem cair. Que conceito.
 - 05b — TOBI: Se for a Miaravéu, diga que a Tobi faz telhados também. Preço de amiga. Quase.
 - 05c — GATO: Primeira coisa que eu ajudo a consertar em vez de quebrar. / TOBI: Não se acostume.
 

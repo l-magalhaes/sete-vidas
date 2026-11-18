@@ -22,7 +22,7 @@ namespace SeteVidas.EditorTools
     public static class ForestLayout
     {
         /// <summary>Suba quando mudar o graybox ("Floresta: gerar as cenas" recria as cenas).</summary>
-        public const int Version = 25; // 25: ajustes à mão do usuário nas cenas (15/11/2026), o Mercado dos Primatas no térreo da C3 (coração fantasma), o Galho Seco acorda quando o gato encosta nele; // 24: a Isyathy no fundo em todas as salas de A a D, muitas vezes; documentos dos devotos nas cabanas; // 23: a Isyathy aparece de vez em quando no fundo (o pescoço que espia), sem desenho parado; // 22: parede em cima do Portão do Templo (não dá mais para pular por cima), portal de pedra; // 21: a Isyathy de longe toda no fundo (atrás das árvores e névoas), árvore da sombra da E2 até o chão; // 20: F5 parte 2 (placas e objetos dos Primatas, cabine secreta da A5, a Isyathy de longe); // 19: corda na beira do abismo (R4), destroços da ponte (A1), cabaninhas; // 18: tutoriais da Floresta (pogo no cacto, cogumelo, atalhos, Caçador), posto e marcos; // 17: raiz com vinha na saída da G3; 10: F4, infectados; 11: sem cacto infectado; 12: F4b (D5, D6, Portão do Templo); 13: corações temporários; 14: troncos até o teto, melhorias 3; 15: ganchos pela floresta; 16: ganchos nas quinas, vãos de dash no Ninho
+        public const int Version = 39; // 39: a R5 maior (56 × 40): o amanhecer no fundo, o portão em ruínas de Miaravéu (o fim da fase) e a subida só de gancho para o caminho das cachoeiras (fechado); 38: as escadas do atalho da ponte: descendo a de cima, no meio dela vai para a A1 (sem saída no fundo do poço); na A1, a escada na parede esquerda leva à de cima; 37: a ponte de madeira nova (vigas e postes escuros) e o atalho para o vale virou uma escada num poço logo antes da ponte (R4p); 36: os ganchos da arena F1 (saiu o do meio; dois nas pontas do galho do topo); 35: o Ninho só com 2 santuários (S-F3B no começo da E1, S-F4 na E6 antes do chefe); 34: F9, a Tobi na beira leste do abismo (R4) e a ponte de madeira (escondida até a flag ponte_reconstruida); 33: a arena F1 com galhos de madeira e galhos podres (temporários), menos plataformas e 3 ganchos (sem pedra); 32: F8, a luta com a Isyathy na F1 (portões de raízes, a volta para a E6, o cipó de volta na E5); 31: a ponte da R4 com 104 tiles e 8 zumbis na horda; 30: a ponte da R4 com o dobro do tamanho (para a esquerda), a horda nasce na cabeceira da R4; 29: o Ninho sem a fuga: a Isyathy dorme na E1, acorda, entra na terra (cratera) e dá botes de baixo do chão na E1–E3 (NestSetup); 28: sem os matinhos (esconderijo "folhagem alta"); 27: F7, a fuga do Ninho (a Isyathy acorda na E1 e persegue até a E4; sem inimigos na E1–E3; NestSetup); 26: o medidor de alerta (substituído); // 25: ajustes à mão do usuário nas cenas (15/11/2026), o Mercado dos Primatas no térreo da C3 (coração fantasma), o Galho Seco acorda quando o gato encosta nele; // 24: a Isyathy no fundo em todas as salas de A a D, muitas vezes; documentos dos devotos nas cabanas; // 23: a Isyathy aparece de vez em quando no fundo (o pescoço que espia), sem desenho parado; // 22: parede em cima do Portão do Templo (não dá mais para pular por cima), portal de pedra; // 21: a Isyathy de longe toda no fundo (atrás das árvores e névoas), árvore da sombra da E2 até o chão; // 20: F5 parte 2 (placas e objetos dos Primatas, cabine secreta da A5, a Isyathy de longe); // 19: corda na beira do abismo (R4), destroços da ponte (A1), cabaninhas; // 18: tutoriais da Floresta (pogo no cacto, cogumelo, atalhos, Caçador), posto e marcos; // 17: raiz com vinha na saída da G3; 10: F4, infectados; 11: sem cacto infectado; 12: F4b (D5, D6, Portão do Templo); 13: corações temporários; 14: troncos até o teto, melhorias 3; 15: ganchos pela floresta; 16: ganchos nas quinas, vãos de dash no Ninho
 
         public const string Road = "Forest_Road";
         public const string A = "Forest_A_Roots";
@@ -44,7 +44,12 @@ namespace SeteVidas.EditorTools
         public const string AtTorre = "atalho_torre";     // B4 (Torre): cipó do alto até o pé da torre
         public const string AtPatamar = "atalho_patamar"; // B1 (Pé do Bosque): cipó do patamar até o chão
         public const string AtRaiz = "atalho_raiz";       // E2 (Raiz que Respira): cipó do alto até a E1
-        public const string AtMusgo = "atalho_musgo";     // E4 (S-F4) → C1 (Entrada do Vale): alçapão + poço
+        public const string AtMusgo = "atalho_musgo";     // E4 → C1 (Entrada do Vale): alçapão + poço
+        /// <summary>
+        /// A Isyathy morta (F8; = IsyathySighting.DeadFlag). Abre o que a luta fecha: o teto da arena (subida G1–G3), a
+        /// passagem da arena de volta para a E6 e o cipó da E5 até a chegada (a volta da fase toda).
+        /// </summary>
+        public const string BossFlag = "isyathy_morta";
 
         public enum Map { Ground, Climbable, Background }
 
@@ -581,7 +586,7 @@ namespace SeteVidas.EditorTools
             var o = O("shadow", "sombra", lx + w * 0.5f, ly + h * 0.5f);
             o.W = w; o.H = h;
         }
-        static void Bush(float cx, float ly) { O("bush", "folhagem alta", cx, ly).Text = "matinho"; }
+        // (sem matinhos, pedido do usuário, 17/11/2026: "não vamos mais utilizá-los assim"; os novos, de capim alto, virão depois)
         /// <summary>Serra correndo de <paramref name="a"/> a <paramref name="b"/> (x locais) sobre um chão com topo em <paramref name="ly"/>.</summary>
         static void Saw(float a, float b, float ly, string group = null)
         {
@@ -631,10 +636,11 @@ namespace SeteVidas.EditorTools
             o.Flag = flag; o.Opens = false; o.Text = line;
         }
         /// <summary>Cipó que aparece aberto: na coluna <paramref name="lx"/> (-1 = parede da esquerda; Right+1 = da direita), de y0 a y1.</summary>
-        static void ScVine(string flag, int lx, int y0, int y1)
+        static Obj ScVine(string flag, int lx, int y0, int y1)
         {
             var o = new Obj { Kind = "sc_vine", Name = S.Id + ": cipó do atalho " + flag, X = GX(lx), Y = GY(y0), W = 1f, H = y1 - y0 + 1, Flag = flag };
             R.Objects.Add(o);
+            return o;   // Text = "escada": a escada de madeira (o mesmo escalar do cipó, outro desenho)
         }
         /// <summary>Tampa/portão (sólido) enquanto fechado: tiles locais de (x0, y0) a (x1, y1).</summary>
         static void ScBlock(string flag, int x0, int y0, int x1, int y1, string look)
@@ -685,12 +691,15 @@ namespace SeteVidas.EditorTools
             o.W = x1 - x0 + 1; o.H = 2f; o.Text = scene; o.Id = entrance; o.Link = flag;
         }
         /// <summary>Gatilho de troca de cena no meio da sala (queda da ponte, corda com flag).</summary>
-        static void Trigger(float cx, float cy, float w, float h, string scene, string entrance, string flag)
+        static Obj Trigger(float cx, float cy, float w, float h, string scene, string entrance, string flag)
         {
             var o = O("exit", "passagem → " + scene, cx, cy);
             o.Facing = 0;
             o.W = w; o.H = h; o.Text = scene; o.Id = entrance; o.Link = flag;
+            return o;
         }
+        /// <summary>Gatilho na escada (o meio dela leva à outra cena): sem a estaca com a corda (Value = 1).</summary>
+        static void LadderTrigger(Obj o) { o.Value = 1; }
 
         /// <summary>Rampa (triângulo) com a base em ly, de lx a lx+w; o lado alto (ly+h) à direita se <paramref name="risesRight"/>.
         /// Andáveis: 1:1 e 1:2. Mais íngreme que 1:1 = o gato escorrega. Encoste o lado alto num bloco com topo em ly+h.</summary>
@@ -770,35 +779,71 @@ namespace SeteVidas.EditorTools
             // R3 Cabeceira oeste: marco da ponte (a corda AT4 foi para a beira do abismo, na R4: pedido do usuário)
             var r3 = Sala("R3", "Cabeceira oeste", r2.X + r2.W - 1, -1, 30, 17);
             Torch(9f, 0f); Torch(25f, 0f);
-            // a horda: nasce aqui atrás quando o gato pisa na ponte
-            Horde(16f, 0f); Horde(19f, 0f); Horde(22f, 0f); Horde(25f, 0f);
+            // (a horda nasce na cabeceira da R4, logo atrás do gato: 17/11/2026)
             DoorE(0, 3);
 
             // R4 Ponte do Último Marco: de pedra, inteira até o gato chegar ao meio; aí o centro desaba (cutscene 1)
-            var r4 = Sala("R4", "Ponte do Último Marco", r3.X + r3.W - 1, -1, 60, 17);
-            DoorS(16, 41);
-            // a corda (AT4) para o fundo do vale fica na beira do abismo, amarrada num galho da cabeceira (pedido do
-            // usuário, 14/11/2026: "por que a corda está aqui se a ponte é lá na frente?"); só depois da ponte nova
-            Branch(11, 3, 4);
-            Trigger(14.5f, 4f, 1f, 2f, A, "A1_corda", BridgeFlag);
-            Entrance("R3_corda", 9f, 0f, 1);   // (o id fica: a A1 manda para cá)
+            // 17/11/2026 (pedido do usuário, duas vezes): a ponte com 4× o tamanho original, crescendo para a esquerda
+            // (104 tiles, 52 blocos)
+            var r4 = Sala("R4", "Ponte do Último Marco", r3.X + r3.W - 1, -1, 138, 17);
+            DoorS(16, 119);
+            // o atalho (AT4) para o fundo do vale: 18/11/2026 (pedido do usuário: "uma escada de madeira com a mesma
+            // mecânica dos cipós, mais perto da ponte"): um poço curto no chão, logo antes da ponte (x 13..14), tampado
+            // por tábuas até a ponte nova; por cima, um estrado de mão única (anda-se por cima; baixo + pulo desce).
+            // A escada fica na parede da direita do poço (a beira do abismo) e embaixo dela a saída para a A1.
+            // (Antes: uma corda pendurada num galho 3 tiles para trás, com o gatilho em cima do galho.)
+            DoorS(13, 14);
+            ScBlock(BridgeFlag, 13, -1, 14, -1, "tábuas pregadas");
+            Closed(BridgeFlag, 13.5f, 0f, "Tábuas pregadas em cima de um buraco. Embaixo, uma escada velha. Sem ponte, descer para quê?");
+            Branch(13, 0, 2);
+            var ladder = ScVine(BridgeFlag, 15, -9, -1); ladder.Text = "escada"; ladder.Value = -1;   // o gato fica à esquerda dela (no poço)
+            Hint("escada", "segure ↓ na escada: desce para o vale", 14f, 0f, 5f, 3f, "agachar:ler:" + BridgeFlag);
+            Entrance("R3_corda", 15.5f, 0f, 1);   // (o id fica: a A1 manda para cá) em cima da escada (subindo a de baixo, chega na de cima)
             var bridge = O("bridge", "ponte de pedra (trecho que desaba)", 16f, 0f);
-            bridge.W = 26f; bridge.A = FX(6f); bridge.B = FX(28f);
-            Trigger(29f, -3f, 28f, 3f, A, "A1_queda", FallenFlag);   // a queda leva ao fundo do vale (depois que caiu)
+            bridge.W = 104f; bridge.A = FX(19f); bridge.B = FX(68f);   // a fuga começa 3 tiles dentro da ponte; o meio desaba
+            // a horda: 8 zumbis nascem na cabeceira, atrás do gato, quando ele pisa na ponte (o peso dela é que derruba a ponte)
+            for (int i = 0; i < 8; i++) Horde(1.5f + i * 1.6f, 0f);
+            Trigger(69f, -3f, 106f, 3f, A, "A1_queda", FallenFlag);   // a queda leva ao fundo do vale (depois que caiu); de x 16 (a beira) em diante: não pega o poço da escada
+            // F9: a ponte de madeira da Tobi, no lugar da de pedra (escondida até a flag ponte_reconstruida)
+            O("bridge_wood", "ponte de madeira (Tobi)", 16f, 0f).W = 104f;
+            // F9: a Tobi na beira leste do abismo, olhando a ponte caída (o encontro acontece sozinho ao chegar perto)
+            O("tobi", "Tobi", 127f, 0f).Facing = -1;
             DoorE(0, 3);
-            // R5 Cabeceira leste: Tobi, S-F5, saída para Miaravéu; o buraco desce para a G3
-            Sala("R5", "Cabeceira leste", r4.X + r4.W - 1, -1, 30, 17);
+            // R4p o poço da escada (2 de largo, 8 de fundo), embaixo da cabeceira. 18/11/2026 (pedido do usuário): descendo
+            // a escada, no meio dela o gato já vai para a A1 (sem saída visível no fundo do poço, que é fechado)
+            int ladderX = GX(12);
+            Sala("R4p", "Escada do Vale", ladderX, r4.Y - 9, 4, 10);
+            LadderTrigger(Trigger(1f, 3f, 2f, 3f, A, "A1_corda", BridgeFlag));
+            // R5 Cabeceira leste: S-F5 (a Tobi fica logo a oeste, na beira do abismo da R4); o buraco desce para a G3
+            // 18/11/2026 (pedido do usuário, com um desenho): a sala cresceu (56 × 40) para o amanhecer, o portão de Miaravéu
+            // no leste (o fim da fase) e, no alto, a subida só de gancho para o caminho das cachoeiras (fechado por ora)
+            Sala("R5", "Cabeceira leste", r4.X + r4.W - 1, -1, 56, 40);
             Sanctuary(6f, 0f, "S-F5", "Cabeceira leste");
             Entrance("R5_sul", 17f, 0f, -1);
             ExitS(20, 23, F, "G3_topo");
+            O("dawn", "amanhecer", 0f, 0f);   // o amanhecer no fundo: acende da ponte para cá (DawnSky)
+            // o portão de Miaravéu, em ruínas, e a placa: passar por ele é o fim da fase (a conversa, uma vez)
+            O("miaraveu_gate", "portão de Miaravéu", 47f, 0f);
+            var end = O("trigger", "o fim da fase (Miaravéu)", 49f, 2f);   // (o centro da caixa: 4 de altura a partir do chão)
+            end.W = 3f; end.H = 4f; end.Id = "D-MIARAVEU-PORTAO";   /* = MiaraveuGateSetup.EndDialogue */ end.Text = ""; end.Link = "miaraveu_portao";
+            // a subida dos ganchos (pulo de 4, gancho de 9): três galhos de mão única a 11, 22 e 33, cada um com o gancho
+            // logo embaixo (do galho de baixo, o gancho fica a ~8). Sem gancho não dá: são 11 de um para o outro
+            Branch(7, 11, 10); Hook(10f, 8.5f);
+            Branch(17, 22, 11); Hook(19f, 19.5f);
+            Branch(32, 33, 15); Hook(30f, 30.5f);
+            // no alto, o caminho das cachoeiras (área futura): o buraco do teto tapado por pedras caídas
+            DoorN(42, 45, false);
+            ScBlock("caminho_cachoeiras", 42, Top + 1, 45, Top + 1, "pedras caídas");
+            Closed("caminho_cachoeiras", 43.5f, 33f, "O caminho das cachoeiras sobe por aqui. As pedras caídas ainda não deixam passar.");
             return reg;
         }
 
         /// <summary>Gatilho com posição global (uso interno dos helpers acima).</summary>
-        static void TriggerAt(float gx, float gy, float w, float h, string scene, string entrance, string flag)
+        static Obj TriggerAt(float gx, float gy, float w, float h, string scene, string entrance, string flag)
         {
             var o = new Obj { Kind = "exit", Name = S.Id + ": passagem → " + scene, X = gx, Y = gy, W = w, H = h, Text = scene, Id = entrance, Link = flag, Facing = 0 };
             R.Objects.Add(o);
+            return o;
         }
 
         // =========================================================== A — Raízes da Queda (fundo do vale, intensidade baixa)
@@ -815,15 +860,17 @@ namespace SeteVidas.EditorTools
             // a queda da ponte cai na raiz das moedas (topo 13) e o teto fica aberto em cima dela: o vale continua para
             // cima, até a ponte (pedido de 14/11/2026). As pontas do teto ficam (o morcego da direita se pendura nelas).
             Entrance("A1_queda", 25.5f, 13f, 1);
-            Entrance("A1_corda", 3f, 0f, 1);
+            Entrance("A1_corda", 1f, 0f, 1);   // ao pé da escada da parede esquerda
             // os destroços da ponte (pedido do usuário, 14/11/2026): caem junto com o gato na primeira vez e ficam no chão
             Debris(20f, 0f, "ponte_destroco_0"); Debris(25f, 0f, "ponte_destroco_3"); Debris(29.5f, 0f, "ponte_destroco_1");
             Debris(46f, 0f, "ponte_destroco_2"); Debris(50f, 0f, "ponte_destroco_3");
             reg.SpawnX = FX(25.5f); reg.SpawnY = FY(13f);
             DoorN(14, 34, false);
             Bark("acordou_no_vale", 1.2f, "Ugh. Caí de novo.", "Do alto da ponte até o fundo do vale. E inteiro.", "Seis vidas. Por enquanto.");
-            Branch(0, 3, 2);   // a corda (AT4) para a estrada, só com a ponte nova
-            TriggerAt(FX(0.5f), FY(4f), 1f, 2f, Road, "R3_corda", BridgeFlag);
+            // o atalho (AT4) para a estrada, só com a ponte nova: 18/11/2026 (pedido do usuário), a escada de madeira na parede
+            // da esquerda (antes, uma corda num galho). Subindo um pedaço dela, o gato já vai para a escada de cima (R4)
+            var up = ScVine(BridgeFlag, -1, 0, 9); up.Text = "escada"; up.Value = 1;   // o gato fica à direita dela
+            LadderTrigger(TriggerAt(FX(0.5f), FY(4f), 1f, 2f, Road, "R3_corda", BridgeFlag));
             Terrain(12, 1, 1, 2, 2, 1);
             Snake(20f, 0f, -1);
             Terrain(32, 1, 2, 2, 3, 3, 2, 1, 1);                   // morro (topo 3 em 35..36)
@@ -834,7 +881,7 @@ namespace SeteVidas.EditorTools
             Blob(39, 14, 46, 15); Coins(40f, 16f, 4);               // topo 16
             Bat(43f, 22.6f);
             Infected(49f, 0f, -1, 41f, 56f, false);
-            Shadow(42, 0, 4, 4); Bush(44f, 0f);
+            Shadow(42, 0, 4, 4);
             Shadow(52, 0, 5, 5);
             LedgeHook(29, 13, 1); LedgeHook(39, 16, -1);                 // ganchos: as raízes das moedas (do morro, pulando)
             DoorE(0, 3);
@@ -959,7 +1006,7 @@ namespace SeteVidas.EditorTools
             ExitN(0, 2, C, "C4p_baixo", AtLago);
             // chão: furtivo, com o templário, o Galho Seco e o vão de espinhos
             Terrain(8, 1, 1, 2, 2, 2, 1);
-            Shadow(14, 0, 5, 4); Bush(16f, 0f);
+            Shadow(14, 0, 5, 4);
             Infected(26f, 0f, 1, 20f, 33f, false);
             Shadow(34, 0, 2, 6);
             Dry(37f, 0f, -1);
@@ -1118,7 +1165,7 @@ namespace SeteVidas.EditorTools
             Sala("B5", "Copa Baixa", 466, -85, 60, 25);
             Terrain(3, 1, 2, 2, 1);
             Infected(15f, 0f, 1, 8f, 24f, false);
-            Shadow(26, 0, 5, 4); Bush(28f, 0f);
+            Shadow(26, 0, 5, 4);
             Snake(33f, 0f, -1);
             Infected(44f, 0f, -1, 37f, 52f, true);
             Shadow(52, 0, 4, 4);
@@ -1160,7 +1207,7 @@ namespace SeteVidas.EditorTools
             Terrain(44, 1, 1, 2, 2, 2, 1);
             Shadow(46, 2, 5, 5);
             Infected(37f, 0f, -1, 27f, 42f, false);
-            Shadow(28, 0, 5, 5); Bush(30f, 0f);
+            Shadow(28, 0, 5, 5);
             Snake(22f, 0f, 1);
             Plant(16f, 0f);
             Infected(7f, 0f, 1, 2f, 13f, true);
@@ -1248,7 +1295,7 @@ namespace SeteVidas.EditorTools
             Sanctuary(54f, 9f, "S-F1D", "Caverna do Lago");             // no patamar da chegada, longe da água
             Pool(13.5f, 0f, 24);                                     // água nas células 2..25
             G(0, 0, 1, 0); G(26, 0, 26, 0);                          // margens: a água não acaba no ar
-            Terrain(11, 2, 3, 3, 3, 2); Chest(13f, 3f, "W11"); Bush(14.5f, 3f); Shadow(11, 3, 5, 4);
+            Terrain(11, 2, 3, 3, 3, 2); Chest(13f, 3f, "W11"); Shadow(11, 3, 5, 4);
             Infected(20f, 0f, -1, 17f, 25f, false); Infected(6f, 0f, 1, 3f, 10f, false);
             DoorS(27, 29);
             ScBlock(AtLago, 27, -1, 29, -1, "tampa de raízes");
@@ -1283,7 +1330,7 @@ namespace SeteVidas.EditorTools
             DoorS(38, 41); 
             G(29, 0, 34, 3); Snake(27f, 0f, 1);
             Infected(19f, 0f, 1, 12f, 25f, false);
-            Bush(14f, 0f); Shadow(12, 0, 4, 5);
+            Shadow(12, 0, 4, 5);
             Plant(8f, 0f);
             Crawler(3f, 0f, 1f, 5f);
             Branch(52, 7, 4); Branch(44, 9, 4); Branch(36, 10, 4); Rotten(31, 10); Branch(24, 9, 4); Branch(16, 8, 4); Branch(8, 6, 4);
@@ -1384,7 +1431,7 @@ namespace SeteVidas.EditorTools
             Infected(17f, 0f, 1, 9f, 26f, false);
             Shadow(5, 0, 4, 4); Shadow(26, 0, 4, 4);
             Snake(29.5f, 0f, -1);
-            Bush(11f, 0f);
+            Shadow(10, 0, 3, 4);                                         // era o matinho no meio da patrulha (17/11/2026: sem matinhos)
             LedgeHook(21, 8, -1);                                        // gancho: o galho largo da Vulpis
             DoorE(0, 3);
 
@@ -1523,6 +1570,9 @@ namespace SeteVidas.EditorTools
             Entrance("E1_oeste", 3f, 0f, 1);
             reg.SpawnX = FX(3f); reg.SpawnY = FY(0f);
             ExitW(0, D, "D4_leste");
+            // 18/11/2026 (pedido do usuário): o Ninho só tem 2 santuários, um no começo (aqui) e um no fim, antes do chefe
+            // (E6). O S-F3B veio da E2 (mesmo id: os saves continuam valendo); a 8 tiles da cabeça dela, que dorme na rampa
+            Sanctuary(3.5f, 0f, "S-F3B", "Sulcos");
             Slope(6, 0, 8, 4, true); G(14, 0, 19, 3);                    // rampa 1:2 até o primeiro patamar (topo 4)
             Spikes(20, 0, 6); // vão de 6: só quicando
             G(26, 0, 29, 3); Slope(26, 4, 4, 4, true); G(30, 0, 37, 7);  // rampa 1:1 até o segundo (topo 8)
@@ -1531,10 +1581,8 @@ namespace SeteVidas.EditorTools
             G(50, 0, 51, 13); V(50, 1, 50, 13); V(51, 1, 51, 13);        // ...e pula para a vinha do pilar
             G(54, 9, 57, 9);                                             // saída (topo 10); o cogumelo fica ao lado, em x 52..53
             Shadow(15, 4, 4, 4); Shadow(31, 8, 4, 4); Shadow(42, 4, 2, 4); Shadow(54, 10, 4, 4); Shadow(52, 0, 6, 5);
-            Bush(17f, 4f);
-            Infected(34f, 8f, -1, 30f, 37f, false); Infected(45f, 0f, 1, 44f, 47f, false);
-            Snake(15.5f, 4f, -1);                                        // no patamar 1 (plano), de frente para quem sobe a rampa
-            Plant(48.5f, 0f);
+            // F7 (17/11/2026): a E1–E3 são a fuga da Isyathy (NestSetup): sem inimigos na rota (saíram 2 templários,
+            // a serpente do patamar 1 e a planta do pé do pilar)
             LedgeHook(50, 14, -1);                                       // gancho: o alto do pilar (outra subida)
             Mushroom(52.9f, 0f);
             DoorE(10, 13);
@@ -1551,7 +1599,7 @@ namespace SeteVidas.EditorTools
             VE(1, 17); VE(23, 44); Sway(20.47f, 15.62f, 4);         // galho perto da parede: ponte entre as duas vinhas (ajuste à mão)
             Mushroom(25f, 0f);
             LedgeHook(13, 44, -1);                                       // gancho: os galhos do alto (saída e alavanca), do patamar 2
-            Plant(0.1f, 24f, -90f);
+            // (a planta da parede esquerda saiu: F7, a fuga)
             Branch(5, 22, 4); Branch(8, 25, 3);
             Branch(13, 44, 4); Branch(24, 45, 3);                    // (o galho do meio saiu: ajuste à mão, 15/11/2026)
             Shadow(0, 26, 5, 8); Shadow(11, 15, 2, 4);
@@ -1561,7 +1609,7 @@ namespace SeteVidas.EditorTools
             ScRolled(AtRaiz, Right + 0.5f, 23f);
             Lever(AtRaiz, 25.5f, 45f, 0, 1, "soltar o cipó");
             Closed(AtRaiz, 26f, 0f, "A vinha some no meio da parede. Tem um cipó enrolado lá em cima.");
-            Sanctuary(13f, 0f, "S-F3B", "Raiz que Respira");           // no pé da subida; o cipó do alto volta para cá
+            // (o S-F3B foi para o começo da E1: o Ninho só tem 2 santuários, 18/11/2026)
             DoorE(45, 48);
 
             // E3 Travessia das Escamas: por cima (rampa que cai em outra rampa e pula na plataforma temporária) ou
@@ -1577,16 +1625,13 @@ namespace SeteVidas.EditorTools
             LedgeHook(26, 17, -1); LedgeHook(55, 8, -1);                 // ganchos: o alto (do piso de cima) e a saída (por baixo)
             Trunk(20, 0, "gb_E3_tronco", 7); Chest(24f, 0f, "W17"); Lore(21.5f, 0f, "D-DEVOTO-04", "Página rasgada", "doc_pagina", -4); // F5: devotos (4/4)
            
-            Shadow(28, 0, 10, 5); Infected(36f, 0f, -1, 27f, 44f, false);
-            Crawler(12f, 0f, 9f, 18f);
+            Shadow(28, 0, 10, 5);                                            // (F7: sem o templário, a serpente e os morcegos: a fuga)
             Branch(47, 3, 4); Branch(47, 6, 4); G(55, 7, Right, 7);           // a saída 8 adiante: dash (melhorias 5)
-            Bat(16f, Top + 0.6f); Bat(42f, Top + 0.6f);
             DoorE(8, 11);
 
-            // E4 Clareira do Musgo: S-F4 (o último santuário antes do chefe). No chão, o alçapão do poço do Musgo:
-            // aberto daqui, desce até a Entrada do Vale (C1)
+            // E4 Clareira do Musgo: no chão, o alçapão do poço do Musgo: aberto daqui, desce até a Entrada do Vale (C1).
+            // (o S-F4 foi para a E6, antes do chefe: o Ninho só tem 2 santuários, 18/11/2026)
             var e4 = Sala("E4", "Clareira do Musgo", e3.X + e3.W - 1, e3.Y + 8, 30, 16);
-            Sanctuary(5f, 0f, "S-F4", "Clareira do Musgo");
             Branch(13, 3, 4); Branch(17, 6, 4); G(22, 8, 27, 8);
             Shadow(19, 0, 4, 4);
             LedgeHook(22, 9, -1);                                        // gancho: a saída da clareira
@@ -1612,7 +1657,10 @@ namespace SeteVidas.EditorTools
             // E5 Olho no Fundo: o chefe dorme ao fundo. Cai-se do alto (sem volta) e a furtividade vai até a arena.
             // Zigue-zague diante da cabeça; W18 no nicho embaixo do focinho.
             var e5 = Sala("E5", "Olho no Fundo", e4.X + e4.W - 1, e4.Y, 45, 34);
-            G(0, 8, 14, 8);                                                    // chegada no alto do focinho (topo 9)
+            G(2, 8, 14, 8); Branch(0f, 9f, 2f);                               // chegada no alto do focinho (topo 9)
+            // F8: depois da Isyathy, um cipó na parede da esquerda sobe até a chegada (atravessa o galho de mão única) e
+            // volta para a E4: a fase inteira tem volta
+            ScVine(BossFlag, -1, 0, 8);
             Chest(5f, 0f, "W18"); Shadow(0, 0, 15, 8);
             Infected(9f, 0f, 1, 3f, 13f, false); Infected(30f, 0f, -1, 17f, 40f, true);
             Shadow(18, 0, 4, 5); Shadow(36, 0, 5, 5);
@@ -1623,12 +1671,15 @@ namespace SeteVidas.EditorTools
             G(41, 27, Right, 27);
             DoorE(28, 31);
 
-            // E6 Antessala: a música some; ainda furtividade (sem santuário: a volta é só depois da Isyathy)
+            // E6 Antessala: a música some; ainda furtividade. No fim, junto da porta da arena, o S-F4 (o último santuário,
+            // antes do chefe; 18/11/2026): morrer na Isyathy volta para cá. O infectado patrulha só até 19 (longe dele)
             var e6 = Sala("E6", "Antessala", e5.X + e5.W - 1, e5.Y + 28, 30, 17);
-            Infected(15f, 0f, 1, 9f, 22f, false);
+            Sanctuary(24f, 0f, "S-F4", "Antessala");
+            Infected(12f, 0f, 1, 9f, 19f, false);
             Shadow(3, 0, 4, 4); Shadow(17, 0, 4, 4);                  // (a folhagem saiu: ajuste à mão, 16/11/2026)
             Crawler(8f, 0f, 5f, 12f);
             ExitE(0, F, "F1_oeste");
+            Entrance("E6_leste", 26f, 0f, -1, BossFlag);                   // F8: a volta da arena (só depois da Isyathy)
             return reg;
         }
 
@@ -1647,9 +1698,27 @@ namespace SeteVidas.EditorTools
             var f1 = Sala("F1", "Coração da Floresta", e6.X + e6.W - 1, e6.Y, 40, 28);
             Entrance("F1_oeste", 3f, 0f, 1);
             reg.SpawnX = FX(3f); reg.SpawnY = FY(0f);
-            // sem saída para o oeste: da E5 até aqui não há volta (pedido do usuário, 13/11/2026)
-            for (int y = 3; y <= 15; y += 6) { G(3, y - 1, 8, y - 1); G(29, y - 1, 34, y - 1); }   // laterais: topos 3, 9, 15
-            for (int y = 6; y <= 18; y += 6) { G(10, y - 1, 15, y - 1); G(22, y - 1, 27, y - 1); } // meio: topos 6, 12, 18
+            // F8: a passagem de volta para a E6 e o teto ficam fechados por raízes até a Isyathy morrer (BossFlag): a
+            // arena é fechada durante a luta; depois, a volta da fase toda e a subida G1–G3
+            DoorW(0, 3);
+            var back = O("exit", "saída ← " + E, -1.5f, 2f);
+            back.Facing = -1; back.W = 2f; back.H = 4f; back.Text = E; back.Id = "E6_leste"; back.Link = BossFlag;
+            ScBlock(BossFlag, -1, 0, -1, 3, "raízes da passagem");
+            ScBlock(BossFlag, 17, S.H - 2, 20, S.H - 2, "raízes do teto");
+            O("boss_isyathy", "a Isyathy (chefe)", 20f, 0f);
+            // 17/11/2026 (pedido do usuário): sem as 12 plataformas de pedra. Galhos de madeira (mão única) e galhos podres
+            // (temporários: caem quando pisados e voltam em 5 s, para não dar para ficar parado), em menor número: os vãos
+            // pedem dash e os ganchos ajudam a subir. Os vãos livres do chão ao teto (x 9,5, 14,5, 23,5 e 29) são por onde
+            // a Isyathy sai do chão e desce do teto (IsyathyBossSetup.Holes).
+            Branch(1, 4, 6); Branch(31, 4, 6);                 // baixos, junto das paredes (topo 4)
+            Rotten(11, 5); Rotten(25, 5);                      // degraus temporários (topo 5)
+            Branch(3, 9, 5); Branch(30, 9, 5);                 // laterais (topo 9): onde a Vulpis chega para atirar
+            Rotten(18, 9);                                     // o meio (topo 9), temporário
+            Branch(10, 14, 4); Branch(24, 14, 4);              // altos (topo 14): o vão entre eles pede dash ou o gancho
+            Rotten(18, 17);                                    // o degrau temporário para os galhos da saída
+            // ganchos: os dois lados de cima e as duas pontas do galho do topo (18/11/2026, pedido do usuário: saiu o do
+            // meio, embaixo do galho podre de cima)
+            Hook(6f, 14.5f); Hook(32.5f, 14.5f); Hook(15.5f, 21f); Hook(22.5f, 21f);
             Branch(16, 21, 6); Branch(15, 24, 8);
             DoorN(17, 20);
 

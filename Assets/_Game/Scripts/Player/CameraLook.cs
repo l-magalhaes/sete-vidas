@@ -36,6 +36,16 @@ namespace SeteVidas.Player
         PlayerController _player;
         Transform _target;
         float _fallingFor, _crouchStillFor, _look;
+        Vector2 _lead;
+
+        /// <summary>
+        /// A câmera olha adiante (tiles), por exemplo na fuga do Ninho (F7): quem pede liga, quem termina zera.
+        /// Static: zerado a cada Play (o projeto entra no Play sem recarregar o domínio).
+        /// </summary>
+        public static Vector2 Lead { get; set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() => Lead = Vector2.zero;
 
         /// <summary>O transform que a câmera deve seguir (criado se não existir).</summary>
         public Transform Target
@@ -68,7 +78,8 @@ namespace SeteVidas.Player
 
             float want = CameraLookRules.LookDown(_fallingFor, _crouchStillFor);
             _look = Mathf.MoveTowards(_look, want, moveSpeed * dt);
-            Target.localPosition = new Vector3(0f, -_look, 0f);
+            _lead = Vector2.MoveTowards(_lead, Lead, moveSpeed * dt);
+            Target.localPosition = new Vector3(_lead.x, _lead.y - _look, 0f);
         }
     }
 }

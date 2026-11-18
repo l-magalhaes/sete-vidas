@@ -79,7 +79,7 @@ namespace SeteVidas.UI
 
         void LateUpdate()
         {
-            var boss = GoldenBoss.Active;
+            IBossBarSource boss = BossBarSource.Active != null && BossBarSource.Active.IsFighting ? BossBarSource.Active : GoldenBoss.Active;
             bool show = boss != null && boss.IsFighting;
             if (root != null && root.activeSelf != show) root.SetActive(show);
             if (!show) { _trail = 1f; _lastHealth = -1; return; }
@@ -88,11 +88,12 @@ namespace SeteVidas.UI
             if (fill != null) fill.fillAmount = f;
             _trail = f > _trail ? f : Mathf.MoveTowards(_trail, f, trailSpeed * Time.unscaledDeltaTime);
             if (trail != null) trail.fillAmount = _trail;
-            if (title != null) title.text = boss.InSecondPhase ? bossTitle + "  (furioso)" : bossTitle;
+            string name = boss.BarTitle ?? bossTitle;
+            if (title != null) title.text = boss.InSecondPhase ? name + "  (furioso)" : name;
             if (_art != null) DrawArt(boss, f);
         }
 
-        void DrawArt(GoldenBoss boss, float f)
+        void DrawArt(IBossBarSource boss, float f)
         {
             float now = Time.unscaledTime;
             if (_lastHealth >= 0 && boss.Health < _lastHealth) { _flashUntil = now + FlashTime; _shakeUntil = now + ShakeTime; }
@@ -116,7 +117,7 @@ namespace SeteVidas.UI
                 Furious = boss.InSecondPhase,
                 Flash = now < _flashUntil,
                 Glint = glint,
-                Name = bossTitle,
+                Name = boss.BarTitle ?? bossTitle,
             };
             long key = BossBarArt.Columns(f) | (long)BossBarArt.Columns(_trail) << 9 | (long)(glint + 8) << 18
                        | (s.Flash ? 1L << 28 : 0) | (s.Furious ? 1L << 29 : 0);

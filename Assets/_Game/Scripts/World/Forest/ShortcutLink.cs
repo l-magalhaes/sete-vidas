@@ -36,7 +36,7 @@ namespace SeteVidas.World
         [SerializeField, Min(0.5f)] float reach = 1.6f;
 
         bool _open;
-        float _barkAt = -10f;
+        float _barkAt = -10f, _nextCheck;
 
         public string Flag => flag;
         public bool OpensHere => opensHere;
@@ -71,6 +71,12 @@ namespace SeteVidas.World
         void Update()
         {
             if (_open) return;
+            // aberto por outra coisa na mesma cena (a morte da Isyathy abre a arena, 17/11/2026): abre sozinho
+            if (Time.time >= _nextCheck)
+            {
+                _nextCheck = Time.time + 0.5f;
+                if (!string.IsNullOrEmpty(flag) && ShortcutRules.IsOpen(SaveManager.Data, flag)) { Apply(true); return; }
+            }
             var h = PlayerHealth.Active;
             var runner = DialogueRunner.Active;
             if (h == null || h.IsDead || SceneTravel.IsTraveling || (runner != null && runner.IsOpen)) { ShowPrompt(false); return; }

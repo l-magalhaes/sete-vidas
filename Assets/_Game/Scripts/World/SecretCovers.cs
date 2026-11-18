@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using SeteVidas.World.Scenery;
 
 namespace SeteVidas.World
 {
@@ -24,6 +25,14 @@ namespace SeteVidas.World
         const string GroundName = "Ground", BackgroundName = "Background";
         /// <summary>Até onde (passos) a área maior atrás da parede fica coberta: mais que meia tela.</summary>
         const int NearSteps = 18;
+        /// <summary>
+        /// Regra de desenho da cobertura. 2 (pedido do usuário, 17/11/2026: "padrão de assets errado repetindo... precisa
+        /// ser orgânico"): o vão é desenhado como parede maciça pelo autotile das salas (miolo com as variações espalhadas,
+        /// e as paredes em volta sem a borda virada para o vão), e não mais com o tile de borda mais próximo, que numa
+        /// cabine de paredes finas formava anéis concêntricos.
+        /// </summary>
+        public const int CoverVersion = 2;
+        const string TileFolder = "Assets/_Game/ScriptableObjects/Environment/Tiles/";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()  // Play sem recarregar o domínio
@@ -58,10 +67,20 @@ namespace SeteVidas.World
         {
             if (ground == null || parent == null) return 0;
             var scene = parent.gameObject.scene;
-            // paredes que já têm cobertura (gravada pelo menu de montagem): não cobre de novo
+            // paredes que já têm cobertura (gravada pelo menu de montagem): não cobre de novo; a de uma regra de desenho
+            // mais velha (o anel de bordas repetidas) é desfeita e refeita
             var covered = new HashSet<BreakableWall>();
             foreach (var c in Object.FindObjectsByType<SecretCover>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                if (c.gameObject.scene == scene && c.Wall != null) covered.Add(c.Wall);
+            {
+                if (c.gameObject.scene != scene) continue;
+                if (c.Version < CoverVersion)
+                {
+                    if (c.CoverMap != null) Kill(c.CoverMap.gameObject);
+                    Kill(c.gameObject);
+                    continue;
+                }
+                if (c.Wall != null) covered.Add(c.Wall);
+            }
 
             int made = 0;
             Transform root = null;
@@ -99,12 +118,13 @@ namespace SeteVidas.World
                         mode = side;
                     }
                     if (pocket == null || pocket.Count == 0) continue;
+                    if (root == null) root = parent.Find("Segredos escondidos");   // a de antes (coberturas refeitas)
                     if (root == null)
                     {
                         root = new GameObject("Segredos escondidos").transform;
                         root.SetParent(parent, false);
                     }
-                    var map = Cover(ground, back, wall.name + (mode == 0 ? "" : side < 0 ? " (esquerda)" : " (direita)"), pocket);
+                    var map = Cover(ground, back, wall.name + (mode == 0 ? "" : side < 0 ? " (esquerda)" : " (direita)"), pocket, wallCells);
                     if (map == null) continue;
                     var go = new GameObject("Segredo atrás de " + wall.name);
                     go.transform.SetParent(root, false);
@@ -197,7 +217,7 @@ namespace SeteVidas.World
         /// da Floresta (pedido do usuário, 14/11/2026: "faça a parte de fora ser igual a de dentro"), a cobertura é a
         /// própria parede de tábuas de dentro, com a janela quebrada repetida por cima; só o baú fica escondido.
         /// </summary>
-        static Tilemap Cover(Tilemap ground, Tilemap back, string wallName, HashSet<Vector3Int> cells)
+        static Tilemap Cover(Tilemap ground, Tilemap back, string wallName, HashSet<Vector3Int> cells, HashSet<Vector3Int> wallCells)
         {
             var grid = ground.layoutGrid != null ? ground.layoutGrid.transform : ground.transform.parent;
             var go = new GameObject("Cobertura: " + wallName);
@@ -215,12 +235,44 @@ namespace SeteVidas.World
             TileBase any = null;   // no meio de uma sala grande (longe das paredes), a mesma pedra de perto da parede
             foreach (var c in cells) { any = cabin ? back.GetTile(c) : InnerTile(ground, c); if (any != null) break; }
             if (cabin) CopyCabinWindows(go.transform, cells);
+            // fora da cabaninha: o vão vira parede maciça, desenhada pelo autotile como se fosse chão de verdade
+            Dictionary<string, TileBase> known = cabin ? null : UsedTiles(ground);
+            TerrainAutotile.SolidAt solid = (x, y) =>
+            {
+                var p = new Vector3Int(x, y, 0);
+                return ground.HasTile(p) || cells.Contains(p) || wallCells.Contains(p);
+            };
             foreach (var c in cells)
             {
-                var tile = (cabin ? back.GetTile(c) : InnerTile(ground, c)) ?? any;
+                TileBase tile;
+                if (cabin) tile = back.GetTile(c) ?? any;
+                else
+                {
+                    var near = InnerTile(ground, c) ?? any;
+                    tile = near == null ? null : Find(known, CoverTileName(near.name, solid, c.x, c.y)) ?? near;
+                }
                 if (tile == null) continue;
                 map.SetTile(c, tile);
                 painted++;
+            }
+            if (!cabin && painted > 0)
+            {
+                // as paredes em volta perdem a borda virada para o vão (só na cobertura: sem ela, a parede é a de sempre)
+                var dirs = new[] { Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down,
+                                   new Vector3Int(1, 1, 0), new Vector3Int(-1, 1, 0), new Vector3Int(1, -1, 0), new Vector3Int(-1, -1, 0) };
+                var rim = new HashSet<Vector3Int>();
+                foreach (var c in cells)
+                    foreach (var d in dirs)
+                    {
+                        var n = c + d;
+                        if (!cells.Contains(n) && ground.HasTile(n)) rim.Add(n);
+                    }
+                foreach (var n in rim)
+                {
+                    var own = ground.GetTile(n);
+                    var tile = Find(known, CoverTileName(own.name, solid, n.x, n.y));
+                    if (tile != null && tile != own) map.SetTile(n, tile);
+                }
             }
             if (painted == 0)
             {
@@ -228,6 +280,63 @@ namespace SeteVidas.World
                 return null;
             }
             return map;
+        }
+
+        static readonly string[] Bands = { "topo", "terra", "transicao", "rocha", "miolo", "meio", "interno" };
+
+        /// <summary>
+        /// O nome do tile que o autotile das salas daria à célula (x, y) se <paramref name="solid"/> fosse o chão, no material
+        /// do tile <paramref name="sourceName"/>. Null se o tile não é de chão comum (tronco, vinha, massa, fundo): aí fica o
+        /// tile de perto como estava.
+        /// </summary>
+        public static string CoverTileName(string sourceName, TerrainAutotile.SolidAt solid, int x, int y)
+        {
+            if (string.IsNullOrEmpty(sourceName) || solid == null) return null;
+            string material = null;
+            bool forest = false;
+            foreach (var m in ForestAutotile.Materials)
+                if (sourceName.StartsWith("tile_" + m + "_") && (material == null || m.Length > material.Length)) { material = m; forest = true; }
+            foreach (var m in TerrainAutotile.Materials)
+                if (sourceName.StartsWith("tile_" + m + "_") && (material == null || m.Length > material.Length)) { material = m; forest = false; }
+            if (material == null) return null;
+            string rest = sourceName.Substring(("tile_" + material + "_").Length);
+            int cut = rest.IndexOf('_');
+            if (cut <= 0 || System.Array.IndexOf(Bands, rest.Substring(0, cut)) < 0) return null;
+            return forest ? ForestAutotile.TileFor(material, solid, x, y) : TerrainAutotile.TileFor(material, solid, null, x, y);
+        }
+
+        static Dictionary<string, TileBase> UsedTiles(Tilemap ground)
+        {
+            var known = new Dictionary<string, TileBase>();
+            var used = new TileBase[ground.GetUsedTilesCount()];
+            ground.GetUsedTilesNonAlloc(used);
+            foreach (var t in used) if (t != null) known[t.name] = t;
+            return known;
+        }
+
+        /// <summary>O tile pelo nome: entre os do chão da cena (no editor, também nos assets); senão a variação 0 dele.</summary>
+        static TileBase Find(Dictionary<string, TileBase> known, string name)
+        {
+            if (known == null || string.IsNullOrEmpty(name)) return null;
+            var t = Lookup(known, name);
+            if (t != null) return t;
+            int cut = name.LastIndexOf('_');
+            return cut > 0 ? Lookup(known, name.Substring(0, cut) + "_0") : null;
+        }
+
+        static TileBase Lookup(Dictionary<string, TileBase> known, string name)
+        {
+            if (known.TryGetValue(name, out var t)) return t;
+#if UNITY_EDITOR
+            t = UnityEditor.AssetDatabase.LoadAssetAtPath<TileBase>(TileFolder + name + ".asset");
+#endif
+            known[name] = t;
+            return t;
+        }
+
+        static void Kill(GameObject go)
+        {
+            if (Application.isPlaying) Object.Destroy(go); else Object.DestroyImmediate(go);
         }
 
         /// <summary>Repete na cobertura (na frente dela) cada janela de cabaninha que fica dentro do vão coberto.</summary>

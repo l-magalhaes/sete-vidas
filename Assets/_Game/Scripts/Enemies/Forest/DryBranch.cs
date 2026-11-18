@@ -67,19 +67,43 @@ namespace SeteVidas.Enemies
         protected override void Awake()
         {
             base.Awake();
+            if (spriteRenderer != null) _visualPos = spriteRenderer.transform.localPosition;
             _state = startsDisguised ? BranchState.Disguised : BranchState.Awake;
         }
 
         protected override void Revive()
         {
             base.Revive();
+            StopAllCoroutines();
+            _arrowCarry = 0f;
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.transform.localPosition = _visualPos;
+                spriteRenderer.transform.localRotation = Quaternion.identity;
+                spriteRenderer.color = Color.white;
+            }
             _state = startsDisguised ? BranchState.Disguised : BranchState.Awake;
             _timer = 0f;
             _sinceSpawn = SproutInterval;
         }
 
+        float _arrowCarry;
+        Vector3 _visualPos;
+
+        /// <summary>A flecha crava na madeira e tira pouco (<see cref="BranchArrowHit"/>); de perto, o dano inteiro.</summary>
+        protected override int AdjustDamage(in DamageInfo info, int dmg)
+        {
+            if (!info.Ranged) return dmg;
+            int d = BranchArrowHit(dmg, ref _arrowCarry);
+            if (d <= 0) SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.4f, 0.7f);   // tóc: cravou na casca
+            return d;
+        }
+
+        protected override float CorpseTime => BranchCorpseTime;
+
         protected override void OnDied()
         {
+            StartCoroutine(Fall());
             // derrubado: os morcegos que soltou continuam (já estão no ar)
             // infectado: vira uma nuvem tóxica no pé do tronco (bestiário)
             if (IsInfected)
@@ -159,6 +183,60 @@ namespace SeteVidas.Enemies
             }
         }
 
+
+        /// <summary>
+        /// A morte (pedido do usuário, 17/11/2026: "eles não têm animação de morte"): o tronco estala e treme, tomba para o
+        /// lado de longe do gato (a base fica no chão, cada vez mais rápido), bate no chão levantando lascas e poeira,
+        /// quica um pouco e some.
+        /// </summary>
+        System.Collections.IEnumerator Fall()
+        {
+            if (spriteRenderer == null) yield break;
+            var visual = spriteRenderer.transform;
+            var h = Player;
+            int side = h != null && h.transform.position.x > transform.position.x ? -1 : 1;   // cai para longe do gato
+            var wood = new Color32(0x82, 0x6a, 0x52, 0xff);
+            var dark = new Color32(0x4a, 0x3a, 0x2c, 0xff);
+            Vector2 mid = (Vector2)transform.position + Vector2.up * height * 0.45f;
+            HitSparks.Burst(mid, 12, wood, dark, 2f, 6f, 0.5f, 30f, 0.5f);
+            SeteVidas.Audio.Sfx.Play("parede_racha", transform.position, 0.8f, 0.7f);
+            float t = 0f;
+            while (t < BranchCrackTime)   // estala: treme no lugar
+            {
+                t += Time.deltaTime;
+                visual.localPosition = _visualPos + new Vector3(Mathf.Sin(t * 90f) * 0.06f, 0f, 0f);
+                yield return null;
+            }
+            t = 0f;
+            bool landed = false;
+            float total = BranchFallTime + BranchSettleTime;
+            while (t < total)
+            {
+                t += Time.deltaTime;
+                float ang = BranchFallAngleAt(t) * -side;   // z negativo = tomba para a direita
+                visual.localRotation = Quaternion.Euler(0f, 0f, ang);
+                // gira em volta da base (os pés ficam no chão)
+                visual.localPosition = Quaternion.Euler(0f, 0f, ang) * _visualPos;
+                if (!landed && t >= BranchFallTime)
+                {
+                    landed = true;
+                    Vector2 ground = (Vector2)transform.position + Vector2.right * side * height * 0.5f;
+                    HitSparks.Burst(ground + Vector2.up * 0.2f, 16, wood, new Color32(0x6e, 0x60, 0x58, 0xff), 2f, 7f, 0.5f, 35f, 0.8f);
+                    for (int i = 0; i < 6; i++)
+                        HitSparks.One((Vector2)transform.position + Vector2.right * side * (0.8f + i * 0.8f), new Vector2(Random.Range(-1f, 1f), Random.Range(2f, 4f)), dark, 0.5f, 25f);
+                    CameraShake.Shake(1.5f, 0.25f);
+                    SeteVidas.Audio.Sfx.Play("plataforma_cai", transform.position, 0.7f, 0.8f);
+                }
+                yield return null;
+            }
+            t = 0f;
+            while (t < BranchFadeTime)   // some (o ForestEnemy esconde o desenho no fim)
+            {
+                t += Time.deltaTime;
+                spriteRenderer.color = new Color(1f, 1f, 1f, 1f - t / BranchFadeTime);
+                yield return null;
+            }
+        }
         void StepSprout(float dt)
         {
             _sinceSpawn += dt;

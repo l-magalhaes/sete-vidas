@@ -14,14 +14,20 @@ namespace SeteVidas.Combat
         public readonly DamageType Type;
         public readonly AttackAngle Angle;
         public readonly GameObject Source;
+        /// <summary>De longe (a flecha do Caçador): o Galho Seco, de madeira, sente menos (17/11/2026).</summary>
+        public readonly bool Ranged;
 
         public DamageInfo(int amount, Vector2 direction, DamageType type, AttackAngle angle, GameObject source)
+            : this(amount, direction, type, angle, source, false) { }
+
+        public DamageInfo(int amount, Vector2 direction, DamageType type, AttackAngle angle, GameObject source, bool ranged)
         {
             Amount = amount;
             Direction = direction;
             Type = type;
             Angle = angle;
             Source = source;
+            Ranged = ranged;
         }
     }
 

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-TOBI-01
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-TOBI-01
+  Required: 1
+  Revision: 1
+  IsDocument: 0
+  Lines:
+  - Speaker: {fileID: 11400000, guid: b40b090f64e63df46b30616fbb59372e, type: 2}
+    Expression: animada
+    Text: "Olha s\xF3 essa trag\xE9dia! Uma ponte inteirinha destru\xEDda!"
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: 
+    Text: "Voc\xEA consegue consertar?"
+  - Speaker: {fileID: 11400000, guid: b40b090f64e63df46b30616fbb59372e, type: 2}
+    Expression: orgulhosa
+    Text: Conseguir? Meu caro, eu sou uma artista da engenharia!
+  - Speaker: {fileID: 11400000, guid: b40b090f64e63df46b30616fbb59372e, type: 2}
+    Expression: gananciosa
+    Text: Agora... arte custa dinheiro. E madeira. Muita madeira!
+  - Speaker: {fileID: 11400000, guid: b40b090f64e63df46b30616fbb59372e, type: 2}
+    Expression: gananciosa
+    Text: "Doze t\xE1buas de lei e vinte moedas de ouro. Nem uma lasca a menos."

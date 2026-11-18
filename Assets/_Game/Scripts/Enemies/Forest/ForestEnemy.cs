@@ -102,7 +102,16 @@ namespace SeteVidas.Enemies
                 SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.5f, 1.2f);
                 return;
             }
-            int dmg = Mathf.Max(1, Mathf.RoundToInt(info.Amount * DamageMultiplier(info)));
+            int dmg = AdjustDamage(info, Mathf.Max(1, Mathf.RoundToInt(info.Amount * DamageMultiplier(info))));
+            if (dmg <= 0)
+            {
+                // não passou da casca (a flecha no Galho Seco): só o tranco
+                var chip = HitFlash.For(spriteRenderer);
+                if (chip != null) chip.Squash(1, 0.08f);
+                if (Senses != null) Senses.Damaged(info.Source != null ? (Vector2)info.Source.transform.position : (Vector2)transform.position);
+                OnHit(info);
+                return;
+            }
             _hp = Mathf.Max(0, _hp - dmg);
             var flash = HitFlash.For(spriteRenderer);
             if (flash != null) { flash.Flash(0.08f); flash.Squash(1, 0.12f); }
@@ -113,6 +122,12 @@ namespace SeteVidas.Enemies
         }
 
         protected virtual void OnHit(in DamageInfo info) { }
+
+        /// <summary>O dano final deste golpe (0 = não passou; o Galho Seco guarda o que a flecha tirou de pouco em pouco).</summary>
+        protected virtual int AdjustDamage(in DamageInfo info, int dmg) => dmg;
+
+        /// <summary>Quanto tempo o desenho fica depois de morrer (a animação de morte).</summary>
+        protected virtual float CorpseTime => 0.4f;
 
         /// <summary>Morre na hora, ignorando a vida e a invulnerabilidade (a serpente entocada no terremoto).</summary>
         protected void KillNow(in DamageInfo info)
@@ -130,10 +145,11 @@ namespace SeteVidas.Enemies
         {
             IsDead = true;
             foreach (var c in _colliders) if (c != null) c.enabled = false;
-            _goneAt = Time.time + 0.4f;
+            _goneAt = Time.time + CorpseTime;
             if (Senses != null) Senses.Kill();
             Vector2 at = (Vector2)transform.position + Vector2.up * 0.8f;
             HitSparks.Burst(at, 10, new Color32(0xc4, 0x98, 0x60, 0xff), new Color32(0x52, 0x26, 0x1e, 0xff), 2f, 6f, 0.5f, 40f, 0.5f);
+            SeteVidas.World.EnemyDrops.OnDeath(at);   // o coração (15%) e o potinho de mana (10%), como todo inimigo
             OnDied();
         }
 

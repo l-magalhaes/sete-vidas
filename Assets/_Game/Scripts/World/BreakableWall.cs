@@ -109,7 +109,7 @@ namespace SeteVidas.World
         {
             SetBroken();
             SeteVidas.Audio.Sfx.Play("parede_quebra", transform.position, 1f, IsWood ? 0.7f : 1f);
-            NoiseSystem.Emit((Vector2)transform.position + Vector2.up, breakNoiseRadius, breakNoiseLoudness, gameObject, IsWood ? "tronco" : "parede");
+            NoiseSystem.Emit((Vector2)transform.position + Vector2.up, breakNoiseRadius, breakNoiseLoudness, gameObject, IsWood ? "tronco_quebra" : "parede"); // F7: a quebra soma mais alerta no Ninho que cada golpe
             var data = SaveManager.Data;
             data.SetFlag(Flag);
             SaveManager.Save(); // atalho aberto é para sempre: grava agora, sem esperar o santuário

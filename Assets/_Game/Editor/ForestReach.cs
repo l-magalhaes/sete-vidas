@@ -156,7 +156,9 @@ namespace SeteVidas.EditorTools
                         break;
                     }
                     case "sc_block":
-                        // tampa/portão de atalho: sólido (confere-se com tudo fechado)
+                        // tampa/portão de atalho: sólido (confere-se com tudo fechado). Os portões de raízes da arena da
+                        // Isyathy abrem quando ela morre (a luta é a chave): conferidos abertos, como fica depois dela
+                        if (o.Flag == ForestLayout.BossFlag) break;
                         for (int x = (int)o.X; x < (int)o.X + (int)o.W; x++)
                             for (int y = (int)o.Y; y < (int)o.Y + (int)o.H; y++) Set(g.Solid, g, x, y);
                         break;

@@ -89,7 +89,7 @@ namespace SeteVidas.Combat
                 if (target == null) continue;
                 var mb = target as MonoBehaviour;
                 if (mb != null && _source != null && mb.gameObject == _source) continue;
-                target.TakeDamage(new DamageInfo(_damage, _dir, DamageType.Normal, AttackAngle.Front, _source));
+                target.TakeDamage(new DamageInfo(_damage, _dir, DamageType.Normal, AttackAngle.Front, _source, true));
                 HitSparks.Burst(_hits[i].point, 5, Color.white, new Color32(0xc4, 0x98, 0x60, 0xff), 1.5f, 3.5f, 0.2f, 10f, 0.2f);
                 SeteVidas.Audio.Sfx.Play("flecha_crava", _hits[i].point, 0.8f, 1.2f);
                 Destroy(gameObject);

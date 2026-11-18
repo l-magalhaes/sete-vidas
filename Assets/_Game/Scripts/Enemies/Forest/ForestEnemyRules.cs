@@ -42,6 +42,36 @@ namespace SeteVidas.Enemies
         public static bool BranchEyesLit(float time) => Mathf.Repeat(time, BranchBlinkEvery) < BranchBlinkOn;
 
         /// <summary>
+        /// A flecha no Galho Seco (pedido do usuário, 17/11/2026: "morrendo muito rápido depois de pegar o arco"): ele é
+        /// de madeira, a flecha crava e tira só <see cref="BranchArrowFactor"/> do dano, guardando o resto para a próxima.
+        /// De perto (adagas, marreta), nada muda: a resposta continua sendo chegar perto e bater nas costas.
+        /// </summary>
+        public const float BranchArrowFactor = 0.35f;
+
+        public static int BranchArrowHit(int dmg, ref float carry)
+        {
+            carry += dmg * BranchArrowFactor;
+            int whole = (int)Mathf.Floor(carry + 1e-4f);
+            carry -= whole;
+            return whole;
+        }
+
+        /// <summary>A queda ao morrer: estala, tomba (aceleração da gravidade), quica e some.</summary>
+        public const float BranchCrackTime = 0.18f, BranchFallTime = 0.65f, BranchSettleTime = 0.25f, BranchFadeTime = 0.5f;
+        public const float BranchFallAngle = 84f;
+        public static float BranchCorpseTime => BranchCrackTime + BranchFallTime + BranchSettleTime + BranchFadeTime;
+
+        /// <summary>O ângulo (graus) da queda <paramref name="t"/> s depois do estalo: cai cada vez mais rápido e quica um pouco.</summary>
+        public static float BranchFallAngleAt(float t)
+        {
+            if (t <= 0f) return 0f;
+            if (t < BranchFallTime) { float k = t / BranchFallTime; return BranchFallAngle * k * k; }
+            float s = (t - BranchFallTime) / BranchSettleTime;
+            if (s >= 1f) return BranchFallAngle;
+            return BranchFallAngle - 7f * Mathf.Sin(s * Mathf.PI) * (1f - s);
+        }
+
+        /// <summary>
         /// Próximo estado do Galho Seco. <paramref name="playerDist"/> = distância horizontal até o gato na mesma altura
         /// (negativa = longe ou em outra altura). <paramref name="timer"/> é o tempo que falta no estado.
         /// </summary>
@@ -278,6 +308,11 @@ namespace SeteVidas.Enemies
         public const float BatZigzag = 3.5f, BatZigzagRate = 2.5f;
 
         public static int BatHealthFor(bool infected) => infected ? BatHealthInfected : BatHealth;
+
+        /// <summary>A vespa solta mel ao morrer (pedido do usuário, 17/11/2026): 20%. O mel vai para o inventário (HoneyRules).</summary>
+        public const float BatHoneyChance = 0.2f;
+        public const int HoneyHeal = 1;
+        public static bool HoneyDrops(float roll01) => roll01 < BatHoneyChance;
         public static float BatNoiseFor(bool infected) => infected ? BatNoiseToWakeInfected : BatNoiseToWake;
         /// <summary>Alcance de acordar: o infectado vê 9/7 mais longe que o normal daquele lugar.</summary>
         public static float BatWakeRangeFor(bool infected, float normal = BatWakeRange) =>

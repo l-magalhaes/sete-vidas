@@ -15,7 +15,7 @@ namespace SeteVidas.Enemies.Boss
     /// mais raios. Derrotado, ajoelha; depois da maldição do tomo, levanta como companheiro.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
-    public class GoldenBoss : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody
+    public class GoldenBoss : MonoBehaviour, IDamageable, IFacingTarget, ISolidBody, IBossBarSource
     {
         public enum State
         {
@@ -108,6 +108,7 @@ namespace SeteVidas.Enemies.Boss
         public bool InSecondPhase => Health <= MaxHealth * settings.SecondPhaseAt;
         /// <summary>Fração da vida em que começa a fase furiosa (a marca na barra).</summary>
         public float SecondPhaseFraction => settings != null ? settings.SecondPhaseAt : 0f;
+        public string BarTitle => null;
         public GoldenBossSettings Settings => settings;
         public int FacingDirection => _facing;
         public bool InCombat => true; // guardião sempre alerta: pelas costas vale 1,5×, nunca furtivo

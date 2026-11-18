@@ -657,6 +657,8 @@ namespace SeteVidas.Enemies
             _respawnAt = respawnDelay > 0f ? Time.time + settings.DeathDuration + respawnDelay : -1f;
             Died?.Invoke(this);
             TryDropHeart(UnityEngine.Random.value);
+            // 18/11/2026: o potinho de mana (10%), como todo inimigo; sem o prefab do coração, o coração também
+            SeteVidas.World.EnemyDrops.OnDeath(_body.position + Vector2.up * (settings.BodySize.y * 0.6f), heart: heartDrop == null);
         }
 
         /// <summary>Solta o meio coração se <paramref name="roll01"/> cair dentro da chance. Retorna o item criado (ou null).</summary>

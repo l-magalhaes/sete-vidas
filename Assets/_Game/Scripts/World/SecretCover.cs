@@ -25,6 +25,8 @@ namespace SeteVidas.World
         [SerializeField] int side;
         [SerializeField] float wallX;
         [SerializeField, Min(0.05f)] float fadeTime = 0.35f;
+        [Tooltip("Regra de desenho da cobertura (SecretCovers.CoverVersion); mais velha que a do código, é refeita ao carregar")]
+        [SerializeField] int version;
 
         float _alpha = 1f;
         bool _done;
@@ -34,10 +36,13 @@ namespace SeteVidas.World
         public void Configure(BreakableWall breakable, Tilemap map, Rect hidden, int areaSide, float x)
         {
             wall = breakable; cover = map; area = hidden; side = areaSide; wallX = x;
+            version = SecretCovers.CoverVersion;
         }
 
         public bool Revealed => _done || _alpha <= 0f;
         public BreakableWall Wall => wall;
+        public Tilemap CoverMap => cover;
+        public int Version => version;
         public int Side => side;
 
         void Start()

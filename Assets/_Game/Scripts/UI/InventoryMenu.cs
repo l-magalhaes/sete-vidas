@@ -578,6 +578,25 @@ namespace SeteVidas.UI
                 Body = InventoryTexts.Coins, Footer = coins + (coins == 1 ? " moeda" : " moedas"),
             });
 
+            // o mel das vespas: usar aqui cura meio coração (17/11/2026)
+            int honey = SeteVidas.World.HoneyRules.Count(data);
+            if (honey > 0)
+                _entries.Add(new Entry
+                {
+                    Icon = IconSprite(InventoryIcon.Honey, false), Name = SeteVidas.World.HoneyRules.Name, NameColor = Gold,
+                    Badge = honey + "/" + SeteVidas.World.HoneyRules.Max, Body = InventoryTexts.Honey,
+                    Footer = "comer (cura meio coração)", FooterAction = GameAction.Confirm,
+                    Confirm = () =>
+                    {
+                        var h = PlayerHealth.Active;
+                        bool canHeal = h != null && !h.IsDead && h.CurrentHits < h.MaxHits;
+                        if (!SeteVidas.World.HoneyRules.Use(SaveManager.Data, canHeal)) { SeteVidas.Audio.Sfx.Play("ui_negado"); return false; }
+                        h.Heal(SeteVidas.World.HoneyRules.Heal);
+                        SeteVidas.Audio.Sfx.Play("coracao_pega");
+                        return true;
+                    },
+                });
+
             // Madeira de Reconstrução: aparece a partir da primeira tábua (Floresta Silenciosa)
             int wood = SeteVidas.Progression.ReconstructionWood.Count(data);
             if (wood > 0)
@@ -1429,6 +1448,7 @@ namespace SeteVidas.UI
         };
 
         public const string Coins = "Moedas da Cidadela, com a pata cunhada. Cada uma vai para a Luna e a Amora. Quase todas.";
+        public const string Honey = "Mel das vespas da raiz, num potinho de barro. Doce, grosso, cheira a flor do mato. Comer cura meio coração. As vespas soltam de vez em quando.";
         public const string Wood = "Tábuas de lei, cortadas por mão experiente: corte reto, secas na sombra, escolhidas a dedo. Madeira de quem constrói, não de quem queima. Alguém as guardou em baús pela floresta. A Tobi reconstrói a ponte com doze delas. E vinte moedas.";
         public const string WoodDone = "Viraram ponte. Menos uma, que a Tobi guardou no bolso. Taxa de material.";
         public static string KeyText(string key) => key == "cabana"

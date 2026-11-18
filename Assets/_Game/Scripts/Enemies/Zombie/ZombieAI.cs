@@ -39,6 +39,12 @@ namespace SeteVidas.Enemies.Zombie
 
         public ZombieState State { get; private set; } = ZombieState.Wander;
         public bool IsDead => State == ZombieState.Dead;
+        /// <summary>
+        /// Multiplica a corrida da perseguição (a horda da ponte, 17/11/2026: acelera e freia para chegar amontoada atrás do
+        /// gato quando ele para no meio). 1 = normal.
+        /// </summary>
+        public float ChaseSpeedMultiplier { get; set; } = 1f;
+        public float ChaseSpeed => settings != null ? settings.ChaseSpeed : 3.2f;
         public int Health => _health;
         public ZombieSettings Settings => settings;
         public int FacingDirection => _facing;
@@ -235,7 +241,7 @@ namespace SeteVidas.Enemies.Zombie
             if (dir != 0) _facing = dir;
             // corre, mas não se joga do andar: para na beira e na parede
             bool blocked = dir == 0 || WallAhead() || !GroundAhead();
-            SetSpeed(blocked ? 0f : _facing * settings.ChaseSpeed);
+            SetSpeed(blocked ? 0f : _facing * settings.ChaseSpeed * ChaseSpeedMultiplier);
             if (!blocked) Footsteps(dt, 0.3f);
             _nextChaseSound -= dt;
             if (_nextChaseSound <= 0f) { _nextChaseSound = Random.Range(1.4f, 2.2f); Sfx.Play("zumbi_caca", _body.position + Vector2.up); }
@@ -362,6 +368,7 @@ namespace SeteVidas.Enemies.Zombie
             _body.linearVelocity = Vector2.zero;
             _body.bodyType = RigidbodyType2D.Kinematic;
             Sfx.Play("zumbi_morte", _body.position + Vector2.up);
+            SeteVidas.World.EnemyDrops.OnDeath(_body.position + Vector2.up);   // o coração (15%) e o potinho de mana (10%)
         }
 
         // ------------------------------------------------------------ visual

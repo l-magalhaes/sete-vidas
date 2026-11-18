@@ -44,6 +44,23 @@ namespace SeteVidas.Enemies
             Senses.Profile = ForestSenseRules.Bat(wakeRange);
         }
 
+        /// <summary>A colmeia onde ela dorme (pedido do usuário, 17/11/2026: "nos spawns das abelhas, faça uma colmeia").</summary>
+        void Start()
+        {
+            if (_spawned || _hive != null) return;   // as que saem do Broto não têm poleiro
+            int order = spriteRenderer != null ? spriteRenderer.sortingOrder - 1 : 3;
+            _hive = SeteVidas.World.BeeHive.Hang(transform.parent, _home, order);
+        }
+
+        SpriteRenderer _hive;
+
+        /// <summary>20% de chance de soltar mel (cura meio coração).</summary>
+        protected override void OnDied()
+        {
+            base.OnDied();
+            if (HoneyDrops(Random.value)) SeteVidas.World.BeeHive.SpawnHoney((Vector2)transform.position);
+        }
+
         protected override void OnEnable() { base.OnEnable(); NoiseSystem.Emitted += OnNoise; }
         protected override void OnDisable() { base.OnDisable(); NoiseSystem.Emitted -= OnNoise; }
 

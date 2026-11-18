@@ -57,6 +57,33 @@ namespace SeteVidas.EditorTools
                       "(desligue \"Play começa na tela inicial\" para dar Play direto nela). Roteiro: Docs/QA/floresta-rev4-plano-de-teste.md");
         }
 
+        /// <summary>
+        /// Gera só uma cena da Floresta (18/11/2026: a Estrada, com a ponte nova e a escada do vale), sem mexer nas outras.
+        /// </summary>
+        public static void BuildOnly(params string[] scenes)
+        {
+            var regions = ForestLayout.Regions().FindAll(r => System.Array.IndexOf(scenes, r.Scene) >= 0);
+            if (regions.Count == 0) { Debug.LogError("[Sete Vidas] Floresta: não há essas cenas no ForestLayout."); return; }
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            SeteVidasSetup.ConfigureLayers();
+            PlayerSetup.CreatePlayerAssets();
+            ProgressionSetup.CreateHudPrefab();
+            ProgressionSetup.CreateSanctuaryPrefab();
+            ClassSetup.CreateWallPrefab();
+            EnemySetup.CreateSentinelPrefab();
+            EnemySetup.CreateCrossbowSentinelPrefab();
+            EnemySetup.CreateBushPrefab();
+            TrapsSetup.CreatePrefabs();
+            Directory.CreateDirectory(Folder);
+            ForestTestSetup.EnsureSprites();
+            EnvLibrary.ImportAll();
+            ForestPainter.ResetCaches();
+            s_lore = null;
+            foreach (var region in regions) BuildRegion(region);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[Sete Vidas] Floresta: gerada(s) de novo só " + string.Join(", ", scenes) + ".");
+        }
+
         public static void CheckOnly()
         {
             Debug.Log("[Sete Vidas] Floresta F2: alcance do graybox\n" + ForestReach.Format(ForestReach.CheckAll(), true));
@@ -84,6 +111,7 @@ namespace SeteVidas.EditorTools
 
             if (s_lore == null) s_lore = ForestLore.Create();   // F5: placas dos Primatas (P-PRIM-xx)
             var dialogues = new Dictionary<string, DialogueDefinition>(s_lore);
+            if (reg.Scene == ForestLayout.Road) dialogues[MiaraveuGateSetup.EndDialogue] = MiaraveuGateSetup.CreateDialogue();   // o fim da fase
             var created = new Dictionary<string, Component>();
             var groups = new Dictionary<string, Transform>();
             var infected = new List<SeteVidas.Enemies.Zombie.ZombieSquad.Post>();
@@ -169,6 +197,9 @@ namespace SeteVidas.EditorTools
             var art = ForestPainter.Paint(ctx, reg);
             int secrets = SecretCovers.Build(ctx.Root, ctx.Ground);   // o que há atrás dos troncos rachados
             Debug.Log($"[Sete Vidas] {reg.Label}: {art.Tiles} tiles, {art.Mass} de massa, {art.Details} detalhes, {art.Emitters} emissores, {art.Shadows} sombras ({art.Trees} com árvore), {secrets} segredo(s) escondido(s).");
+            if (reg.Scene == ForestLayout.E)   // F7: o medidor de alerta, o bote e os galhos frágeis
+                Debug.Log($"[Sete Vidas] Ninho (F7): a Isyathy embaixo da terra, {NestSetup.Apply(ctx.Root, reg)} galhos frágeis.");
+            if (reg.Scene == ForestLayout.F) { IsyathyBossSetup.Apply(ctx.Root, reg); Debug.Log("[Sete Vidas] F8: a Isyathy na arena F1."); }
             ForestTestSetup.End(ctx);
         }
 
@@ -194,6 +225,25 @@ namespace SeteVidas.EditorTools
                 : (x + y * 2) % 7 == 0 ? new Color32(0x82, 0x3e, 0x2e, 0xff) : new Color32(0x52, 0x36, 0x24, 0xff));
             var vine = Placeholder("cipo_atalho", 16, 16, (x, y) => x >= 5 && x <= 10 ? ((x + y) % 4 == 0 ? new Color32(0x6c, 0x86, 0x60, 0xff) : new Color32(0x4a, 0x68, 0x46, 0xff))
                 : (x == 4 || x == 11) && y % 5 == 2 ? new Color32(0x2e, 0x48, 0x34, 0xff) : new Color32(0, 0, 0, 0));
+            // a escada de madeira (18/11/2026, o atalho da ponte para o vale): dois montantes e dois degraus por tile, pregados
+            var ladder = Placeholder("escada_atalho", 16, 16, (x, y) =>
+            {
+                var clear = new Color32(0, 0, 0, 0);
+                var ink = new Color32(0x2a, 0x18, 0x10, 0xff);
+                bool rail = (x >= 2 && x <= 4) || (x >= 11 && x <= 13);
+                bool rung = (y == 3 || y == 4 || y == 11 || y == 12) && x > 4 && x < 11;
+                if (rail)
+                {
+                    bool nail = (y == 4 || y == 12) && (x == 3 || x == 12);
+                    if (nail) return new Color32(0xd8, 0xdc, 0xe4, 0xff);
+                    if (x == 2 || x == 11) return new Color32(0xb0, 0x7a, 0x48, 0xff);
+                    if (x == 4 || x == 13) return new Color32(0x5a, 0x38, 0x20, 0xff);
+                    return (y * 3 + x) % 11 == 0 ? new Color32(0x6e, 0x46, 0x28, 0xff) : new Color32(0x8a, 0x5a, 0x34, 0xff);
+                }
+                if (rung) return y == 4 || y == 12 ? new Color32(0xc0, 0x8a, 0x50, 0xff) : new Color32(0x7a, 0x4e, 0x2a, 0xff);
+                if ((x == 1 || x == 14) || ((y == 2 || y == 10) && x > 4 && x < 11)) return x == 1 || x == 14 ? ink : clear;
+                return clear;
+            });
             var rolled = Placeholder("cipo_enrolado", 16, 16, (x, y) =>
             {
                 float dx = x - 7.5f, dy = y - 7.5f, d = Mathf.Sqrt(dx * dx + dy * dy);
@@ -216,12 +266,14 @@ namespace SeteVidas.EditorTools
                     }
                     case "sc_vine":
                     {
-                        var go = new GameObject("Cipó (aberto)") { layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Climbable) };
+                        bool isLadder = p.Text == "escada";
+                        var go = new GameObject(isLadder ? "Escada (aberta)" : "Cipó (aberto)") { layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Climbable) };
                         go.transform.SetParent(root.transform, false);
                         go.transform.position = new Vector3(p.X + 0.5f, p.Y + p.H * 0.5f, 0f);
                         go.AddComponent<BoxCollider2D>().size = new Vector2(1f, p.H);
                         var sr = go.AddComponent<SpriteRenderer>();
-                        sr.sprite = vine; sr.drawMode = SpriteDrawMode.Tiled; sr.size = new Vector2(1f, p.H); sr.sortingOrder = 2;
+                        sr.sprite = isLadder ? ladder : vine; sr.drawMode = SpriteDrawMode.Tiled; sr.size = new Vector2(1f, p.H); sr.sortingOrder = 2;
+                        if (isLadder) go.AddComponent<SeteVidas.World.LadderTop>().Configure(p.Value >= 0 ? 1 : -1);   // em cima, segurar baixo agarra (Value: o lado do gato)
                         go.SetActive(false);
                         open.Add(go);
                         break;
@@ -332,7 +384,7 @@ namespace SeteVidas.EditorTools
 
         /// <summary>
         /// A Vulpis (NPC do vínculo, como o Koda na Fortaleza): E fala; a conversa dá a classe Caçador e +1 coração
-        /// (<see cref="CompanionBond"/>). Desenho provisório: raposa de pé com o arco.
+        /// (<see cref="CompanionBond"/>). Arte: VulpisAnimationSet (Tools/CharacterSprites/VulpisSpriteGen.cs); sem ela, o desenho provisório.
         /// </summary>
         static void VulpisNpc(Transform parent, ForestLayout.Obj o)
         {
@@ -350,6 +402,7 @@ namespace SeteVidas.EditorTools
             sr.sprite = Placeholder("vulpis", 24, 32, PaintVulpis);
             sr.sortingOrder = 3;
             sr.flipX = o.Facing < 0;
+            VulpisArtSetup.Dress(go.transform, VulpisArtSetup.Load(), o.Facing < 0);   // a arte nova (animada), se já foi gerada
             var promptGo = new GameObject("Prompt");
             promptGo.transform.SetParent(go.transform, false);
             promptGo.transform.localPosition = new Vector3(0f, 2.8f, 0f);
@@ -695,7 +748,7 @@ namespace SeteVidas.EditorTools
                 case -2: PassageLight.Vertical(t, name, o.X, o.W, o.Y - 7f, o.Y + 3f, Tint, brightUp: false); break;
                 default:
                     // gatilho pequeno no meio da sala (a corda da ponte nova): a estaca com a corda descendo, sem clarão
-                    if (o.W <= 3f)
+                    if (o.W <= 3f && o.Value != 1)   // (Value 1: o gatilho no meio da escada, sem estaca)
                     {
                         var rope = Prop(t, o.Name + " (corda)", "atalho_estaca_solta", o.X, o.Y - o.H * 0.5f, 2, false);
                         // só aparece quando a passagem funciona (a corda da ponte nova)
@@ -751,6 +804,10 @@ namespace SeteVidas.EditorTools
                     break;
                 }
                 case "vulpis": VulpisNpc(t, o); break;
+                case "tobi": TobiSetup.Npc(t, o); break;                 // F9
+                case "bridge_wood": TobiSetup.Bridge(t, o); break;      // F9: a ponte nova (escondida até a flag)
+                case "dawn": MiaraveuGateSetup.Dawn(t, o); break;          // o amanhecer da cabeceira leste (R5)
+                case "miaraveu_gate": MiaraveuGateSetup.Gate(t, o); break; // o portão em ruínas de Miaravéu (R5)
                 case "gate": TempleGate(t, o); break;
                 case "ruinwall": RuinWall(t, o); break;
                 case "bat":
@@ -807,6 +864,7 @@ namespace SeteVidas.EditorTools
                 }
                 case "slope": SlopeSetup.Create(t, o.Name, Mathf.RoundToInt(o.X), Mathf.RoundToInt(o.Y), Mathf.RoundToInt(o.W), Mathf.RoundToInt(o.H), o.Facing > 0); break;
                 case "entrance": ForestTestSetup.Entrance(t, o.Name, new Vector2(o.X, o.Y + 0.05f), o.Id, o.Facing); break;
+                case "boss_isyathy": break;   // F8: montado pelo IsyathyBossSetup
                 case "exit":
                     ForestTestSetup.Exit(t, o.Name, new Vector2(o.X, o.Y), new Vector2(o.W, o.H), o.Text, o.Id, o.Link ?? "");
                     ExitLight(t, o);

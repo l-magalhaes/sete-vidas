@@ -62,6 +62,25 @@ public static class ForestPropGen
         return "tochas, fogueira, marco, tronco rachado, posto, " + bridges + " ponte(s)";
     }
 
+    /// <summary>Só os blocos das pontes do ForestLayout (a ponte dobrada da R4, 17/11/2026), sem regravar o resto.</summary>
+    public static string RunBridges(string projectRoot, string metaTemplatePath)
+    {
+        s_template = File.ReadAllText(metaTemplatePath);
+        s_dir = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Forest/Placeholder");
+        s_terrain = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Forest/Terrain");
+        Palette();
+        var done = new HashSet<int>();
+        foreach (var reg in ForestLayout.Regions())
+            foreach (var o in reg.Objects)
+                if (o.Kind == "bridge")
+                {
+                    int n = BridgeBlocks(o.W);
+                    if (!done.Add(n)) continue;
+                    for (int i = 0; i < n; i++) Write(BridgeName(i, n), BridgeBlock(i, n));
+                }
+        return string.Join(", ", done);
+    }
+
     /// <summary>Blocos da ponte (2 tiles cada), como o ForestGrayboxSetup.Bridge monta.</summary>
     public static int BridgeBlocks(float w) { return Math.Max(1, (int)Math.Round(w / 2f)); }
     public static string BridgeName(int i, int n) { return "ponte_pedra_" + n + "_" + i; }

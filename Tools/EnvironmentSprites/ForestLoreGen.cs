@@ -32,6 +32,11 @@
 //   isy_olhos_0..2      40 × 12  dois olhos amarelo-esverdeados: abertos, meio fechados, fechados (A4 e o lago da C4)
 //   isy_silhueta       192 × 40  um trecho do corpo passando atrás das copas (B4)
 //   isy_fundo_0..5      96 × 80  o pescoço que espia entre as árvores do fundo: olhos fechados, meio, abertos, de lado (2), piscada
+// Ninho Adormecido (F7, 17/11/2026), de perto (cores mais claras que as de longe, com a praga nas escamas):
+//   isy_bote_0/1        64 × 96  a cabeça descendo de frente, o pescoço vindo do alto: boca fechada / aberta (o bote)
+//   isy_aviso           64 × 10  a sombra da cabeça no chão (o aviso de 1,2 s), cor lisa (a transparência é do jogo)
+//   isy_escama           4 × 4   escama que cai no aviso
+//   folha_caindo         5 × 3   folha que cai com ela inquieta
 // C# 5.
 using System;
 using System.Collections.Generic;
@@ -74,6 +79,7 @@ public static class ForestLoreGen
         int[,] peek = { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 1, 0 } };
         for (int i = 0; i < 6; i++) Write("isy_fundo_" + i, Peek(peek[i, 0], peek[i, 1], false));
         Write("isy_fundo_6", Peek(0, 2, true));                                                  // a língua
+        RunNest();                                                                               // F7: o bote do Ninho
         // documentos das cabanas abandonadas (a gente que rezava para a Isyathy)
         Write("doc_oracao", DocPrayer()); Write("doc_caderno", DocLedger()); Write("doc_carta", DocLetter()); Write("doc_pagina", DocPage());
         // portões (pedido do usuário, 14/11/2026: "melhore os assets da porta do templo e dos portões da arena")
@@ -94,6 +100,7 @@ public static class ForestLoreGen
         "portao_templo_fechado", "portao_templo_aberto", "portal_templo_pilares", "portal_templo_lintel", "portao_barras",
         "isy_fundo_0", "isy_fundo_1", "isy_fundo_2", "isy_fundo_3", "isy_fundo_4", "isy_fundo_5", "isy_fundo_6",
         "doc_oracao", "doc_caderno", "doc_carta", "doc_pagina",
+        "isy_bote_0", "isy_bote_1", "isy_aviso", "isy_escama", "folha_caindo",
     };
 
     static void Write(string name, PixelCanvas cv)
@@ -125,6 +132,9 @@ public static class ForestLoreGen
         PixelKit.P('i', "#121a16"); PixelKit.P('j', "#1a2820"); PixelKit.P('J', "#24382c"); PixelKit.P('T', "#2e4834");
         PixelKit.P('U', "#3a4a3a"); PixelKit.P('Z', "#52664c");
         PixelKit.P('y', "#d8e85a"); PixelKit.P('z', "#8fd14f"); PixelKit.P('h', "#5b2a6e");
+        // Isyathy de perto (F7, o bote): contorno, escamas com luar, ventre, boca, presas, a praga acesa
+        PixelKit.P('A', "#0e1410"); PixelKit.P('F', "#2e4834"); PixelKit.P('I', "#3f6446"); PixelKit.P('N', "#6e9a6a");
+        PixelKit.P('O', "#8a9a72"); PixelKit.P('Q', "#5a1e2a"); PixelKit.P('s', "#e8e4d0"); PixelKit.P('t', "#4ade6a");
         // turquesa do templo (a mesma da Chave do Templo e do olho do portão)
         PixelKit.P('6', "#1f6a64"); PixelKit.P('7', "#5ce0c8"); PixelKit.P('8', "#c8fff4");
     }
@@ -1038,6 +1048,134 @@ public static class ForestLoreGen
             for (int i = 0; i < 6; i++) c.Force(tx + i, ty, 'q');
             c.Force(tx + 6, ty - 1, 'q'); c.Force(tx + 7, ty - 2, 'q'); c.Force(tx + 6, ty + 1, 'q'); c.Force(tx + 7, ty + 2, 'q');
         }
+        return c;
+    }
+
+    // ============================================================ Ninho Adormecido (F7): o bote de busca
+
+    /// <summary>Só os desenhos do Ninho (F7): dá para gerar sem regravar o resto (Tools/EnvironmentSprites/gerar_ninho.ps1).</summary>
+    public static void RunNest(string projectRoot, string metaTemplatePath)
+    {
+        s_template = File.ReadAllText(metaTemplatePath);
+        s_dir = Path.Combine(projectRoot, "Assets/_Game/Art/Environments/Forest/Placeholder");
+        Directory.CreateDirectory(s_dir);
+        Palette();
+        RunNest();
+    }
+
+    static void RunNest()
+    {
+        Write("isy_bote_0", StrikeHead(false));
+        Write("isy_bote_1", StrikeHead(true));
+        Write("isy_aviso", StrikeShadow());
+        Write("isy_escama", FallingScale());
+        Write("folha_caindo", FallingLeaf());
+    }
+
+    /// <summary>
+    /// A cabeça descendo de frente (64 × 96): o pescoço vem do alto, a cabeça larga embaixo, os dois olhos acesos dos
+    /// lados, o verde da praga escorrendo entre as escamas. <paramref name="open"/>: a boca aberta com as presas (o bote).
+    /// Luz da lua no alto à esquerda.
+    /// </summary>
+    static PixelCanvas StrikeHead(bool open)
+    {
+        var c = new PixelCanvas(64, 96);
+        // pescoço: do alto até a nuca, um pouco mais estreito embaixo
+        for (int y = 0; y < 64; y++)
+        {
+            double half = 12.5 - y * 0.03, cx = 32 + Math.Sin(y / 18.0) * 1.5;
+            for (int x = (int)(cx - half) - 1; x <= (int)(cx + half) + 1; x++)
+            {
+                double u = (x + 0.5 - cx) / half;
+                if (Math.Abs(u) > 1.0) continue;
+                char ch = Math.Abs(u) > 0.88 ? 'A'
+                        : u < -0.45 ? 'N'
+                        : Math.Abs(u) < 0.22 ? 'O'                                                // o ventre na frente
+                        : ((x + 2 * y) % 6 == 0 || (x - 2 * y + 600) % 6 == 0) ? 'F' : 'I';
+                c.Force(x, y, ch);
+            }
+        }
+        // a cabeça: larga em cima (olhos), afinando até o focinho embaixo
+        double hx = 32, hy = 72;
+        for (int y = 52; y < 96; y++)
+            for (int x = 6; x < 58; x++)
+            {
+                double dy = (y + 0.5 - hy) / (y < hy ? 18.0 : 22.0);
+                double rx = 25.0 * Math.Sqrt(Math.Max(0, 1 - dy * dy)) * (y > hy ? 1 - (y - hy) / 60.0 : 1);
+                double dx = x + 0.5 - hx;
+                if (Math.Abs(dx) > rx) continue;
+                double u = dx / Math.Max(1, rx);
+                char ch = Math.Abs(u) > 0.9 || (y > hy && Math.Abs(dy) > 0.95) ? 'A'
+                        : (u < -0.5 && y < hy + 6) ? 'N'
+                        : ((x + 2 * y) % 7 == 0 || (x - 2 * y + 700) % 7 == 0) ? 'F' : 'I';
+                c.Force(x, y, ch);
+            }
+        // sobrancelhas de escamas e os olhos (fenda) dos dois lados
+        foreach (int ex in new[] { 19, 45 })
+        {
+            int ey = 66;
+            for (int i = -4; i <= 4; i++) c.Force(ex + i, ey - 4 + Math.Abs(i) / 3, 'A');
+            for (int y = ey - 2; y <= ey + 2; y++)
+                for (int x = ex - 4; x <= ex + 4; x++)
+                {
+                    double dx = (x + 0.5 - (ex + 0.5)) / 4.5, dy = (y + 0.5 - (ey + 0.5)) / 2.6;
+                    if (dx * dx + dy * dy > 1.0) continue;
+                    c.Force(x, y, dx * dx + dy * dy > 0.55 ? 'z' : 'y');
+                }
+            c.Force(ex, ey - 1, 'A'); c.Force(ex, ey, 'A'); c.Force(ex, ey + 1, 'A');                  // a pupila em fenda
+        }
+        // a praga escorrendo entre as escamas (riscos verdes acesos, da nuca para baixo)
+        foreach (var p in new[] { new[] { 24, 40, 9 }, new[] { 38, 30, 12 }, new[] { 29, 56, 7 }, new[] { 41, 74, 6 }, new[] { 14, 72, 5 } })
+            for (int i = 0; i < p[2]; i++) c.Set(p[0] + (i % 3 == 2 ? 1 : 0), p[1] + i, i % 4 == 0 ? 'z' : 't');
+        // narinas
+        c.Force(29, 86, 'A'); c.Force(35, 86, 'A');
+        if (!open)
+        {
+            for (int x = 22; x <= 42; x++) c.Force(x, 90 - Math.Abs(x - 32) / 4, 'A');                  // a boca fechada
+            c.Force(25, 91, 's'); c.Force(39, 91, 's');                                                 // a ponta das presas
+        }
+        else
+        {
+            // a boca aberta: a mandíbula desce (sai pela borda de baixo do desenho)
+            for (int y = 84; y < 96; y++)
+                for (int x = 14; x < 50; x++)
+                {
+                    double dx = (x + 0.5 - 32) / 17.0, dy = (y + 0.5 - 92) / 9.0;
+                    if (dx * dx + dy * dy > 1.0) continue;
+                    c.Force(x, y, dx * dx + dy * dy > 0.8 ? 'A' : 'Q');
+                }
+            foreach (int fx in new[] { 21, 27, 37, 43 })   // presas de cima
+                for (int i = 0; i < (fx == 21 || fx == 43 ? 6 : 4); i++) c.Force(fx, 85 + i, 's');
+            for (int x = 24; x <= 40; x += 4) c.Force(x, 95, 's');                                      // dentes de baixo
+            c.Force(32, 90, 't'); c.Force(31, 91, 't'); c.Force(33, 91, 't');                          // a praga na garganta
+        }
+        return c;
+    }
+
+    /// <summary>A sombra da cabeça no chão (64 × 10): elipse de cor lisa, sem pontilhado (a transparência é do jogo).</summary>
+    static PixelCanvas StrikeShadow()
+    {
+        var c = new PixelCanvas(64, 10);
+        for (int y = 0; y < 10; y++)
+            for (int x = 0; x < 64; x++)
+            {
+                double dx = (x + 0.5 - 32) / 32.0, dy = (y + 0.5 - 5) / 5.0;
+                if (dx * dx + dy * dy <= 1.0) c.Force(x, y, '1');
+            }
+        return c;
+    }
+
+    static PixelCanvas FallingScale()
+    {
+        var c = new PixelCanvas(4, 4);
+        c.Stamp(new[] { ".N..", "NIF.", ".IFA", "..A." }, 0, 0);
+        return c;
+    }
+
+    static PixelCanvas FallingLeaf()
+    {
+        var c = new PixelCanvas(5, 3);
+        c.Stamp(new[] { ".HG..", "gGGHG", "..gg." }, 0, 0);
         return c;
     }
 

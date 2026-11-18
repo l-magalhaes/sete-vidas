@@ -36,7 +36,7 @@ namespace SeteVidas.Enemies
         static Sprite s_segment;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { s_segment = null; s_wallMask = 0; s_lip = null; s_lipInfected = null; } // Play sem recarregar o domínio
+        static void ResetStatics() { s_segment = null; s_wallMask = 0; s_lip = null; s_lipInfected = null; s_heads.Clear(); } // Play sem recarregar o domínio
 
         public SnakeState State => _state;
         public bool Crawls => crawls;
@@ -94,6 +94,25 @@ namespace SeteVidas.Enemies
                 lip.enabled = false;
                 _lip = lip;
             }
+            // sem toca (a que rasteja): o corpo é uma curva só, do rabo à cabeça, desenhada a cada quadro
+            if (crawls && transform.Find("Toca") == null)
+            {
+                _flesh = new GameObject("Corpo (curva)").AddComponent<SpriteRenderer>();
+                _flesh.transform.SetParent(transform, false);
+                _fleshTex = new Texture2D(FleshW, FleshH, TextureFormat.RGBA32, false)
+                    { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "serpente_corpo", hideFlags = HideFlags.DontSave };
+                _fleshPx = new Color32[FleshW * FleshH];
+                _fleshFill = new bool[FleshW * FleshH];
+                var s = Sprite.Create(_fleshTex, new Rect(0, 0, FleshW, FleshH), new Vector2((float)FleshOx / FleshW, (float)FleshOy / FleshH), 16f);
+                s.hideFlags = HideFlags.DontSave;
+                _flesh.sprite = s;
+                _flesh.sortingOrder = 3;       // atrás da cabeça (4)
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (_fleshTex != null) Destroy(_fleshTex);
         }
 
         SpriteRenderer _lip;
@@ -204,6 +223,7 @@ namespace SeteVidas.Enemies
         protected override void OnDied()
         {
             foreach (var g in _segments) if (g != null) g.enabled = false;
+            if (_flesh != null) _flesh.enabled = false;
         }
 
         /// <summary>Distância horizontal até o gato na altura do buraco (até 1,5 acima); negativa = longe.</summary>
@@ -262,11 +282,128 @@ namespace SeteVidas.Enemies
             {
                 // fora do buraco (bote, esticada ou ainda voltando) mostra o corpo; só os olhos quando já entrou
                 bool outside = _state == SnakeState.Strike || _state == SnakeState.Stretched || (_state == SnakeState.Retreat && ext > 0.02f);
-                Sprite rest = crawls ? Anim(crawlFrames, crawlSprite, 6f) : Anim(hiddenFrames, hiddenSprite, 2f);
-                Sprite want = outside ? strikeSprite : _state == SnakeState.Warn ? Anim(warnFrames, warnSprite, 7f) : rest;
-                if (want != null) spriteRenderer.sprite = want;
+                if (_flesh != null) Organic(dt, ext, outside);
+                else
+                {
+                    Sprite rest = crawls ? Anim(crawlFrames, crawlSprite, 6f) : Anim(hiddenFrames, hiddenSprite, 2f);
+                    Sprite want = outside ? strikeSprite : _state == SnakeState.Warn ? Anim(warnFrames, warnSprite, 7f) : rest;
+                    if (want != null) spriteRenderer.sprite = want;
+                }
             }
         }
+
+        // ------------------------------------------------------------ corpo orgânico (a serpente sem toca)
+        // Pedido do usuário (17/11/2026): "precisa ter o rabo dela quando não tem toca" e "deixe mais orgânica". O corpo
+        // é uma curva só (SnakeSpine), do rabo afinando até o pescoço, desenhada em pixel a cada quadro; a cabeça é a
+        // ponta dos desenhos de sempre (rastejando, a língua, a boca aberta). Rastejando, a onda corre pelo corpo; no
+        // aviso ela se enrola em S e recua a cabeça; no bote o corpo estica e a onda alisa; voltando, enrola de novo.
+
+        const int FleshW = 112, FleshH = 24, FleshOx = 40, FleshOy = 12;
+        /// <summary>Coluna (px) onde começa a cabeça nos desenhos de 32 × 16; antes dela é o corpo.</summary>
+        const int NeckColumn = 23;
+        /// <summary>Linha (px, de cima) do meio da cabeça: rastejando, com a língua, no bote; e a do corpo deitado.</summary>
+        const int RowCalm = 10, RowTongue = 8, RowStrike = 7, RowGround = 10;
+        SpriteRenderer _flesh;
+        Texture2D _fleshTex;
+        Color32[] _fleshPx;
+        bool[] _fleshFill;
+        float _wave, _flick = 2f, _coil;
+        int _headRow = RowCalm;
+        static readonly Dictionary<Sprite, Sprite> s_heads = new Dictionary<Sprite, Sprite>();
+
+        /// <summary>Só a cabeça (da coluna <see cref="NeckColumn"/> em diante), no mesmo lugar do desenho inteiro.</summary>
+        static Sprite HeadOf(Sprite full)
+        {
+            if (full == null) return null;
+            if (s_heads.TryGetValue(full, out var h) && h != null) return h;
+            var r = full.rect;
+            if (r.width <= NeckColumn) return full;
+            var crop = new Rect(r.x + NeckColumn, r.y, r.width - NeckColumn, r.height);
+            h = Sprite.Create(full.texture, crop, new Vector2((full.pivot.x - NeckColumn) / crop.width, full.pivot.y / crop.height), full.pixelsPerUnit);
+            h.name = full.name + " (cabeça)";
+            h.hideFlags = HideFlags.DontSave;
+            s_heads[full] = h;
+            return h;
+        }
+
+        void Organic(float dt, float ext, bool outside)
+        {
+            bool moving = _state == SnakeState.Hidden && maxX - minX >= 0.5f;
+            _wave += dt * (moving ? 7f : outside ? 2.5f : _state == SnakeState.Warn ? 5f : 1.5f);
+            float coilTarget = _state == SnakeState.Warn ? 1f : 0f;
+            _coil = Mathf.MoveTowards(_coil, coilTarget, dt / (coilTarget > 0f ? SnakeWarn * 0.7f : 0.12f));
+
+            Sprite calm = crawlFrames.Length > 0 && crawlFrames[0] != null ? crawlFrames[0] : crawlSprite;
+            Sprite tongue = crawlFrames.Length > 1 && crawlFrames[1] != null ? crawlFrames[1] : calm;
+            // de vez em quando, rastejando, ela levanta a cabeça e prova o ar
+            _flick -= dt;
+            if (_flick < -0.3f) _flick = Random.Range(1.8f, 3.5f);
+            bool tasting = _state == SnakeState.Warn ? ((int)(Time.time * 7f) % 2 == 0) : _state == SnakeState.Hidden && _flick < 0f;
+            Sprite full = outside ? strikeSprite : tasting ? tongue : calm;
+            _headRow = outside ? RowStrike : tasting ? RowTongue : RowCalm;
+            var head = HeadOf(full);
+            if (head != null) spriteRenderer.sprite = head;
+            Pose(ext);
+        }
+
+        /// <summary>Desenha o corpo de <see cref="_flesh"/> do rabo até o pescoço da cabeça (em <see cref="body"/>).</summary>
+        void DrawFlesh(float ext)
+        {
+            var head = spriteRenderer != null ? spriteRenderer.sprite : null;
+            if (_flesh == null || head == null || body == null) return;
+            _flesh.enabled = !IsDead;
+            _flesh.flipX = _facing < 0;
+            _flesh.color = spriteRenderer.color;
+            // tudo em px, do lado para onde ela olha (x para a frente), a partir da raiz
+            Vector2 b = body.localPosition * 16f;
+            b.x *= _facing;
+            float nx = b.x + 0.5f - head.pivot.x;                                  // 1 px dentro da cabeça: sem fresta
+            float ny = b.y + (15 - _headRow) + 0.5f - head.pivot.y;
+            float tx = 0.4f * 16f + 0.5f - head.pivot.x - SnakeSpine.RestLength + ext * SnakeSpine.TailCreep;
+            float ty = 0.3f * 16f + (15 - RowGround) + 0.5f - head.pivot.y;
+            float amp = SnakeSpine.Amplitude(ext, _coil), wave = SnakeSpine.Wavelength(ext, _coil);
+
+            System.Array.Clear(_fleshFill, 0, _fleshFill.Length);
+            var clear = new Color32(0, 0, 0, 0);
+            for (int i = 0; i < _fleshPx.Length; i++) _fleshPx[i] = clear;
+            int prev = int.MinValue;
+            for (int i = 0; i < FleshW; i++)
+            {
+                float x = i - FleshOx + 0.5f;
+                if (x < tx || x > nx) { prev = int.MinValue; continue; }
+                float y = SnakeSpine.Y(x, tx, ty, nx, ny, amp, wave, _wave);
+                int jc = Mathf.FloorToInt(y + FleshOy);
+                int half = SnakeSpine.Half(x, tx);
+                int lo = jc - half, hi = jc + half;
+                if (prev != int.MinValue) { lo = Mathf.Min(lo, prev); hi = Mathf.Max(hi, prev); }   // sem degrau aberto
+                prev = jc;
+                int k = ((int)(x - tx) + 600) % 6;
+                for (int j = lo; j <= hi; j++)
+                {
+                    if (j < 0 || j >= FleshH) continue;
+                    Color32 c = j == hi ? ScaleTop : j == lo ? ScaleBelly : ScaleBody;
+                    if (half > 0 && j == jc && (k == 0 || k == 5)) c = ScaleDark;              // os losangos
+                    if (half > 1 && j == jc + 1 && k == 2) c = ScaleDark;
+                    _fleshPx[j * FleshW + i] = c;
+                    _fleshFill[j * FleshW + i] = true;
+                }
+            }
+            // contorno de 1 px em volta (como o Outline do gerador)
+            for (int j = 0; j < FleshH; j++)
+                for (int i = 0; i < FleshW; i++)
+                {
+                    int p = j * FleshW + i;
+                    if (_fleshFill[p]) continue;
+                    if ((i > 0 && _fleshFill[p - 1]) || (i < FleshW - 1 && _fleshFill[p + 1]) ||
+                        (j > 0 && _fleshFill[p - FleshW]) || (j < FleshH - 1 && _fleshFill[p + FleshW]))
+                        _fleshPx[p] = ScaleOutline;
+                }
+            _fleshTex.SetPixels32(_fleshPx);
+            _fleshTex.Apply(false);
+        }
+
+        static readonly Color32 ScaleOutline = new Color32(0x0e, 0x0c, 0x10, 0xff), ScaleTop = new Color32(0x84, 0x7c, 0x48, 0xff),
+            ScaleBody = new Color32(0x5e, 0x5a, 0x32, 0xff), ScaleBelly = new Color32(0xa8, 0x98, 0x6a, 0xff), ScaleDark = new Color32(0x22, 0x1e, 0x12, 0xff);
 
         /// <summary>A cabeça a <paramref name="ext"/> do bote; os gomos ligam o buraco à cabeça.</summary>
         void Pose(float ext)
@@ -285,6 +422,13 @@ namespace SeteVidas.Enemies
             }
             float from = 0.3f, to = headX - HeadHalf + 0.4f;
             bool show = ext > 0.02f && to > from;
+            if (_flesh != null)
+            {
+                // sem toca: a cabeça recua e levanta no aviso (o bote se arma), balança 1 px rastejando; o corpo é a curva
+                show = false;
+                float bob = _state == SnakeState.Hidden ? Mathf.Round(Mathf.Sin(_wave * 0.5f)) / 16f : 0f;
+                if (body != null) body.localPosition += new Vector3(-_facing * SnakeSpine.CoilPullback * _coil, SnakeSpine.CoilRaise * _coil + bob, 0f);
+            }
             for (int i = 0; i < _segments.Count; i++)
             {
                 var g = _segments[i];
@@ -293,7 +437,8 @@ namespace SeteVidas.Enemies
                 if (!show) continue;
                 float t = _segments.Count == 1 ? 0.5f : i / (_segments.Count - 1f);
                 // com a toca, o 1º gomo afunda (mergulha na terra, atrás da boca) e o 2º desce um pouco: a curva
-                float dive = _lip == null ? 0f : i == 0 ? 0.25f : i == 1 ? 0.0625f : 0f;
+                // (17/11/2026: afundava 4 px e a ponta do gomo, fora da borda de terra, passava do chão: 1 px basta)
+                float dive = _lip == null ? 0f : i == 0 ? 0.0625f : 0f;
                 g.transform.localPosition = new Vector3(_facing * Mathf.Lerp(from, to, t), 0.3f - dive, 0f);
                 g.flipX = _facing < 0;
             }
@@ -304,6 +449,7 @@ namespace SeteVidas.Enemies
                 _lip.flipX = _facing < 0;   // a fresta fica do lado da cabeça
                 _lip.transform.localPosition = new Vector3(_facing * -0.05f, -0.0625f, 0f);
             }
+            if (_flesh != null) DrawFlesh(ext);
         }
 
         void Crawl(float dt)

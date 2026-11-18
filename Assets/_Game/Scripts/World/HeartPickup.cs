@@ -28,6 +28,35 @@ namespace SeteVidas.World
         Vector3 _restPosition;
 
         public int HealHits => healHits;
+
+        /// <summary>Montado em tempo de jogo (o mel das vespas): o desenho e quanto cura.</summary>
+        public void Configure(SpriteRenderer art, int heal)
+        {
+            spriteRenderer = art;
+            healHits = Mathf.Max(1, heal);
+        }
+
+        /// <summary>O mel (17/11/2026): vai para o bolso (inventário) em vez de curar na hora.</summary>
+        public void ConfigureHoney(SpriteRenderer art)
+        {
+            spriteRenderer = art;
+            _honey = true;
+            lifetime = 20f;
+        }
+
+        bool _honey, _mana;
+
+        /// <summary>
+        /// O potinho de mana (18/11/2026, pedido do usuário: cai da Isyathy quando a flecha da Vulpis quebra o escudo):
+        /// encostando, recarrega todos os usos da Cura do Paladino (<see cref="HealingSpell.Refill"/>). Com os usos cheios,
+        /// fica no chão até precisar (como o coração).
+        /// </summary>
+        public void ConfigureMana(SpriteRenderer art)
+        {
+            spriteRenderer = art;
+            _mana = true;
+            lifetime = 30f;
+        }
         public bool Landed => _landed;
 
         void Awake()
@@ -85,6 +114,25 @@ namespace SeteVidas.World
         void TryCollect(Collider2D other)
         {
             var health = other.GetComponentInParent<PlayerHealth>();
+            if (_mana)
+            {
+                var spell = health != null ? health.GetComponent<HealingSpell>() : null;
+                if (spell == null || !spell.IsUnlocked || spell.Charges >= spell.MaxCharges) return;
+                spell.Refill();
+                SeteVidas.Audio.Sfx.Play("coracao_pega", null, 0.9f, 1.6f);
+                SeteVidas.Combat.HitSparks.Burst(transform.position + Vector3.up * 0.4f, 12, new Color32(0x7a, 0xd8, 0xff, 0xff), new Color32(0xe0, 0xf8, 0xff, 0xff), 2f, 5f, 0.4f, 0f, 0.6f);
+                SeteVidas.UI.SpeechBubble.Show(health.transform, "Mana! Os lacres da cura acenderam de novo.", 1.8f);
+                Destroy(gameObject);
+                return;
+            }
+            if (_honey)
+            {
+                if (health == null || !SeteVidas.World.HoneyRules.Add(SeteVidas.Save.SaveManager.Data)) return;
+                SeteVidas.Audio.Sfx.Play("coracao_pega", null, 0.9f, 1.3f);
+                SeteVidas.UI.SpeechBubble.Show(health.transform, "Mel. Vai pro bolso.", 1.4f);
+                Destroy(gameObject);
+                return;
+            }
             if (health != null && health.Heal(healHits))
             {
                 SeteVidas.Audio.Sfx.Play("coracao_pega");

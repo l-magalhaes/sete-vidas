@@ -14,7 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.SpeakerProfile
   DisplayName: Vulpis
   Portrait: {fileID: 21300000, guid: b6c1fc73823a7b74b8b50597e42a74af, type: 3}
-  Expressions: []
+  Expressions:
+  - Key: serio
+    Portrait: {fileID: 21300000, guid: 44d1025503e4183d09ce1a140f5c4dbd, type: 3}
+  - Key: ironico
+    Portrait: {fileID: 21300000, guid: 30f98dfe47d3e70834d67afb10b7d2d0, type: 3}
+  - Key: triste
+    Portrait: {fileID: 21300000, guid: dd566061e553add425468be5ef8e15ec, type: 3}
+  - Key: sorriso
+    Portrait: {fileID: 21300000, guid: 900ec3869852d483a717cd6e06b22960, type: 3}
   Side: 1
   NameColor: {r: 0.9411765, g: 0.6039216, b: 0.2901961, a: 1}
   VoicePitch: 1.1

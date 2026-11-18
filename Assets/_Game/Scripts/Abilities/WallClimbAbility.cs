@@ -63,6 +63,7 @@ namespace SeteVidas.Abilities
                 WallJump();
                 return false;
             }
+            if (grounded && _reattachTimer <= 0f && Player.Input.MoveY < -InputThreshold && TryGrabLadderFromAbove()) return true;
             if (_reattachTimer > 0f || Player.IsCrouching) return false;
 
             float moveX = Player.Input.MoveX, moveY = Player.Input.MoveY;
@@ -170,6 +171,33 @@ namespace SeteVidas.Abilities
         }
 
         public override void OnInterrupted() => Release();
+
+        /// <summary>
+        /// Em pé em cima de uma escada (ou do lado dela, no estrado), segurando baixo: agarra a escada pelo lado dela
+        /// (<see cref="SeteVidas.World.LadderTop"/>) um tile abaixo do topo e começa a descer (18/11/2026).
+        /// </summary>
+        bool TryGrabLadderFromAbove()
+        {
+            Vector2 feet = Player.Body.position;
+            var hits = Physics2D.OverlapBoxAll(feet + new Vector2(0f, -0.3f), new Vector2(HalfWidth * 2f + 1.6f, 0.4f), 0f, climbableLayers);
+            foreach (var c in hits)
+            {
+                var ladder = c.GetComponent<SeteVidas.World.LadderTop>();
+                if (ladder == null) continue;
+                var b = c.bounds;
+                if (feet.y < b.max.y - 0.25f) continue;                  // só por cima (no meio dela é o agarrar normal)
+                int side = ladder.Side;
+                WallDirection = -side;                                    // a escada fica do lado oposto ao do gato
+                Player.Face(WallDirection);
+                Player.Timers.Consume();
+                var body = Player.Body;
+                body.position = new Vector2(SeteVidas.World.LadderTop.GrabX(b, side, HalfWidth), b.max.y - 1.05f);
+                body.linearVelocity = Vector2.zero;
+                ClimbVelocity = 0f;
+                return true;
+            }
+            return false;
+        }
 
         void WallJump()
         {
