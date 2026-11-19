@@ -12,6 +12,7 @@ namespace SeteVidas.Enemies
     /// </summary>
     public class NightBat : ForestEnemy
     {
+        protected override string SoundName => "vespa";   // F10: os sons da Vespa da Raiz
         [SerializeField] Sprite sleeping, flyA, flyB;
         [Tooltip("F4c: quadros pousado (insetos agarrados ao poleiro) e voando (asas batendo). Vazio = os desenhos únicos")]
         [SerializeField] Sprite[] sleepFrames = new Sprite[0], flyFrames = new Sprite[0];
@@ -50,6 +51,7 @@ namespace SeteVidas.Enemies
             if (_spawned || _hive != null) return;   // as que saem do Broto não têm poleiro
             int order = spriteRenderer != null ? spriteRenderer.sortingOrder - 1 : 3;
             _hive = SeteVidas.World.BeeHive.Hang(transform.parent, _home, order);
+            if (_fadeHive) { _hive.color = new Color(1f, 1f, 1f, 0f); StartCoroutine(FadeHiveIn()); }
         }
 
         SpriteRenderer _hive;
@@ -58,11 +60,12 @@ namespace SeteVidas.Enemies
         protected override void OnDied()
         {
             base.OnDied();
+            if (_hum != null) { _hum.Stop(0.15f); _hum = null; }
             if (HoneyDrops(Random.value)) SeteVidas.World.BeeHive.SpawnHoney((Vector2)transform.position);
         }
 
         protected override void OnEnable() { base.OnEnable(); NoiseSystem.Emitted += OnNoise; }
-        protected override void OnDisable() { base.OnDisable(); NoiseSystem.Emitted -= OnNoise; }
+        protected override void OnDisable() { base.OnDisable(); NoiseSystem.Emitted -= OnNoise; if (_hum != null) { _hum.Stop(0.1f); _hum = null; } }
 
         void OnNoise(NoiseEvent n)
         {
@@ -72,6 +75,33 @@ namespace SeteVidas.Enemies
         }
 
         /// <summary>Saiu das folhas de um Broto: já acordado e perseguindo, sem poleiro.</summary>
+        /// <summary>
+        /// Chega voando numa leva da arena (vem do fundo, já caçando). A colmeia dela aparece aos poucos no teto e é para
+        /// onde ela volta se perder o gato. Diferente das do Broto, volta no reinício do mundo.
+        /// </summary>
+        public void ArriveFlying()
+        {
+            _state = BatState.Chase;
+            _vel = Vector2.zero;
+            _fadeHive = true;
+            Senses.ForceAware(PlayerHealth.Active != null ? (Vector2)PlayerHealth.Active.transform.position : (Vector2)transform.position);
+        }
+
+        bool _fadeHive;
+
+        System.Collections.IEnumerator FadeHiveIn()
+        {
+            if (_hive == null) yield break;
+            float t = 0f;
+            while (t < 0.8f && _hive != null)
+            {
+                t += Time.deltaTime;
+                _hive.color = new Color(1f, 1f, 1f, t / 0.8f);
+                yield return null;
+            }
+            if (_hive != null) _hive.color = Color.white;
+        }
+
         public void LaunchFromLeaves()
         {
             _spawned = true;
@@ -80,8 +110,20 @@ namespace SeteVidas.Enemies
             Senses.ForceAware(PlayerHealth.Active != null ? (Vector2)PlayerHealth.Active.transform.position : (Vector2)transform.position);
         }
 
+        SeteVidas.Audio.SfxLoop _hum;
+
+        /// <summary>O zumbido das asas enquanto voa (some ao pousar e ao morrer). Avisa que ela está perto, fora da tela.</summary>
+        void FlightHum()
+        {
+            bool flying = !IsDead && _state != BatState.Sleep;
+            if (flying && _hum == null) _hum = SeteVidas.Audio.Sfx.Loop("vespa_voo_loop", transform);
+            else if (!flying && _hum != null) { _hum.Stop(0.3f); _hum = null; }
+            if (_hum != null) _hum.Pitch = IsInfected ? 0.85f : 1f;
+        }
+
         protected override void Revive()
         {
+            if (_hum != null) { _hum.Stop(0.1f); _hum = null; }
             if (_spawned) { Destroy(gameObject); return; } // os do Broto não voltam
             base.Revive();
             _state = BatState.Sleep;
@@ -155,7 +197,9 @@ namespace SeteVidas.Enemies
             var before = _state;
             _state = StepBat(_state, ref _timer, dt, _spawned ? Mathf.Min(dist, BatGiveUpRange) : dist, crouched, _heard, hit, atPerch && !_spawned, wakeRange, IsInfected);
             _heard = false;
-            if (_state == BatState.Wake && before == BatState.Sleep) SeteVidas.Audio.Sfx.Play("zumbi_sente", me, 0.6f, 1.8f); // guincho (provisório)
+            if (_state == BatState.Wake && before == BatState.Sleep) Sound("acorda", me);   // o zumbido subindo (F10)
+            if (_state == BatState.Chase && before != BatState.Chase) Sound("investida", me);
+            FlightHum();
 
             Vector2 want;
             switch (_state)

@@ -36,6 +36,8 @@ namespace SeteVidas.World
         [Tooltip("D-TOBI-04, em partes: o começo, \"segurei!\", a taxa e a garantia")]
         [SerializeField] DialogueDefinition buildStart, buildCarry, buildTax, buildEnd;
         [SerializeField] DialogueDefinition[] after = new DialogueDefinition[0];
+        [Tooltip("D-TOBI-06: o convite para a lojinha em Miaravéu (uma vez, na primeira conversa depois do encontro)")]
+        [SerializeField] DialogueDefinition shop;
 
         [Header("Lugar")]
         [Tooltip("A cabeceira leste (mundo): ao entrar, a fala da aurora")]
@@ -60,6 +62,7 @@ namespace SeteVidas.World
         {
             meet = talks[0]; meetMore = talks[1]; missingWood = talks[2]; missingCoins = talks[3];
             buildStart = talks[4]; buildCarry = talks[5]; buildTax = talks[6]; buildEnd = talks[7];
+            shop = talks.Length > 8 ? talks[8] : null;
             after = afterTalks; auroraArea = aurora; prompt = promptText; visual = look;
         }
 
@@ -129,6 +132,14 @@ namespace SeteVidas.World
             var data = SaveManager.Data;
             if (runner == null || runner.IsOpen || data == null || _busy) return;
             var input = cat.GetComponent<PlayerInputReader>();
+            // a lojinha em Miaravéu: a primeira conversa depois do encontro (D-TOBI-06)
+            if (shop != null && TobiRules.ShopPending(data))
+            {
+                data.SetFlag(TobiRules.ShopFlag);
+                SaveManager.Save();
+                runner.Play(shop, input);
+                return;
+            }
             switch (TobiRules.Next(data))
             {
                 case TobiTalk.Meet:
@@ -184,6 +195,12 @@ namespace SeteVidas.World
         void Anim(string clip, string then = null) { if (visual != null) visual.Play(clip, then); }
         float Dur(string clip) => visual != null ? visual.Duration(clip) : 0.5f;
 
+        /// <summary>Volume dos sons cômicos na cena da ponte: +3 dB acima do normal (Docs/Audio/floresta-audio.md, exagerados).</summary>
+        public const float ComicBoost = 1.41f;
+
+        /// <summary>Um som da cena (não espacial, +3 dB). Devolve true (para emendar num if).</summary>
+        static bool Sfx(string id) { SeteVidas.Audio.Sfx.Play(id, null, ComicBoost); return true; }
+
         void ShowTobi(bool on)
         {
             foreach (var r in GetComponentsInChildren<SpriteRenderer>(true)) r.enabled = on;
@@ -208,18 +225,22 @@ namespace SeteVidas.World
                 yield return Say(buildStart, input);
                 // a chave inglesa maior do que ela
                 Anim("wrench");
+                Sfx("tobi_chave_gigante");
                 yield return new WaitForSeconds(Dur("wrench") + 0.5f);
                 // as 12 tábuas voam do gato e empilham nos braços dela, que cambaleia
                 Anim("carry");
                 for (int i = 0; i < ReconstructionWood.Total; i++)
                 {
+                    Sfx("tobi_madeira_voa");
                     StartCoroutine(FlyBoard(cat.transform.position + Vector3.up, transform.position + Vector3.up * (1.2f + i * 0.08f)));
                     yield return new WaitForSeconds(0.07f);
                 }
                 yield return new WaitForSeconds(0.9f);
+                Sfx("tobi_cambaleia");
                 yield return Say(buildCarry, input);   // "Segura... segura... segurei!"
                 // cava e some
                 Anim("dig");
+                Sfx("tobi_cava");
                 yield return new WaitForSeconds(Dur("dig"));
                 ShowTobi(false);
                 if (bridge != null) yield return AcrossTheGap(bridge);
@@ -227,6 +248,7 @@ namespace SeteVidas.World
                 transform.position = _home;
                 ShowTobi(true);
                 Anim("emerge", "proud");
+                Sfx("tobi_emerge");
                 HitSparks.Burst((Vector2)_home + Vector2.up * 0.2f, 12, new Color32(0x7a, 0x64, 0x50, 0xff), new Color32(0x4e, 0x3e, 0x30, 0xff), 2f, 5f, 0.5f, 20f, 0.6f);
                 yield return new WaitForSeconds(Dur("emerge") + 0.4f);
                 Anim("greedy");
@@ -265,10 +287,13 @@ namespace SeteVidas.World
             ShowTobi(true);
             if (visual != null) visual.FaceLeft = false;
             Anim("emerge", "pull");
+            Sfx("tobi_emerge");
+            Sfx("corda_desce");
             HitSparks.Burst(west + Vector2.up * 0.2f, 12, new Color32(0x7a, 0x64, 0x50, 0xff), new Color32(0x4e, 0x3e, 0x30, 0xff), 2f, 5f, 0.5f, 20f, 0.6f);
             yield return new WaitForSeconds(Dur("emerge") + 0.9f);
             // a nuvem de obra atravessa montando a ponte
-            float x = bridge.StartX, t = 0f;
+            float x = bridge.StartX, t = 0f, nextTool = 0f;
+            int tool = 0;
             while (x < bridge.EndX)
             {
                 t += Time.deltaTime;
@@ -276,10 +301,11 @@ namespace SeteVidas.World
                 bridge.SetFront(x);
                 transform.position = new Vector2(x - 0.6f, y);
                 Anim(((int)(t * 2.5f)) % 2 == 0 ? "drill" : "hammer");
+                if (t >= nextTool) { Sfx(tool % 3 == 0 ? "tobi_martelo_rapido" : tool % 3 == 1 ? "tobi_broca_gira" : "tobi_serrote"); tool++; nextTool = t + 0.6f; }
                 if (UnityEngine.Random.value < Time.deltaTime * 40f)
                     HitSparks.One(new Vector2(x + UnityEngine.Random.Range(-1.4f, 0.6f), y + UnityEngine.Random.Range(0.2f, 2.2f)),
                         new Vector2(UnityEngine.Random.Range(-1.5f, 1.5f), UnityEngine.Random.Range(0.5f, 2.5f)), new Color(0.78f, 0.72f, 0.64f), 0.6f, 0f);
-                if (UnityEngine.Random.value < Time.deltaTime * 8f)   // "plink": estrelinhas
+                if (UnityEngine.Random.value < Time.deltaTime * 8f && Sfx("tobi_plink"))   // "plink": estrelinhas
                     HitSparks.Burst(new Vector2(x + UnityEngine.Random.Range(-1f, 1f), y + UnityEngine.Random.Range(0.8f, 2f)), 4, Color.white, new Color(1f, 0.95f, 0.6f), 2f, 4f, 0.25f, 0f, 0.3f);
                 if (UnityEngine.Random.value < Time.deltaTime * 5f) CameraShake.Shake(0.8f, 0.1f);
                 CinematicCamera.MoveTo(new Vector2(x, y + 2f));
@@ -287,6 +313,7 @@ namespace SeteVidas.World
             }
             bridge.Finish();
             ShowTobi(false);
+            Sfx("tobi_jingle");   // MUS-F12: a ponte pronta
             // a câmera volta para o gato
             yield return Pan(CinematicCamera.Position, home, 0.9f);
             CinematicCamera.End();
@@ -320,7 +347,7 @@ namespace SeteVidas.World
             input.ClearScriptedMove();
             bridge.Creak(1.4f);
             CameraShake.Shake(1.2f, 0.5f);
-            SeteVidas.Audio.Sfx.Play("parede_racha", cat.transform.position, 0.8f, 0.6f);   // o rangido (som próprio na F10)
+            Sfx("ponte_madeira_range");   // o rangido alto (F10)
             yield return new WaitForSeconds(1.6f);                                        // silêncio
         }
 

@@ -270,6 +270,10 @@ namespace SeteVidas.Dialogue
             if (n.Contains("koda") || n.Contains("golden")) return "koda";
             if (n.Contains("contratante") || n.Contains("capivara")) return "capivara";
             if (n.Contains("lion") || n.Contains("gato")) return "lion";
+            // a Floresta (19/11/2026): a Vulpis é a gravação Audio-vulpis.wav; a Tobi e o espírito, sintetizados
+            if (n.Contains("vulpis") || n.Contains("raposa")) return "vulpis";
+            if (n.Contains("tobi") || n.Contains("toupeira")) return "tobi";
+            if (n.Contains("isyathy")) return "isyathy";
             return null;
         }
 

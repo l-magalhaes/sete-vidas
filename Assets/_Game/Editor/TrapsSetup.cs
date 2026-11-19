@@ -103,12 +103,47 @@ namespace SeteVidas.EditorTools
             return go.GetComponent<T>();
         }
 
-        internal static void Sign(Transform parent, float x, float y, string text)
+        /// <summary>
+        /// A placa provisória do graybox (o texto solto no cenário, "saída ↑"). 19/11/2026 (pedido do usuário: "remova todos
+        /// esses textos em branco do jogo"): não cria mais nada; o texto fica só no layout, como anotação. As placas de
+        /// leitura (LoreSign, D-PLACA) continuam.
+        /// </summary>
+        internal static void Sign(Transform parent, float x, float y, string text) { }
+
+        /// <summary>O nome dos textos provisórios antigos nas cenas (o menu de limpeza procura por ele).</summary>
+        public const string SignPrefix = "Placa: ";
+
+        /// <summary>
+        /// Menu: tira os textos provisórios das cenas já geradas (todas as de Scenes/World), sem recriar nada. Só apaga o
+        /// objeto "Placa: …" que tem apenas o texto (nenhum outro componente).
+        /// </summary>
+        public static void RemoveSignsFromScenes()
         {
-            var go = new GameObject("Placa: " + text);
-            go.transform.SetParent(parent, false);
-            go.transform.position = new Vector3(x, y, 0f);
-            SeteVidas.Combat.DamagePopup.CreateText(go, text, new Color32(0xff, 0xe9, 0xa8, 0xc0), 22);
+            if (!UnityEditor.SceneManagement.EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            int total = 0;
+            foreach (var guid in AssetDatabase.FindAssets("t:Scene", new[] { "Assets/_Game/Scenes/World" }))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(path);
+                var doomed = new System.Collections.Generic.List<GameObject>();
+                foreach (var root in scene.GetRootGameObjects())
+                    foreach (var tm in root.GetComponentsInChildren<TextMesh>(true))
+                    {
+                        var go = tm.gameObject;
+                        if (!go.name.StartsWith(SignPrefix) || go.transform.childCount > 0) continue;
+                        bool onlyText = true;
+                        foreach (var c in go.GetComponents<Component>())
+                            if (!(c is Transform) && !(c is TextMesh) && !(c is MeshRenderer)) { onlyText = false; break; }
+                        if (onlyText) doomed.Add(go);
+                    }
+                foreach (var go in doomed) Object.DestroyImmediate(go);
+                if (doomed.Count == 0) continue;
+                total += doomed.Count;
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+                UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+                Debug.Log($"[Sete Vidas] {scene.name}: {doomed.Count} texto(s) provisório(s) removido(s).");
+            }
+            Debug.Log($"[Sete Vidas] Textos provisórios removidos: {total}.");
         }
 
         // ------------------------------------------------------------ prefabs

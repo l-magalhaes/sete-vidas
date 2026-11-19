@@ -43,6 +43,8 @@ namespace SeteVidas.World
         ArenaRules.State _state;
         int _nextWave;
         float _waveTimer = -1f;
+        /// <summary>Quantos da leva ainda estão chegando do fundo (a arena não conta eles como mortos).</summary>
+        int _arriving;
         public ArenaRules.State State => _state;
         public int WavesStarted => _nextWave;
         public Rect Area => new Rect((Vector2)transform.position - size * 0.5f, size);
@@ -104,6 +106,7 @@ namespace SeteVidas.World
             inner.xMin += 1.5f; inner.xMax -= 1.5f;
             bool inside = h != null && inner.Contains(h.transform.position);
 
+            if (_arriving > 0 && !dead) return;   // a leva ainda está vindo do fundo
             int alive = Alive();
             if (_state == ArenaRules.State.Fighting && !dead && alive == 0 && _nextWave < waves.Length)
             {
@@ -128,17 +131,115 @@ namespace SeteVidas.World
                 if (m != null)
                     HitSparks.Burst((Vector2)m.transform.position + Vector2.up * 0.6f, 8, new Color32(0x7a, 0x9a, 0x4a, 0xff),
                         new Color32(0x2e, 0x3a, 0x22, 0xff), 1.5f, 4f, 0.5f, 20f, 0.4f);
+            SeteVidas.Audio.Sfx.Play("arena_leva_aviso", transform.position);
         }
 
         void StartWave(Wave w, PlayerHealth h)
         {
+            int i = 0;
             foreach (var m in w.members)
             {
                 if (m == null) continue;
                 m.SetActive(true);
                 foreach (var e in m.GetComponents<ForestEnemy>()) e.ReviveNow();
+                StartCoroutine(Arrive(m, i++ * ArriveStagger));
             }
             if (h != null && _nextWave == 0) SpeechBubble.Show(h.transform, "Claro. Tinha mais.", 2f);
+        }
+
+        // ------------------------------------------------------------ a chegada da leva (do fundo para a frente)
+
+        /// <summary>Quanto dura a vinda do fundo (s).</summary>
+        public const float ArriveTime = 1.1f;
+        /// <summary>Um atrás do outro (s).</summary>
+        public const float ArriveStagger = 0.14f;
+        /// <summary>O tamanho lá no fundo (1 = do tamanho do jogo).</summary>
+        public const float ArriveFarScale = 0.3f;
+        /// <summary>Lá no fundo o desenho fica mais alto (o horizonte), em tiles.</summary>
+        public const float ArriveFarRise = 2.2f;
+        /// <summary>A cor da névoa do fundo (de onde eles saem).</summary>
+        static readonly Color FarTint = new Color(0.32f, 0.36f, 0.5f, 0.35f);
+
+        /// <summary>
+        /// A leva chegando (pedido do usuário, 19/11/2026: "como se viesse do fundo da arena para a frente"): começa pequena,
+        /// escura e mais alta, atrás do cenário (na névoa), e cresce num pulo até o lugar dela, ganhando cor; no fim pisa
+        /// no chão levantando poeira. Enquanto vem, não pensa, não fere e não leva dano. Regra pura da curva:
+        /// <see cref="ArriveScale"/>, <see cref="ArriveOffset"/>.
+        /// </summary>
+        System.Collections.IEnumerator Arrive(GameObject m, float delay)
+        {
+            _arriving++;
+            var brains = new List<Behaviour>();
+            foreach (var b in m.GetComponents<MonoBehaviour>())
+                if (b is ForestEnemy || b is EnemyAI) { if (b.enabled) { b.enabled = false; brains.Add(b); } }
+            var cols = new List<Collider2D>();
+            foreach (var c in m.GetComponentsInChildren<Collider2D>()) if (c.enabled) { c.enabled = false; cols.Add(c); }
+            var body = m.GetComponent<Rigidbody2D>();
+            bool simulated = body != null && body.simulated;
+            if (body != null) body.simulated = false;
+            var renderers = m.GetComponentsInChildren<SpriteRenderer>();
+            var orders = new int[renderers.Length];
+            var colors = new Color[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++) { orders[i] = renderers[i].sortingOrder; colors[i] = renderers[i].color; }
+            Vector3 home = m.transform.position, scale = m.transform.localScale;
+            try
+            {
+                float t = -delay;
+                while (t < ArriveTime)
+                {
+                    t += Time.deltaTime;
+                    float k = Mathf.Clamp01(t / ArriveTime);
+                    float s = ArriveScale(k);
+                    m.transform.localScale = new Vector3(scale.x * s, scale.y * s, scale.z);
+                    m.transform.position = home + (Vector3)ArriveOffset(k);
+                    bool behind = k < 0.55f;   // a primeira metade atrás do cenário da sala
+                    for (int i = 0; i < renderers.Length; i++)
+                    {
+                        if (renderers[i] == null) continue;
+                        renderers[i].sortingOrder = behind ? -70 + i : orders[i];
+                        renderers[i].color = Color.Lerp(FarTint * colors[i], colors[i], Mathf.SmoothStep(0f, 1f, k));
+                        if (t < 0f) renderers[i].color = Color.clear;
+                    }
+                    yield return null;
+                }
+            }
+            finally
+            {
+                if (m != null)
+                {
+                    m.transform.localScale = scale;
+                    m.transform.position = home;
+                    for (int i = 0; i < renderers.Length; i++)
+                        if (renderers[i] != null) { renderers[i].sortingOrder = orders[i]; renderers[i].color = colors[i]; }
+                    foreach (var c in cols) if (c != null) c.enabled = true;
+                    if (body != null) body.simulated = simulated;
+                    foreach (var b in brains) if (b != null) b.enabled = true;
+                }
+                _arriving = Mathf.Max(0, _arriving - 1);
+            }
+            if (m == null || !m.activeInHierarchy) yield break;
+            HitSparks.Burst((Vector2)home + Vector2.up * 0.1f, 10, new Color32(0x6e, 0x60, 0x58, 0xff), new Color32(0x3a, 0x32, 0x2e, 0xff), 1.5f, 4.5f, 0.4f, 25f, 0.5f);
+            SeteVidas.Audio.Sfx.Play("arena_leva_chega", home);
+            foreach (var bat in m.GetComponents<NightBat>()) bat.ArriveFlying();
+        }
+
+        /// <summary>O tamanho na chegada (k 0..1): pequeno lá no fundo, cresce rápido no fim (perspectiva). Regra pura.</summary>
+        public static float ArriveScale(float k)
+        {
+            k = Mathf.Clamp01(k);
+            return Mathf.Lerp(ArriveFarScale, 1f, k * k * (3f - 2f * k));
+        }
+
+        /// <summary>
+        /// O deslocamento na chegada (k 0..1): sai mais alto (o fundo), dá um pulo para a frente e cai no lugar. Termina em
+        /// zero. Regra pura.
+        /// </summary>
+        public static Vector2 ArriveOffset(float k)
+        {
+            k = Mathf.Clamp01(k);
+            float far = ArriveFarRise * (1f - k) * (1f - k);   // desce do horizonte
+            float hop = 1.6f * Mathf.Sin(k * Mathf.PI) * k;     // o pulo para a frente (mais no fim)
+            return new Vector2(0f, far + hop);
         }
 
         void Begin(PlayerHealth h)

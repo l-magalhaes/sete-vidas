@@ -16,6 +16,7 @@ namespace SeteVidas.Enemies
     /// </summary>
     public class ForestSnake : ForestEnemy, IQuakeTarget
     {
+        protected override string SoundName => "serpente";   // F10
         [SerializeField] Transform body;
         [SerializeField] Sprite hiddenSprite, warnSprite, strikeSprite, crawlSprite;
         [Tooltip("F4c: na toca (os olhos e a piscada), aviso (a língua), rastejando (o corpo ondulando)")]
@@ -256,12 +257,12 @@ namespace SeteVidas.Enemies
             if (_state == SnakeState.Warn && before == SnakeState.Hidden)
             {
                 _facing = side;
-                SeteVidas.Audio.Sfx.Play("zumbi_sente", transform.position, 0.6f, 1.8f); // chocalho (provisório)
+                Sound("aviso", transform.position);   // o sibilo (F10)
             }
             if (_state == SnakeState.Strike && before == SnakeState.Warn)
             {
                 _room = RoomAhead(_facing);
-                SeteVidas.Audio.Sfx.Play("zumbi_caca", transform.position, 0.5f, 1.8f); // bote (provisório)
+                Sound("bote", transform.position);   // F10
             }
 
             if (_state == SnakeState.Warn && before == SnakeState.Hidden) _room = RoomAhead(_facing);

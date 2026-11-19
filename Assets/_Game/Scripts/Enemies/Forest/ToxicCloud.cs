@@ -26,7 +26,7 @@ namespace SeteVidas.Enemies
             c._left = c._total = Mathf.Max(0.1f, seconds);
             // a nuvem aparece de uma vez (antes de o gato poder sair)
             HitSparks.Burst(center, 14, Infected.Acid, Infected.Purple, 0.6f, 2.2f, 0.6f, -0.5f, 0.2f);
-            SeteVidas.Audio.Sfx.Play("veneno_tique", center, 0.5f, 0.7f); // provisório: o chiado dos esporos
+            SeteVidas.Audio.Sfx.Play("nuvem_toxica", center);   // F10
             return c;
         }
 

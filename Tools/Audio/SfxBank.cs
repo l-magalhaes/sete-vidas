@@ -16,7 +16,7 @@ public class SfxEntry
     public bool Loudness = true;
 }
 
-public static class SfxBank
+public static partial class SfxBank
 {
     /// <summary>Liga de novo as receitas sintéticas dos sons que hoje vêm de gravação (passos e água).</summary>
     static readonly bool UseSynthFoley = false;
@@ -672,6 +672,7 @@ public static class SfxBank
         Add(l, "UI", "ui_orbe_gasto", 1, s => Sx.Pitch(Sx.Bell(Sx.Hz("A5"), 0.4, 2.76, 1, 0.1), 0.85));
         Add(l, "UI", "ui_orbe_recarga", 1, s => Chord(new[] { "D5", "F#5", "A5" }, 0.07, 0.6, 2, 0.8, 0.2));
 
+        Forest(l);   // a Floresta (F3–F9, Docs/Audio/floresta-audio.md): SfxBankForest.cs
         return l;
     }
 

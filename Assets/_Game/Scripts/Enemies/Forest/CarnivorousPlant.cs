@@ -13,6 +13,7 @@ namespace SeteVidas.Enemies
     /// </summary>
     public class CarnivorousPlant : ForestEnemy
     {
+        protected override string SoundName => "planta";   // F10
         [Tooltip("Até onde a cabeça vai (tiles)")]
         [SerializeField, Min(1f)] float reach = PlantReach;
         [SerializeField] Transform head;
@@ -114,6 +115,7 @@ namespace SeteVidas.Enemies
             if (!IsInfected || (_spores != null && _spores.IsAlive)) return;
             Vector2 at = head != null ? (Vector2)head.position : Rest;
             _spores = ToxicCloud.Spawn(at, Vector2.one * PlantSporeSize, PlantSporeTime);
+            SeteVidas.Audio.Sfx.Play("planta_esporos", at);
         }
 
         protected override Vector2 EyePosition => Mouth;
@@ -134,7 +136,7 @@ namespace SeteVidas.Enemies
             if (_state == PlantState.Windup)
             {
                 _aim = PlantAim(Forward, toCat);
-                if (before == PlantState.Idle) SeteVidas.Audio.Sfx.Play("zumbi_sente", Base, 0.7f, 1.2f); // provisório
+                if (before == PlantState.Idle) Sound("aviso", Base);   // telégrafo (F10)
             }
             if (_state == PlantState.Lunge && before == PlantState.Windup)
             {
@@ -142,7 +144,7 @@ namespace SeteVidas.Enemies
                 // e para no primeiro bloco do caminho: a cabeça não atravessa chão, parede nem teto
                 float d = Mathf.Min(reach, toCat.magnitude);
                 _lungeTarget = Base + _aim * Mathf.Max(restDistance, ClearDistance(_aim, d));
-                SeteVidas.Audio.Sfx.Play("zumbi_caca", Base, 0.9f, 1.3f); // provisório: o estalo da boca
+                Sound("mordida", Base);   // o estalo da boca (F10)
             }
 
             float ext = PlantExtension(_state, _timer, IsInfected);

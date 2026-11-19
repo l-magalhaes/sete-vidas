@@ -115,13 +115,38 @@ namespace SeteVidas.Enemies
             _hp = Mathf.Max(0, _hp - dmg);
             var flash = HitFlash.For(spriteRenderer);
             if (flash != null) { flash.Flash(0.08f); flash.Squash(1, 0.12f); }
-            SeteVidas.Audio.Sfx.Play(_hp > 0 ? "zumbi_dano" : "zumbi_morte", transform.position); // provisório (decisão de 13/11/2026)
+            HurtSound(_hp <= 0);   // o som de cada inimigo (F10); sem ele, o do zumbi
             if (Senses != null) Senses.Damaged(info.Source != null ? (Vector2)info.Source.transform.position : (Vector2)transform.position);
             OnHit(info);
             if (_hp <= 0) Die();
         }
 
         protected virtual void OnHit(in DamageInfo info) { }
+
+        /// <summary>
+        /// O prefixo dos sons deste inimigo (F10, 19/11/2026: "vespa", "galho", "planta", "serpente"). Null = os do zumbi
+        /// (o provisório de antes).
+        /// </summary>
+        protected virtual string SoundName => null;
+
+        /// <summary>
+        /// Toca "&lt;SoundName&gt;_&lt;what&gt;" (o infectado usa a variante "_inf", com o timbre da praga). Sem o som,
+        /// tenta <paramref name="fallback"/>.
+        /// </summary>
+        protected void Sound(string what, Vector2 at, float volume = 1f, float pitch = 1f, string fallback = null)
+        {
+            if (SoundName == null) return;
+            string id = SoundName + "_" + what;
+            if (!SeteVidas.Audio.Sfx.Has(id) && fallback != null) id = SoundName + "_" + fallback;
+            if (IsInfected && SeteVidas.Audio.Sfx.Has(id + SeteVidas.Audio.SfxCatalog.InfectedSuffix)) id += SeteVidas.Audio.SfxCatalog.InfectedSuffix;
+            SeteVidas.Audio.Sfx.Play(id, at, volume, pitch);
+        }
+
+        void HurtSound(bool dies)
+        {
+            if (SoundName == null) { SeteVidas.Audio.Sfx.Play(dies ? "zumbi_morte" : "zumbi_dano", transform.position); return; }
+            Sound(dies ? "morte" : "dano", transform.position, 1f, 1f, "dano");
+        }
 
         /// <summary>O dano final deste golpe (0 = não passou; o Galho Seco guarda o que a flecha tirou de pouco em pouco).</summary>
         protected virtual int AdjustDamage(in DamageInfo info, int dmg) => dmg;
@@ -136,7 +161,7 @@ namespace SeteVidas.Enemies
             _hp = 0;
             var flash = HitFlash.For(spriteRenderer);
             if (flash != null) { flash.Flash(0.08f); flash.Squash(1, 0.12f); }
-            SeteVidas.Audio.Sfx.Play("zumbi_morte", transform.position);
+            HurtSound(true);
             OnHit(info);
             Die();
         }
@@ -168,6 +193,10 @@ namespace SeteVidas.Enemies
             foreach (var c in _colliders) if (c != null) c.enabled = true;
             if (spriteRenderer != null) spriteRenderer.enabled = true;
         }
+
+        /// <summary>Morre na hora numa cena (a flecha da Vulpis no resgate da D2): sem passar pela vida nem pela casca.</summary>
+        public void KillScripted(GameObject source, Vector2 direction) =>
+            KillNow(new DamageInfo(MaxHealth * 10, direction, DamageType.Heavy, AttackAngle.Front, source));
 
         /// <summary>Entra vivo e inteiro, no lugar de origem (uma leva de arena que acabou de ser ligada).</summary>
         public void ReviveNow() => Revive();

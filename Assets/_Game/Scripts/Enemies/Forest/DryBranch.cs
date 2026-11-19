@@ -9,10 +9,13 @@ namespace SeteVidas.Enemies
     /// Galho Seco (ajuste do usuário, 13/11/2026): fica parado e é alto (5,5 tiles), então bloqueia a passagem: não dá
     /// para pular por cima, é preciso derrubá-lo. Finge ser tronco até o gato chegar perto; levanta o braço (aviso de
     /// 0,6 s) e bate no chão à frente. Com o braço preso no chão (1 s) aceita pogo e leva o dobro pelas costas.
-    /// <para>Variação <b>Broto</b> (<see cref="spawnsBats"/>): das folhas do topo saem morcegos (no máximo 2 vivos, um a cada 4 s).</para>
+    /// <para>Variação <b>Broto</b> (<see cref="spawnsBats"/>): uma colmeia pendurada no galho do alto (pedido do usuário,
+    /// 19/11/2026); dela saem as vespas (no máximo 2 vivas, uma a cada 4 s). A colmeia treme antes de cada uma sair e
+    /// tomba junto com o tronco.</para>
     /// </summary>
     public class DryBranch : ForestEnemy, ISolidBody
     {
+        protected override string SoundName => "galho";   // F10
         [Tooltip("Altura do corpo (tiles). Mais de 5 = não dá para passar por cima")]
         [SerializeField, Min(1f)] float height = BranchHeight;
         [SerializeField] bool startsDisguised = true;
@@ -26,6 +29,11 @@ namespace SeteVidas.Enemies
 
         BranchState _state;
         float _timer;
+        SpriteRenderer _hive;
+        Vector3 _hiveRest;
+        float _hiveShake;
+        /// <summary>A colmeia do Broto fica menor que a das vespas do teto (pendurada num galho do tronco).</summary>
+        const float HiveScale = 0.7f;
         float _sinceSpawn = SproutInterval;
         readonly List<NightBat> _bats = new List<NightBat>();
 
@@ -55,7 +63,7 @@ namespace SeteVidas.Enemies
             if (IsDead || Senses == null) return;
             bool wasDisguised = _state == BranchState.Disguised;
             if (wasDisguised || !Aware)
-                SeteVidas.Audio.Sfx.Play("zumbi_sente", transform.position, 0.8f, 0.7f); // estalo de madeira (provisório)
+                Sound("estalo", transform.position);   // o estalo de madeira (F10)
             Senses.ForceAware(playerPosition);
             _state = BranchBumped(_state);
             if (_state == BranchState.Awake) _facing = playerPosition.x >= transform.position.x ? 1 : -1;
@@ -66,9 +74,47 @@ namespace SeteVidas.Enemies
 
         protected override void Awake()
         {
+            if (maxHealth < BranchHealth) maxHealth = BranchHealth;   // cenas geradas antes de 19/11/2026 (6 de vida) já valem com a nova
             base.Awake();
             if (spriteRenderer != null) _visualPos = spriteRenderer.transform.localPosition;
             _state = startsDisguised ? BranchState.Disguised : BranchState.Awake;
+            if (spawnsBats) BuildHive();
+        }
+
+        static readonly Color HiveInfected = new Color(0.9f, 0.8f, 1f);   // a praga chegou na cera também
+
+        /// <summary>
+        /// A colmeia do Broto: filha do desenho (tomba junto com ele), pendurada no galho do alto, do lado para onde ele
+        /// olha. A vespa sai pela boca dela.
+        /// </summary>
+        void BuildHive()
+        {
+            if (spriteRenderer == null || _hive != null) return;
+            var go = new GameObject("Colmeia do Broto");
+            go.transform.SetParent(spriteRenderer.transform, false);
+            float side = startFacing >= 0 ? 1f : -1f;
+            _hiveRest = new Vector3(side * 0.85f, height - 0.9f - _visualPos.y, 0f);
+            go.transform.localPosition = _hiveRest;
+            go.transform.localScale = new Vector3(HiveScale, HiveScale, 1f);
+            _hive = go.AddComponent<SpriteRenderer>();
+            _hive.sprite = SeteVidas.World.BeeHive.HiveSprite();
+            _hive.sortingOrder = spriteRenderer.sortingOrder + 1;
+            if (IsInfected) _hive.color = HiveInfected;
+        }
+
+        /// <summary>A boca da colmeia (mundo): de onde a vespa sai.</summary>
+        Vector3 HiveMouth => _hive != null
+            ? _hive.transform.position + Vector3.down * (SeteVidas.World.BeeArt.HiveH / 16f * 0.68f * HiveScale)
+            : transform.position + Vector3.up * (height - 0.3f);
+
+        /// <summary>A colmeia balança de leve; logo antes de soltar uma vespa, treme forte (o aviso).</summary>
+        void ShakeHive(float dt)
+        {
+            if (_hive == null) return;
+            bool soon = _state != BranchState.Disguised && SproutInterval - _sinceSpawn < 0.6f && _bats.Count < 2;
+            _hiveShake += dt;
+            float dx = soon ? Mathf.Sin(_hiveShake * 55f) * 0.06f : Mathf.Sin(_hiveShake * 2.2f) * 0.03f;
+            _hive.transform.localPosition = _hiveRest + new Vector3(dx, 0f, 0f);
         }
 
         protected override void Revive()
@@ -81,6 +127,12 @@ namespace SeteVidas.Enemies
                 spriteRenderer.transform.localPosition = _visualPos;
                 spriteRenderer.transform.localRotation = Quaternion.identity;
                 spriteRenderer.color = Color.white;
+            }
+            if (_hive != null)
+            {
+                _hive.enabled = true;
+                _hive.color = IsInfected ? HiveInfected : Color.white;
+                _hive.transform.localPosition = _hiveRest;
             }
             _state = startsDisguised ? BranchState.Disguised : BranchState.Awake;
             _timer = 0f;
@@ -162,17 +214,18 @@ namespace SeteVidas.Enemies
             Senses.IconHidden = _state == BranchState.Disguised;
 
             if (_state == BranchState.Windup && before != BranchState.Windup)
-                SeteVidas.Audio.Sfx.Play("zumbi_sente", transform.position, 0.8f, 0.7f); // estalo de madeira (provisório)
+                Sound("estalo", transform.position);   // o estalo de madeira (F10)
             if (_state == BranchState.Stuck && before == BranchState.Windup)
             {
                 // a pancada no chão à frente
                 var box = new Rect(transform.position.x + (_facing > 0 ? 0.3f : -0.3f - BranchAttackRange), transform.position.y, BranchAttackRange, 1.8f);
                 HurtPlayerIn(box);
                 HitSparks.Burst((Vector2)transform.position + Vector2.right * _facing * 1.5f, 8, new Color32(0x82, 0x6a, 0x52, 0xff), new Color32(0x52, 0x46, 0x40, 0xff), 1.5f, 4f, 0.35f, 30f, 0.4f);
-                SeteVidas.Audio.Sfx.Play("parede_racha", transform.position, 0.7f, 0.8f);
+                Sound("pancada", transform.position);
             }
 
             if (spawnsBats && _state != BranchState.Disguised) StepSprout(dt);
+            if (spawnsBats) ShakeHive(dt);
 
             if (spriteRenderer != null)
             {
@@ -199,7 +252,7 @@ namespace SeteVidas.Enemies
             var dark = new Color32(0x4a, 0x3a, 0x2c, 0xff);
             Vector2 mid = (Vector2)transform.position + Vector2.up * height * 0.45f;
             HitSparks.Burst(mid, 12, wood, dark, 2f, 6f, 0.5f, 30f, 0.5f);
-            SeteVidas.Audio.Sfx.Play("parede_racha", transform.position, 0.8f, 0.7f);
+            Sound("estalo", transform.position, 1f, 0.8f);
             float t = 0f;
             while (t < BranchCrackTime)   // estala: treme no lugar
             {
@@ -225,7 +278,7 @@ namespace SeteVidas.Enemies
                     for (int i = 0; i < 6; i++)
                         HitSparks.One((Vector2)transform.position + Vector2.right * side * (0.8f + i * 0.8f), new Vector2(Random.Range(-1f, 1f), Random.Range(2f, 4f)), dark, 0.5f, 25f);
                     CameraShake.Shake(1.5f, 0.25f);
-                    SeteVidas.Audio.Sfx.Play("plataforma_cai", transform.position, 0.7f, 0.8f);
+                    Sound("tomba", transform.position);
                 }
                 yield return null;
             }
@@ -234,8 +287,10 @@ namespace SeteVidas.Enemies
             {
                 t += Time.deltaTime;
                 spriteRenderer.color = new Color(1f, 1f, 1f, 1f - t / BranchFadeTime);
+                if (_hive != null) { var c = _hive.color; c.a = 1f - t / BranchFadeTime; _hive.color = c; }
                 yield return null;
             }
+            if (_hive != null) _hive.enabled = false;
         }
         void StepSprout(float dt)
         {
@@ -245,14 +300,14 @@ namespace SeteVidas.Enemies
             bool near = h != null && !h.IsDead && Vector2.Distance(h.transform.position, transform.position) <= SproutRange;
             if (batTemplate == null || !SproutSpawns(_sinceSpawn, _bats.Count, near)) return;
             _sinceSpawn = 0f;
-            var top = transform.position + Vector3.up * (height - 0.3f);
+            var top = HiveMouth;
             var bat = Instantiate(batTemplate, top, Quaternion.identity, transform.parent);
             bat.gameObject.SetActive(true);
             bat.LaunchFromLeaves();
             _bats.Add(bat);
-            var leaf = new Color32(0x4a, 0x68, 0x46, 0xff);
-            HitSparks.Burst(top, 8, leaf, new Color32(0x2e, 0x48, 0x34, 0xff), 1.5f, 4f, 0.4f, 60f, 0.4f);
-            SeteVidas.Audio.Sfx.Play("zumbi_ocioso", top, 0.6f, 1.6f); // folhas sacudindo (provisório)
+            // lascas de cera saindo da boca da colmeia
+            HitSparks.Burst(top, 8, new Color32(0xc9, 0x92, 0x38, 0xff), new Color32(0x6e, 0x45, 0x19, 0xff), 1.5f, 4f, 0.4f, 60f, 0.4f);
+            SeteVidas.Audio.Sfx.Play("colmeia_solta", top);
         }
 
 #if UNITY_EDITOR

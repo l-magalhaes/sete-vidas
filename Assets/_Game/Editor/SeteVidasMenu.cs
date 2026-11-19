@@ -61,6 +61,12 @@ namespace SeteVidas.EditorTools
         [MenuItem(M + "Floresta: Tobi e a ponte F9 (sem recriar a cena)", priority = 11)]
         static void ForestTobi() => TobiSetup.PatchScene();
 
+        [MenuItem(M + "Floresta: som F10 (sem recriar as cenas)", priority = 11)]
+        static void ForestAudio() => ForestAudioSetup.PatchScenes();
+
+        [MenuItem(M + "Remover os textos provisórios (placas brancas) de todas as cenas", priority = 11)]
+        static void RemoveSigns() => TrapsSetup.RemoveSignsFromScenes();
+
         /// <summary>
         /// Tira das cenas da Floresta já montadas os matinhos (esconderijo "folhagem alta"), sem recriar nada (pedido do
         /// usuário, 17/11/2026: os novos virão em outro estilo). O ForestLayout já não os põe (versão 28).

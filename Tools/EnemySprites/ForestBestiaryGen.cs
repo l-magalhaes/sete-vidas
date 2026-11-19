@@ -16,7 +16,7 @@
 //     galho_alto, galho_alto_1               acordado: dois olhos acesos nos nós, o galho-braço erguido de lado
 //     galho_alto_braco, _1                   o braço lá no alto, tremendo (aviso)
 //     galho_alto_preso                       o braço batido no chão à frente, lascas
-//     broto_*                                os mesmos, com casulos claros na copa (de onde saem as vespas)
+//     broto_*                                os mesmos (as vespas saem da colmeia que o jogo pendura nele)
 //   Planta Carnívora (inspirada na planta de cano, com identidade própria: um bulbo vinho com pintas claras, lábios
 //   de espinhos e duas folhas-orelha), cabeça 24 × 24 com a boca PARA CIMA (o jogo gira a cabeça para onde ela vai)
 //     planta_cabeca, _1                      fechada, respirando
@@ -236,12 +236,8 @@ public static class ForestBestiaryGen
             int len = 1 + (int)(N(x + shift, 3, seed) * 4);
             for (int i = 1; i <= len; i++) c.Force(x, b + i, i == len ? 'a' : 'b');
         }
-        if (!cocoons) return;
-        foreach (var p in new[] { new[] { 34, 34 }, new[] { 55, 30 }, new[] { 66, 40 }, new[] { 44, 20 } })
-        {
-            int px = p[0] + shift / 2, py = p[1];
-            Rect(c, px, py, px + 2, py + 4, 'n'); Rect(c, px, py, px, py + 3, 'N'); c.Force(px + 1, py - 1, 'x'); c.Force(px + 1, py + 5, 'k');
-        }
+        // (19/11/2026, pedido do usuário: "remova essas manchas brancas"): os casulos claros na copa do Broto saíram; as
+        // vespas saem da colmeia pendurada nele (DryBranch.BuildHive)
     }
 
     /// <summary>O tronco (casca dos troncos do cenário: veio vertical torto, luar à esquerda, raízes abrindo no pé).</summary>

@@ -52,6 +52,13 @@ namespace SeteVidas.EditorTools
                     (tobi, "orgulhosa", "Garantia de... uns cinquenta anos. Talvez."),
                     (cat, "ironico", "\"Talvez\" é a palavra que eu menos queria ouvir em cima de um abismo."),
                     (cat, "ironico", "Se ela cair, pelo menos eu já sei o caminho.")),
+                // 19/11/2026 (pedido do usuário): o convite para a lojinha em Miaravéu, na primeira conversa depois do encontro
+                DialogueSetup.Conversation("D-TOBI-06", false, 1,
+                    (tobi, "animada", "Ah! Antes que eu me esqueça, gato!"),
+                    (tobi, "orgulhosa", "Eu tenho uma lojinha em Miaravéu. Ferramentas, consertos, bugigangas de primeira. Tudo feito por estas mãos!"),
+                    (cat, "ironico", "Deixa eu adivinhar. Nada de graça."),
+                    (tobi, "gananciosa", "De graça, só o conselho. Mas para quem cai de ponte, eu faço um precinho especial."),
+                    (tobi, "animada", "Quando chegar na cidade, passa lá! Procura a placa com uma chave inglesa. A maior da rua, claro.")),
             };
             var after = new[]
             {

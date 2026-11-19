@@ -67,13 +67,13 @@ namespace SeteVidas.World
                     ? "Uma serpente entalhada. E uma fechadura do tamanho da minha cabeça."
                     : "Trancada. Deve ter uma chave por aí.";
                 if (Time.time - _barkAt > 2f) { SpeechBubble.Show(h.transform, locked, 2.4f); _barkAt = Time.time; }
-                SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.6f, 0.7f); // provisório: maçaneta presa
+                SeteVidas.Audio.Sfx.Play("tronco_adaga", transform.position, 0.8f, 1.1f);   // F10: a maçaneta presa
                 return;
             }
             data.SetFlag(KeyRules.DoorFlag(doorId));
             SaveManager.Save();
             SetOpen(true);
-            SeteVidas.Audio.Sfx.Play("grade_abre", transform.position, 0.8f, 1.2f); // provisório
+            SeteVidas.Audio.Sfx.Play(KeyRules.IsTempleKey(keyId) ? "porta_metal" : "bau_abre", transform.position);   // F10: o portão de pedra do templo / a porta de madeira
             SpeechBubble.Show(h.transform, KeyRules.IsTempleKey(keyId) ? "O templo abriu. O ninho fica para lá." : "Abriu. Com licença, Vulpis.", 2.2f);
         }
     }

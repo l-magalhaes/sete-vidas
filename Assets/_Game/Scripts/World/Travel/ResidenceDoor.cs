@@ -97,7 +97,7 @@ namespace SeteVidas.World
             if (ClosedFromThisSide)
             {
                 if (Time.time - _barkAt > 2f) { SpeechBubble.Show(h.transform, "Não abre deste lado.", 2.2f); _barkAt = Time.time; }
-                SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.6f, 0.7f); // provisório
+                SeteVidas.Audio.Sfx.Play("tronco_adaga", transform.position, 0.8f, 1.1f);   // F10
                 return;
             }
             if (!string.IsNullOrEmpty(opensFlag) && data != null && !data.HasFlag(opensFlag))
@@ -110,15 +110,15 @@ namespace SeteVidas.World
                 if (!KeyRules.HasKey(data, keyId))
                 {
                     if (Time.time - _barkAt > 2f) { SpeechBubble.Show(h.transform, "Trancada. Deve ter uma chave por aí.", 2.2f); _barkAt = Time.time; }
-                    SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position, 0.6f, 0.7f); // provisório: maçaneta presa
+                    SeteVidas.Audio.Sfx.Play("tronco_adaga", transform.position, 0.8f, 1.1f);   // F10: a maçaneta presa
                     return;
                 }
                 data.SetFlag(KeyRules.DoorFlag(doorId)); // destrancou: a chave fica na porta
                 SaveManager.Save();
                 RefreshSprite();
-                SeteVidas.Audio.Sfx.Play("grade_abre", transform.position, 0.8f, 1.2f); // provisório
+                SeteVidas.Audio.Sfx.Play("bau_abre", transform.position, 1f, 0.9f);   // F10: a fechadura
             }
-            SeteVidas.Audio.Sfx.Play("santuario_descansa", transform.position, 0.5f, 1.3f); // provisório: a porta rangendo
+            SeteVidas.Audio.Sfx.Play("galho_treme", transform.position, 1.2f, 0.8f);   // F10: a porta de madeira rangendo
             SceneTravel.ToEntrance(targetScene, targetEntrance, h);
         }
     }

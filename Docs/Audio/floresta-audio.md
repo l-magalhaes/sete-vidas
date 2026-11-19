@@ -79,3 +79,31 @@ O som é espacializado pela posição do corpo no fundo. **Prioridade máxima** 
 6. Ambiência
 
 Cutscene 2 (Tobi): os SFX cômicos sobem +3 dB acima do normal (pedido do plano: exagerados).
+
+## Implementação (F10, 19/11/2026) — falta ouvir no Unity
+
+Pedido do usuário: "todo o som da Floresta, de F3 a F9, seguindo floresta-audio.md; mixagem; o Audio-vulpis para as falas da Vulpis".
+
+**Como regerar (sem o Unity):** `Tools/Audio/gerar_sfx.ps1` (as receitas da Floresta estão em `Tools/Audio/SfxBankForest.cs`) e `Tools/Audio/importar_vozes.ps1` (a Vulpis). No Unity: gerar as cenas da Floresta ou o menu **Floresta: som F10 (sem recriar as cenas)** (`Editor/ForestAudioSetup.cs`).
+
+| Grupo | Pasta (Resources/Audio/SFX) | Ids | Onde toca |
+|---|---|---|---|
+| Mundo | Floresta | `tronco_golpe/quebra/adaga`, `bau_abre`, `madeira_pega`, `galho_treme/quebra`, `raiz_refaz`, `cipo_solta`, `corda_desce`, `alavanca_primatas`, `porta_metal`, `colmeia_solta`, `arena_leva_aviso/chega`, `mel_pega`, `espirito_surge/fala` | `BreakableWall` (madeira), `WoodChest`, `ShortcutLink`, `LockedDoor`, `ResidenceDoor`, `DryBranch` (Broto), `ArenaRoom`, `IsyathySpiritNpc` |
+| Gato | Floresta | `pogo_espinho`, `pogo_cacto`, `pogo_carne`, `gato_queda_galhos` | `PlayerAudio` (por cima do `quique`), `BounceMushroom`, `BridgeCollapse` |
+| Bestiário | Bestiario | `vespa_*`, `galho_*`, `planta_*`, `serpente_*` (aviso/ataque/dano/morte) e cada um com `_inf` (timbre da praga); `vespa_voo_loop`, `planta_esporos`, `nuvem_toxica` | `ForestEnemy.Sound` (escolhe o `_inf` no infectado) |
+| Isyathy | Isyathy | `isyathy_respira` (4 níveis = variações 1–4), `tremor`, `emerge`, `mergulha`, `bote`, `mordida`, `impacto`, `rugido`, `rugido_praga` (fase II+), `cuspe`, `poca`, `dano`, `resvala`, `casca`, `casca_quebra`, `corrompe`, `arrasto_loop`, `derrota` | `IsyathyBurrow` (Ninho), `IsyathyBoss`, `PlagueSpit`, `IsyathySighting` (respiração a 22%) |
+| Vulpis | Vulpis | `vulpis_arco_tensiona`, `flecha_voa`, `flecha_crava`, `magia`, `motivo` (MUS-F10 em 3 notas) | `IsyathyBoss` (chegada e flecha forte), `VulpisRescue` |
+| Ponte | Ponte | `ponte_pedra_racha/cai/desaba`, `ponte_madeira_range`, `horda_geme` | `BridgeCollapse`, `TobiNpc` |
+| Tobi | Tobi | `tobi_chave_gigante`, `cambaleia`, `cava`, `emerge`, `martelo_rapido`, `serrote`, `broca_gira`, `plink`, `bolso`, `madeira_voa`, `jingle` (MUS-F12) | `TobiNpc` (+3 dB na cena, `ComicBoost`) |
+| Ambiência | Ambiencia | loops `amb_floresta_viva`, `amb_floresta_ruinas`, `amb_floresta_corrompida`, `amb_ninho`, `amb_estrada` (18 s, bitcrush 12 bits/32 kHz); pontuais `amb_coruja`, `amb_galho_cai`, `amb_sapo`, `amb_maquina_bip` | `AmbienceZone` (uma por sala; vale a menor; crossfade de 2 s) |
+| Vozes | Voz | `vox_vulpis_<neutro/serio/ironico/triste/sorriso/surpreso>` (da gravação), `vox_tobi_<neutro/animada/ofendida/gananciosa/orgulhosa>`, `vox_isyathy_neutro` | `DialogueRunner.VoiceClipId` (pelo nome do falante) |
+
+**Ambiência por sala** (`ForestAudioSetup.AmbienceFor`): estrada na R; ruínas em A5, B4, C3, C5, G2 e C4 (com o sapo); corrompida em C7 e F1; ninho na E, cada sala mais quieta (0,9 → 0,35); viva no resto (C6 e D sem a coruja: os bichos já sumiram perto do Ninho).
+
+**Respiração no Ninho:** dormindo, o ciclo de 4 s; embaixo da terra, 2,5 s; com o próximo bote a menos de 2 s, 1,5 s com as escamas. O bote começa com o `isyathy_tremor` (1,1 s, o tempo da tela tremendo), o som mais alto do Ninho.
+
+**Música:** o `MusicDirector` está nas 7 cenas, com as áreas de música e a Isyathy como chefe (silêncio de 30 s depois da morte; o espírito por perto chama o MUS-F14). Os arquivos esperados em `Assets/_Game/Audio/Music/` (`.wav` ou `.ogg`): `mus_floresta_estrada`, `mus_floresta_exploracao`, `mus_floresta_ruinas`, `mus_floresta_corrompida`, `mus_floresta_ninho`, `mus_isyathy`, `mus_vulpis`, `mus_tobi`, `mus_floresta_santuario` (sem ela, `mus_santuario`), `mus_isyathy_espirito`. Sem um arquivo, aquele momento segue com a faixa que já toca. Depois de pôr os arquivos, rode o menu **Floresta: som F10**.
+
+**Mixagem** (`SfxCatalog`): telégrafos (tremor 0,85; arco 0,65; estalo do galho 0,62) acima dos golpes; a respiração 0,55 (não espacial: ela está em todo lugar); tronco quebrando 0,8 com ducking; ambiência 0,18 (fundo); a variante `_inf` mixa igual à normal.
+
+**Faixas em uso (19/11/2026, pedido do usuário):** Estrada (`Forest_Road`) = *Guardian of the Forbidden Tome*; A a D = *Silent Forest*; Ninho e Coração (E e F, também a luta) = *Ancient Grove of Shadows*. Volume 0,1 (era 0,18; o usuário pediu mais baixo). Os outros momentos (ruínas, corrompida, Vulpis, Tobi, espírito, santuário) só trocam de faixa quando tiverem arquivo próprio; até lá, segue a da cena. *A Plague Sealed Under Stone* já é a da maldição na Fortaleza.

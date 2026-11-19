@@ -215,40 +215,56 @@ namespace SeteVidas.EditorTools
                     if (Vector2.Distance(z.transform.position, new Vector2(s.Obj.X, s.Obj.Y)) < 0.05f) { zone = z; break; }
                 if (zone == null) { Debug.LogWarning($"[Sete Vidas] Floresta F5: zona de sombra não encontrada ({s.Obj.Name})."); continue; }
 
-                // o desenho da sombra fica separado da zona de jogo (que continua o mesmo retângulo): começa colado na copa e
-                // desce até o chão, mesmo quando a zona está num degrau (antes ficava "voando")
-                var shadeSprite = LoadArt(ShadowArt, s.ShadeName);
+                // o desenho da sombra fica separado da zona de jogo (que continua o mesmo retângulo). 19/11/2026 (pedido do
+                // usuário: "um sistema de sombra dinâmico, onde a sombra reflete o asset que ela está projetando"): a sombra é
+                // projetada da silhueta de quem a faz (ShadowProjector), não mais um desenho fixo por tamanho de zona
                 var so = new SerializedObject(zone);
                 var old = so.FindProperty("shade").objectReferenceValue as SpriteRenderer;
-                if (shadeSprite != null)
+                Color tint = old != null ? old.color : new Color(0.04f, 0.03f, 0.1f, 0.42f);
+                tint.a = Mathf.Lerp(0.6f, 0f, zone.Exposure);   // como o LightZone pinta: mais escuro = mais opaco
+                if (old != null) Object.DestroyImmediate(old.gameObject);
+                so.FindProperty("shade").objectReferenceValue = null;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                foreach (var p in zone.GetComponentsInChildren<ShadowProjector>(true)) Object.DestroyImmediate(p.gameObject);
+                var holder = new GameObject("Sombra (projeção)");
+                holder.transform.SetParent(zone.transform, false);
+                var projector = holder.AddComponent<ShadowProjector>();
+                if (s.Roof)
                 {
-                    Color tint = old != null ? old.color : new Color(0.04f, 0.03f, 0.1f, 0.42f);
-                    tint.a = Mathf.Lerp(0.6f, 0f, zone.Exposure);   // como o LightZone pinta: mais escuro = mais opaco
-                    if (old != null) Object.DestroyImmediate(old.gameObject);
-                    so.FindProperty("shade").objectReferenceValue = null;
-                    so.ApplyModifiedPropertiesWithoutUndo();
-                    var art = new GameObject("Sombra (desenho)");
-                    art.transform.SetParent(zone.transform, false);
-                    // pivô no centro: o desenho vai do topo da zona até "Below" tiles abaixo dela
-                    art.transform.localPosition = new Vector3(0f, -s.Below * 0.5f * (s.Roof ? 0f : 1f), 0f);
-                    var shade = art.AddComponent<SpriteRenderer>();
-                    shade.sprite = shadeSprite;
-                    shade.color = tint;
-                    shade.sortingOrder = 8;   // por cima do gato: ele escurece ao entrar na sombra
+                    // o teto acima faz a sombra: a fileira de baixo dele, da largura da zona (± 1 onde o teto continua)
+                    projector.ConfigureRoof(new RectInt(s.RoofX0, s.RoofY, s.RoofX1 - s.RoofX0 + 1, 1), s.Y0, tint, ShadeOrder);
                     res.Shadows++;
+                    continue;
                 }
-                if (s.Roof) continue;
                 var treeSprite = LoadArt(ShadowArt, s.TreeName);
-                if (treeSprite == null) continue;
+                if (treeSprite == null) { Object.DestroyImmediate(holder); continue; }
+                EnsureReadable(treeSprite);
                 var tree = new GameObject("Árvore (faz a sombra)");
                 tree.transform.SetParent(zone.transform, false);
-                // a árvore vai de "Below" tiles abaixo da zona até 3 acima dela; pivô no centro do sprite
-                tree.transform.localPosition = new Vector3(0f, (ForestTerrain.ShadowInfo.Crown - s.Below) * 0.5f, 0f);
+                // a árvore vai de "Below" tiles abaixo da zona até 6 acima dela; pivô no centro do sprite. Puxada um pouco
+                // para a esquerda: a sombra cai para a direita (a lua) e assim fica em cima da zona de jogo
+                float lean = Mathf.Round(ShadowCast.DefaultSlope * (s.H + s.Below) * 0.5f * 16f) / 16f;
+                tree.transform.localPosition = new Vector3(-lean, (ForestTerrain.ShadowInfo.Crown - s.Below) * 0.5f, 0f);
                 var sr = tree.AddComponent<SpriteRenderer>();
                 sr.sprite = treeSprite;
                 sr.sortingOrder = ShadowTreeOrder;
+                projector.ConfigureTree(sr, s.Y0 - s.Below, tint, ShadeOrder);
                 res.Trees++;
+                res.Shadows++;
             }
+        }
+
+        /// <summary>A sombra fica por cima do gato: ele escurece ao entrar nela.</summary>
+        const int ShadeOrder = 8;
+
+        /// <summary>O <see cref="ShadowProjector"/> lê os pixels da árvore: a textura precisa ser legível.</summary>
+        static void EnsureReadable(Sprite s)
+        {
+            string path = AssetDatabase.GetAssetPath(s);
+            var imp = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (imp == null || imp.isReadable) return;
+            imp.isReadable = true;
+            imp.SaveAndReimport();
         }
 
         static Sprite LoadArt(string folder, string name)

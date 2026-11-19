@@ -75,7 +75,7 @@ namespace SeteVidas.Enemies.Boss
         void Splat(Vector2 p, bool ground)
         {
             HitSparks.Burst(p, 10, new Color32(0xc4, 0x7b, 0xff, 0xff), new Color32(0x4a, 0x1d, 0x5c, 0xff), 2f, 5f, 0.4f, 20f, 0.6f);
-            if (ground) PoisonPuddle.Spawn(p, _source);   // a poça de veneno no chão (no lugar da nuvem)
+            if (ground) { PoisonPuddle.Spawn(p, _source); SeteVidas.Audio.Sfx.Play("isyathy_poca", p); }   // a poça de veneno no chão (no lugar da nuvem)
             Destroy(gameObject);
         }
 

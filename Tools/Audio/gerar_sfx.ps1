@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = (Resolve-Path (Join-Path $here '..\..')).Path
 $out = Join-Path $root 'Assets\_Game\Resources\Audio\SFX'
-Add-Type -Path @((Join-Path $here 'SfxSynth.cs'), (Join-Path $here 'SfxBank.cs'))
+Add-Type -Path @((Join-Path $here 'SfxSynth.cs'), (Join-Path $here 'SfxBank.cs'), (Join-Path $here 'SfxBankForest.cs'))
 
 $sw = [Diagnostics.Stopwatch]::StartNew()
 $files = 0

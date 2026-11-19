@@ -55,22 +55,27 @@ public static class ForestShadowGen
     {
         int wpx = (W + 2) * 16;
         int seed = W * 31 + H;
-        int cols = Math.Max(2, (W + 2) / 2);
         var list = new List<double[]>();
-        for (int row = 0; row < 3; row++)
+        // a copa (19/11/2026, pedido do usuário: "a sombra da árvore ainda está muito quadrada"): antes eram fileiras de
+        // lobos com uma elipse larga e achatada na base, e os lados e o fundo saíam retos. Agora o contorno é uma elipse
+        // (a forma geral da copa) coberta de lobos de tamanhos diferentes, com alguns no meio para encher: o recorte de
+        // fora fica redondo e irregular em toda a volta.
+        double cx = wpx / 2.0, cy = CrownPx * 0.52, ax = wpx / 2.0 - 6, ay = CrownPx * 0.5 - 5;
+        int ring = Math.Max(8, (int)(Math.PI * (ax + ay) / 13));
+        for (int i = 0; i < ring; i++)
         {
-            int n = row == 0 ? Math.Max(1, cols - 1) : cols;               // o alto da copa é mais estreito
-            for (int i = 0; i < n; i++)
-            {
-                double t = (i + 0.5) / n;
-                double margin = row == 0 ? wpx * 0.22 : 10;
-                double x = margin + t * (wpx - 2 * margin) + (Hash(seed, i + row * 20) - 0.5) * 8;
-                double y = 18 + row * (CrownPx - 40) / 2.0 + (Hash(seed, i + row * 20 + 40) - 0.5) * 8;
-                double r = 17 + Hash(seed, i + row * 20 + 80) * 6;
-                list.Add(new[] { x, y, r, 0.85 });
-            }
+            double ang = 2 * Math.PI * (i + (Hash(seed, i + 200) - 0.5) * 0.5) / ring;
+            double r = 11 + Hash(seed, i + 220) * 7;
+            double k = 1 - r * 0.6 / Math.Min(ax, ay) - Hash(seed, i + 240) * 0.08;   // uns mais para fora, outros para dentro
+            list.Add(new[] { cx + Math.Cos(ang) * ax * k, cy + Math.Sin(ang) * ay * k, r, 0.82 });
         }
-        list.Add(new[] { wpx / 2.0, CrownPx - 20.0, wpx / 2.0 - 3, 12.0 / (wpx / 2.0 - 3) });   // base larga
+        list.Add(new[] { cx, cy, ax * 0.6, ay / ax });   // o miolo (sem buracos dentro da copa)
+        int fill = 3 + W * 2;
+        for (int i = 0; i < fill; i++)
+        {
+            double ang = 2 * Math.PI * Hash(seed, i + 260), rad = 0.7 * Math.Sqrt(Hash(seed, i + 280));
+            list.Add(new[] { cx + Math.Cos(ang) * ax * rad, cy + Math.Sin(ang) * ay * rad, 16 + Hash(seed, i + 300) * 6, 0.85 });
+        }
         return list;
     }
     /// <summary>Fundo da copa em cada coluna da árvore (px, de cima): onde a folhagem termina. -1 = sem copa.</summary>

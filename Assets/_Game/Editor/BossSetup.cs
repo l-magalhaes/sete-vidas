@@ -84,10 +84,10 @@ namespace SeteVidas.EditorTools
                     (cat, "", "Não... não, não, não. Isso não estava no contrato.")),
                 // O contratante (capivara necromante) aparece com o gato caído
                 Villain = DialogueSetup.Conversation("D-CAPIVARA-01", true, 4,
-                    (capy, "deboche", "Ah, estava sim. Cláusula sete. Você leu... e achou graça."),
+                    (capy, "deboche", "Ah, estava sim. Cláusula sete."),
                     (cat, "", "Você... o contratante. O que você fez comigo?"),
-                    (capy, "", "Eu? Nada. O tomo dorme há cinco séculos e só acorda bebendo vidas."),
-                    (capy, "revelacao", "Sete vidas de gato. Raras. Deliciosas. Exatamente o que ele precisava."),
+                    (capy, "", "Eu? Nada. O tomo estava adormecido há cinco séculos e precisava de um sacrificio."),
+                    (capy, "revelacao", "vidas de gato. Raras. Deliciosas. Exatamente o que ele precisava."),
                     (cat, "", "Você me usou... desde o começo."),
                     (capy, "deboche", "Como se usa uma chave, gatinho. E chaves não reclamam da porta.")),
                 VillainLeave = DialogueSetup.Conversation("D-CAPIVARA-02", true, 2,

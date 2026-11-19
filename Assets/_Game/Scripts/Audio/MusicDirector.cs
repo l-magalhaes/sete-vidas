@@ -116,6 +116,11 @@ namespace SeteVidas.Audio
         EnemyAI[] _enemies = new EnemyAI[0];
         float _nextScan;
         CursedTome _tome;
+        SeteVidas.Enemies.Boss.IsyathyBoss _isyathy;
+        bool _isyWasFighting;
+        float _isySilenceUntil = -99f;
+        /// <summary>Depois da morte da Isyathy, silêncio total (o plano: "a música para de vez") por este tempo (s).</summary>
+        public const float IsyathySilence = 30f;
         ShadowSilhouette _silhouette;
         float _userVolume = 1f;
 
@@ -162,7 +167,7 @@ namespace SeteVidas.Audio
         {
             var s = new MusicRules.Situation();
             float now = Time.unscaledTime;
-            if (now >= _nextScan) { _enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None); _tome = FindAnyObjectByType<CursedTome>(); _nextScan = now + 2f; }
+            if (now >= _nextScan) { _enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None); _tome = FindAnyObjectByType<CursedTome>(); _isyathy = FindAnyObjectByType<SeteVidas.Enemies.Boss.IsyathyBoss>(); _nextScan = now + 2f; }
 
             var health = PlayerHealth.Active;
             Vector2 cat = health != null ? (Vector2)health.transform.position : Vector2.zero;
@@ -182,7 +187,12 @@ namespace SeteVidas.Audio
             if (_bossWasFighting && !fighting && boss != null && boss.IsDefeated) _bossOutro = true;   // ajoelhou: toca o desfecho
             _bossWasFighting = fighting;
             s.BossFighting = fighting;
-            s.BossOutro = _bossOutro;
+            // a Isyathy (F8): a luta usa a faixa do chefe; morta, silêncio (antes do espírito falar)
+            bool isy = _isyathy != null && _isyathy.IsFighting;
+            if (_isyWasFighting && !isy && _isyathy != null && _isyathy.IsDead) _isySilenceUntil = now + IsyathySilence;
+            _isyWasFighting = isy;
+            s.BossFighting |= isy;
+            s.BossOutro = _bossOutro || now < _isySilenceUntil;
             s.CurseScene = _tome != null && _tome.IsRunning;
             if (s.CurseScene) _bossOutro = false;   // a cena do tomo encerra o silêncio do pós-chefe
 
@@ -190,6 +200,7 @@ namespace SeteVidas.Audio
             {
                 s.OnMountain = mountainArea.Contains(cat);
                 s.AreaCue = MusicArea.CueAt(cat);
+                if (SeteVidas.World.IsyathySpiritNpc.Shown) s.AreaCue = MusicCue.Spirit;   // MUS-F14: o espírito por perto
                 foreach (var sa in Sanctuary.All)
                     if (sa != null && Vector2.Distance(cat, sa.transform.position) <= sanctuaryRadius) { s.InSanctuary = true; break; }
             }

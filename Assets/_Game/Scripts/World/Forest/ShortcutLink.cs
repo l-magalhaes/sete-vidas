@@ -102,8 +102,8 @@ namespace SeteVidas.World
                 SaveManager.Save();
             }
             Apply(true);
-            SeteVidas.Audio.Sfx.Play("grade_abre", transform.position, 0.8f, 0.8f);     // provisório: madeira/cipó
-            SeteVidas.Audio.Sfx.Play("plataforma_cai", transform.position, 0.6f, 0.9f);
+            SeteVidas.Audio.Sfx.Play("cipo_solta", transform.position);     // F10: o cipó/alçapão se solta
+            SeteVidas.Audio.Sfx.Play("raiz_refaz", transform.position);
             SpeechBubble.Show(h.transform, "Pronto. Um caminho mais curto.", 2.2f);
         }
 

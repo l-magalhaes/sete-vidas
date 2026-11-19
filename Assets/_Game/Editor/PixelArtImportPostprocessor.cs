@@ -40,6 +40,11 @@ namespace SeteVidas.EditorTools
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;
+            // as árvores que fazem sombra: o ShadowProjector lê os pixels delas para projetar a silhueta (19/11/2026)
+            if (assetPath.StartsWith(ShadowCasterArt)) importer.isReadable = true;
         }
+
+        /// <summary>A pasta dos desenhos que projetam sombra (lidos pelo <see cref="SeteVidas.World.ShadowProjector"/>).</summary>
+        public const string ShadowCasterArt = ArtRoot + "Environments/Forest/Shadows/";
     }
 }

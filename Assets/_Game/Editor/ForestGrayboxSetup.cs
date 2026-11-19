@@ -200,6 +200,7 @@ namespace SeteVidas.EditorTools
             if (reg.Scene == ForestLayout.E)   // F7: o medidor de alerta, o bote e os galhos frágeis
                 Debug.Log($"[Sete Vidas] Ninho (F7): a Isyathy embaixo da terra, {NestSetup.Apply(ctx.Root, reg)} galhos frágeis.");
             if (reg.Scene == ForestLayout.F) { IsyathyBossSetup.Apply(ctx.Root, reg); Debug.Log("[Sete Vidas] F8: a Isyathy na arena F1."); }
+            ForestAudioSetup.Apply(ctx.Root, reg);   // F10: música, áreas de música e ambiência de cada sala
             ForestTestSetup.End(ctx);
         }
 
@@ -304,8 +305,13 @@ namespace SeteVidas.EditorTools
                 {
                     var rope = parts.Find(p => p.Kind == "sc_vine");
                     bool left = rope != null && rope.X < opener.X;                       // o cipó desce à esquerda
-                    closed.Add(ShortcutProp(root.transform, "Estaca com o nó", "atalho_estaca", opener.X, opener.Y, left, true));
-                    open.Add(ShortcutProp(root.transform, "Estaca com o cipó solto", "atalho_estaca_solta", opener.X, opener.Y, left, false));
+                    // a estaca nunca fica em cima de uma tampa do atalho: ela some ao abrir e a estaca ficava no ar
+                    // (19/11/2026); vai para o chão firme do lado oposto ao cipó
+                    float stakeX = opener.X;
+                    var lidUnder = parts.Find(p => p.Kind == "sc_block" && Mathf.Abs(p.Y + p.H - opener.Y) < 0.3f && opener.X > p.X - 0.01f && opener.X < p.X + p.W + 0.01f);
+                    if (lidUnder != null) stakeX = left ? lidUnder.X + lidUnder.W + 0.5f : lidUnder.X - 0.5f;
+                    closed.Add(ShortcutProp(root.transform, "Estaca com o nó", "atalho_estaca", stakeX, opener.Y, left, true));
+                    open.Add(ShortcutProp(root.transform, "Estaca com o cipó solto", "atalho_estaca_solta", stakeX, opener.Y, left, false));
                 }
                 else
                 {
@@ -422,6 +428,7 @@ namespace SeteVidas.EditorTools
             idle.arraySize = d.Idle.Length;
             for (int i = 0; i < d.Idle.Length; i++) idle.GetArrayElementAtIndex(i).objectReferenceValue = d.Idle[i];
             so.ApplyModifiedPropertiesWithoutUndo();
+            VulpisRescueSetup.AddDeparture(go);   // com a Chave do Templo, ela vai na frente para o templo (19/11/2026)
         }
 
         /// <summary>Raposa de pé (24 × 32, olhando para a direita): pelo laranja, peito branco, capa verde, arco nas costas.</summary>
@@ -642,6 +649,28 @@ namespace SeteVidas.EditorTools
                 SightingParallax, o.Link, string.IsNullOrEmpty(o.Id) ? new string[0] : o.Id.Split('|'));
         }
 
+        /// <summary>
+        /// O espírito da Isyathy pela floresta (pedido do usuário, 19/11/2026): NPC no primeiro plano, só com a flag da morte
+        /// dela; E abre a próxima conversa do rodízio (D-ISYATHY-ESPIRITO-02a..e).
+        /// </summary>
+        static void SpiritNpc(Transform parent, ForestLayout.Obj o)
+        {
+            var go = new GameObject(o.Name) { layer = LayerMask.NameToLayer(SeteVidas.Core.GameConstants.Layers.Interactable) };
+            go.transform.SetParent(parent, false);
+            go.transform.position = new Vector3(o.X, o.Y, 0f);
+            var box = go.AddComponent<BoxCollider2D>();
+            box.isTrigger = true;
+            box.size = new Vector2(3.5f, 3f);
+            box.offset = new Vector2(0f, 1.5f);
+            var promptGo = new GameObject("Prompt");
+            promptGo.transform.SetParent(go.transform, false);
+            promptGo.transform.localPosition = new Vector3(0f, 4.9f, 0f);
+            var prompt = SeteVidas.Combat.DamagePopup.CreateText(promptGo, "E: falar", new Color32(0xc8, 0xf0, 0xff, 0xff), 30);
+            promptGo.SetActive(false);
+            var (talks, bridge) = IsyathyBossSetup.CreateSpiritDialogues();
+            go.AddComponent<IsyathySpiritNpc>().Configure(talks, bridge, new Rect(o.TX, o.TY, o.TW, o.TH), prompt);
+        }
+
         /// <summary>Quadros <paramref name="prefix"/>0..n−1 (n = 0: só <paramref name="prefix"/>), de Forest/Placeholder.</summary>
         static Sprite[] SightingFrames(string prefix, int n)
         {
@@ -808,6 +837,7 @@ namespace SeteVidas.EditorTools
                 case "bridge_wood": TobiSetup.Bridge(t, o); break;      // F9: a ponte nova (escondida até a flag)
                 case "dawn": MiaraveuGateSetup.Dawn(t, o); break;          // o amanhecer da cabeceira leste (R5)
                 case "miaraveu_gate": MiaraveuGateSetup.Gate(t, o); break; // o portão em ruínas de Miaravéu (R5)
+                case "waterfall": WaterfallSetup.Build(t, o); break;       // as cachoeiras no fundo, caindo da montanha (R5)
                 case "gate": TempleGate(t, o); break;
                 case "ruinwall": RuinWall(t, o); break;
                 case "bat":
@@ -853,6 +883,18 @@ namespace SeteVidas.EditorTools
                 case "ruinlight": RuinLight(t, o); break;
                 case "prilore": PrimateLore(t, o, dialogues); break;
                 case "sighting": Sighting(t, o); break;
+                case "spirit": SpiritNpc(t, o); break;                 // depois da luta: o espírito da Isyathy (D-ISYATHY-ESPIRITO-02)
+                case "rescue": VulpisRescueSetup.Build(t, o); break;    // F6: o resgate da D2 (D-VULPIS-01)
+                case "arrowprop":                                       // F6: a trilha de flechas da Vulpis
+                {
+                    var go = new GameObject(o.Name);
+                    go.transform.SetParent(t, false);
+                    go.transform.position = new Vector3(o.X, o.Y, 0f);
+                    var sr = go.AddComponent<SpriteRenderer>();
+                    sr.sortingOrder = -3;   // atrás do gato, na frente do cenário
+                    go.AddComponent<ArrowProp>().Configure(o.Value == 1 ? ArrowProp.Kind.DeadWasp : ArrowProp.Kind.Arrow, o.A);
+                    break;
+                }
                 case "cabinfacade":ForestTestSetup.CabinFacade(t, o.X, o.Y); break;
                 case "outpost":Prop(t, o.Name, "posto_abandonado", o.X, o.Y, 1, false); break;
                 case "bark":

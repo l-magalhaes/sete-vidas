@@ -39,7 +39,7 @@ namespace SeteVidas.World
             _readyAt = Time.time + 0.2f;
             player.Bounce(bounceHeight);
             _squashUntil = Time.time + 0.15f;
-            SeteVidas.Audio.Sfx.Play("gato_pulo", transform.position, 1.5f, 0.7f); // provisório: "boing" grave
+            SeteVidas.Audio.Sfx.Play("pogo_cacto", transform.position, 1f, 0.9f);   // F10: o "boing" abafado do cogumelo
         }
 
         void Update()

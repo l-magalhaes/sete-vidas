@@ -32,6 +32,8 @@ namespace SeteVidas.World
         public float Amplitude, Phase;
         public int Frame = IsyathyArt.FrameSleep;
         public bool Glow = true;
+        /// <summary>O estágio da corrupção (0 a <see cref="IsyathyArt.MaxStage"/>): na luta, um por fase.</summary>
+        public int Corruption;
 
         SerpentRaster _raster;
         Texture2D _tex;
@@ -182,10 +184,10 @@ namespace SeteVidas.World
             }
         }
 
-        static uint[] HeadPixels(int frame, bool glow)
+        static uint[] HeadPixels(int frame, bool glow, int stage)
         {
-            int key = frame * 2 + (glow ? 1 : 0);
-            if (!s_heads.TryGetValue(key, out var px)) { px = IsyathyArt.Head(frame, glow); s_heads[key] = px; }
+            int key = (stage * 8 + frame) * 2 + (glow ? 1 : 0);
+            if (!s_heads.TryGetValue(key, out var px)) { px = IsyathyArt.Head(frame, glow, stage); s_heads[key] = px; }
             return px;
         }
 
@@ -228,10 +230,11 @@ namespace SeteVidas.World
             _raster.SetClip(false, 0f, 0f, 0f);
             _raster.SetRoom(_hasRoom, _room.xMin * 16f, _room.yMin * 16f, _room.xMax * 16f, _room.yMax * 16f);
             foreach (var h in _holes) _raster.AddClip((h.x - BurrowRules.HoleHalfWidth) * 16f, (h.x + BurrowRules.HoleHalfWidth) * 16f, h.y * 16f);
+            _raster.Stage = Corruption;
             _raster.Body(_discs, m);
             Vector2 hd = HeadDirection;
             _flip = Flipped(hd.x);
-            _raster.Head(HeadPixels(Frame, Glow), IsyathyArt.HeadW, IsyathyArt.HeadH, IsyathyArt.NeckX, IsyathyArt.NeckY,
+            _raster.Head(HeadPixels(Frame, Glow, Corruption), IsyathyArt.HeadW, IsyathyArt.HeadH, IsyathyArt.NeckX, IsyathyArt.NeckY,
                 neck.x, neck.y, Mathf.Atan2(hd.y, hd.x), _flip);
             _raster.Finish();
             _tex.SetPixelData(_raster.Px, 0);

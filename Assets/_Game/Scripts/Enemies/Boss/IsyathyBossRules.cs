@@ -236,9 +236,36 @@ namespace SeteVidas.Enemies.Boss
         /// <summary>Até onde a cabeça vai no trilho, com o buraco no ponto <paramref name="holeS"/> dele.</summary>
         public static float MaxHead(float holeS) => holeS + MaxOut;
 
-        /// <summary>Quantas bolas o Cuspe solta (e o tempo de voo, s).</summary>
-        public const int SpitShots = 5;
+        /// <summary>
+        /// Quantas bolas o Cuspe solta (e o tempo de voo, s). Pedido do usuário (19/11/2026): o triplo de poças (15),
+        /// cobrindo <see cref="SpitCover"/> da largura da arena. Saem em <see cref="SpitVolleys"/> cuspidas de 3 bolas
+        /// cada, no mesmo ritmo de antes (o golpe não fica mais longo).
+        /// </summary>
+        public const int SpitShots = 15, SpitVolleys = 5;
         public const float SpitFlight = 0.8f;
+        /// <summary>A fração da largura da arena que as poças do Cuspe cobrem (o resto fica livre para fugir).</summary>
+        public const float SpitCover = 0.4f;
+
+        /// <summary>
+        /// Onde cai cada bola do Cuspe (x, tiles): uma faixa de <see cref="SpitCover"/> da arena centrada em
+        /// <paramref name="aimX"/> (para onde o gato vai), empurrada para dentro nas bordas. As poças vão de ponta a ponta
+        /// da faixa, lado a lado, sem buraco entre elas. A cuspida <c>v</c> solta as bolas <c>v</c>, <c>v + 5</c>,
+        /// <c>v + 10</c>: cada uma espalha pela faixa toda e a faixa vai enchendo.
+        /// </summary>
+        public static float[] SpitTargets(Rect inside, float aimX, float puddleHalfWidth)
+        {
+            float band = inside.width * SpitCover;
+            float x0 = Mathf.Clamp(aimX - band * 0.5f, inside.xMin, inside.xMax - band);
+            float first = x0 + puddleHalfWidth, last = x0 + band - puddleHalfWidth;
+            var xs = new float[SpitShots];
+            for (int i = 0; i < SpitShots; i++)
+            {
+                int perVolley = SpitShots / SpitVolleys;
+                int slot = i / perVolley + (i % perVolley) * SpitVolleys;   // a bola b da cuspida v → a posição v + 5b na faixa
+                xs[i] = last <= first ? (first + last) * 0.5f : Mathf.Lerp(first, last, slot / (float)(SpitShots - 1));
+            }
+            return xs;
+        }
         /// <summary>Quanto a cabeça sai da superfície ao se armar (tiles).</summary>
         public const float RearOut = 3.4f;
 

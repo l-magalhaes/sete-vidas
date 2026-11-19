@@ -183,6 +183,102 @@ namespace SeteVidas.Audio
             { "plataforma_cai", new SfxSettings(0.32f, 14f, 2) },
             { "plataforma_volta", new SfxSettings(0.14f, 12f, 2) },
 
+            // ================ a Floresta (19/11/2026, Docs/Audio/floresta-audio.md §Mixagem). Prioridade: telégrafos >
+            // respiração da Isyathy (no ninho) > o gato > tronco quebrando > música > ambiência. A floresta é silenciosa:
+            // os sons de fundo ficam baixos e o perigo se ouve de longe.
+            // ---------------- mundo
+            { "tronco_golpe", new SfxSettings(0.55f, 18f, 2, 0.06f) },
+            { "tronco_quebra", new SfxSettings(0.8f, 24f, 1, 0.04f, duck: 0.5f) },     // árvores quebrando: 3ª prioridade da mixagem
+            { "tronco_adaga", new SfxSettings(0.3f, 10f, 2, 0.05f) },
+            { "bau_abre", new SfxSettings(0.45f, 0f, 1, 0.02f) },
+            { "madeira_pega", new SfxSettings(0.55f, 0f, 1, 0f, duck: 0.6f) },
+            { "galho_treme", new SfxSettings(0.3f, 10f, 2, 0.08f, 0.2f) },
+            { "galho_quebra", new SfxSettings(0.42f, 12f, 2, 0.06f) },
+            { "raiz_refaz", new SfxSettings(0.2f, 10f, 2, 0.05f) },
+            { "cipo_solta", new SfxSettings(0.5f, 16f, 1, 0.03f) },
+            { "corda_desce", new SfxSettings(0.25f, 0f, 1, 0.05f, 0.3f) },
+            { "alavanca_primatas", new SfxSettings(0.45f, 14f, 1, 0.02f) },
+            { "porta_metal", new SfxSettings(0.55f, 20f, 1, 0.02f, duck: 0.7f) },
+            { "colmeia_solta", new SfxSettings(0.4f, 14f, 2, 0.06f) },
+            { "arena_leva_aviso", new SfxSettings(0.6f, 0f, 1, 0f, duck: 0.6f) },        // telégrafo: a leva vem
+            { "arena_leva_chega", new SfxSettings(0.4f, 20f, 3, 0.08f, 0.05f) },
+            { "mel_pega", new SfxSettings(0.35f, 0f, 1, 0.03f) },
+            { "espirito_surge", new SfxSettings(0.35f, 22f, 1, 0f, 2f, duck: 0.6f) },
+            { "espirito_fala", new SfxSettings(0.25f, 0f, 1, 0f) },
+            { "nuvem_toxica", new SfxSettings(0.4f, 12f, 2, 0.05f) },
+            // ---------------- gato
+            { "pogo_espinho", new SfxSettings(0.35f, 0f, 1, 0.03f) },
+            { "pogo_cacto", new SfxSettings(0.35f, 0f, 1, 0.05f) },
+            { "pogo_carne", new SfxSettings(0.38f, 0f, 1, 0.06f) },
+            { "gato_queda_galhos", new SfxSettings(0.6f, 0f, 1, 0f) },
+            // ---------------- bestiário (o aviso mais alto que o golpe; infectados "_inf", mesmos números)
+            { "vespa_acorda", new SfxSettings(0.5f, 16f, 2, 0.06f, 0.3f) },
+            { "vespa_voo_loop", new SfxSettings(0.12f, 9f, 6, 0f) },
+            { "vespa_investida", new SfxSettings(0.55f, 14f, 3, 0.06f, 0.1f) },           // telégrafo
+            { "vespa_dano", new SfxSettings(0.4f, 14f, 3, 0.06f) },
+            { "vespa_morte", new SfxSettings(0.42f, 16f, 3, 0.06f) },
+            { "galho_estalo", new SfxSettings(0.62f, 16f, 2, 0.05f, 0.2f) },              // telégrafo (0,6 s): o braço erguendo
+            { "galho_pancada", new SfxSettings(0.6f, 18f, 2, 0.05f, duck: 0.8f) },
+            { "galho_dano", new SfxSettings(0.45f, 14f, 3, 0.06f) },
+            { "galho_tomba", new SfxSettings(0.65f, 20f, 2, 0.04f, duck: 0.7f) },
+            { "planta_aviso", new SfxSettings(0.55f, 14f, 2, 0.05f, 0.2f) },              // telégrafo (0,45 s)
+            { "planta_mordida", new SfxSettings(0.5f, 14f, 3, 0.06f) },
+            { "planta_dano", new SfxSettings(0.4f, 14f, 3, 0.06f) },
+            { "planta_morte", new SfxSettings(0.45f, 16f, 2, 0.05f) },
+            { "planta_esporos", new SfxSettings(0.35f, 12f, 2, 0.06f) },
+            { "serpente_aviso", new SfxSettings(0.55f, 12f, 2, 0.05f, 0.3f) },            // telégrafo: o sibilo
+            { "serpente_bote", new SfxSettings(0.5f, 14f, 2, 0.06f) },
+            { "serpente_dano", new SfxSettings(0.4f, 14f, 3, 0.06f) },
+            { "serpente_morte", new SfxSettings(0.45f, 16f, 2, 0.05f) },
+            // ---------------- Isyathy (a respiração é a camada principal do ninho; o aviso do bote é o som mais importante)
+            { "isyathy_respira", new SfxSettings(0.55f, 0f, 1, 0.02f, 0.5f) },
+            { "isyathy_tremor", new SfxSettings(0.85f, 0f, 1, 0.03f, 0.4f, duck: 0.4f) },  // telégrafo do bote (1,1 s)
+            { "isyathy_emerge", new SfxSettings(0.7f, 26f, 2, 0.05f, duck: 0.6f) },
+            { "isyathy_mergulha", new SfxSettings(0.55f, 26f, 2, 0.05f) },
+            { "isyathy_bote", new SfxSettings(0.6f, 26f, 2, 0.05f) },
+            { "isyathy_mordida", new SfxSettings(0.8f, 26f, 2, 0.04f, duck: 0.5f) },
+            { "isyathy_impacto", new SfxSettings(0.85f, 26f, 2, 0.04f, duck: 0.45f) },
+            { "isyathy_rugido", new SfxSettings(0.85f, 0f, 1, 0.03f, 0.8f, duck: 0.35f) },
+            { "isyathy_rugido_praga", new SfxSettings(0.85f, 0f, 1, 0.03f, 0.8f, duck: 0.35f) },
+            { "isyathy_cuspe", new SfxSettings(0.55f, 26f, 3, 0.05f) },
+            { "isyathy_poca", new SfxSettings(0.35f, 18f, 3, 0.06f) },
+            { "isyathy_dano", new SfxSettings(0.45f, 26f, 2, 0.06f, 0.08f) },
+            { "isyathy_resvala", new SfxSettings(0.4f, 26f, 2, 0.06f, 0.08f) },
+            { "isyathy_casca", new SfxSettings(0.75f, 0f, 1, 0f, duck: 0.4f) },
+            { "isyathy_casca_quebra", new SfxSettings(0.85f, 0f, 1, 0f, duck: 0.35f) },
+            { "isyathy_corrompe", new SfxSettings(0.6f, 0f, 1, 0f, duck: 0.6f) },
+            { "isyathy_arrasto_loop", new SfxSettings(0.3f, 22f, 1, 0f) },
+            { "isyathy_derrota", new SfxSettings(0.85f, 0f, 1, 0f, duck: 0.2f) },
+            // ---------------- Vulpis (as flechas dela com prioridade alta: 3ª da mixagem)
+            { "vulpis_arco_tensiona", new SfxSettings(0.65f, 0f, 1, 0.02f) },               // telégrafo (0,5 s)
+            { "vulpis_flecha_voa", new SfxSettings(0.6f, 0f, 2, 0.04f) },
+            { "vulpis_flecha_crava", new SfxSettings(0.65f, 24f, 2, 0.04f, duck: 0.7f) },
+            { "vulpis_magia", new SfxSettings(0.55f, 0f, 1, 0f, duck: 0.6f) },
+            { "vulpis_motivo", new SfxSettings(0.45f, 0f, 1, 0f, 1f) },
+            // ---------------- ponte e horda
+            { "ponte_pedra_racha", new SfxSettings(0.6f, 0f, 2, 0.05f, 0.25f) },
+            { "ponte_pedra_cai", new SfxSettings(0.55f, 24f, 4, 0.08f, 0.05f) },
+            { "ponte_desaba", new SfxSettings(0.9f, 0f, 1, 0f, duck: 0.25f) },
+            { "ponte_madeira_range", new SfxSettings(0.5f, 0f, 1, 0.06f, 0.2f) },
+            { "horda_geme", new SfxSettings(0.5f, 26f, 3, 0.06f, 0.4f) },
+            // ---------------- Tobi (a cena da ponte toca com volume 1,4: +3 dB, exagerados)
+            { "tobi_chave_gigante", new SfxSettings(0.6f, 0f, 1, 0f) },
+            { "tobi_cambaleia", new SfxSettings(0.5f, 0f, 1, 0.03f) },
+            { "tobi_cava", new SfxSettings(0.5f, 0f, 2, 0.05f) },
+            { "tobi_emerge", new SfxSettings(0.55f, 0f, 1, 0.04f) },
+            { "tobi_martelo_rapido", new SfxSettings(0.5f, 0f, 2, 0.04f) },
+            { "tobi_serrote", new SfxSettings(0.4f, 0f, 1, 0.04f) },
+            { "tobi_broca_gira", new SfxSettings(0.45f, 0f, 1, 0.03f) },
+            { "tobi_plink", new SfxSettings(0.4f, 0f, 3, 0.03f, 0.05f) },
+            { "tobi_bolso", new SfxSettings(0.4f, 0f, 1, 0f) },
+            { "tobi_madeira_voa", new SfxSettings(0.4f, 0f, 4, 0.08f, 0.04f) },
+            { "tobi_jingle", new SfxSettings(0.6f, 0f, 1, 0f, duck: 0.2f) },
+            // ---------------- ambiência pontual (os loops são da AmbienceZone, sem esta tabela)
+            { "amb_coruja", new SfxSettings(0.18f, 40f, 1, 0.05f, 6f) },
+            { "amb_galho_cai", new SfxSettings(0.18f, 40f, 1, 0.08f, 4f) },
+            { "amb_sapo", new SfxSettings(0.16f, 18f, 2, 0.1f, 0.5f) },
+            { "amb_maquina_bip", new SfxSettings(0.08f, 8f, 2, 0f, 0.5f) },
+
             // ---------------- interface (discreta: não compete com o jogo)
             { "ui_cursor", new SfxSettings(0.14f, 0f, 2, 0.02f) },
             { "ui_cursor_inv", new SfxSettings(0.14f, 0f, 2, 0.02f) },
@@ -194,10 +290,16 @@ namespace SeteVidas.Audio
             { "ui_apaga", new SfxSettings(0.32f, 0f, 1, 0f) },
         };
 
+        /// <summary>O fim do id dos sons da variante infectada (Tools/Audio/SfxBankForest.cs).</summary>
+        public const string InfectedSuffix = "_inf";
+
         public static SfxSettings For(string id)
         {
             if (s_table.TryGetValue(id, out var s)) return s;
-            if (id.StartsWith("ui_")) return new SfxSettings(0.24f, 0f, 2, 0.02f);
+            // a variante infectada de um som de inimigo da Floresta mixa igual ao som normal
+            if (id.EndsWith(InfectedSuffix) && s_table.TryGetValue(id.Substring(0, id.Length - InfectedSuffix.Length), out s)) return s;
+            if (id.StartsWith("amb_")) return new SfxSettings(0.18f, 0f, 1, 0f, 0f);   // loops de ambiência
+            if (id.StartsWith("ui_"))return new SfxSettings(0.24f, 0f, 2, 0.02f);
             if (id.StartsWith("vox_")) return new SfxSettings(0.18f, 0f, 1, 0f, 0f);   // vozes baixas (pedido do usuário)
             return new SfxSettings(0.4f, 16f);
         }

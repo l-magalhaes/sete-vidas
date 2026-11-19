@@ -126,7 +126,8 @@ namespace SeteVidas.World
             if (tempHearts > 0) GiveTempHearts();
 
             Refresh();
-            SeteVidas.Audio.Sfx.Play("moeda", transform.position); // provisório até o "bau_abre" (Docs/Audio/floresta-audio.md)
+            SeteVidas.Audio.Sfx.Play("bau_abre", transform.position);   // F10
+            if (containsWood) SeteVidas.Audio.Sfx.Play("madeira_pega", transform.position);
             NoiseSystem.Emit((Vector2)transform.position + Vector2.up * 0.5f, noiseRadius, noiseLoudness, gameObject, "bau");
 
             Vector2 top = (Vector2)transform.position + Vector2.up * 1.2f;

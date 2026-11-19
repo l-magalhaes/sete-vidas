@@ -118,6 +118,7 @@ namespace SeteVidas.EditorTools
             public bool Hidden(int x, int y)
             {
                 if (Region.Scene != ForestLayout.Road || !_ground.Contains(Key(x, y))) return false;
+                if (Region.InPeak(x, y)) return false;                                     // a montanha (R5): a casca dela aparece
                 foreach (var r in Region.Rooms)
                 {
                     if (x < r.X || x >= r.X + r.W || y < r.Y || y >= r.Y + r.H) continue;
@@ -130,7 +131,7 @@ namespace SeteVidas.EditorTools
             /// <summary>Célula de massa: fora das salas, fora das aberturas e onde a cena preenche.</summary>
             public bool Mass(int x, int y)
             {
-                return !InRoom(x, y) && !_carved.Contains(Key(x, y)) && FillsVoid(Region.Scene, x, y);
+                return !InRoom(x, y) && !_carved.Contains(Key(x, y)) && (FillsVoid(Region.Scene, x, y) || Region.InPeak(x, y));
             }
 
             /// <summary>Sólido para o desenho: o chão de verdade e a massa (as bordas da sala não ficam expostas para a massa).</summary>
@@ -345,6 +346,10 @@ namespace SeteVidas.EditorTools
             /// <summary>Tiles de tronco abaixo da zona até o chão (a zona pode estar num degrau).</summary>
             public int Below;
             public bool Blight;
+            /// <summary>Embaixo de teto: a linha (tile) mais baixa do teto acima da zona, onde a sombra começa (19/11/2026).</summary>
+            public int RoofY;
+            /// <summary>Embaixo de teto: as colunas do teto que projetam a sombra (tile), dentro da largura da zona ± 1.</summary>
+            public int RoofX0, RoofX1;
 
             /// <summary>Desenho da sombra (W × H tiles): a borda de cima segue a copa da árvore (ou reta, embaixo do teto).</summary>
             public string ShadeName { get { return "flo_sombra_" + (Roof ? "teto" : "copa") + "_" + W + "x" + H + (Roof ? "" : "_b" + Below); } }
@@ -365,11 +370,25 @@ namespace SeteVidas.EditorTools
                 var s = new ShadowInfo { Obj = o };
                 s.W = (int)System.Math.Round(o.W); s.H = (int)System.Math.Round(o.H);
                 s.X0 = (int)System.Math.Round(o.X - o.W * 0.5f); s.Y0 = (int)System.Math.Round(o.Y - o.H * 0.5f);
-                int roofed = 0;
+                // quem faz a sombra (19/11/2026, pedido do usuário: "remova essas árvores", que apareciam dentro de uma
+                // construção): a árvore só entra se a copa inteira couber embaixo do teto e se a zona não estiver na frente de
+                // uma parede de fundo (um interior). Senão, quem faz a sombra é o teto acima dela.
+                int roofed = 0, low = int.MaxValue, reach = s.H + ShadowInfo.Crown + 1;
                 for (int x = s.X0; x < s.X0 + s.W; x++)
-                    for (int y = s.Y0 + s.H; y <= s.Y0 + s.H + 2; y++)
-                        if (m.Real(x, y)) { roofed++; break; }
-                s.Roof = roofed * 10 >= s.W * 6;
+                    for (int y = s.Y0 + s.H; y <= s.Y0 + reach; y++)
+                        if (m.Real(x, y)) { roofed++; low = System.Math.Min(low, y); break; }
+                int backs = 0;
+                for (int x = s.X0; x < s.X0 + s.W; x++) if (m.Back(x, s.Y0 + s.H / 2)) backs++;
+                bool covered = roofed * 10 >= s.W * 6;
+                s.Roof = covered || backs * 2 >= s.W;
+                if (s.Roof)
+                {
+                    s.RoofY = low == int.MaxValue ? s.Y0 + s.H : low;
+                    // as colunas do teto que fazem a sombra: as da zona, crescendo até 1 tile para cada lado se houver teto
+                    s.RoofX0 = s.X0; s.RoofX1 = s.X0 + s.W - 1;
+                    if (m.Real(s.X0 - 1, s.RoofY)) s.RoofX0--;
+                    if (m.Real(s.X0 + s.W, s.RoofY)) s.RoofX1++;
+                }
                 if (!s.Roof)
                 {
                     int trunkX = s.X0 + TrunkTile(s.W);

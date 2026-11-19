@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-ISYATHY-ESPIRITO-01
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-ISYATHY-ESPIRITO-01
+  Required: 1
+  Revision: 1
+  IsDocument: 0
+  Lines:
+  - Speaker: {fileID: 11400000, guid: 8a4c4debdeaeb30479394b993da45b8b, type: 2}
+    Expression: 
+    Text: Pequeno que cai... e que sempre se levanta.
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: surpreso
+    Text: Ela... fala?
+  - Speaker: {fileID: 11400000, guid: 8a4c4debdeaeb30479394b993da45b8b, type: 2}
+    Expression: 
+    Text: "Eu falava antes. Mas a doen\xE7a n\xE3o deixava ningu\xE9m me ouvir. Nem eu mesma."
+  - Speaker: {fileID: 11400000, guid: 8a4c4debdeaeb30479394b993da45b8b, type: 2}
+    Expression: 
+    Text: "Voc\xEAs me soltaram. A carne era a pris\xE3o da praga. Agora eu sou s\xF3 floresta."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: triste
+    Text: "Guardi\xE3... me perdoe."
+  - Speaker: {fileID: 11400000, guid: 8a4c4debdeaeb30479394b993da45b8b, type: 2}
+    Expression: 
+    Text: "Raposa fiel. Voc\xEA n\xE3o errou nenhuma flecha que precisava errar."

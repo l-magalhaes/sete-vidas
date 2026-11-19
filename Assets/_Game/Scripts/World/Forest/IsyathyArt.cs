@@ -80,6 +80,25 @@ namespace SeteVidas.World
         /// </summary>
         public static uint BodyColor(float u, float v, float lit, float radius)
         {
+            return BodyColor(u, v, lit, radius, 0);
+        }
+
+        /// <summary>Os estágios da corrupção (a luta: um por fase). 0 = o Ninho e a fase I.</summary>
+        public const int MaxStage = 2;
+
+        /// <summary>
+        /// O limiar das manchas roxas no estágio (pedido do usuário, 19/11/2026: "a corrupção aumenta em cada fase da
+        /// luta"): quanto menor, mais do corpo a praga cobre (fase I ~25%, II ~45%, III ~70%).
+        /// </summary>
+        public static float BlightThreshold(int stage)
+        {
+            stage = Math.Max(0, Math.Min(MaxStage, stage));
+            return stage == 0 ? 0.62f : stage == 1 ? 0.5f : 0.36f;
+        }
+
+        /// <summary>Com o estágio da corrupção (<see cref="BlightThreshold"/>): as manchas crescem e as faíscas roxas se multiplicam.</summary>
+        public static uint BodyColor(float u, float v, float lit, float radius, int stage)
+        {
             int ui = (int)Math.Floor(u);
             // a base: 3 tons chapados e o ventre creme em placas
             uint c;
@@ -104,10 +123,13 @@ namespace SeteVidas.World
 
             // as sombras roxas da praga: manchas que avançam pelo corpo (mais no dorso), com a borda clara
             float s = Smooth1(u / 38f, 11) * 0.85f + Smooth1(u / 9f, 13) * 0.18f + 0.28f * v;
-            const float thr = 0.62f;
+            float thr = BlightThreshold(stage);
             if (s > thr + 0.05f) c = lit > 0.35f ? PMid : PDark;
             else if (s > thr) c = PRim;
-            if (s > thr + 0.12f && Rand(ui, (int)(v * radius), 41) < 0.012f) c = Rand(ui, 1, 42) < 0.4f ? GG : G;   // faíscas
+            float spark = stage <= 0 ? 0.012f : stage == 1 ? 0.025f : 0.045f;
+            if (s > thr + 0.12f && Rand(ui, (int)(v * radius), 41) < spark) c = Rand(ui, 1, 42) < 0.4f ? GG : G;   // faíscas
+            // na fase III, veias roxas acesas correndo pelas manchas
+            if (stage >= 2 && s > thr + 0.08f && Math.Abs(Math.Sin(u * 0.21f + v * 3.1f)) < 0.07f) c = G;
 
             // os anéis de ouro (adornos de deidade), em distâncias irregulares, com a pedra de jade no dorso
             int b = (int)Math.Floor(u / 46f);
@@ -167,9 +189,15 @@ namespace SeteVidas.World
         /// </summary>
         public static uint[] Head(int frame, bool glow)
         {
+            return Head(frame, glow, 0);
+        }
+
+        /// <summary>A cabeça no estágio da corrupção: a sombra roxa da nuca avança para a testa e o queixo a cada fase.</summary>
+        public static uint[] Head(int frame, bool glow, int stage)
+        {
             var closed = new uint[HeadW * HeadH];
             var lower = new bool[HeadW * HeadH];
-            PaintHead(closed, lower, frame, glow);
+            PaintHead(closed, lower, frame, glow, Math.Max(0, Math.Min(MaxStage, stage)));
             if (frame != FrameBite) { OutlineAll(closed, HeadW, HeadH); return closed; }
 
             // mordendo: o queixo desce (gira em volta da dobra), o alto da cabeça sobe um pouco; a boca fica aberta
@@ -285,7 +313,7 @@ namespace SeteVidas.World
             if (x >= 0 && y >= 0 && x < HeadW && y < HeadH && px[y * HeadW + x] != Clear) px[y * HeadW + x] = c;
         }
 
-        static void PaintHead(uint[] px, bool[] lower, int frame, bool glow)
+        static void PaintHead(uint[] px, bool[] lower, int frame, bool glow, int stage)
         {
             // o penacho atrás (desenhado primeiro: a cabeça fica na frente dele)
             Plumes(px);
@@ -312,15 +340,18 @@ namespace SeteVidas.World
                 if (x >= HingeX - 2 && x < SnoutX) Put(px, x, (int)Math.Round(mouth), Outline);   // a boca fechada
             }
             // a sombra da praga subindo da nuca (com a borda clara), e uma língua dela indo para o olho
+            // (a cada estágio da corrupção a sombra avança uns 8 px para a frente; na fase III, até o queixo)
             for (int y = OY + 8; y < OY + 44; y++)
-                for (int x = 0; x < 30; x++)
+                for (int x = 0; x < 30 + stage * 10; x++)
                 {
                     int yy = y - OY;
-                    if (px[y * HeadW + x] == Clear || lower[y * HeadW + x]) continue;
-                    float edge = 9f + 4f * (float)Math.Sin(yy * 0.45f) + 2f * (float)Math.Sin(yy * 1.3f);
+                    if (px[y * HeadW + x] == Clear || (lower[y * HeadW + x] && stage < 2)) continue;
+                    float edge = 9f + stage * 8f + 4f * (float)Math.Sin(yy * 0.45f + stage) + 2f * (float)Math.Sin(yy * 1.3f);
                     if (yy > 18 && yy < 24) edge += (yy - 18) < 3 ? (yy - 18) * 3f : (24 - yy) * 3f;   // a língua da sombra
+                    if (lower[y * HeadW + x]) edge -= 6f;   // no queixo (fase III), um pouco atrás
                     if (x < edge - 1.5f) px[y * HeadW + x] = yy < 22 ? PMid : PDark;
                     else if (x < edge) px[y * HeadW + x] = PRim;
+                    if (stage >= 1 && x < edge - 3f && Rand(x, y, 51 + stage) < 0.03f * stage) px[y * HeadW + x] = G;   // brilhos da praga
                 }
             // o desenho do dorso: um losango na nuca
             for (int y = OY + 10; y < OY + 20; y++) for (int x = 16; x < 30; x++)

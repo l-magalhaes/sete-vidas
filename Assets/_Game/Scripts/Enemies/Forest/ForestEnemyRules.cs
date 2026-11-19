@@ -19,14 +19,14 @@ namespace SeteVidas.Enemies
         public const float BranchAttackRange = 2.5f;
         public const float BranchWindup = 0.6f;
         public const float BranchStuck = 1f;
-        public const int BranchHealth = 6;
+        public const int BranchHealth = 12;   // 19/11/2026: era 6 (pedido do usuário: "estão morrendo muito rápido para a adaga")
         /// <summary>Altura (tiles): mais que o pulo (4) e que agarrar a borda (5): não dá para passar por cima.</summary>
         public const float BranchHeight = 5.5f;
 
         // infectado (bestiário): aviso mais curto, menos tempo preso, um pouco mais de vida, nuvem tóxica ao morrer
         public const float BranchWindupInfected = 0.4f;
         public const float BranchStuckInfected = 0.7f;
-        public const int BranchHealthInfected = 7;
+        public const int BranchHealthInfected = 14;   // era 7
         /// <summary>Nuvem tóxica do Galho Seco infectado ao morrer: 2 × 2 tiles por 2 s.</summary>
         public const float BranchCloudSize = 2f, BranchCloudTime = 2f;
 

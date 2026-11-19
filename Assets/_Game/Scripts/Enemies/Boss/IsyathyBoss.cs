@@ -114,6 +114,23 @@ namespace SeteVidas.Enemies.Boss
             talkFirstArrow = firstArrow; talkDefeat = defeat; talkSpirit = spirit; talkSpiritMore = spiritMore; talkFarewell = farewell;
         }
 
+        // 19/11/2026 (pedido do usuário: "passar as falas de balão para assets de diálogo"): o resto das falas da luta
+        [SerializeField] SeteVidas.Dialogue.DialogueDefinition talkIntro, talkSecondArrow, talkStrike1, talkStrike2;
+
+        /// <summary>A chegada (D-ISYATHY-00), a 2ª casca (D-ISYATHY-30) e o "agora!" depois de cada flecha (D-ISYATHY-65b/30b).</summary>
+        public void SetFightDialogues(SeteVidas.Dialogue.DialogueDefinition intro, SeteVidas.Dialogue.DialogueDefinition secondArrow,
+            SeteVidas.Dialogue.DialogueDefinition strike1, SeteVidas.Dialogue.DialogueDefinition strike2)
+        {
+            talkIntro = intro; talkSecondArrow = secondArrow; talkStrike1 = strike1; talkStrike2 = strike2;
+        }
+
+        /// <summary>Um balão (quando falta o asset da conversa): o que <see cref="Speak"/> usa de reserva.</summary>
+        IEnumerator Bubble(Transform who, string line, float seconds, bool fox = false)
+        {
+            if (who != null) SpeechBubble.Show(who, line, seconds, fox ? FoxBubble : 1.9f);
+            yield break;
+        }
+
         /// <summary>
         /// Abre a conversa com retrato e espera ela fechar (o jogo pausa nela). Devolve false (na hora) se não deu para
         /// abrir: aí quem chamou usa os balões.
@@ -198,6 +215,7 @@ namespace SeteVidas.Enemies.Boss
             StopAllCoroutines();
             _fight = null;
             _hp = R.MaxHealth; _phase = 1; _last = IsyathyMove.Spit;
+            if (_rig != null) _rig.Corruption = 0;
             _exposed = _stunned = _shell = _tailOut = _barrierOn = false;
             if (_circle != null) Destroy(_circle.gameObject);
             EndCinematic();
@@ -289,6 +307,7 @@ namespace SeteVidas.Enemies.Boss
             {
                 // 1. a câmera vai até ela (o chão já treme)
                 CameraShake.Shake(1.2f, 1.4f);
+                SeteVidas.Audio.Sfx.Play("isyathy_tremor");
                 yield return CamTo(home, focus, 1f, 1.5f, 1f);
                 // 2. o chão racha no meio da arena
                 float t = 0f;
@@ -330,6 +349,7 @@ namespace SeteVidas.Enemies.Boss
                 // 5. o rugido: a câmera treme, um soco de zoom, ondas roxas saindo da boca, terra caindo do teto
                 _rig.Frame = IsyathyArt.FrameBite;
                 CameraShake.Shake(4.5f, 1.8f);
+                SeteVidas.Audio.Sfx.Play("isyathy_rugido");   // a apresentação
                 StartCoroutine(TitleCard(Title, 3.2f));
                 float s0 = _rig.S, nextRing = 0f;
                 t = 0f;
@@ -361,7 +381,7 @@ namespace SeteVidas.Enemies.Boss
                 if (_health != null) _health.Shielded = false;
             }
             BossBarSource.Active = this;   // a barra dela aparece
-            if (FindPlayer()) SpeechBubble.Show(_player.transform, "Ela é... maior do que a floresta.", 2.2f);
+            if (FindPlayer()) yield return Speak(talkIntro, Bubble(_player.transform, "Como ninguem viu uma cobra desse tamanho?", 2.2f));
             yield return Move(_rig.S, 2f, 1f, BurrowRules.EaseIn, 0.2f);
             HideBody();
             HideCraters();
@@ -646,11 +666,12 @@ namespace SeteVidas.Enemies.Boss
                 t += Time.deltaTime;
                 _rig.S = Mathf.Lerp(from, mid, BurrowRules.EaseOut(t / R.StrikeTime));
                 Animate(0.1f, 18f);
-                if (!hit) hit = Bite(R.Damage(m, finisher));   // só a boca fere (o corpo é sólido)
+                if (!hit) { hit = Bite(R.Damage(m, finisher)); if (hit) SeteVidas.Audio.Sfx.Play("isyathy_mordida", _rig.Snout); }   // só a boca fere (o corpo é sólido)
                 yield return null;
             }
             _rig.Frame = IsyathyArt.FrameAwake;
             CameraShake.Shake(1.5f, 0.2f);
+            SeteVidas.Audio.Sfx.Play("isyathy_impacto", _rig.Snout, 0.6f);
             yield return Move(_rig.S, end, 0.35f, BurrowRules.EaseInOut, 0.1f);
             HitSparks.Burst(_rig.Snout, 8, Dirt(), new Color(0.35f, 0.25f, 0.33f), 1.5f, 4f, 0.4f, 20f, 0.6f);
             yield return Exposed(R.Exposed(m, _phase));
@@ -724,12 +745,13 @@ namespace SeteVidas.Enemies.Boss
                 t += Time.deltaTime;
                 _rig.S = Mathf.Lerp(from, _rig.PathLength, BurrowRules.EaseIn(t / R.StrikeTime));
                 Animate(0.06f, 20f);
-                if (!hit) hit = Bite(R.Damage(IsyathyMove.CeilingDrop, finisher)) || Column(floor, R.Damage(IsyathyMove.CeilingDrop, finisher));
+                if (!hit) { hit = Bite(R.Damage(IsyathyMove.CeilingDrop, finisher)) || Column(floor, R.Damage(IsyathyMove.CeilingDrop, finisher)); if (hit) SeteVidas.Audio.Sfx.Play("isyathy_mordida", _rig.Snout); }
                 yield return null;
             }
             _rig.Frame = IsyathyArt.FrameAwake;
             _impact.Show(floor, 1f, true);
             CameraShake.Shake(3f, 0.45f);
+            SeteVidas.Audio.Sfx.Play("isyathy_impacto", _rig.Snout);   // a Descida bate no chão
             HitSparks.Burst(floor + Vector2.up * 0.3f, 22, Dirt(), new Color(0.35f, 0.25f, 0.33f), 3f, 9f, 0.7f, 25f, 1.2f);
             if (_phase >= 3) StartCoroutine(Shockwave(floor));
             // pendurada, cansada: a cabeça sobe um pouco do chão e fica ao alcance
@@ -815,6 +837,7 @@ namespace SeteVidas.Enemies.Boss
             _rig.Visible = true;
             _craterA.Show(a, 1f, true); _craterB.Show(b, 0.85f, true);
             CameraShake.Shake(2.5f, 0.4f);
+            SeteVidas.Audio.Sfx.Play("isyathy_emerge", _rig.Neck);   // o Arco: a cabeça e o rabo saem
             HitSparks.Burst(a + Vector2.up * 0.3f, 14, Dirt(), new Color(0.35f, 0.25f, 0.33f), 3f, 8f, 0.7f, 25f, 1.2f);
             HitSparks.Burst(b + Vector2.up * 0.3f, 10, Dirt(), new Color(0.35f, 0.25f, 0.33f), 3f, 7f, 0.6f, 25f, 1f);
             // sobem juntos, a cabeça e o rabo
@@ -889,8 +912,9 @@ namespace SeteVidas.Enemies.Boss
         }
 
         /// <summary>
-        /// O Cuspe (fase II): sai da parede de longe, abre a boca (a luz da praga junta na boca) e cospe três bolas em arco,
-        /// uma de cada vez, onde o gato está; cada uma vira uma poça de veneno no chão (<see cref="PoisonPuddle"/>).
+        /// O Cuspe (fase II): sai da parede de longe, abre a boca (a luz da praga junta na boca) e cospe 15 bolas em arco
+        /// (5 cuspidas de 3) numa faixa de 40% da arena para onde o gato ia; cada uma vira uma poça de veneno no chão
+        /// (<see cref="PoisonPuddle"/>).
         /// </summary>
         IEnumerator Spit(Vector2 at, Vector2 n)
         {
@@ -916,14 +940,24 @@ namespace SeteVidas.Enemies.Boss
                 Animate(0.08f, 0f);
                 yield return null;
             }
-            for (int i = 0; i < R.SpitShots && _state == State.Fighting; i++)
+            // 15 bolas em 5 cuspidas de 3: as poças cobrem 40% da arena, centradas para onde o gato ia (mira na 1ª cuspida)
+            float[] xs = null;
+            float aimY = Feet.y + 0.2f;
+            int perVolley = R.SpitShots / R.SpitVolleys;
+            for (int v = 0; v < R.SpitVolleys && _state == State.Fighting; v++)
             {
                 if (FindPlayer())
                 {
-                    Vector2 lead = Aim() - Cat;   // prevê para onde o gato vai
-                    Vector2 target = new Vector2(Mathf.Clamp(Feet.x + lead.x * 3f + (i - (R.SpitShots - 1) * 0.5f) * 1.8f, Inside.xMin + 1f, Inside.xMax - 1f), Feet.y + 0.2f);
+                    if (xs == null)
+                    {
+                        Vector2 lead = Aim() - Cat;   // prevê para onde o gato vai
+                        xs = R.SpitTargets(Inside, Feet.x + lead.x * 3f, PoisonPuddle.HalfWidth);
+                        aimY = Feet.y + 0.2f;
+                    }
                     _rig.SetPath(Looking(aimPath, 0.7f)); _rig.S = _rig.PathLength; _rig.Render();
-                    PlagueSpit.Fire(_rig.Snout, target, R.SpitFlight, R.Damage(IsyathyMove.Spit), gameObject);
+                    SeteVidas.Audio.Sfx.Play("isyathy_cuspe", _rig.Snout);
+                    for (int b = 0; b < perVolley; b++)
+                        PlagueSpit.Fire(_rig.Snout, new Vector2(xs[v * perVolley + b], aimY), R.SpitFlight, R.Damage(IsyathyMove.Spit), gameObject);
                 }
                 CameraShake.Shake(0.8f, 0.12f);
                 yield return Hold(0.32f, 0.1f, false);
@@ -944,10 +978,36 @@ namespace SeteVidas.Enemies.Boss
             yield return Move(8f, _rig.PathLength, 0.8f, BurrowRules.EaseOutBack, 0.14f);
             _rig.Frame = IsyathyArt.FrameBite;
             CameraShake.Shake(3.5f, 1.2f);
+            SeteVidas.Audio.Sfx.Play(_phase >= 2 ? "isyathy_rugido_praga" : "isyathy_rugido");   // da fase II em diante, o timbre da praga
+            // a praga avança (pedido do usuário, 19/11/2026: "a corrupção aumenta em cada fase da luta"): as manchas roxas
+            // crescem pelo corpo e pela cabeça, com uma onda de faíscas da nuca até o rabo
+            _rig.Corruption = Mathf.Clamp(_phase - 1, 0, IsyathyArt.MaxStage);
+            SeteVidas.Audio.Sfx.Play("isyathy_corrompe", _rig.Neck);
+            StartCoroutine(BlightSurge());
             yield return Hold(1.3f, 0.14f, true);
             _rig.Frame = IsyathyArt.FrameAwake;
             yield return Retract(_craterA);
             _u = R.ParamOf(Inside, h);
+        }
+
+        /// <summary>A onda da praga correndo pelo corpo na troca de fase (faíscas roxas e um anel na cabeça).</summary>
+        IEnumerator BlightSurge()
+        {
+            PixelRing.Spawn(_rig.Snout, 8, 90, 0.7f, new Color32(0xc4, 0x7b, 0xff, 0xff), 2);
+            float t = 0f;
+            while (t < 1.1f && _rig.Visible)
+            {
+                t += Time.deltaTime;
+                float along = t / 1.1f * R.BodyLength;
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 p = BurrowRules.PointAt(_rig.Path, _rig.S - along - Random.Range(0f, 1.5f));
+                    if (!_rig.OutsideRoom(p, 0f))
+                        HitSparks.One(p + Random.insideUnitCircle * 0.5f, new Vector2(Random.Range(-1f, 1f), Random.Range(1.5f, 3.5f)),
+                            Random.value < 0.5f ? (Color)ForestMagic.Shell : new Color32(0xf0, 0xc9, 0xff, 0xff), 0.7f, -1f);
+                }
+                yield return null;
+            }
         }
 
         // ------------------------------------------------------------ a cabeça exposta e o golpe nela
@@ -1052,13 +1112,13 @@ namespace SeteVidas.Enemies.Boss
             int dmg = body ? R.BodyDamage(info.Amount, exposed, _stunned, _shell) : R.HeadDamage(info.Amount, exposed, _stunned, _shell);
             if (dmg <= 0 && _shell)
             {
-                SeteVidas.Audio.Sfx.Play("adaga_tink", at, 0.8f, 0.6f);   // a casca da praga: nada passa
+                SeteVidas.Audio.Sfx.Play("isyathy_resvala", at, 1f, 0.8f);   // a casca da praga: nada passa
                 HitSparks.Burst(at, 6, ForestMagic.Shell, ForestMagic.ShellDark, 1.5f, 4f, 0.2f, 10f, 0.3f);
                 return;
             }
             if (dmg <= 0)
             {
-                SeteVidas.Audio.Sfx.Play("adaga_tink", at, 0.7f, 0.8f);   // resvala nas escamas
+                SeteVidas.Audio.Sfx.Play("isyathy_resvala", at);   // resvala nas escamas
                 HitSparks.Burst(at, 4, Color.white, new Color32(0x8a, 0x9a, 0x72, 0xff), 1.5f, 3f, 0.15f, 10f, 0.2f);
                 return;
             }
@@ -1066,7 +1126,7 @@ namespace SeteVidas.Enemies.Boss
             _hp = Mathf.Max(0, _hp - dmg);
             _flashUntil = Time.time + 0.08f;
             _rig.Tint = new Color(1f, 0.55f, 0.6f);
-            SeteVidas.Audio.Sfx.Play("zumbi_dano", at, 0.9f, 0.6f);
+            SeteVidas.Audio.Sfx.Play("isyathy_dano", at);
             HitSparks.Burst(at, 8, new Color32(0xb4, 0x46, 0x5a, 0xff), new Color32(0xc4, 0x7b, 0xff, 0xff), 2f, 5f, 0.3f, 20f, 0.4f);
             if (_hp <= 0) { Die(); return; }
             if (R.CrossedVulpisMark(before, _hp, R.MaxHealth)) StartShell();
@@ -1135,7 +1195,9 @@ namespace SeteVidas.Enemies.Boss
                 _u = R.ParamOf(Inside, h);
             }
             _rig.Frame = IsyathyArt.FrameBite;
-            if (FindPlayer()) SpeechBubble.Show(_player.transform, "O que ela está fazendo?!", 1.8f);
+            bool late = _hp <= R.PhaseThreeAt * R.MaxHealth;
+            bool talkLater = (late ? talkSecondArrow : talkFirstArrow) != null;   // a fala do gato vai na conversa com a Vulpis
+            if (!talkLater && FindPlayer()) SpeechBubble.Show(_player.transform, "O que ela está fazendo?!", 1.8f);
             // o círculo de runas gira e cresce em volta da cabeça; as runas sobem do corpo
             var circle = _circle = RuneCircle();
             float t = 0f, cast = 1.5f;
@@ -1164,11 +1226,12 @@ namespace SeteVidas.Enemies.Boss
             Vector2 at = (_rig.Neck + _rig.Snout) * 0.5f;
             HitSparks.Burst(at, 26, ForestMagic.Shell, ForestMagic.ShellDark, 3f, 9f, 0.6f, 0f, 0.9f);
             CameraShake.Shake(3f, 0.5f);
+            SeteVidas.Audio.Sfx.Play("isyathy_casca");   // o escudo da praga fecha
             _barrierOn = true;
             _barrierBorn = Time.time;
             _shellSince = Time.time;
-            if (FindPlayer()) SpeechBubble.Show(_player.transform, "Não entra nada! A praga cobriu ela inteira!", 2.4f);
-            StartCoroutine(FoxComes(_hp <= R.PhaseThreeAt * R.MaxHealth, true));
+            if (!talkLater && FindPlayer()) SpeechBubble.Show(_player.transform, "Não entra nada! A praga cobriu ela inteira!", 2.4f);
+            StartCoroutine(FoxComes(late, true));
             _rig.Frame = IsyathyArt.FrameAwake;
             yield return new WaitForSeconds(0.4f);
             yield return Retract(_craterA);
@@ -1316,6 +1379,7 @@ namespace SeteVidas.Enemies.Boss
         IEnumerator FoxComes(bool second, bool ready)
         {
             if (_vulpis == null) yield break;
+            SeteVidas.Audio.Sfx.Play("vulpis_motivo");   // MUS-F10: o motivo de 3 notas da Vulpis quando ela chega
             _foxFeet = FoxSpot();
             Transform fox = _vulpis.transform;
             if (_fox != null) _fox.FaceLeft = _foxFeet.x > arena.center.x;   // olhando para o meio da arena
@@ -1345,11 +1409,13 @@ namespace SeteVidas.Enemies.Boss
             }
             if (!ready) yield break;
             _foxReady = true;
-            // a primeira vez que ela aparece na luta: a conversa com retrato (D-ISYATHY-65, pedido do usuário, 18/11/2026)
-            if (!second && talkFirstArrow != null)
+            // a conversa com retrato quando ela chega (D-ISYATHY-65, pedido do usuário, 18/11/2026; a 2ª, D-ISYATHY-30,
+            // em 19/11/2026)
+            var arrival = second ? talkSecondArrow : talkFirstArrow;
+            if (arrival != null)
             {
                 bool opened = false;
-                yield return Talk(talkFirstArrow, ok => opened = ok);
+                yield return Talk(arrival, ok => opened = ok);
                 if (opened)
                 {
                     if (_fox != null && _foxReady) _fox.Play("ready");   // volta para a pose de juntar a magia
@@ -1429,7 +1495,9 @@ namespace SeteVidas.Enemies.Boss
             if (_state != State.Fighting) yield break;
 
             if (_vulpis != null)
-                SpeechBubble.Show(_vulpis.transform, second ? "A praga está tomando ela. Mais um pouco e não sobra nada da guardiã!" : "Agora, gato!", second ? 3f : 1.6f, FoxBubble);
+                yield return Speak(second ? talkStrike2 : talkStrike1, Bubble(_vulpis.transform,
+                    second ? "A praga está tomando ela. Mais um pouco e não sobra nada da guardiã!" : "Agora, gato!", second ? 3f : 1.6f, true));
+            if (_state != State.Fighting) yield break;
             // atordoada: os olhos fecham com a dor, a cabeça cai devagar até perto do chão
             _stunned = true;
             _exposed = true;
@@ -1513,6 +1581,7 @@ namespace SeteVidas.Enemies.Boss
             });
             // 3. no alto, puxa o arco: a magia da floresta se junta na ponta da flecha
             if (_fox != null) _fox.Play("air_draw");
+            SeteVidas.Audio.Sfx.Play("vulpis_arco_tensiona"); SeteVidas.Audio.Sfx.Play("vulpis_magia");
             Vector2 Tip() => (Vector2)fox.position + new Vector2(side * ArrowTipPx.x, ArrowTipPx.y) / 16f;
             yield return Real(0.62f, k =>
             {
@@ -1530,6 +1599,7 @@ namespace SeteVidas.Enemies.Boss
             Vector2 start = Tip();
             Vector2 Target() => (_rig.Neck + _rig.Snout) * 0.5f;
             if (_fox != null) _fox.Play("air_release");
+            SeteVidas.Audio.Sfx.Play("vulpis_flecha_voa");
             ForestMagic.Burst(start, 16, 2f, 6f, 0.4f);
             var arrow = new GameObject("Flecha forte da Vulpis").AddComponent<SpriteRenderer>();
             arrow.sprite = ForestMagic.Arrow();
@@ -1562,6 +1632,7 @@ namespace SeteVidas.Enemies.Boss
             ForestMagic.Burst(p, 44, 3f, 12f, 0.9f);
             ForestMagic.Shards(p, 30);
             CameraShake.Shake(4.5f, 0.5f);
+            SeteVidas.Audio.Sfx.Play("isyathy_casca_quebra"); SeteVidas.Audio.Sfx.Play("vulpis_flecha_crava");   // a flecha forte acerta
             SeteVidas.Audio.Sfx.Play("adaga_tink", p, 1f, 0.5f);
             _rig.Tint = Color.white;
             _rig.Frame = IsyathyArt.FrameSleep;
@@ -1697,6 +1768,7 @@ namespace SeteVidas.Enemies.Boss
             _rig.Tint = Color.white;
             _tailOut = false;
             CameraShake.Shake(4f, 1.4f);
+            SeteVidas.Audio.Sfx.Play("isyathy_derrota");   // o último rugido
             yield return Hold(1.2f, 0.16f, true);
             // 2. ela se debate e afunda na terra pelo caminho por onde veio (a onda forte: a agonia)
             _rig.Frame = IsyathyArt.FrameAwake;
@@ -1757,6 +1829,7 @@ namespace SeteVidas.Enemies.Boss
             _rig.SetPath(Pose(1f, 0f));
             _rig.S = _rig.PathLength;
             CameraShake.Shake(3f, 0.5f);
+            SeteVidas.Audio.Sfx.Play("isyathy_impacto", _rig.Snout, 0.8f);   // o queixo bate no chão
             HitSparks.Burst(_rig.Snout, 20, Dirt(), new Color(0.35f, 0.25f, 0.33f), 2f, 7f, 0.6f, 25f, 1f);
             // 6. o brilho dos olhos apaga devagar e os olhos fecham
             for (int i = 0; i < 3; i++) { _rig.Glow = i % 2 == 0; _rig.Render(); yield return new WaitForSeconds(0.35f); }
@@ -1778,6 +1851,7 @@ namespace SeteVidas.Enemies.Boss
 
             // D-ISYATHY-ESPIRITO-01: do corpo sobe uma luz azul-clara; a serpente se desenha no ar, translúcida
             var spirit = BuildSpirit(_rig.Neck);
+            SeteVidas.Audio.Sfx.Play("espirito_surge", _rig.Neck);   // F10: o espírito sobe (coro suave e sino)
             t = 0f;
             while (t < 1.6f)
             {
@@ -2002,6 +2076,7 @@ namespace SeteVidas.Enemies.Boss
         IEnumerator Warn(Vector2 at, Vector2 n, float seconds, IsyathyBurrow.Crater c)
         {
             CameraShake.Shake(1.2f, seconds);
+            SeteVidas.Audio.Sfx.Play("isyathy_tremor", at);   // o aviso: a superfície racha (F10)
             float angle = R.CraterAngle(n), t = 0f;
             Vector2 tan = new Vector2(n.y, -n.x);
             while (t < seconds)
@@ -2023,6 +2098,7 @@ namespace SeteVidas.Enemies.Boss
         {
             c.Show(at, 1f, true, R.CraterAngle(n));
             CameraShake.Shake(2f, 0.3f);
+            SeteVidas.Audio.Sfx.Play("isyathy_emerge", at);
             HitSparks.Burst(at + n * 0.3f, 16, Dirt(), new Color(0.35f, 0.25f, 0.33f), 3f, 8f, 0.7f, 25f, 1.2f);
             _rig.SetPath(path);
             _rig.ClearClip();
@@ -2038,6 +2114,7 @@ namespace SeteVidas.Enemies.Boss
         IEnumerator Retract(IsyathyBurrow.Crater c)
         {
             float time = Mathf.Max(R.RetractTime, _rig.S / 18f);
+            SeteVidas.Audio.Sfx.Play("isyathy_mergulha", _rig.Neck);
             yield return Move(_rig.S, 0f, time, BurrowRules.EaseIn, 0.2f);
             HideBody();
             c.Hide();
@@ -2135,7 +2212,15 @@ namespace SeteVidas.Enemies.Boss
             _mound.enabled = false;
         }
 
-        void ShowMound(bool on) { if (_mound != null) _mound.enabled = on; }
+        SeteVidas.Audio.SfxLoop _drag;
+
+        /// <summary>O montinho de terra correndo pela borda, com o arrasto dela embaixo da terra (F10).</summary>
+        void ShowMound(bool on)
+        {
+            if (_mound != null) _mound.enabled = on;
+            if (on && _drag == null && _mound != null) _drag = SeteVidas.Audio.Sfx.Loop("isyathy_arrasto_loop", _mound.transform);
+            else if (!on && _drag != null) { _drag.Stop(0.3f); _drag = null; }
+        }
 
         /// <summary>
         /// O montinho no ponto <paramref name="u"/> do perímetro: gira com a borda, pulsa, solta terra (do teto, ela cai) e

@@ -87,7 +87,7 @@ namespace SeteVidas.World
                 // a lâmina resvala: faíscas de aço cinza no ponto do golpe (sem texto)
                 Vector2 tinkAt = (Vector2)transform.position + Vector2.up * (_solid.size.y * 0.5f) - info.Direction.normalized * (_solid.size.x * 0.5f);
                 HitSparks.Burst(tinkAt, 5, new Color32(0xe8, 0xec, 0xf2, 0xff), new Color32(0xb8, 0xbf, 0xcc, 0xff), 2f, 5f, 0.18f, 25f, 0.2f);
-                SeteVidas.Audio.Sfx.Play("adaga_tink", transform.position);
+                SeteVidas.Audio.Sfx.Play(IsWood ? "tronco_adaga" : "adaga_tink", transform.position);   // na madeira, o "tunk"
                 return; // adagas não arranham a parede
             }
 
@@ -100,7 +100,7 @@ namespace SeteVidas.World
                 HitSparks.Burst(chipAt, 8, new Color32(0x9a, 0x8c, 0x7c, 0xff), new Color32(0x5e, 0x52, 0x4a, 0xff), 2f, 6f, 0.4f, 30f, 0.5f);
             if (spriteRenderer != null && crackedSprite != null && Health <= maxHealth / 2) spriteRenderer.sprite = crackedSprite;
             // madeira: por enquanto os sons da parede, mais graves (sons próprios em Docs/Audio/floresta-audio.md)
-            if (Health > 0) SeteVidas.Audio.Sfx.Play("parede_racha", transform.position, 1f, IsWood ? 0.75f : 1f);
+            if (Health > 0) { if (IsWood) SeteVidas.Audio.Sfx.Play("tronco_golpe", transform.position); else SeteVidas.Audio.Sfx.Play("parede_racha", transform.position); }   // F10: o tronco tem som próprio
             if (Health > 0 && IsWood) NoiseSystem.Emit((Vector2)transform.position + Vector2.up, 10f, 0.6f, gameObject, "tronco");
             if (Health <= 0) Break();
         }
@@ -108,7 +108,7 @@ namespace SeteVidas.World
         void Break()
         {
             SetBroken();
-            SeteVidas.Audio.Sfx.Play("parede_quebra", transform.position, 1f, IsWood ? 0.7f : 1f);
+            SeteVidas.Audio.Sfx.Play(IsWood ? "tronco_quebra" : "parede_quebra", transform.position);
             NoiseSystem.Emit((Vector2)transform.position + Vector2.up, breakNoiseRadius, breakNoiseLoudness, gameObject, IsWood ? "tronco_quebra" : "parede"); // F7: a quebra soma mais alerta no Ninho que cada golpe
             var data = SaveManager.Data;
             data.SetFlag(Flag);

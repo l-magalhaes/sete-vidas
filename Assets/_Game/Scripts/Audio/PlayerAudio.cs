@@ -191,7 +191,12 @@ namespace SeteVidas.Audio
             }
         }
 
-        void OnBounced() => Sfx.Play("quique");
+        void OnBounced()
+        {
+            Sfx.Play("quique");
+            // F10 (Floresta): o espinho de pogo soa cristalino; quicar num inimigo soa "carne" (planta, galho, serpente)
+            Sfx.Play(_combat != null && _combat.LastBounceOnSpikes ? "pogo_espinho" : "pogo_carne", null, 0.8f);
+        }
         /// <summary>Quanto o gato caiu desde o ponto mais alto do pulo (tiles). A água usa para o volume do respingo.</summary>
         public float FallHeight => _player != null && _player.Body != null ? Mathf.Max(0f, _peakY - _player.Body.position.y) : 0f;
 

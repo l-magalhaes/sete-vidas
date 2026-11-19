@@ -499,7 +499,7 @@ public static class ArchitectureSpriteGen
     /// <summary>
     /// Gárgula 24×18: uma bica de pedra em forma de cabeça de cão saindo de uma mísula presa na parede (à direita),
     /// olhando para a esquerda. Orelha em pé, olho, focinho e a boca aberta de onde sai um fio d'água contínuo
-    /// (é por ela que a chuva escorre e alimenta a vinha embaixo). Maior que a versão anterior para ler de longe.
+    /// (é por ela que a chuva escorre e alimenta a vinha embaixo). ç a versão anterior para ler de longe.
     /// </summary>
     static PixelCanvas Gargoyle()
     {

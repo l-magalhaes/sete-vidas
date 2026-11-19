@@ -124,12 +124,15 @@ As placas lidas vão para o Diário (capítulo 2), de qualquer cena.
 
 ## Refúgio da Vulpis
 
-### D-VULPIS-01 — O resgate (obrigatório, cutscene em D2)
-[AÇÃO: um Galho Seco infectado encurrala o gato; uma flecha o atravessa; a Vulpis aparece no galho alto]
+### D-VULPIS-01 — O resgate (obrigatório, cutscene em D2) [no jogo desde 19/11/2026, `VulpisRescueSetup`; texto: PROPOSTA]
+[AÇÃO: um Galho Seco infectado larga o disfarce na frente do gato; a Vulpis cai das folhas no galho do meio; a flecha de magia verde derruba o tronco]
 VULPIS (irônica): Você escolheu uma péssima noite para passear por estas bandas.
-GATO (irônico): Eu não escolhi cair aqui.
-VULPIS: Então sua sorte é ainda pior do que parece.
-VULPIS: Venha. Antes que o cheiro de gato acorde a floresta inteira.
+GATO (irônico): Eu não escolhi. Eu caí. É diferente.
+VULPIS (irônica): Então sua sorte é ainda pior do que parece.
+VULPIS (séria): E ande baixo daqui para a frente. Tem coisa muito maior que esse galho acordando nesta floresta.
+GATO (irônico): Maior que um tronco que dá socos? Que ótimo.
+VULPIS (séria): Me procure no posto, depois do Refúgio. Se ainda estiver inteiro.
+[AÇÃO: ela some pelo alto; o vínculo é na D5]
 
 ### D-VULPIS-02 — No Refúgio (obrigatório)
 VULPIS (séria): Faz três luas que a floresta adoece. Começou nas raízes. Depois, nos bichos.
@@ -182,7 +185,9 @@ GATO (sussurro): Devagar, Lion. Bem devagar.
 
 ### D-ISYATHY-00 — Despertar (obrigatório, entrada da arena)
 [AÇÃO: o olho abre ao fundo; a cabeça se ergue entre as árvores, com o verde da praga escorrendo das escamas]
-GATO (surpreso): Ela é... maior do que a floresta.
+GATO (surpreso): Como ninguem viu uma cobra desse tamanho?
+GATO (irônico): Tudo bem. Eu já enfrentei um cachorro de ouro. Isso é só um pouco mais... comprido.
+> No jogo (19/11/2026): conversa com retrato depois da apresentação. D-ISYATHY-65 (a chegada da Vulpis) abre com GATO (surpreso): "O que ela fez?! Não entra nada! A praga cobriu ela inteira!"; D-ISYATHY-30 com GATO (surpreso): "A casca de novo! E mais grossa!" + VULPIS: "De novo! A praga está mais forte agora... Mantém ela ocupada. Essa vai doer nela." As falas abaixo, depois de cada flecha, são D-ISYATHY-65b e D-ISYATHY-30b.
 
 ### D-ISYATHY-65 — Primeira flecha (no limiar de 65%)
 [AÇÃO: flecha no focinho; a cabeça trava]
@@ -191,6 +196,7 @@ VULPIS: Agora, gato!
 ### D-ISYATHY-30 — Segunda flecha (no limiar de 30%)
 [AÇÃO: flecha nas escamas do pescoço; a cabeça cai por um instante]
 VULPIS (séria): A praga está tomando ela. Mais um pouco e não sobra nada da guardiã!
+GATO (sério): Então vamos acabar com isso. Por ela.
 
 ### D-ISYATHY-DERROTA — A morte da guardiã (obrigatório)
 [AÇÃO: um último rugido; a cabeça desaba na clareira; o brilho verde dos olhos apaga devagar]
@@ -306,6 +312,13 @@ GATO (irônico): Se ela cair, pelo menos eu já sei o caminho.
 - 05a — TOBI (orgulhosa): Abri o poço da escada no começo da ponte, lá do lado da Fortaleza (18/11/2026: era a corda). Para descer na floresta sem quebrar o pescoço. De nada. / GATO (irônico): Descer sem cair. Que conceito.
 - 05b — TOBI: Se for a Miaravéu, diga que a Tobi faz telhados também. Preço de amiga. Quase.
 - 05c — GATO: Primeira coisa que eu ajudo a consertar em vez de quebrar. / TOBI: Não se acostume.
+
+### D-TOBI-06 — A lojinha em Miaravéu (opcional, uma vez: a primeira conversa depois do encontro) [PROPOSTA, 19/11/2026, pedido do usuário]
+TOBI (animada): Ah! Antes que eu me esqueça, gato!
+TOBI (orgulhosa): Eu tenho uma lojinha em Miaravéu. Ferramentas, consertos, bugigangas de primeira. Tudo feito por estas mãos!
+GATO (irônico): Deixa eu adivinhar. Nada de graça.
+TOBI (gananciosa): De graça, só o conselho. Mas para quem cai de ponte, eu faço um precinho especial.
+TOBI (animada): Quando chegar na cidade, passa lá! Procura a placa com uma chave inglesa. A maior da rua, claro.
 
 ## Os devotos da Isyathy (documentos nas cabanas abandonadas) [PROPOSTA, 14/11/2026]
 

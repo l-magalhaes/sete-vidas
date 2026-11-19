@@ -27,7 +27,7 @@ namespace SeteVidas.World
             return s;
         }
 
-        static Sprite HiveSprite()
+        public static Sprite HiveSprite()
         {
             if (s_hive == null) s_hive = Make(BeeArt.Hive(), BeeArt.HiveW, BeeArt.HiveH, new Vector2(0.5f, 1f), "colmeia");
             return s_hive;

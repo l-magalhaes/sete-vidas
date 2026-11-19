@@ -25,6 +25,16 @@ namespace SeteVidas.Progression
     public static class TobiRules
     {
         public const string MetFlag = "tobi_conheceu";
+        /// <summary>Ela já convidou o gato para a lojinha em Miaravéu (D-TOBI-06, uma vez).</summary>
+        public const string ShopFlag = "tobi_lojinha";
+
+        /// <summary>
+        /// O convite para a lojinha (pedido do usuário, 19/11/2026) vem na primeira conversa depois do encontro, seja qual
+        /// for o estado da ponte; depois, as falas de sempre.
+        /// </summary>
+        public static bool ShopPending(bool met, bool invited) => met && !invited;
+
+        public static bool ShopPending(SaveData data) => data != null && ShopPending(data.HasFlag(MetFlag), data.HasFlag(ShopFlag));
         /// <summary>A fala da aurora ao chegar na cabeceira leste (D-SAIDA-01), uma vez.</summary>
         public const string AuroraFlag = "fala_aurora";
         /// <summary>O lugar da conta nas falas (trocado na hora; "{n}" é dos atalhos de botão).</summary>

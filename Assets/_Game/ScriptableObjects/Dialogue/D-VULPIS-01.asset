@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-VULPIS-01
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-VULPIS-01
+  Required: 1
+  Revision: 1
+  IsDocument: 0
+  Lines:
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: ironico
+    Text: "Voc\xEA escolheu uma p\xE9ssima noite para passear por estas bandas."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Eu n\xE3o escolhi. Eu ca\xED. \xC9 diferente."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: ironico
+    Text: "Ent\xE3o sua sorte \xE9 ainda pior do que parece."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: E ande baixo daqui para a frente. Tem coisa muito maior que esse galho acordando nesta floresta.
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Maior que um tronco que d\xE1 socos? Que \xF3timo."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "Me procure no posto, depois do Ref\xFAgio. Se ainda estiver inteiro."

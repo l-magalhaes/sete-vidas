@@ -584,7 +584,7 @@ namespace SeteVidas.UI
                 _entries.Add(new Entry
                 {
                     Icon = IconSprite(InventoryIcon.Honey, false), Name = SeteVidas.World.HoneyRules.Name, NameColor = Gold,
-                    Badge = honey + "/" + SeteVidas.World.HoneyRules.Max, Body = InventoryTexts.Honey,
+                    Badge = honey.ToString(), Body = InventoryTexts.Honey,   // sem limite (19/11/2026): só a quantidade, como as moedas
                     Footer = "comer (cura meio coração)", FooterAction = GameAction.Confirm,
                     Confirm = () =>
                     {

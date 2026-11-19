@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-VULPIS-CHAVE
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-VULPIS-CHAVE
+  Required: 1
+  Revision: 1
+  IsDocument: 0
+  Lines:
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: surpreso
+    Text: "A Chave do Templo! Voc\xEA achou mesmo."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Achar coisas trancadas \xE9 o meu trabalho. Abrir tamb\xE9m."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "Ent\xE3o n\xE3o temos tempo a perder. O templo fica no alto do Mirante, e o ninho logo depois dele."
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "Vou na frente, pelas copas, ver se o caminho est\xE1 limpo. Te encontro no templo."
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Pelas copas. Claro. Os gatos v\xE3o pelo ch\xE3o, como gente normal."

@@ -21,6 +21,8 @@ namespace SeteVidas.World
         public readonly int W, H;
         /// <summary>O quadro (ARGB, W × H, linha 0 embaixo).</summary>
         public readonly uint[] Px;
+        /// <summary>O estágio da corrupção do corpo (<see cref="IsyathyArt.BlightThreshold"/>).</summary>
+        public int Stage;
         readonly float[] _u, _v, _lit, _r;
         readonly bool[] _body;
         int _x0, _y0, _x1 = -1, _y1 = -1;   // a área suja (para limpar só ela)
@@ -117,7 +119,7 @@ namespace SeteVidas.World
                 for (int x = _x0; x <= _x1; x++)
                 {
                     int i = y * W + x;
-                    if (_body[i]) Px[i] = IsyathyArt.BodyColor(_u[i], _v[i], _lit[i], _r[i]);
+                    if (_body[i]) Px[i] = IsyathyArt.BodyColor(_u[i], _v[i], _lit[i], _r[i], Stage);
                 }
         }
 

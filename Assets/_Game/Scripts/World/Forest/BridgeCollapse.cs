@@ -108,7 +108,12 @@ namespace SeteVidas.World
         {
             _phase = Phase.Fleeing;
             _time = 0f; _shake = 0f; _stopped = false;
-            if (horde != null) horde.SpawnAll(alerted: true);
+            // a horda nasce fora da tela, à esquerda (na R3), já correndo: não se vê ninguém surgindo (19/11/2026)
+            if (horde != null)
+            {
+                float left = CameraLeft(cat.transform.position.x);
+                horde.SpawnAll(true, (postX, rank) => BridgeRules.OffscreenX(postX, rank, left));
+            }
             _player = cat.GetComponent<PlayerController>();
             _health = cat;
             cat.Shielded = true;   // a horda colada atrás não fere: o controle está travado
@@ -117,6 +122,7 @@ namespace SeteVidas.World
             if (_input != null) { _input.SetLock(this, true); _input.SetScriptedMove(BridgeRules.FleeInput); }
             SpeechBubble.Show(cat.transform, "Ah, não. Eles me seguiram.", 2f);
             SeteVidas.Audio.Sfx.Play("zumbi_sente", (Vector2)cat.transform.position + Vector2.left * 6f, 1f, 0.8f);
+            SeteVidas.Audio.Sfx.Play("horda_geme", (Vector2)cat.transform.position + Vector2.left * 8f);   // F10: a horda gemendo atrás
             CameraShake.Shake(0.6f, 0.4f);
         }
 
@@ -169,6 +175,14 @@ namespace SeteVidas.World
             }
         }
 
+        /// <summary>A borda esquerda da tela (mundo).</summary>
+        static float CameraLeft(float fallbackX)
+        {
+            var cam = Camera.main;
+            if (cam == null || !cam.orthographic) return fallbackX - 16f;
+            return cam.transform.position.x - cam.orthographicSize * cam.aspect;
+        }
+
         bool OnBridge(Vector2 p) => p.x >= _minX && p.x <= _maxX && p.y > _rest[0].y - 1f && p.y < _rest[0].y + 3f;
 
         // a pedra treme com o peso: mais zumbis, mais forte (aviso de que vai ceder)
@@ -182,7 +196,8 @@ namespace SeteVidas.World
                 s.position = _rest[i] + new Vector2(0f, Mathf.Sin(Time.time * 40f + i * 1.7f) * j);
             }
             if (Random.value < Time.deltaTime * (1f + 4f * weight))
-                SeteVidas.Audio.Sfx.Play("parede_racha", segments.Length > 0 && segments[0] != null ? segments[0].position : (Vector2)transform.position, 0.6f, 0.8f);
+                SeteVidas.Audio.Sfx.Play("ponte_pedra_racha", null, 0.5f + 0.5f * weight);   // F10: a pedra rachando sob o peso
+            if (Random.value < Time.deltaTime * 0.8f) SeteVidas.Audio.Sfx.Play("horda_geme", _health != null ? (Vector2)_health.transform.position + Vector2.left * 5f : (Vector2)transform.position);
             if (Random.value < Time.deltaTime * 3f * weight) CameraShake.Shake(0.5f + weight, 0.2f);
             if (Random.value < Time.deltaTime * 6f * weight && segments.Length > 0)
             {
@@ -203,7 +218,7 @@ namespace SeteVidas.World
             if (data != null) { data.SetFlag(FallenFlag); SaveManager.Save(); } // libera o gatilho da queda
             SpeechBubble.Show(cat.transform, "Não, não, não—", 1.6f);
             CameraShake.Shake(3f, 1.2f);
-            SeteVidas.Audio.Sfx.Play("plataforma_cai", cat.transform.position, 1f, 0.6f);
+            SeteVidas.Audio.Sfx.Play("ponte_desaba");   // F10: o colapso do centro
             // do meio (onde está o gato) para as pontas, um bloco de cada vez
             var order = new List<int>();
             for (int i = 0; i < segments.Length; i++) order.Add(i);
@@ -220,7 +235,8 @@ namespace SeteVidas.World
                 s.angularVelocity = Random.Range(-120f, 120f);
                 var col = s.GetComponent<Collider2D>();
                 if (col != null) col.enabled = false;   // cai todo mundo junto
-                if (++n == 3) Release();                 // o gato já está caindo: devolve o controle
+                if (n % 4 == 0) SeteVidas.Audio.Sfx.Play("ponte_pedra_cai", s.position);
+                if (++n == 3) { Release(); SeteVidas.Audio.Sfx.Play("gato_queda_galhos"); }   // o gato já está caindo: devolve o controle (e cai entre os galhos)
                 yield return new WaitForSeconds(0.05f);
             }
             Release();
@@ -233,14 +249,14 @@ namespace SeteVidas.World
     /// <summary>Regras da queda da ponte (testadas em EditMode).</summary>
     public static class BridgeRules
     {
-        /// <summary>O gato foge a 60% da corrida (olhando para trás): a horda alcança a ponte antes de ele chegar ao meio.</summary>
-        public const float FleeInput = 0.6f;
+        /// <summary>O gato foge a 80% da corrida (olhando para trás): a horda, vinda de fora da tela, alcança ele na ponte.</summary>
+        public const float FleeInput = 0.8f;   // 19/11/2026: era 0,6 (pedido do usuário: "a ponte está demorando muito")
         /// <summary>A ponte só treme com tantos zumbis em cima (o peso).</summary>
         public const int ZombiesToShake = 3;
         /// <summary>Tremendo este tempo (s), com o gato no meio, o centro desaba.</summary>
-        public const float ShakeBeforeCollapse = 1.6f;
+        public const float ShakeBeforeCollapse = 0.9f;   // era 1,6
         /// <summary>Segurança: desaba de qualquer jeito depois deste tempo de fuga (zumbi preso).</summary>
-        public const float MaxFlight = 14f;
+        public const float MaxFlight = 8f;   // era 14
 
         /// <summary>O peso que faz tremer (0 = parada; 1 = muito): só com <see cref="ZombiesToShake"/> zumbis ou mais.</summary>
         public static float Weight(int zombies, bool hero)
@@ -253,19 +269,32 @@ namespace SeteVidas.World
         public static bool Collapses(float shakeTime, float stoppedFor) => stoppedFor >= LineTime && shakeTime >= ShakeBeforeCollapse;
 
         /// <summary>O tempo da fala no meio da ponte, com a horda colada nele, antes de desabar.</summary>
-        public const float LineTime = 1.6f;
+        public const float LineTime = 1.1f;   // era 1,6
 
         /// <summary>A distância (tiles) que o <paramref name="rank"/>º zumbi da fila fica atrás do gato.</summary>
         public static float PackGap(int rank) => 1.7f + rank * 1.05f;
 
+        /// <summary>O máximo que a horda acelera (× a corrida do zumbi): 3,4 para alcançar o gato vindo de fora da tela.</summary>
+        public const float MaxPace = 3.4f;
+
+        /// <summary>A folga além da borda da tela e o espaço entre os zumbis da fila, ao nascer (tiles).</summary>
+        public const float OffscreenMargin = 1.5f, OffscreenSpacing = 1.6f;
+
+        /// <summary>
+        /// Onde o <paramref name="rank"/>º zumbi da horda nasce: no posto dele, se já estiver fora da tela; senão, além da
+        /// borda esquerda (<paramref name="cameraLeft"/>), em fila. Regra pura.
+        /// </summary>
+        public static float OffscreenX(float postX, int rank, float cameraLeft) =>
+            Mathf.Min(postX, cameraLeft - OffscreenMargin - rank * OffscreenSpacing);
+
         /// <summary>
         /// Quanto o zumbi corre (multiplicador da corrida dele): acompanha o gato e fecha a distância até a vaga dele na
-        /// fila; perto demais, para. Até 2,6× (alcança quem corre a 60%).
+        /// fila; perto demais, para. Até <see cref="MaxPace"/>× (alcança quem corre a 80%, vindo de fora da tela).
         /// </summary>
         public static float PaceMultiplier(float gap, float desired, float catSpeed, float zombieSpeed)
         {
             float v = catSpeed + 1.8f * (gap - desired);
-            return Mathf.Clamp(v / Mathf.Max(0.1f, zombieSpeed), 0f, 2.6f);
+            return Mathf.Clamp(v / Mathf.Max(0.1f, zombieSpeed), 0f, MaxPace);
         }
     }
 }

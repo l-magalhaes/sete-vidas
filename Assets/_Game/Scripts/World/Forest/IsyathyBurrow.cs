@@ -120,9 +120,34 @@ namespace SeteVidas.World
             return default;
         }
 
+        float _breathAt;
+
+        /// <summary>
+        /// A respiração colossal, a camada principal do Ninho (Docs/Audio/floresta-audio.md): dormindo, o ciclo de 4 s;
+        /// embaixo da terra, 2,5 s e, perto do próximo bote, 1,5 s com as escamas raspando. Regra pura:
+        /// <see cref="BreathLevel"/>. No bote, quem fala é o tremor.
+        /// </summary>
+        void BreathLayer()
+        {
+            if (_phase == Phase.Gone || _phase == Phase.Striking || _phase == Phase.Waking) return;
+            if (!FindPlayer() || (_phase == Phase.Lurking && !InRooms(CatCenter))) return;
+            if (_phase == Phase.Sleeping && Vector2.Distance(CatCenter, wakePath[wakePath.Length - 1]) > 40f) return;
+            if (_time < _breathAt) return;
+            int level = BreathLevel(_phase == Phase.Sleeping, _timer);
+            SeteVidas.Audio.Sfx.PlayVariant("isyathy_respira", level);
+            _breathAt = _time + BreathCycle[level];
+        }
+
+        /// <summary>O ciclo de cada nível (s): 4, 2,5, 1,5 (o nível 3, o rugido subindo, é da luta).</summary>
+        public static readonly float[] BreathCycle = { 4f, 2.5f, 1.5f, 1.2f };
+
+        /// <summary>O nível da respiração: 0 dormindo; à espreita, 1, ou 2 com o bote a menos de 2 s. Regra pura.</summary>
+        public static int BreathLevel(bool sleeping, float untilStrike) => sleeping ? 0 : untilStrike <= 2f ? 2 : 1;
+
         void Update()
         {
             _time += Time.deltaTime;
+            BreathLayer();
             if (_phase == Phase.Gone || _phase == Phase.Waking || _phase == Phase.Striking) return;
             if (Flag(IsyathySighting.DeadFlag)) { _rig.Visible = false; _phase = Phase.Gone; return; }
 
@@ -206,6 +231,7 @@ namespace SeteVidas.World
 
             // o aviso: a terra treme e o chão racha
             CameraShake.Shake(1.5f, BurrowRules.WarnTime);
+            SeteVidas.Audio.Sfx.Play("isyathy_tremor");   // o aviso (F10): o som mais importante do Ninho
             float t = 0f;
             while (t < BurrowRules.WarnTime)
             {
@@ -225,6 +251,7 @@ namespace SeteVidas.World
             _rig.Visible = true;
             _strikeCrater.Show(hole, 1f, true);
             CameraShake.Shake(2.5f, 0.35f);
+            SeteVidas.Audio.Sfx.Play("isyathy_emerge", hole);
             HitSparks.Burst(hole + Vector2.up * 0.3f, 18, DirtColor(), new Color(0.35f, 0.25f, 0.33f), 3f, 8f, 0.7f, 25f, 1.2f);
             yield return Move(BurrowRules.Depth - 2f, _rig.PathLength, BurrowRules.RiseTime, Ease.OutBack, 0.12f);
 
@@ -261,6 +288,7 @@ namespace SeteVidas.World
             bool bit = false;
             float from = _rig.S, to = _rig.PathLength;
             CameraShake.Shake(1.2f, 0.15f);
+            SeteVidas.Audio.Sfx.Play("isyathy_bote", rear);
             t = 0f;
             while (t < BurrowRules.LungeTime + BurrowRules.BiteHold)
             {
@@ -275,6 +303,7 @@ namespace SeteVidas.World
                 if (!bit && FindPlayer() && BurrowRules.Bites(_rig.Snout, CatCenter))
                 {
                     bit = true;
+                    SeteVidas.Audio.Sfx.Play("isyathy_mordida", _rig.Snout);
                     float dir = CatCenter.x >= _rig.Neck.x ? 1f : -1f;
                     _health.TakeDamage(new DamageInfo(BurrowRules.Damage, new Vector2(dir, 0.3f), DamageType.Normal, AttackAngle.Front, gameObject));
                 }
@@ -284,6 +313,7 @@ namespace SeteVidas.World
 
             // volta para a terra: puxa a cabeça de volta ao buraco e escorrega para dentro se contorcendo
             yield return Move(_rig.S, Mathf.Max(0f, BurrowRules.LengthTo(lunge, path.Length - 1) - 0.3f), 0.22f, Ease.InOut, 0.12f);
+            SeteVidas.Audio.Sfx.Play("isyathy_mergulha", hole);
             yield return Move(_rig.S, 0f, BurrowRules.RetractTime, Ease.In, 0.18f);
             _rig.Visible = false;
             _rig.ClearClip();
@@ -362,6 +392,7 @@ namespace SeteVidas.World
             CameraLook.Lead = new Vector2(6f, 1.5f);
             // ela respira; o gato percebe
             CameraShake.Shake(0.8f, 1f);
+            SeteVidas.Audio.Sfx.PlayVariant("isyathy_respira", 0);
             if (_player != null) SpeechBubble.Show(_player.transform, WakeLines[0], 1.8f);
             yield return Breathe(1.8f);
             // o olho abre
@@ -373,6 +404,7 @@ namespace SeteVidas.World
             // o rugido
             _rig.Frame = IsyathyArt.FrameBite;
             CameraShake.Shake(3f, 1f);
+            SeteVidas.Audio.Sfx.Play("isyathy_rugido");
             float t = 0f;
             while (t < 1f)
             {
@@ -389,6 +421,7 @@ namespace SeteVidas.World
             yield return Move(lookS, holeS - 0.3f, 0.6f, Ease.In, 0.18f);
             _wakeCrater.Show(wakeHole, 1f, true);
             CameraShake.Shake(3f, 0.6f);
+            SeteVidas.Audio.Sfx.Play("isyathy_mergulha", wakeHole);
             HitSparks.Burst(wakeHole + Vector2.up * 0.3f, 26, DirtColor(), new Color(0.35f, 0.25f, 0.33f), 3f, 9f, 0.8f, 25f, 1.2f);
             // o corpo inteiro escorrega para dentro da terra
             float end = holeS + BurrowRules.BodyLength + 1f, speed = 5f;

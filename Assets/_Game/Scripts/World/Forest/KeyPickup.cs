@@ -57,7 +57,7 @@ namespace SeteVidas.World
             int n = temple ? 16 : 8;
             for (int i = 0; i < n; i++)
                 HitSparks.Rise((Vector2)at + new Vector2(Random.Range(-0.6f, 0.6f), Random.Range(-1.4f, -0.6f)), c, Random.Range(1f, 2.5f), 0.7f);
-            SeteVidas.Audio.Sfx.Play(temple ? "classe_desbloqueada" : "moeda", at, temple ? 0.8f : 1f, 0.8f); // provisório
+            SeteVidas.Audio.Sfx.Play(temple ? "classe_desbloqueada" : "madeira_pega", at, temple ? 0.8f : 1f, temple ? 0.8f : 1.2f);   // F10
             if (temple && cat != null)
                 SeteVidas.UI.SpeechBubble.Show(cat, "Pesada. E me olhando. Ótimo.", 2.4f);
         }

@@ -139,6 +139,7 @@ namespace SeteVidas.World
             art.flipX = Random.value < 0.5f;
             _base = SpotFromCamera(cam.transform.position, halfW, halfH, side, Random.value);
             _visible = true;
+            SeteVidas.Audio.Sfx.PlayVariant("isyathy_respira", 0, null, 0.22f);   // F10: a respiração muito baixa, lá no fundo (mapa §6)
             StartCoroutine(Bark(1.2f));
             yield return EyesAnim(side);
             _alpha = 0f; Apply();

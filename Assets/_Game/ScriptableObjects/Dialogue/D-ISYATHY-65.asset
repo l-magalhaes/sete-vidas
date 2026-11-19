@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a542215b885b59408cc6d453acb5cd7, type: 3}
+  m_Name: D-ISYATHY-65
+  m_EditorClassIdentifier: SeteVidas.Runtime::SeteVidas.Dialogue.DialogueDefinition
+  ScriptId: D-ISYATHY-65
+  Required: 1
+  Revision: 2
+  IsDocument: 0
+  Lines:
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: surpreso
+    Text: "O que ela fez?! N\xE3o entra nada! A praga cobriu ela inteira!"
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: Segura ela, gato! A praga endureceu a pele dela!
+  - Speaker: {fileID: 11400000, guid: 65348136a88ff0541a9211e41a8d418e, type: 2}
+    Expression: ironico
+    Text: "Segurar? Ela \xE9 do tamanho de uma ponte!"
+  - Speaker: {fileID: 11400000, guid: 15de09afa34ec1a46bee5989f0455dcb, type: 2}
+    Expression: serio
+    Text: "S\xF3 a magia da floresta atravessa isso. Me d\xE1 um instante!"

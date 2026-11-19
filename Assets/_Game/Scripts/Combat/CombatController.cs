@@ -381,6 +381,8 @@ namespace SeteVidas.Combat
 
         /// <summary>A estocada quicou (testes e efeitos).</summary>
         public event System.Action Bounced;
+        /// <summary>O último quique foi no espinho de pogo (sem alvo vivo embaixo): o som cristalino (F10).</summary>
+        public bool LastBounceOnSpikes { get; private set; }
 
         /// <summary>Começa o ataque para baixo sem o controle (testes e cenas). Só no ar e com a arma que o tem.</summary>
         public bool TryDownAttack()
@@ -450,6 +452,7 @@ namespace SeteVidas.Combat
                         {
                             if (pogo && _health != null) _health.GrantPogoGrace(weapon.PogoGrace);
                             _player.Bounce(_player.Settings.JumpHeight * weapon.PogoHeightFraction);
+                            LastBounceOnSpikes = pogo && bounceHits == 0;
                             Bounced?.Invoke();
                             if (pogo) HitSparks.Spawn(_player.Body.position + Vector2.down * 0.2f, 3, AttackDirection, false, _player.Body.position);
                             EndDown(); // pode emendar outra estocada logo em seguida

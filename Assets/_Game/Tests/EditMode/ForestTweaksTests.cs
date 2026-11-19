@@ -84,10 +84,21 @@ namespace SeteVidas.Tests
             Assert.Greater(BridgeRules.PaceMultiplier(15f, 2f, cat, zs) * zs, cat, "longe: corre mais que o gato");
             Assert.AreEqual(cat, BridgeRules.PaceMultiplier(2f, 2f, cat, zs) * zs, 1e-3f, "na vaga: acompanha");
             Assert.AreEqual(0f, BridgeRules.PaceMultiplier(1f, 2f, 0f, zs), "o gato parado e ele já na vaga: para");
-            // o zumbi do fim da fila (17 tiles atrás) chega na vaga antes de o gato andar os 49 tiles até o meio
-            float gap = 17f, t = 0f, x = 0f;
-            while (t < 49f / cat) { float m = BridgeRules.PaceMultiplier(gap, BridgeRules.PackGap(7), cat, zs); gap += (cat - m * zs) * 0.02f; t += 0.02f; x += cat * 0.02f; }
+            // o zumbi do fim da fila (nasce fora da tela, ~28 tiles atrás) chega na vaga antes de o gato andar os 27 tiles
+            // até onde a ponte desaba (19/11/2026: a fuga ficou mais curta)
+            float gap = 28f, t = 0f, x = 0f;
+            while (t < 27f / cat) { float m = BridgeRules.PaceMultiplier(gap, BridgeRules.PackGap(7), cat, zs); gap += (cat - m * zs) * 0.02f; t += 0.02f; x += cat * 0.02f; }
             Assert.Less(Mathf.Abs(gap - BridgeRules.PackGap(7)), 0.5f, "chega amontoado");
+        }
+
+        [Test]
+        public void Horde_SpawnsOffscreen()
+        {
+            float left = 100f;
+            for (int rank = 0; rank < 8; rank++)
+                Assert.Less(BridgeRules.OffscreenX(120f, rank, left), left, "nunca dentro da tela");
+            Assert.Greater(BridgeRules.OffscreenX(120f, 0, left), BridgeRules.OffscreenX(120f, 1, left), "em fila, o primeiro na frente");
+            Assert.AreEqual(80f, BridgeRules.OffscreenX(80f, 0, left), "posto já fora da tela: fica nele");
         }
 
         [Test]
@@ -102,7 +113,7 @@ namespace SeteVidas.Tests
             Assert.AreEqual(0, data.honey);
             Assert.IsFalse(HoneyRules.Use(data, true), "sem mel");
             for (int i = 0; i < 20; i++) HoneyRules.Add(data);
-            Assert.AreEqual(HoneyRules.Max, data.honey, "o bolso tem limite");
+            Assert.AreEqual(20, data.honey, "sem limite (19/11/2026)");
             Assert.AreEqual(1, HoneyRules.Heal);
         }
 

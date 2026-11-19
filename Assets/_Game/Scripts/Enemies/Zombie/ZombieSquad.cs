@@ -53,12 +53,27 @@ namespace SeteVidas.Enemies.Zombie
         }
 
         /// <summary>Faz nascer todos (uma vez). <paramref name="alerted"/>: já correm atrás do gato.</summary>
-        public void SpawnAll(bool alerted)
+        public void SpawnAll(bool alerted) => SpawnAll(alerted, null);
+
+        /// <summary>
+        /// Como acima; com <paramref name="place"/>, cada um nasce em outro x (recebe o x do posto e a posição na fila, do
+        /// mais à direita para trás). A horda da ponte usa isso para nascer fora da tela (pedido do usuário, 19/11/2026).
+        /// </summary>
+        public void SpawnAll(bool alerted, Func<float, int, float> place)
         {
             if (Spawned) return;
             Spawned = true;
-            foreach (var p in posts)
+            var order = new List<Post>(posts);
+            order.Sort((a, b) => b.at.x.CompareTo(a.at.x));   // o da frente primeiro
+            for (int i = 0; i < order.Count; i++)
             {
+                var p = order[i];
+                if (place != null)
+                {
+                    float x = place(p.at.x, i);
+                    p.at = new Vector2(x, p.at.y);
+                    p.minX = p.maxX = x;
+                }
                 var z = ZombieAI.Spawn(transform, p.name, p.at, p.facing, p.minX, p.maxX, settings, animations, bodyMaterial);
                 if (p.shield && shieldSprite != null) z.GiveShield(shieldSprite);
                 _zombies.Add(z);
